@@ -43,7 +43,7 @@ void print__NEC__basic_header(const void* buffer)
 void print__NEC__extended_header(const void* buffer)
 {
 
-	__NEC__print_basic_header(buffer);
+	print__NEC__basic_header(buffer); //estaba mal escrito o nome da función!!
 
 	__NEC__gnbtpapi_extended_header_t* h
 		= (__NEC__gnbtpapi_extended_header_t *)buffer;
