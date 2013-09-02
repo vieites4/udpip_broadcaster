@@ -1,0 +1,17 @@
+docs/html
+*~
+src/udpipbroadcaster
+src/*.[oa]
+src/.deps
+src/Makefile
+/config.h
+/config.log
+/config.status
+/Makefile
+/autoscan.log
+/config.guess
+/config.sub
+/libtool
+/ltmain.sh
+/autom4te.cache
+/aclocal.m4
