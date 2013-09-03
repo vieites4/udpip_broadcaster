@@ -3,7 +3,7 @@
 #include "itsnet_header.h"
 void startup()
 {
-printf("comprobo o valor de itsGnLocalAddrConfMethod\n");
+
 //if (itsGnLocalAddrConfMethod=AUTO(0))
 //	autoaddrconf();
 //else
@@ -16,8 +16,6 @@ LPV_ini();//teñen que estar todos os elementos a 0-> páx 16
 
 itsnet_node_id autoaddrconf(){
 
-	//teño que definir o struct das GN_ADDR
-
 	itsnet_node_id addr;
 	int i;
 	for (i=0;i<8;i++)	addr[0]=rand() % 0xFF;//0x00;//buscar o modo de que sexa random
@@ -25,10 +23,10 @@ itsnet_node_id autoaddrconf(){
 
 }
 
-bool mngdaddrconf(int opcion) //1: initial, 2:update,3:duplicate detection
+bool mngdaddrconf(int option) //1: initial, 2:update,3:duplicate detection
 {
-bool correcto=false;
-	switch(opcion)
+bool correct=false;
+	switch(option)
 			{
 				case 1: //initial
 
@@ -44,7 +42,7 @@ bool correcto=false;
  //sería a opcion 3
 				break;
 			}
-return(correcto);
+return(correct);
 
 }
 
@@ -65,14 +63,14 @@ void Beacon_send(){
 }
 
 
-void LS(int opcion){
-	switch(opcion)
+void LS(int option){
+	switch(option)
 				{
-					case 1: //initial LS Request
+					case 1: //initial transmission of LS Request
 					{
 						printf("initial LS Request\n");
 //						if (LS_pending){
-//							paquete_a_buffer();
+//							pkt2buffer();
 //							break;
 //										}
 			//			else{printf("envío o paquete LS request");
@@ -88,13 +86,13 @@ void LS(int opcion){
 						//aquí entraríamos no caso de que o timer Tls_gnaddr expirara
 
 
-			if( RTCls_gnaddr<itsGnLocationServiceMaxRetrans){
+//			if( RTCls_gnaddr<itsGnLocationServiceMaxRetrans){
 //
 			//reenviar o packete LS Request como un TSB.
 			//restart Tls_gnaddr=itsGnLocationServiceRetransmitTimer
 			//RTCls_gnaddr++;
 
-			}
+//			}
 //			else{
 				//flush the LS packet buffer for the sought GN_ADDR and discard the stored packets;
 				//remove the LocTE for the sought(desexado) GN_ADDR
@@ -107,7 +105,7 @@ void LS(int opcion){
 						break;
 
 					}
-					default://LS Reply //sería a opcion 3
+					case(3)://receive LS Reply //sería a opcion 3
 					{
 						//if the source receives a LS Reply packet for the sought GN_ADDR
 
@@ -122,15 +120,58 @@ void LS(int opcion){
 //update SO PVlocT=PV do LS Reply Extended Header [algoritmo B.2]
 	//				if (so/=se){ IS_NEIGHBOUR=FALSE}
 
+					if (SO LS_pending){
+						//flush packet buffers. SO LS packet buffer
+						//forward the stored packets
+						// SO LS_pending=false;
+						}
 
-				}
+			//		if(UC_forwarding_pkt_buffer!=empty){//flush the UC_forwarding_pkt_buffer
+						//forward the stored packets
+
+			//		}
+
+					//flush LS_pkt_buffer for the sought GN_ADDR & forward the stored packets
+					//LS_pending=false of GN_ADDR
+					//stop Tls_gnaddr
+					//reset RTCls_gnaddr
+
+
+					}
+
+
+
 
 
 						printf("LS Reply\n");
 
 					break;
-				}}
+				}
+
+
+					default:{ //recepción da LS Request
+						//despois de comprobar na recepcion  que ten o GN_ADDR correcto
+
+						//Common Header processing
+						if( mngdaddrconf(3)){
+
+						//discard the packet
+						break;
+					}else{
+						//B.2
+						//IF(SO/=SE)SO IS_NEIGHBOUR=FALSE
+						//
+
+					}
+
+					break;
+					}
+				}
 
 
 
 }
+
+
+
+
