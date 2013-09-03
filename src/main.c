@@ -58,6 +58,12 @@ int main(int argc, char **argv)
 	log_app_msg(">>> Configuration read! Printing data...\n");
 	print_configuration(cfg);
 
+
+	//1.a Start-up
+	// address configuration
+
+	startup();
+
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
@@ -65,10 +71,8 @@ int main(int argc, char **argv)
 	if ( cfg->__tx_test == true )
 	{
 
-		net_events = init_tx_udp_events(cfg->if_name, cfg->tx_port
-										, cb_broadcast_sendto, true);
-		printf("> UDP TX socket open, port = %d, fd = %d.\n"
-					, cfg->tx_port, net_events->socket_fd);
+		net_events = init_tx_udp_events(cfg->if_name, cfg->tx_port, cb_broadcast_sendto, true); //aqui teño a posibilidade de facer q non sexa solo broadcast
+		printf("> UDP TX socket open, port = %d, fd = %d.\n", cfg->tx_port, net_events->socket_fd);
 
 	}
 	else
@@ -76,10 +80,7 @@ int main(int argc, char **argv)
 
 		log_app_msg(">>> Opening UDP NET RX socket...\n");
 		net_events = init_net_udp_events
-						(cfg->rx_port, cfg->if_name
-								, cfg->app_address, cfg->app_rx_port
-								, cfg->nec_mode
-								, cb_forward_recvfrom);
+						(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_rx_port, cfg->nec_mode , cb_forward_recvfrom);
 		log_app_msg(">>> UDP NET RX socket open!\n");
 		print_udp_events(net_events, cfg->rx_port, cfg->app_rx_port);
 

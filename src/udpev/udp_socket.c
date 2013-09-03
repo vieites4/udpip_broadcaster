@@ -272,7 +272,7 @@ int open_receiver_udp_socket(const int port)
 }
 
 /* open_transmitter_udp_socket */
-int open_transmitter_udp_socket(const int port)
+int open_transmitter_udp_socket(const int port) //non está completo, non?
 {
 
 	int fd = -1;
@@ -391,8 +391,7 @@ int recv_message(const int socket_fd, void *data)
 
 	int rx_bytes = 0;
 
-	if ( ( rx_bytes = recvfrom(socket_fd, data, UDP_BUFFER_LEN
-								, 0, NULL, NULL) ) < 0 )
+	if ( ( rx_bytes = recvfrom(socket_fd, data, UDP_BUFFER_LEN, 0, NULL, NULL) ) < 0 )
 	{
 		log_sys_error("recv_message: wrong <recvfrom> call. ");
 		return(EX_ERR);
