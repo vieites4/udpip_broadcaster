@@ -107,8 +107,7 @@ typedef struct itsnet_node_id itsnet_node_id;
 
 struct itsnet_accuracy
 {
-unsigned char time_ac :
-	4; /**time accuracy */
+unsigned char time_ac :	4; /**time accuracy */
 unsigned char pos_ac :
 	4; /**position accuracy*/
 unsigned char speed_ac :

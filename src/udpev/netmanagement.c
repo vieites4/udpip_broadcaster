@@ -2,7 +2,8 @@
 #include "main.h"
 #include "itsnet_header.h"
 #include "netmanagement.h"
-void startup()
+
+void startup1()
 {
 
 //if (itsGnLocalAddrConfMethod=AUTO(0))
@@ -10,10 +11,10 @@ void startup()
 //else
 //	mngdaddrconf(1);
 printf("teño que enviar unha Beacon\n");
-Beacon_send();
-LPV_ini();//teñen que estar todos os elementos a 0-> páx 16
-}
+//Beacon_send();
+//LPV_ini();//teñen que estar todos os elementos a 0-> páx 16
 
+}
 
 itsnet_node_id autoaddrconf(){
 

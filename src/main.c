@@ -62,8 +62,8 @@ int main(int argc, char **argv)
 
 	//1.a Start-up
 	// address configuration
+	startup1();
 
-	startup();
 
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;

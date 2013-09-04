@@ -5,6 +5,9 @@
  *      Author: pc
  */
 
+//estaría ben agrupar a parte común do case 0 e 1.
+
+
 
 #include "pkt_handling.h"
 #include "netmanagement.h"
@@ -16,7 +19,6 @@ void GeoUnicast(int option){ //send(source),forward,reception(destination)
 					case 0: //send
 						//{
 					//{////if a GN-DATA.request arrive with a Pkt transport type=GeoUnicast and GN_ADDR=GN_ADDR in DE pv
-						////determine LL_ADDR_NH of the next hop
 			//		LL_ADDR_NH=determine_nexthop();
 					////create GNPFU
 					// set Common Header fields
@@ -62,9 +64,25 @@ void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
 									//		}
 					//------------------------x-----------------////fin da parte común
+						//update DE PVlocT=PV do LS Reply Extended Header [algoritmo B.2]
+					////update fields of Common Header
+					//HL--
+					//SE PV=LPV
 
-
-
+					// DE PV=DE PE of LocT (clause B.3)
+					if (HL=0){
+						//discard GN-PDU
+						//break;
+							}
+					LL_ADDR_NH= determine_nexthop();
+					//		if (LL_ADDR_NH=0){
+					//buffer pkt in UC_forwardin_pkt_buffer
+					//break;
+					//	}
+					if (Communication profile of GN-DATA.request= ITS-G5A){
+											//operations specified in i.2???????????
+										}
+					//enviar GN-PDU->LL, destination=LL_ADDR_NH
 
 						break;
 				//	}

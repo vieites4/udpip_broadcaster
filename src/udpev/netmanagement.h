@@ -7,7 +7,10 @@
 
 #ifndef NETMANAGEMENT_H_
 #define NETMANAGEMENT_H_
-void startup();
+#include "main.h"
+#include "itsnet_header.h"
+void startup1();
+
 
 void LPV_update();
 void Time_update();
