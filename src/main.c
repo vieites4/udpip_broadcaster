@@ -23,11 +23,12 @@
  */
 
 #include "main.h"
-
 #include "logger.h"
 #include "configuration.h"
 #include "udpev/udp_events.h"
 #include "udpev/cb_udp_events.h"
+#include "udpev/netmanagement.h"
+#include "udpev/pkt_handling.h"
 
 /************************************************** Application definitions */
 

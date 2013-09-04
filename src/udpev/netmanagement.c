@@ -1,6 +1,7 @@
 
 #include "main.h"
 #include "itsnet_header.h"
+#include "netmanagement.h"
 void startup()
 {
 
@@ -109,7 +110,7 @@ void LS(int option){
 					{
 						//if the source receives a LS Reply packet for the sought GN_ADDR
 
-
+						//------------------------x-----------------////inicio da parte común
 				//Common Header processing
 				if( mngdaddrconf(3)){
 
@@ -130,6 +131,7 @@ void LS(int option){
 						//forward the stored packets
 
 			//		}
+					//------------------------x-----------------////fin da parte común
 
 					//flush LS_pkt_buffer for the sought GN_ADDR & forward the stored packets
 					//LS_pending=false of GN_ADDR
