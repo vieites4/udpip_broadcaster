@@ -53,7 +53,7 @@ configuration_t *create_configuration(int argc, char** argv)
 /* read_configuration */
 int read_configuration(int argc, char** argv, configuration_t* cfg)
 {
-
+bool tic=false;
 	int idx = 0, read = 0;
     
     static struct option args[] =
@@ -66,14 +66,15 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
 		{"apptx",	required_argument,	NULL, 	'u'	},
 		{"apprx",  	required_argument,	NULL, 	'w'	},
 		{"appaddr", required_argument,  NULL,	'd'	},
-		{"ifname",	required_argument,	NULL,	'i'	},
+		{"ifname",	required_argument,	NULL,	'i'	}, //wlan0
 		{"txtest",  no_argument,		NULL,   's' },
+		{"app",     no_argument,		NULL,   'a' },
 		{"nec",		no_argument,		NULL,	'n' },
 		{0,0,0,0}
 	};
 	
 	while
-		( ( read = getopt_long(argc, argv, "nhsevt:r:i:u:w:d:", args, &idx) )
+		( ( read = getopt_long(argc, argv, "anhsevt:r:i:u:w:d:", args, &idx) )
 				> -1 )
 	{
 
@@ -89,16 +90,17 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
 				cfg->rx_port = atoi(optarg);
 				break;
 
-			case 'd':
+			case 'd': // se se define esa é a dirección de destino, se non o destino é broadcast
 
 				if ( strlen(optarg) <= 0 )
 					{ handle_app_error("read_configuration: " \
 										"wrong application address.\n"); }
 				cfg->app_address = optarg;
 				cfg->app_inet_addr = inet_addr(optarg);
+				tic=true;
 
 				if ( 	( cfg->app_inet_addr < 0 ) ||
-						( cfg->app_inet_addr == 0xFFFFFFFF )	)
+						( cfg->app_inet_addr == 0xFFFFFFfF )	)
 					{ handle_app_error("read_configuration: " \
 										"wrong application address.\n"); }
 
@@ -147,17 +149,23 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
 				print_version();
 				exit(EXIT_SUCCESS);
 				break;
-				
+			case 'a':
+				cfg->ladoapp=true;
+				break;
 			case 'h':
 			default:
 			
 				print_help();
 				exit(EXIT_SUCCESS);
+
+				printf("go2\n");
 				break;
 		}
 
 	};
-
+	printf("go\n");
+//	if (!tic){ cfg->app_address = "255.255.255.255";
+//	cfg->app_inet_addr = inet_addr("255.255.255.255");}
 	return(EX_OK);
 
 }
@@ -165,6 +173,8 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
 /* check_configuration */
 int check_configuration(configuration_t *cfg)
 {
+
+
 
 	if ( cfg == NULL )
 	{
@@ -207,6 +217,7 @@ void print_configuration(const configuration_t *cfg)
 	log_app_msg("\t.if_name = %s\n", cfg->if_name);
 	log_app_msg("\t.nec_mode = %s\n", cfg->nec_mode ? "true" : "false");
 	log_app_msg("\t.__tx_test = %s\n", cfg->__tx_test ? "true" : "false");
+	log_app_msg("\t.ladoapp = %s\n", cfg->ladoapp ? "true" : "false");
 	log_app_msg("\t.__verbose = %s\n", cfg->__verbose ? "true" : "false");
 	log_app_msg("}\n");
 	

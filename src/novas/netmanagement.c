@@ -20,11 +20,11 @@ printf("teño que enviar unha Beacon\n");
 
 }
 
-itsnet_node_id autoaddrconf(){
+mac_addr autoaddrconf(){
 
-	itsnet_node_id addr;
+	mac_addr addr;
 	int i;
-	//for (i=0;i<8;i++)	addr[i]=rand() % 0xFF;//0x00;//buscar o modo de que sexa random
+	//for (i=0;i<8;i++ ) addr[i]= rand() % 0xFF;//0x00;//buscar o modo de que sexa random
 	return(addr);
 
 }

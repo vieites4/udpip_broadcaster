@@ -37,13 +37,30 @@
 #include "../logger.h"
 #include "../execution_codes.h"
 
+
+
+
+#include <stdio.h>
+
+#include <unistd.h>
+#include <linux/if_packet.h>
+
+#include <net/ethernet.h> /* the L2 protocols */
+#include <netinet/in.h>
+#include <sys/types.h>
+
+#include <sys/mman.h>
+
+#include <ev.h>
+
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // SOCKET STRUCTURES
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 typedef struct ifreq ifreq_t;				/**< Type for ifreq. */
 #define LEN__IFREQ sizeof(ifreq_t)
-
+typedef struct sockaddr_ll sockaddr_ll_t;
+#define LEN__SOCKADDR_LL sizeof(sockaddr_ll_t)
 /**
  * @brief Allocates memory for an ifreq structure.
  * @return A pointer to the newly allocated block of memory.
@@ -74,6 +91,7 @@ typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
  * @return A pointer to the newly allocated block of memory.
  */
 sockaddr_in_t *new_sockaddr_in();
+sockaddr_ll_t *new_sockaddr_ll();
 
 typedef struct iovec iovec_t;
 #define LEN__IOVEC sizeof(iovec_t)
@@ -111,7 +129,7 @@ msg_header_t *init_msg_header(void* buffer, const int buffer_len);
  * @result An initialized sockaddr_in structure.
  */
 sockaddr_in_t *init_broadcast_sockaddr_in(const int port);
-
+sockaddr_ll_t *init_broadcast_sockaddr_ll(const int port);
 /**
  * @brief Initializes a sockaddr_in structure for receiving messages from
  * 			any source address, which were sent to the given port.
@@ -119,6 +137,7 @@ sockaddr_in_t *init_broadcast_sockaddr_in(const int port);
  * @result An initialized sockaddr_in structure.
  */
 sockaddr_in_t *init_any_sockaddr_in(const int port);
+sockaddr_ll_t *init_any_sockaddr_ll(const int port);
 
 /**
  * @brief Initializes a sockaddr_in structure for sending messages to the
@@ -127,7 +146,8 @@ sockaddr_in_t *init_any_sockaddr_in(const int port);
  * @param port The port where the messages will be sent to.
  * @result An initialized sockaddr_in structure.
  */
-sockaddr_in_t *init_sockaddr_in(const char *address, const int port);
+sockaddr_in_t *init_sockaddr_in( const int port, in_addr_t addr);
+sockaddr_ll_t *init_sockaddr_ll( const char *address,const int port);
 
 /**
  * @brief Initializes a sockaddr_in structure for sending messages through
@@ -137,7 +157,7 @@ sockaddr_in_t *init_sockaddr_in(const char *address, const int port);
  * @result An initialized sockaddr_in structure.
  */
 sockaddr_in_t *init_if_sockaddr_in(const char *if_name, const int port);
-
+sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port);
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // UDP SOCKET MANAGEMENT
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -165,14 +185,15 @@ int set_msghdrs_socket(const int socket_fd);
  * @return File descriptor of the opened UDP socket.
  */
 int open_receiver_udp_socket(const int port);
+int open_receiver_raw_socket(const int port);
 
 /**
  * @brief Creates and DOES NOT BIND an UDP socket that uses the given port.
  * @param port The UDP port to be used by this socket.
  * @return File descriptor of the opened UDP socket.
  */
-int open_transmitter_udp_socket(const int port);
-
+int open_transmitter_udp_socket(const int port, in_addr_t addr);
+int open_transmitter_raw_socket(const int port);
 /**
  * @brief Creates and binds an UDP socket that uses the given port with
  * 			broadcasting privileges.
@@ -181,7 +202,7 @@ int open_transmitter_udp_socket(const int port);
  * @return File descriptor of the opened UDP socket.
  */
 int open_broadcast_udp_socket(const char *if_name, const int port);
-
+int open_broadcast_raw_socket(const char *if_name, const int port);
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // SOCKET DATA TRANSMISSION
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -82,7 +82,6 @@ typedef struct ev_io_arg
 	struct ev_io watcher;					/**< Event watcher. */
 	ev_cb_t cb_specfic;						/**< Callback function. */
 	//void (*cb_function) (public_ev_arg_t *arg);	/**< Watcher callback. */
-
 	public_ev_arg_t public_arg;		/*!< Data for external callbacks. */
 
 } ev_io_arg_t;
@@ -129,6 +128,9 @@ udp_events_t *new_udp_events();
  * @return Manager's structure configured.
  */
 udp_events_t *init_tx_udp_events
+				(const char* if_name, const int port, in_addr_t addr
+						, const ev_cb_t callback, const bool broadcast);
+udp_events_t *init_tx_raw_events
 				(const char* if_name, const int port
 						, const ev_cb_t callback, const bool broadcast);
 
@@ -145,7 +147,8 @@ udp_events_t *init_tx_udp_events
  */
 udp_events_t *init_rx_udp_events(const int port, const char* if_name
 									, const ev_cb_t callback);
-
+udp_events_t *init_rx_raw_events(const int port, const char* if_name
+									, const ev_cb_t callback);
 /**
  * @brief Initializes a new structure for handling libev's reception events
  * 			for an UDP socket which will trigger the immediate forwarding
@@ -157,14 +160,14 @@ udp_events_t *init_rx_udp_events(const int port, const char* if_name
  * 						are forwarded to applications.
  * @return Structure for management just configured.
  */
-udp_events_t *init_net_udp_events
+udp_events_t *init_net_raw_events
 				(	const int net_rx_port, const char* net_if_name,
-					const char *app_fwd_addr, const int app_fwd_port,
+					 const int app_fwd_port,
 					const bool nec_mode,
 					const ev_cb_t callback);
 
 udp_events_t *init_app_udp_events
-				(	const int app_rx_port,
+				(	const int app_rx_port,in_addr_t addr,
 					const char* if_name, const int net_fwd_port,
 					const ev_cb_t callback);
 
@@ -217,7 +220,7 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
  */
 int init_watcher(udp_events_t *m
 				, const ev_cb_t callback, const int events
-				, const int port, const char* if_name);
+				, const int port, const char* if_name, in_addr_t addr);
 
 /**
  * @brief Callback function for common events processing, <libev>. All events

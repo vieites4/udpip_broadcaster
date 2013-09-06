@@ -21,7 +21,9 @@
  */
 
 #include "udp_socket.h"
-
+#include <sys/socket.h>
+const unsigned char ETH_ADDR_BROADCAST[ETH_ALEN]                                    ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
+const unsigned char ETH_ADDR_ANY[ETH_ALEN]                                    ={ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 /* new_ifreq */
 ifreq_t *new_ifreq()
 {
@@ -88,6 +90,19 @@ sockaddr_in_t *new_sockaddr_in()
 
 }
 
+/* new_sockaddr_ll */
+sockaddr_ll_t *new_sockaddr_ll()
+{
+	sockaddr_ll_t *buffer = NULL;
+	buffer = (sockaddr_ll_t *)malloc(LEN__SOCKADDR_LL);
+	memset(buffer, 0, LEN__SOCKADDR_LL);
+	return(buffer);
+}
+
+
+
+
+
 /* new_iovec */
 iovec_t *new_iovec()
 {
@@ -147,19 +162,33 @@ msg_header_t *init_msg_header(void* buffer, const int buffer_len)
 }
 
 /* init_broadcast_sockaddr_in */
-sockaddr_in_t *init_broadcast_sockaddr_in(const int port)
+sockaddr_in_t *init_sockaddr_in(const int port,in_addr_t addr)
 {
 
 	sockaddr_in_t *s = new_sockaddr_in();
 
 	s->sin_family = AF_INET;
 	s->sin_port = (in_port_t)htons(port);
-	s->sin_addr.s_addr = htonl(INADDR_BROADCAST);
+	s->sin_addr.s_addr = addr;//htonl(INADDR_BROADCAST);
 
+	return(s);
+}
+
+
+sockaddr_ll_t *init_broadcast_sockaddr_ll(const int port)
+{
+
+	sockaddr_ll_t *s = new_sockaddr_ll();
+
+
+	s->sll_family = PF_PACKET;
+	s->sll_ifindex = if_nametoindex("wlan0");
+
+	memcpy(s->sll_addr,ETH_ADDR_BROADCAST , ETH_ALEN);
+s->sll_protocol=htons(0x0707);
 	return(s);
 
 }
-
 /* init_any_sockaddr_in */
 sockaddr_in_t *init_any_sockaddr_in(const int port)
 {
@@ -174,22 +203,101 @@ sockaddr_in_t *init_any_sockaddr_in(const int port)
 
 }
 
-/* init_sockaddr_in */
-sockaddr_in_t *init_sockaddr_in(const char *address, const int port)
+sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 {
 
-	sockaddr_in_t *s = new_sockaddr_in();
+	sockaddr_ll_t *s = new_sockaddr_ll();
 
-	s->sin_family = AF_INET;
-	s->sin_port = (in_port_t)htons(port);
-
-	if ( ( s->sin_addr.s_addr = inet_addr(address) ) < 0 )
-		{ handle_sys_error("init_sockaddr_in: " \
-							"<inet_addr> returns error.\n"); }
+	s->sll_family = PF_PACKET;
+	s->sll_ifindex = (in_port_t)htons(port);//??
+	memcpy(s->sll_addr,ETH_ADDR_ANY , ETH_ALEN);
 
 	return(s);
 
 }
+
+
+
+
+sockaddr_ll_t *init_sockaddr_ll(const char *address, const int port)
+{
+
+	sockaddr_ll_t *s = new_sockaddr_ll();
+	s->sll_family = PF_PACKET;
+	s->sll_halen = ETH_ALEN;
+	//memset(s->sll_addr, 0xff, ETH_ALEN);
+	//s->sin_port = (in_port_t)htons(port);
+//	s->sll_ifindex =if_index; -> FALTA DAR ESTA INFO
+	s->sll_protocol=htons(port);
+	memset(s->sll_addr,address,ETH_ALEN);
+//	if ( ( s->sll_addr.s_addr = inet_addr(address) ) < 0 )
+	//	{ handle_sys_error("init_sockaddr_in: " \
+		//					"<inet_addr> returns error.\n"); }
+
+	return(s);
+
+
+	//	if (is_transmitter) {t->sll_protocol = htons(ll_socket->ll_sap);}else t->sll_protocol=htons(ETH_P_ALL);
+
+
+}
+
+
+/* init_if_sockaddr_in */
+sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port)
+{
+
+	sockaddr_ll_t *s = NULL;
+	struct ifaddrs *ifaddr, *ifa;
+    int i;
+    char host[NI_MAXHOST];
+    bool if_found = false;
+
+    if ( getifaddrs(&ifaddr) < 0 )
+    {
+    	handle_sys_error("init_if_sockaddr_ll: " \
+    						"<getifaddrs> returned error. Error: ");
+    }
+
+    for ( ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next )
+    {
+
+        if ( ifa->ifa_addr == NULL ) { continue; }
+
+        i = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_ll)
+        					, host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+
+        if ( 	( strcmp(ifa->ifa_name,if_name) == 0 ) &&
+        		( ifa->ifa_addr->sa_family == AF_INET )		)
+        {
+
+            if ( i != 0 )
+            {
+                handle_app_error("init_if_sockaddr_in: " \
+                					"<getnameinfo> failed: %s\n"
+                						, gai_strerror(i));
+            }
+
+            s = init_sockaddr_ll(host, port);
+            if_found = true;
+
+        }
+
+    }
+
+    freeifaddrs(ifaddr);
+
+    if ( if_found == false )
+    {
+    	handle_app_error("Could not get local interface, if_name = %s.\n"
+    						, if_name);
+    }
+
+	return(s);
+
+}
+
+
 
 /* init_if_sockaddr_in */
 sockaddr_in_t *init_if_sockaddr_in(const char *if_name, const int port)
@@ -267,12 +375,40 @@ int open_receiver_udp_socket(const int port)
 		{ handle_app_error("open_receiver_udp_socket: " \
 							"<set_msghdrs_socket> returns error.\n"); }
 
+
+	return(fd);
+
+}
+
+
+
+int open_receiver_raw_socket(const int port)
+{
+
+	int fd = -1;
+
+	// 1) socket creation
+	if ( ( fd = socket(AF_PACKET, SOCK_RAW, port) ) < 0 )
+		{ handle_sys_error("open_receiver_RAW_socket: " \
+							"<socket> returns error. Description"); }
+
+	// 2) local address for binding
+	sockaddr_ll_t* addr = init_any_sockaddr_ll(port);
+	//if ( bind(fd, (sockaddr_t *)addr, LEN__SOCKADDR_LL) < 0 )
+	//	{ handle_sys_error("open_receiver_RAW_socket: " \
+		//					"<bind> returns error. Description"); }
+
+	// 3) for analyzing received message's headers
+//	if ( set_msghdrs_socket(fd) < 0 ) //PROBABLEMENTE BORRE ESTO
+//		{ handle_app_error("open_receiver_RAW_socket: " \
+//							"<set_msghdrs_socket> returns error.\n"); }
+
 	return(fd);
 
 }
 
 /* open_transmitter_udp_socket */
-int open_transmitter_udp_socket(const int port) //non está completo, non?
+int open_transmitter_udp_socket(const int port, in_addr_t addr) //non está completo, non?
 {
 
 	int fd = -1;
@@ -281,9 +417,39 @@ int open_transmitter_udp_socket(const int port) //non está completo, non?
 	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
 		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
+//	sockaddr_in_t server;
+	//	 memset(&server, 0, sizeof server);
+	//	    server.sin_family = AF_INET; // Use IPv4
+	//	    server.sin_addr.s_addr = addr; // My IP
+	//	    server.sin_port = port; // Server Port
+
+		    // Bind socket
+//		    if ((bind(fd, (struct sockaddr *) &server, sizeof(server))) == -1) {
+//		    	close(fd);
+//		    	perror("Can't bind");
+	//	    }
+
 	return(fd);
 
 }
+
+
+int open_transmitter_raw_socket(const int port) //non está completo, non?
+{
+
+	int fd = -1;
+
+	// 1) socket creation
+	if ( ( fd = socket(AF_PACKET, SOCK_RAW, 0) ) < 0 )
+		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
+
+
+
+
+	return(fd);
+
+}
+
 
 /* open_broadcast_udp_socket */
 int open_broadcast_udp_socket(const char *iface, const int port)
@@ -312,6 +478,35 @@ int open_broadcast_udp_socket(const char *iface, const int port)
 	return(fd);
 
 }
+
+
+int open_broadcast_raw_socket(const char *iface, const int port) ///cambiar esto a raw
+{
+
+	int fd = -1;
+
+	// 1) socket creation
+	if ( ( fd = socket(AF_PACKET, SOCK_RAW, 0) ) < 0 )
+		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
+
+	// 2) set broadcast socket options
+	if ( set_broadcast_socket(fd) < 0 )
+	{
+		handle_app_error("open_broadcast_udp_socket: " \
+							"<set_broadcast_socket> returns error.\n");
+	}
+
+	// 3) broadcast socket must be bound to a specific network interface
+	if ( set_bindtodevice_socket(iface, fd) < 0 )
+	{
+		handle_app_error("open_broadcast_udp_socket: " \
+							"<set_bindtodevice_socket> returns error.\n");
+	}
+
+	return(fd);
+
+}
+
 
 /* set_broadcast_socket */
 int set_broadcast_socket(const int socket_fd)
@@ -366,7 +561,7 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 	int sent_bytes = 0;
 
 	if ( ( sent_bytes = sendto(socket_fd, buffer, len
-								, 0, dest_addr, LEN__SOCKADDR_IN) ) < 0 )
+								, 0, dest_addr, LEN__SOCKADDR_IN) ) < 0 ) // solo habería que cambiar esta liña
 	{
 		log_sys_error("cb_broadcast_sendto (fd=%d): <sendto> ERROR.\n"
 						, socket_fd);
@@ -402,14 +597,14 @@ int recv_message(const int socket_fd, void *data)
 }
 
 /* recv_msg */
-int recv_msg(	const int socket_fd, msg_header_t *msg,
+int recv_msg(	const int socket_fd, msg_header_t *msg, //FACER TAMÉN UNHA VERSION NET (RAW) DO SEND
 				const in_addr_t block_ip, bool *blocked	)
 {
 
 	int rx_bytes = 0;
 
 	// 1) read UDP message from network level
-	if ( ( rx_bytes = recvmsg(socket_fd, msg, 0) ) < 0 )
+	if ( ( rx_bytes = recvmsg(socket_fd, msg, 0) ) < 0 ) //ESTO HAI QUE CAMBIALO!!!
 	{
 		log_sys_error("recv_msg: wrong <recvmsg> call. ");
 		return(EX_ERR);

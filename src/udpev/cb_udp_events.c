@@ -52,14 +52,37 @@ void cb_print_recvfrom(public_ev_arg_t *arg)
 char data[__DATA_BUFFER_LEN];		/**< Static buffer. */
 
 /* cb_broadcast_sendto */
-void cb_broadcast_sendto(public_ev_arg_t *arg)
+void cb_udp_sendto(public_ev_arg_t *arg)
+{
+
+	sprintf(data, "TEST#%d", arg->__test_number++);
+	int len = strlen(data);
+
+	sockaddr_t *dest_addr = (sockaddr_t *)
+			init_sockaddr_in(arg->port, arg->forwarding_addr);
+printf("envio\n");
+	printf(">>> TEST (fd = %d): sending test[%d] = %s\n"
+			, arg->socket_fd, len, data);
+
+	send_message(dest_addr, arg->socket_fd, data, len);
+
+	if ( usleep(__TX_DELAY_US) < 0 )
+	{
+		log_app_msg("Could not sleep for %d (usecs).\n", __TX_DELAY_US);
+		return;
+	}
+
+}
+
+
+void cb_raw_sendto(public_ev_arg_t *arg)
 {
 
 	sprintf(data, "BROADCAST-TEST#%d", arg->__test_number++);
 	int len = strlen(data);
-
+	printf("envio1\n");
 	sockaddr_t *dest_addr = (sockaddr_t *)
-			init_broadcast_sockaddr_in(arg->port);
+			init_broadcast_sockaddr_ll(arg->port);
 
 	printf(">>> BROADCAST TEST (fd = %d): sending test[%d] = %s\n"
 			, arg->socket_fd, len, data);

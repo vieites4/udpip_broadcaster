@@ -349,9 +349,8 @@ typedef struct itsnet_packet itsnet_packet;
  *The structure describes adress
  */
 
-struct mac_addr
-{
-	uint8_t address[MAX_LLA_LEN];
+struct mac_addr{
+	unsigned char address[6];
 };
 
 typedef struct mac_addr mac_addr;

@@ -35,6 +35,37 @@ udp_events_t *new_udp_events()
 
 /* init_tx_udp_events */
 udp_events_t *init_tx_udp_events
+	(const char* if_name, const int port, in_addr_t addr
+			, const ev_cb_t callback, const bool broadcast)
+{
+
+
+	udp_events_t *s = new_udp_events();
+
+	if ( broadcast == true )
+	{printf("chego0\n");
+		log_app_msg(">>> Opening TX socket in broadcast mode.");
+		s->socket_fd = open_broadcast_udp_socket(if_name, port);
+	}
+	else
+	{printf("chego1\n");
+		log_app_msg(">>> Opening TX socket in normal mode.");
+		s->socket_fd = open_transmitter_udp_socket(port, addr);
+	}
+	printf("chego2\n");
+	if ( init_watcher(s, callback, EV_READ, port, if_name, addr) < 0 )
+		{ handle_app_error("init_tx_udp_events: <init_watcher> error.\n"); }
+	printf("chego3\n");
+
+	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
+	arg->public_arg.__test_number = 0;
+	printf("chego4\n");
+	return(s);
+
+}
+
+
+udp_events_t *init_tx_raw_events
 	(const char* if_name, const int port
 			, const ev_cb_t callback, const bool broadcast)
 {
@@ -44,15 +75,15 @@ udp_events_t *init_tx_udp_events
 	if ( broadcast == true )
 	{
 		log_app_msg(">>> Opening TX socket in broadcast mode.");
-		s->socket_fd = open_broadcast_udp_socket(if_name, port);
+		s->socket_fd = open_broadcast_raw_socket(if_name, port);
 	}
 	else
 	{
 		log_app_msg(">>> Opening TX socket in normal mode.");
-		s->socket_fd = open_transmitter_udp_socket(port);
+		s->socket_fd = open_transmitter_raw_socket(port);
 	}
 
-	if ( init_watcher(s, callback, EV_READ, port, if_name) < 0 )
+	if ( init_watcher(s, callback, EV_READ, port, if_name, (in_addr_t) NULL) < 0 )
 		{ handle_app_error("init_tx_udp_events: <init_watcher> error.\n"); }
 
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
@@ -70,7 +101,22 @@ udp_events_t *init_rx_udp_events(const int port, const char* if_name
 	udp_events_t *s = new_udp_events();
 	s->socket_fd = open_receiver_udp_socket(port);
 
-	if ( init_watcher(s, callback, EV_READ, port, if_name) < 0 )
+	if ( init_watcher(s, callback, EV_READ, port, if_name,(in_addr_t) NULL) < 0 )
+		{ handle_app_error("init_rx_udp_events: <init_watcher> error.\n"); }
+
+	return(s);
+
+}
+
+/* init_rx_udp_events */
+udp_events_t *init_rx_raw_events(const int port, const char* if_name
+									, const ev_cb_t callback)
+{
+
+	udp_events_t *s = new_udp_events();
+	s->socket_fd = open_receiver_raw_socket(port);
+
+	if ( init_watcher(s, callback, EV_READ, port, if_name,(in_addr_t) NULL) < 0 )
 		{ handle_app_error("init_rx_udp_events: <init_watcher> error.\n"); }
 
 	return(s);
@@ -78,24 +124,21 @@ udp_events_t *init_rx_udp_events(const int port, const char* if_name
 }
 
 /* init_net_udp_events */
-udp_events_t *init_net_udp_events
-				(	const int net_rx_port, const char* net_if_name,
-					const char *app_fwd_addr, const int app_fwd_port,
-					const bool nec_mode,
-					const ev_cb_t callback)
+udp_events_t *init_net_raw_events
+				(	const int net_rx_port, const char* net_if_name,const int net_fwd_port,
+					const bool nec_mode,	const ev_cb_t callback)
 {
 
-	udp_events_t *s = init_rx_udp_events(net_rx_port, net_if_name, callback);
+	udp_events_t *s = init_rx_raw_events(net_rx_port, net_if_name, callback);
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
 
 	arg->public_arg.local_addr
-		= init_if_sockaddr_in(net_if_name, net_rx_port);
+		= init_if_sockaddr_ll(net_if_name, net_rx_port); // poñer a version de raw
 
 	arg->public_arg.forwarding_socket_fd
-		= open_transmitter_udp_socket(app_fwd_port);
-	arg->public_arg.forwarding_port = app_fwd_port;
-	arg->public_arg.forwarding_addr
-		= init_sockaddr_in(app_fwd_addr, app_fwd_port);
+		= open_transmitter_raw_socket(net_fwd_port);
+	arg->public_arg.forwarding_port =  net_fwd_port;
+	//arg->public_arg.forwarding_addr 		= init_sockaddr_raw(app_fwd_addr, app_fwd_port); // esto aínda hai que establecelo
 	arg->public_arg.print_forwarding_message = __verbose;
 
 	arg->public_arg.nec_mode = nec_mode;
@@ -107,7 +150,7 @@ udp_events_t *init_net_udp_events
 
 /* init_app_udp_events */
 udp_events_t *init_app_udp_events
-				(	const int app_rx_port,
+				(	const int app_rx_port,in_addr_t addr,
 					const char* if_name, const int net_fwd_port,
 					const ev_cb_t callback)
 {
@@ -119,8 +162,7 @@ udp_events_t *init_app_udp_events
 
 	arg->public_arg.forwarding_socket_fd
 		= open_broadcast_udp_socket(if_name, net_fwd_port);
-	arg->public_arg.forwarding_addr
-		= init_broadcast_sockaddr_in(net_fwd_port);
+	arg->public_arg.forwarding_addr= init_sockaddr_in(net_fwd_port,addr);
 	arg->public_arg.forwarding_port = net_fwd_port;
 	arg->public_arg.print_forwarding_message = __verbose;
 
@@ -159,13 +201,13 @@ ev_io_arg_t *new_ev_io_arg()
 /* init_watcher */
 int init_watcher(udp_events_t *m
 				, const ev_cb_t callback, const int events
-				, const int port, const char* if_name)
+				, const int port, const char* if_name,in_addr_t addr)
 {
 
 	m->loop = EV_DEFAULT;
 	ev_io_arg_t *arg = init_ev_io_arg(m, callback, port, if_name);
 	m->watcher = &arg->watcher;
-
+if (addr!=NULL) arg->public_arg.forwarding_addr=addr;
 	ev_io_init(	m->watcher, cb_common,
 				m->socket_fd, events	);
 	ev_io_start(m->loop, m->watcher);

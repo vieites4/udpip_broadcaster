@@ -47,6 +47,8 @@ void GeoUnicast(int option){ //send(source),forward,reception(destination)
 						CommonHeader_processing(); //114 de netmanagement.c
 						if( mngdaddrconf(3)){ //duplicate
 
+						}
+
 											//discard the packet
 											break;
 					//					}
@@ -120,14 +122,14 @@ void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
 
 
-};
-};
-void TSB(){};
+//};
+}
+void TSB(){}
 
-void SHB(){};
+void SHB(){}
 
-void GeoBroadcast(){};
-void GeoAnycast(){};
+void GeoBroadcast(){}
+void GeoAnycast(){}
 void CommonHeader_processing(){
 
 	////this is the first think we must do after reception of a GN pkt.
@@ -159,14 +161,14 @@ void CommonHeader_processing(){
 	//break;
 	//}
 
-};
+}
 
 
 void determine_nexthop(){
 //	switch(itsGnGeoUnicastForwardingAlgorithm){
 
 //						case(0)://unspecified
-						case(1)://greedy
+					//	case(1)://greedy
 //						//{
 						//gf algorithm os c2
 						//break;

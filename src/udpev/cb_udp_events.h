@@ -44,8 +44,8 @@ void cb_print_recvfrom(public_ev_arg_t *arg);
  * 			put available for writing. Messages are sent in broadcast mode.
  * @param public_arg Public arguments for this callback function.
  */
-void cb_broadcast_sendto(public_ev_arg_t *arg);
-
+void cb_udp_sendto(public_ev_arg_t *arg);
+void cb_raw_sendto(public_ev_arg_t *arg);
 /**
  * @brief Callback function that forwards an UDP message that it receives to
  * 			a given forwarding socket.
