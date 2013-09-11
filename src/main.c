@@ -79,7 +79,6 @@ int main(int argc, char **argv)
 		printf("> RAW TX socket open, port = %d, fd = %d.\n", cfg->tx_port, net_events->socket_fd);
 		}
 		else{
-			printf("chego\n");
 		app_events= init_tx_udp_events(cfg->if_name, cfg->app_tx_port,cfg->app_inet_addr, cb_udp_sendto,broad); //aqui teño a posibilidade de facer q non sexa solo broadcast
 	//	cb_udp_sendto();
 		printf("fin\n");
@@ -88,25 +87,26 @@ int main(int argc, char **argv)
 	}
 	else
 	{printf("chego1\n");
-		if (cfg->ladoapp ==false){
+		//if (cfg->ladoapp ==false){
 		log_app_msg(">>> Opening RAW NET RX socket...\n");
 		net_events = init_net_raw_events ///esto non ten sentido que esté asi, fala de cousas in e non ll.  init_if_sockaddr_in
-						(cfg->rx_port, cfg->if_name , cfg->app_rx_port, cfg->nec_mode , cb_forward_recvfrom);
+						(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom);
 		log_app_msg(">>> raw NET RX socket open!\n");
-		print_udp_events(net_events, cfg->rx_port, cfg->app_rx_port);
-		}
-				else{
+		print_udp_events(net_events, cfg->rx_port, cfg->app_tx_port);
+		//}
+			//	else{
 		log_app_msg(">>> Opening UDP APP RX socket...\n");
 		app_events = init_app_udp_events
-						(cfg->app_tx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom);
+						(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom);
 		log_app_msg(">>> UDP APP RX socket open!\n");
-		print_udp_events(app_events, cfg->app_tx_port, cfg->tx_port);
+		print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
 
-	}}
+	//}
+		}
 	printf("sae ben do bucle\n");
 
 	// 3)int open_broadcast_udp_socket(const char *if_name, const int port); loop that waits for net_events to occur...
-	ev_loop(net_events->loop, 0);
+	ev_loop(net_events->loop, 0); //app_events
 printf("ultimo!\n");
 	// 4) program finalization
 	exit(EXIT_SUCCESS);

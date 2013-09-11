@@ -56,6 +56,51 @@
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // SOCKET STRUCTURES
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#define LEN__IEEE80211_FRAME sizeof(ieee80211_frame_t)
+#define IEEE_80211_HLEN 		30		/*!< IEEE 802.11 header length (B). */
+#define TYPE_IEEE_80211 	2	/*!< Buffer with an IEEE 802.11 frame. */
+
+#define IEEE_80211_BLEN 		2312	/*!< IEEE 802.11 body length (B). */
+typedef struct ieee80211_header_frame_control
+{
+
+	uint8_t mac_service;				/*!< IEEE 802.11 MAC service (1 B). */
+	uint8_t flags;						/*!< IEEE 802.11 flags (1 B). */
+
+} ieee80211_header_frame_control_t;
+
+
+typedef struct ieee80211_header
+{
+
+	unsigned char dest_address[ETH_ALEN]; //é importante a orde na que coloco os compoñentes do struct
+	unsigned char src_address[ETH_ALEN];	/*!< Source MAC address. */
+} ieee80211_header_t ;
+
+typedef struct ieee80211_frame_buffer
+{
+
+	ieee80211_header_t header;	/*!< IEEE 802.11 header. */
+	char data[IEEE_80211_BLEN];	/*!< Data body of the IEEE 802.11 frame. */
+
+} ieee80211_buffer_t;
+typedef struct ll_frame
+{
+
+	int frame_type;				/*!< Type of the frame. */
+	int frame_len;				/*!< Length of the total bytes read. */
+
+	struct timeval timestamp;	/*!< Frame creation timestamp (usecs). */
+
+} ll_frame_t;
+
+typedef struct ieee80211_frame
+{
+
+	ll_frame_t info;			/*!< Info relative to frame management. */
+	ieee80211_buffer_t buffer;	/*!< Buffer with frame contents. */
+
+} ieee80211_frame_t;
 
 typedef struct ifreq ifreq_t;				/**< Type for ifreq. */
 #define LEN__IFREQ sizeof(ifreq_t)
@@ -85,7 +130,7 @@ sockaddr_t *new_sockaddr();
 
 typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
 #define LEN__SOCKADDR_IN sizeof(sockaddr_in_t)
-
+#define LEN__SOCKADDR_LL sizeof(sockaddr_ll_t)
 /**
  * @brief Allocates memory for an sockaddr_in structure.
  * @return A pointer to the newly allocated block of memory.
@@ -273,5 +318,11 @@ int print_hex_data(const char *buffer, const int len);
  * @param eth_address Ethernet address as an array.
  */
 void print_eth_address(const unsigned char *eth_address);
+int set_ll_frame
+	(ll_frame_t *frame, const int frame_type, const int frame_len);
+ieee80211_frame_t *new_ieee80211_frame();
 
+ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char *h_dest, const unsigned char *h_source	);
+
+int get_mac_address	(const int socket_fd, const char *if_name,const unsigned char *mac);
 #endif /* UDP_SOCKET_H_ */

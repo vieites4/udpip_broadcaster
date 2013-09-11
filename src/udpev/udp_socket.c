@@ -22,8 +22,42 @@
 
 #include "udp_socket.h"
 #include <sys/socket.h>
-const unsigned char ETH_ADDR_BROADCAST[ETH_ALEN]                                    ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
+const unsigned char ETH_ADDR_BROADCAST[ETH_ALEN]                    ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 const unsigned char ETH_ADDR_ANY[ETH_ALEN]                                    ={ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+const unsigned char ETH_ADDR_FAKE[ETH_ALEN]= { 0x00,0x18,0x39,0xAE,0x7D,0xD5 };
+const unsigned char ETH_ADDR_NULL[ETH_ALEN]   = { 0x00,0x00,0x00,0x00,0x00,0x00 };
+
+
+
+int get_mac_address
+	(const int socket_fd, const char *if_name ,const unsigned char *mac)
+{
+
+	int len_if_name = -1;
+
+	if ( if_name == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
+//if ( mac == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
+
+	if ( socket_fd < 0 )		{ return(EX_WRONG_PARAM);printf("no"); }
+
+	len_if_name = strlen(if_name);
+
+	if ( len_if_name == 0 )		{ return(EX_EMPTY_PARAM);printf("no"); }
+	if ( len_if_name > IF_NAMESIZE )		{ return(EX_WRONG_PARAM);printf("no"); }
+
+	ifreq_t *ifr = new_ifreq();
+	strncpy(ifr->ifr_name, if_name, len_if_name);
+
+	if ( ioctl(socket_fd, SIOCGIFHWADDR, ifr) < 0 )	{		log_sys_error("Could not get interface index");		return(EX_SYS);printf("no");}
+
+
+	memcpy(mac, ifr->ifr_hwaddr.sa_data, ETH_ALEN);
+	return(EX_OK);
+
+}
+
+
 /* new_ifreq */
 ifreq_t *new_ifreq()
 {
@@ -222,13 +256,24 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 sockaddr_ll_t *init_sockaddr_ll(const char *address, const int port)
 {
 
+
+
+
+
+
+	//	s.sll_ifindex  = if_index;//if_nametoindex(if_index);
+
+
+
+
 	sockaddr_ll_t *s = new_sockaddr_ll();
 	s->sll_family = PF_PACKET;
 	s->sll_halen = ETH_ALEN;
 	//memset(s->sll_addr, 0xff, ETH_ALEN);
 	//s->sin_port = (in_port_t)htons(port);
-//	s->sll_ifindex =if_index; -> FALTA DAR ESTA INFO
-	s->sll_protocol=htons(port);
+	s->sll_ifindex =if_nametoindex("wlan0");//if_index; -> FALTA DAR ESTA INFO
+	//s->sll_protocol=htons(port);
+	s->sll_protocol = htons(ETH_P_ALL);	// htons(0x0707);//engadido
 	memset(s->sll_addr,address,ETH_ALEN);
 //	if ( ( s->sll_addr.s_addr = inet_addr(address) ) < 0 )
 	//	{ handle_sys_error("init_sockaddr_in: " \
@@ -551,8 +596,52 @@ int set_msghdrs_socket(const int socket_fd)
 
 	return(EX_OK);
 
+
+
 }
 
+ieee80211_frame_t *new_ieee80211_frame()
+	{
+
+		ieee80211_frame_t *buffer = NULL;
+		buffer = (ieee80211_frame_t *)malloc(LEN__IEEE80211_FRAME);
+		memset(buffer, 0, LEN__IEEE80211_FRAME);
+		return(buffer);
+
+	}
+int set_ll_frame
+	(ll_frame_t *frame, const int frame_type, const int frame_len)
+{
+
+	frame->frame_type = frame_type;
+	frame->frame_len = frame_len;
+
+	if ( gettimeofday(&frame->timestamp, NULL) < 0 )
+	{
+		log_sys_error("Cannot get timestamp");
+		return(EX_ERR);
+	}
+
+	return(EX_OK);
+
+}
+
+ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char *h_dest, const unsigned char *h_source	)
+{
+
+	ieee80211_frame_t *f = new_ieee80211_frame();
+
+	if ( set_ll_frame(&f->info, TYPE_IEEE_80211, ETH_FRAME_LEN) < 0 )
+		{ log_app_msg("Could not set info adequately!\n"); }
+	printf("ini3\n");
+	//f->buffer.header.h_proto = htons(ETH_P_ALL);//ll_sap;//cambio
+	memcpy(f->buffer.header.dest_address, h_dest, ETH_ALEN);
+	printf("ini3\n");
+	memcpy(f->buffer.header.src_address, h_source, ETH_ALEN);
+	printf("ini3\n");
+	return(f);
+
+}
 /* send_message */
 int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 					const void *buffer, const int len	)
@@ -560,8 +649,12 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 
 	int sent_bytes = 0;
 
+//teño que engadir aqui a cabeceira
+
+printf("pinto2\n");
+
 	if ( ( sent_bytes = sendto(socket_fd, buffer, len
-								, 0, dest_addr, LEN__SOCKADDR_IN) ) < 0 ) // solo habería que cambiar esta liña
+								, 0, dest_addr, LEN__SOCKADDR_LL) ) < 0 ) // solo habería que cambiar esta liña
 	{
 		log_sys_error("cb_broadcast_sendto (fd=%d): <sendto> ERROR.\n"
 						, socket_fd);

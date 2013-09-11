@@ -115,7 +115,7 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name
 
 	udp_events_t *s = new_udp_events();
 	s->socket_fd = open_receiver_raw_socket(port);
-
+printf("raw socket aberto %d\n", s->socket_fd);
 	if ( init_watcher(s, callback, EV_READ, port, if_name,(in_addr_t) NULL) < 0 )
 		{ handle_app_error("init_rx_udp_events: <init_watcher> error.\n"); }
 
@@ -125,7 +125,7 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name
 
 /* init_net_udp_events */
 udp_events_t *init_net_raw_events
-				(	const int net_rx_port, const char* net_if_name,const int net_fwd_port,
+				(	const int net_rx_port, const char* net_if_name,const char *app_fwd_addr, const int app_fwd_port,
 					const bool nec_mode,	const ev_cb_t callback)
 {
 
@@ -136,9 +136,9 @@ udp_events_t *init_net_raw_events
 		= init_if_sockaddr_ll(net_if_name, net_rx_port); // poñer a version de raw
 
 	arg->public_arg.forwarding_socket_fd
-		= open_transmitter_raw_socket(net_fwd_port);
-	arg->public_arg.forwarding_port =  net_fwd_port;
-	//arg->public_arg.forwarding_addr 		= init_sockaddr_raw(app_fwd_addr, app_fwd_port); // esto aínda hai que establecelo
+		= open_transmitter_udp_socket(app_fwd_port, NULL);
+	arg->public_arg.forwarding_port =  app_fwd_port;
+	arg->public_arg.forwarding_addr 		= init_sockaddr_in(app_fwd_addr, app_fwd_port); // esto aínda hai que establecelo
 	arg->public_arg.print_forwarding_message = __verbose;
 
 	arg->public_arg.nec_mode = nec_mode;
@@ -158,11 +158,11 @@ udp_events_t *init_app_udp_events
 	udp_events_t *s = init_rx_udp_events(app_rx_port, if_name, callback);
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
 
-	arg->public_arg.local_addr = init_if_sockaddr_in(if_name, net_fwd_port);
+	arg->public_arg.local_addr = init_if_sockaddr_ll(if_name, net_fwd_port);
 
 	arg->public_arg.forwarding_socket_fd
-		= open_broadcast_udp_socket(if_name, net_fwd_port);
-	arg->public_arg.forwarding_addr= init_sockaddr_in(net_fwd_port,addr);
+		= open_broadcast_raw_socket(if_name, net_fwd_port);
+	arg->public_arg.forwarding_addr= init_sockaddr_ll(net_fwd_port,addr);
 	arg->public_arg.forwarding_port = net_fwd_port;
 	arg->public_arg.print_forwarding_message = __verbose;
 
@@ -249,7 +249,7 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
 void cb_common
 	(struct ev_loop *loop, struct ev_io *watcher, int revents)
 {
-
+printf("cb_common\n");
 	if ( EV_ERROR & revents )
 		{ log_sys_error("Invalid event"); return; }
 

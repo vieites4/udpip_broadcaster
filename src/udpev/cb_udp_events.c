@@ -21,7 +21,7 @@
  */
 
 #include "cb_udp_events.h"
-
+const unsigned char ETH_ADDR_BROAD[ETH_ALEN]                    ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 /* cb_print_recvfrom */
 void cb_print_recvfrom(public_ev_arg_t *arg)
 {
@@ -54,7 +54,7 @@ char data[__DATA_BUFFER_LEN];		/**< Static buffer. */
 /* cb_broadcast_sendto */
 void cb_udp_sendto(public_ev_arg_t *arg)
 {
-
+printf("cb_udp_sendto\n");
 	sprintf(data, "TEST#%d", arg->__test_number++);
 	int len = strlen(data);
 
@@ -77,7 +77,7 @@ printf("envio\n");
 
 void cb_raw_sendto(public_ev_arg_t *arg)
 {
-
+	printf("cb_raw_sendto\n");
 	sprintf(data, "BROADCAST-TEST#%d", arg->__test_number++);
 	int len = strlen(data);
 	printf("envio1\n");
@@ -100,10 +100,10 @@ void cb_raw_sendto(public_ev_arg_t *arg)
 /* cb_forward_recvfrom */
 void cb_forward_recvfrom(public_ev_arg_t *arg)
 {
-
+	printf("cb_forward_recvfrom\n");
 	bool blocked = false;
 	arg->len = 0;
-
+printf("esto si\n");
 	// 1) read UDP message from network level
 	if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header
 								, arg->local_addr->sin_addr.s_addr
@@ -113,7 +113,7 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 						"Could not receive message.\n");
 		return;
 	}
-
+	printf("esto si2\n");
 	// 2) in case the message comes from the localhost, it is discarded
 	if ( blocked == true )
 	{
@@ -121,7 +121,7 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 		return;
 	}
 
-
+	printf("esto si3\n");
 
 	// 3) forward network level UDP message to application level
 	int fwd_bytes = send_message
@@ -136,13 +136,14 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
 	}
+	printf("esto si4\n");
 
 }
 
 /* cb_broadcast_recvfrom */
 void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 {
-
+	printf("cb_broadcast_recvfrom\n");
 	bool blocked = false;
 	arg->len = 0;
 
@@ -157,12 +158,19 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 		return;
 	}
 
-	// 2) broadcast application level UDP message to network level
-	int fwd_bytes = send_message
-						(	(sockaddr_t *)arg->forwarding_addr,
-							arg->forwarding_socket_fd,
-							arg->data, arg->len	);
+	char h_source[ETH_ALEN];
+	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 
+
+
+	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROAD,h_source);
+			tx_frame->info.frame_len = IEEE_80211_HLEN + 10;
+	memcpy(tx_frame->buffer.data,arg->data,arg->len);
+
+print_eth_address(h_source);
+
+	// 2) broadcast application level UDP message to network level
+	int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
 	if ( arg->print_forwarding_message == true )
 	{
 		log_app_msg(">>> BROADCAST(app:%d>net:%d), msg[%.2d] = {"
@@ -170,5 +178,6 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
 	}
+	printf("saio ben do cb_broadcast_recvfrom\n");
 
 }

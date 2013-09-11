@@ -99,7 +99,7 @@ bool tic=false;
 				cfg->app_inet_addr = inet_addr(optarg);
 				tic=true;
 
-				if ( 	( cfg->app_inet_addr < 0 ) ||
+				if ( ( cfg->app_inet_addr == 0 ) ||	( cfg->app_inet_addr < 0 ) ||
 						( cfg->app_inet_addr == 0xFFFFFFfF )	)
 					{ handle_app_error("read_configuration: " \
 										"wrong application address.\n"); }
