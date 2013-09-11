@@ -42,7 +42,7 @@ udp_events_t *init_tx_udp_events
 	udp_events_t *s = new_udp_events();
 
 	if ( broadcast == true )
-	{
+	{ printf("broadcast\n");
 		log_app_msg(">>> Opening TX socket in broadcast mode.");
 		s->socket_fd = open_broadcast_udp_socket(if_name, port);
 	}
@@ -52,10 +52,17 @@ udp_events_t *init_tx_udp_events
 		s->socket_fd = open_transmitter_udp_socket(port);
 	}
 
+
+	printf("entro en init_watcher desde init_tx_udp_events\n");
+
+
 	if ( init_watcher(s, callback, EV_READ, port, if_name) < 0 )
-		{ handle_app_error("init_tx_udp_events: <init_watcher> error.\n"); }
+		{ handle_app_error("init_tx_udp_events: <init_watcher> error.\n");
+		printf("hai erro no init_watcher\n");
+		}else printf("non hai erro no init_watcher\n");
 
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
+	printf("saio do init_tx_udp_events\n");
 	arg->public_arg.__test_number = 0;
 
 	return(s);
@@ -87,10 +94,8 @@ udp_events_t *init_net_udp_events
 
 	udp_events_t *s = init_rx_udp_events(net_rx_port, net_if_name, callback);
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
-
 	arg->public_arg.local_addr
 		= init_if_sockaddr_in(net_if_name, net_rx_port);
-
 	arg->public_arg.forwarding_socket_fd
 		= open_transmitter_udp_socket(app_fwd_port);
 	arg->public_arg.forwarding_port = app_fwd_port;
@@ -100,7 +105,6 @@ udp_events_t *init_net_udp_events
 
 	arg->public_arg.nec_mode = nec_mode;
 	arg->public_arg.__test_number = 0;
-
 	return(s);
 
 }
@@ -123,7 +127,7 @@ udp_events_t *init_app_udp_events
 		= init_broadcast_sockaddr_in(net_fwd_port);
 	arg->public_arg.forwarding_port = net_fwd_port;
 	arg->public_arg.print_forwarding_message = __verbose;
-
+printf("init_app_udp_events\n");
 	return(s);
 
 }
@@ -165,11 +169,9 @@ int init_watcher(udp_events_t *m
 	m->loop = EV_DEFAULT;
 	ev_io_arg_t *arg = init_ev_io_arg(m, callback, port, if_name);
 	m->watcher = &arg->watcher;
-
-	ev_io_init(	m->watcher, cb_common,
-				m->socket_fd, events	);
+	ev_io_init(	m->watcher, cb_common,m->socket_fd, events	);
 	ev_io_start(m->loop, m->watcher);
-
+	printf("saio do init_watcher\n");
     return(EX_OK);
 
 }
@@ -180,7 +182,7 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
 							, const int port
 							, const char* if_name)
 {
-
+printf("entro no init_ev_io_arg desde o init_watcher\n");
 	ev_io_arg_t *s = new_ev_io_arg();
 
 	// 1) private data initialization
@@ -198,7 +200,7 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
 
 	s->public_arg.msg_header
 		= init_msg_header(s->public_arg.data, UDP_BUFFER_LEN);
-
+printf("datos: %s\n", s->public_arg.data);
 	return(s);
 
 }
@@ -207,10 +209,9 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
 void cb_common
 	(struct ev_loop *loop, struct ev_io *watcher, int revents)
 {
-
+printf("cb_common en udp_events\n");
 	if ( EV_ERROR & revents )
 		{ log_sys_error("Invalid event"); return; }
-
 	ev_io_arg_t *arg = (ev_io_arg_t *)watcher;
 	public_ev_arg_t *public_arg = &arg->public_arg;
 	public_arg->socket_fd = watcher->fd;

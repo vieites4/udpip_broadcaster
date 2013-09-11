@@ -1,0 +1,574 @@
+Conexiones activas de Internet (servidores y establecidos)
+Proto  Recib Enviad Dirección local         Dirección remota       Estado      
+tcp        0      0 localhost:domain        *:*                     ESCUCHAR   
+tcp        0      0 localhost:ipp           *:*                     ESCUCHAR   
+tcp        0      0 lenovo.local:47607      wg-in-f189.1e100.:https ESTABLECIDO
+tcp        0      0 lenovo.local:38829      mad01s14-in-f21.1:https ESTABLECIDO
+tcp        1      0 lenovo.local:35944      mistletoe.canonica:http CLOSE_WAIT 
+tcp6       0      0 [::]:webmin             [::]:*                  ESCUCHAR   
+tcp6       0      0 [::]:http-alt           [::]:*                  ESCUCHAR   
+tcp6       0      0 [::]:2323               [::]:*                  ESCUCHAR   
+tcp6       0      0 ip6-localhost:ipp       [::]:*                  ESCUCHAR   
+tcp6       0      0 [::]:28312              [::]:*                  ESCUCHAR   
+tcp6       0      0 [::]:28701              [::]:*                  ESCUCHAR   
+tcp6       0      0 [::]:4321               [::]:*                  ESCUCHAR   
+tcp6      28      0 192.168.100.202%3:34276 werkzeug.dcaiti.t:https CLOSE_WAIT 
+udp        0      0 *:46523                 *:*                                
+udp        0      0 *:2001                  *:*                                
+udp        0      0 *:2007                  *:*                                
+udp        0      0 localhost:domain        *:*                                
+udp        0      0 *:bootpc                *:*                                
+udp        0      0 *:55423                 *:*                                
+udp        0      0 *:41668                 *:*                                
+udp        0      0 *:mdns                  *:*                                
+udp   165760      0 *:1301                  *:*                                
+udp        0      0 *:1303                  *:*                                
+udp6       0      0 [::]:1402               [::]:*                             
+udp6       0      0 [::]:46259              [::]:*                             
+udp6       0      0 localhost:51935         localhost:4218          ESTABLECIDO
+udp6       0      0 [::]:mdns               [::]:*                             
+udp6       0      0 [::]:58094              [::]:*                             
+udp6       0      0 [::]:1302               [::]:*                             
+udp6       0      0 [::]:50986              [::]:*                             
+Activar zócalos de dominio UNIX (servidores y establecidos)
+Proto RefCnt Flags       Type       State         I-Node   Ruta
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    12812    @/tmp/.ICE-unix/1798
+unix  2      [ ]         DGRAM                    9237     /var/run/wpa_supplicant/wlan0
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    9483     /tmp/.X11-unix/X0
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    12649    /tmp/keyring-RGH3Bp/control
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    12783    /tmp/ssh-VWxaOcVv1798/agent.1798
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    12813    /tmp/.ICE-unix/1798
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    12963    /tmp/keyring-RGH3Bp/pkcs11
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    12967    /tmp/keyring-RGH3Bp/ssh
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    12968    /tmp/keyring-RGH3Bp/gpg
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    9267     /var/run/acpid.socket
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    13237    /home/pc/.pulse/1e22376c3f112bb37d4426db0000000c-runtime/native
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    6828     @/com/ubuntu/upstart
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    7386     @/org/bluez/audio
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    7258     /var/run/dbus/system_bus_socket
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    9482     @/tmp/.X11-unix/X0
+unix  2      [ ACC ]     SEQPACKET  ESCUCHANDO    7067     /run/udev/control
+unix  19     [ ]         DGRAM                    7340     /dev/log
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    12797    @/tmp/dbus-IcFTSatCMq
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    7371     /var/run/avahi-daemon/socket
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    7376     /var/run/sdp
+unix  2      [ ACC ]     FLUJO      ESCUCHANDO    39921    /var/run/cups/cups.sock
+unix  3      [ ]         FLUJO      CONECTADO     60385    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     60384    
+unix  3      [ ]         FLUJO      CONECTADO     60383    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     60382    
+unix  3      [ ]         FLUJO      CONECTADO     60377    
+unix  3      [ ]         FLUJO      CONECTADO     60376    
+unix  3      [ ]         FLUJO      CONECTADO     60254    
+unix  3      [ ]         FLUJO      CONECTADO     60253    
+unix  3      [ ]         FLUJO      CONECTADO     57925    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     57924    
+unix  3      [ ]         FLUJO      CONECTADO     57923    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     57922    
+unix  3      [ ]         FLUJO      CONECTADO     57919    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     57918    
+unix  3      [ ]         FLUJO      CONECTADO     57917    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     57916    
+unix  2      [ ]         FLUJO      CONECTADO     55708    
+unix  2      [ ]         DGRAM                    46912    
+unix  2      [ ]         DGRAM                    46909    
+unix  2      [ ]         DGRAM                    46294    
+unix  2      [ ]         DGRAM                    46291    
+unix  3      [ ]         FLUJO      CONECTADO     45208    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     45207    
+unix  2      [ ]         FLUJO      CONECTADO     45181    
+unix  3      [ ]         FLUJO      CONECTADO     45126    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     45125    
+unix  3      [ ]         FLUJO      CONECTADO     45124    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     45123    
+unix  2      [ ]         DGRAM                    45007    
+unix  2      [ ]         DGRAM                    45004    
+unix  3      [ ]         FLUJO      CONECTADO     44242    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     44241    
+unix  2      [ ]         FLUJO      CONECTADO     44182    
+unix  3      [ ]         FLUJO      CONECTADO     44181    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     44180    
+unix  3      [ ]         FLUJO      CONECTADO     44179    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     44178    
+unix  3      [ ]         FLUJO      CONECTADO     44164    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     44163    
+unix  3      [ ]         FLUJO      CONECTADO     43683    
+unix  3      [ ]         FLUJO      CONECTADO     43682    
+unix  3      [ ]         FLUJO      CONECTADO     43615    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     43614    
+unix  3      [ ]         FLUJO      CONECTADO     43613    @/tmp/.ICE-unix/1798
+unix  3      [ ]         FLUJO      CONECTADO     43612    
+unix  3      [ ]         FLUJO      CONECTADO     43611    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     43610    
+unix  3      [ ]         FLUJO      CONECTADO     43608    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     43607    
+unix  3      [ ]         FLUJO      CONECTADO     43606    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     43605    
+unix  3      [ ]         FLUJO      CONECTADO     43527    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     43526    
+unix  3      [ ]         FLUJO      CONECTADO     39927    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     39926    
+unix  3      [ ]         FLUJO      CONECTADO     38884    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     38883    
+unix  3      [ ]         FLUJO      CONECTADO     29726    /home/pc/.pulse/1e22376c3f112bb37d4426db0000000c-runtime/native
+unix  3      [ ]         FLUJO      CONECTADO     29725    
+unix  3      [ ]         FLUJO      CONECTADO     26717    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     26716    
+unix  3      [ ]         FLUJO      CONECTADO     26647    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     26646    
+unix  3      [ ]         FLUJO      CONECTADO     26645    @/tmp/.ICE-unix/1798
+unix  3      [ ]         FLUJO      CONECTADO     26644    
+unix  3      [ ]         FLUJO      CONECTADO     26642    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     26641    
+unix  3      [ ]         FLUJO      CONECTADO     26639    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     26638    
+unix  3      [ ]         FLUJO      CONECTADO     26637    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     26636    
+unix  3      [ ]         FLUJO      CONECTADO     20959    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     20958    
+unix  3      [ ]         FLUJO      CONECTADO     19225    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     19224    
+unix  3      [ ]         FLUJO      CONECTADO     16907    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16906    
+unix  3      [ ]         FLUJO      CONECTADO     16894    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16893    
+unix  3      [ ]         FLUJO      CONECTADO     16892    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     16891    
+unix  3      [ ]         FLUJO      CONECTADO     16885    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16884    
+unix  3      [ ]         FLUJO      CONECTADO     16879    
+unix  3      [ ]         FLUJO      CONECTADO     16878    
+unix  3      [ ]         FLUJO      CONECTADO     16875    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     16874    
+unix  3      [ ]         FLUJO      CONECTADO     16873    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16872    
+unix  3      [ ]         FLUJO      CONECTADO     16849    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16848    
+unix  3      [ ]         FLUJO      CONECTADO     16473    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16472    
+unix  3      [ ]         FLUJO      CONECTADO     16471    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16470    
+unix  3      [ ]         FLUJO      CONECTADO     16468    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16467    
+unix  3      [ ]         FLUJO      CONECTADO     16405    /tmp/keyring-RGH3Bp/pkcs11
+unix  3      [ ]         FLUJO      CONECTADO     16404    
+unix  3      [ ]         FLUJO      CONECTADO     16399    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16398    
+unix  3      [ ]         FLUJO      CONECTADO     16395    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16394    
+unix  3      [ ]         FLUJO      CONECTADO     16391    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16390    
+unix  3      [ ]         FLUJO      CONECTADO     16340    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16339    
+unix  3      [ ]         FLUJO      CONECTADO     16338    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16337    
+unix  3      [ ]         FLUJO      CONECTADO     16334    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16333    
+unix  3      [ ]         FLUJO      CONECTADO     16310    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16309    
+unix  3      [ ]         FLUJO      CONECTADO     16306    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16305    
+unix  3      [ ]         FLUJO      CONECTADO     16304    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16303    
+unix  3      [ ]         FLUJO      CONECTADO     16300    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16299    
+unix  3      [ ]         FLUJO      CONECTADO     16298    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16297    
+unix  3      [ ]         FLUJO      CONECTADO     16282    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     16281    
+unix  3      [ ]         FLUJO      CONECTADO     16047    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     16046    
+unix  3      [ ]         FLUJO      CONECTADO     15686    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     15685    
+unix  3      [ ]         FLUJO      CONECTADO     15684    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     15683    
+unix  3      [ ]         FLUJO      CONECTADO     15682    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     15681    
+unix  3      [ ]         FLUJO      CONECTADO     15679    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     15678    
+unix  3      [ ]         FLUJO      CONECTADO     15516    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     15515    
+unix  3      [ ]         FLUJO      CONECTADO     15490    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     15489    
+unix  3      [ ]         FLUJO      CONECTADO     15488    @/dbus-vfs-daemon/socket-tQmYKtaY
+unix  3      [ ]         FLUJO      CONECTADO     15487    
+unix  3      [ ]         FLUJO      CONECTADO     15486    @/dbus-vfs-daemon/socket-nXNqfZ9O
+unix  3      [ ]         FLUJO      CONECTADO     15485    
+unix  3      [ ]         FLUJO      CONECTADO     15357    @/dbus-vfs-daemon/socket-UB8ExPu9
+unix  3      [ ]         FLUJO      CONECTADO     15356    
+unix  3      [ ]         FLUJO      CONECTADO     15358    @/dbus-vfs-daemon/socket-aig1w6jV
+unix  3      [ ]         FLUJO      CONECTADO     15355    
+unix  3      [ ]         FLUJO      CONECTADO     15352    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     15351    
+unix  3      [ ]         FLUJO      CONECTADO     15325    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     15324    
+unix  3      [ ]         FLUJO      CONECTADO     15314    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     15313    
+unix  3      [ ]         FLUJO      CONECTADO     15312    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     15311    
+unix  3      [ ]         FLUJO      CONECTADO     15310    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     15309    
+unix  3      [ ]         FLUJO      CONECTADO     15307    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     15306    
+unix  3      [ ]         FLUJO      CONECTADO     15305    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     15304    
+unix  3      [ ]         FLUJO      CONECTADO     15192    @/tmp/.ICE-unix/1798
+unix  3      [ ]         FLUJO      CONECTADO     15191    
+unix  3      [ ]         FLUJO      CONECTADO     15190    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     15189    
+unix  3      [ ]         FLUJO      CONECTADO     15186    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     15185    
+unix  3      [ ]         FLUJO      CONECTADO     15179    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     15175    
+unix  3      [ ]         FLUJO      CONECTADO     15173    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     15172    
+unix  2      [ ]         DGRAM                    15171    
+unix  3      [ ]         FLUJO      CONECTADO     14738    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     14737    
+unix  3      [ ]         FLUJO      CONECTADO     14736    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14735    
+unix  3      [ ]         FLUJO      CONECTADO     14734    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14733    
+unix  3      [ ]         FLUJO      CONECTADO     14732    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14731    
+unix  3      [ ]         FLUJO      CONECTADO     14729    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     14728    
+unix  3      [ ]         FLUJO      CONECTADO     14704    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14703    
+unix  3      [ ]         FLUJO      CONECTADO     14693    
+unix  3      [ ]         FLUJO      CONECTADO     14692    
+unix  3      [ ]         FLUJO      CONECTADO     14687    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14686    
+unix  3      [ ]         FLUJO      CONECTADO     14662    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     14661    
+unix  3      [ ]         FLUJO      CONECTADO     14653    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14652    
+unix  3      [ ]         FLUJO      CONECTADO     14646    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14645    
+unix  3      [ ]         FLUJO      CONECTADO     14622    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14621    
+unix  3      [ ]         FLUJO      CONECTADO     14617    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14616    
+unix  2      [ ]         DGRAM                    14615    
+unix  3      [ ]         FLUJO      CONECTADO     14608    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     14607    
+unix  3      [ ]         FLUJO      CONECTADO     14595    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14594    
+unix  3      [ ]         FLUJO      CONECTADO     14589    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14588    
+unix  3      [ ]         FLUJO      CONECTADO     14583    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14582    
+unix  3      [ ]         FLUJO      CONECTADO     14579    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14578    
+unix  3      [ ]         FLUJO      CONECTADO     14577    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14576    
+unix  3      [ ]         FLUJO      CONECTADO     14574    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     14573    
+unix  3      [ ]         FLUJO      CONECTADO     14437    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14436    
+unix  3      [ ]         FLUJO      CONECTADO     14435    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     14434    
+unix  3      [ ]         FLUJO      CONECTADO     14410    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14409    
+unix  3      [ ]         FLUJO      CONECTADO     14408    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14407    
+unix  3      [ ]         FLUJO      CONECTADO     14406    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14403    
+unix  3      [ ]         FLUJO      CONECTADO     14402    /home/pc/.pulse/1e22376c3f112bb37d4426db0000000c-runtime/native
+unix  3      [ ]         FLUJO      CONECTADO     14401    
+unix  3      [ ]         FLUJO      CONECTADO     14392    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14389    
+unix  3      [ ]         FLUJO      CONECTADO     14385    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14384    
+unix  3      [ ]         FLUJO      CONECTADO     14378    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     14377    
+unix  3      [ ]         FLUJO      CONECTADO     14374    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14373    
+unix  3      [ ]         FLUJO      CONECTADO     14372    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14371    
+unix  3      [ ]         FLUJO      CONECTADO     14370    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14369    
+unix  3      [ ]         FLUJO      CONECTADO     14368    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     14367    
+unix  3      [ ]         FLUJO      CONECTADO     14343    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     14342    
+unix  3      [ ]         FLUJO      CONECTADO     14339    /tmp/keyring-RGH3Bp/pkcs11
+unix  3      [ ]         FLUJO      CONECTADO     14338    
+unix  3      [ ]         FLUJO      CONECTADO     14258    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14257    
+unix  3      [ ]         FLUJO      CONECTADO     14246    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     14245    
+unix  3      [ ]         FLUJO      CONECTADO     14221    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14220    
+unix  3      [ ]         FLUJO      CONECTADO     14187    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14186    
+unix  3      [ ]         FLUJO      CONECTADO     14185    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14184    
+unix  3      [ ]         FLUJO      CONECTADO     14179    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     14178    
+unix  3      [ ]         FLUJO      CONECTADO     14170    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14168    
+unix  3      [ ]         FLUJO      CONECTADO     14164    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14139    
+unix  3      [ ]         FLUJO      CONECTADO     14111    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14107    
+unix  3      [ ]         FLUJO      CONECTADO     14077    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14076    
+unix  3      [ ]         FLUJO      CONECTADO     14073    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14072    
+unix  3      [ ]         FLUJO      CONECTADO     14048    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14047    
+unix  3      [ ]         FLUJO      CONECTADO     14046    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14045    
+unix  3      [ ]         FLUJO      CONECTADO     14042    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     14041    
+unix  3      [ ]         FLUJO      CONECTADO     14040    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14039    
+unix  3      [ ]         FLUJO      CONECTADO     14036    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14035    
+unix  3      [ ]         FLUJO      CONECTADO     14034    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14033    
+unix  3      [ ]         FLUJO      CONECTADO     14030    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14029    
+unix  3      [ ]         FLUJO      CONECTADO     14024    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     14023    
+unix  3      [ ]         FLUJO      CONECTADO     14022    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     14021    
+unix  3      [ ]         FLUJO      CONECTADO     13973    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13972    
+unix  3      [ ]         FLUJO      CONECTADO     13971    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13970    
+unix  3      [ ]         FLUJO      CONECTADO     13968    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13967    
+unix  3      [ ]         FLUJO      CONECTADO     13965    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13964    
+unix  3      [ ]         FLUJO      CONECTADO     13937    @/dbus-vfs-daemon/socket-uop5WQj4
+unix  3      [ ]         FLUJO      CONECTADO     13934    
+unix  3      [ ]         FLUJO      CONECTADO     13904    @/tmp/.ICE-unix/1798
+unix  3      [ ]         FLUJO      CONECTADO     13903    
+unix  3      [ ]         FLUJO      CONECTADO     13872    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13871    
+unix  3      [ ]         FLUJO      CONECTADO     13830    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13829    
+unix  3      [ ]         FLUJO      CONECTADO     13826    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13825    
+unix  3      [ ]         FLUJO      CONECTADO     13822    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13821    
+unix  2      [ ]         FLUJO      CONECTADO     13785    
+unix  3      [ ]         FLUJO      CONECTADO     13730    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13729    
+unix  2      [ ]         FLUJO      CONECTADO     13727    
+unix  3      [ ]         FLUJO      CONECTADO     13726    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13725    
+unix  3      [ ]         FLUJO      CONECTADO     13724    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13723    
+unix  3      [ ]         FLUJO      CONECTADO     13721    @/dbus-vfs-daemon/socket-NInZky1O
+unix  3      [ ]         FLUJO      CONECTADO     13720    
+unix  3      [ ]         FLUJO      CONECTADO     13719    @/dbus-vfs-daemon/socket-8jNr570O
+unix  3      [ ]         FLUJO      CONECTADO     13718    
+unix  3      [ ]         FLUJO      CONECTADO     13714    @/dbus-vfs-daemon/socket-GlcQ4cUq
+unix  3      [ ]         FLUJO      CONECTADO     13713    
+unix  3      [ ]         FLUJO      CONECTADO     13715    @/dbus-vfs-daemon/socket-FhrbB4BG
+unix  3      [ ]         FLUJO      CONECTADO     13712    
+unix  3      [ ]         FLUJO      CONECTADO     13706    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13705    
+unix  3      [ ]         FLUJO      CONECTADO     13679    @/dbus-vfs-daemon/socket-apslDg9p
+unix  3      [ ]         FLUJO      CONECTADO     13678    
+unix  3      [ ]         FLUJO      CONECTADO     13680    @/dbus-vfs-daemon/socket-jJzvmaDE
+unix  3      [ ]         FLUJO      CONECTADO     13677    
+unix  3      [ ]         FLUJO      CONECTADO     13671    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13670    
+unix  3      [ ]         FLUJO      CONECTADO     13668    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13667    
+unix  3      [ ]         FLUJO      CONECTADO     13650    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13649    
+unix  3      [ ]         FLUJO      CONECTADO     13632    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13631    
+unix  3      [ ]         FLUJO      CONECTADO     13623    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13622    
+unix  3      [ ]         FLUJO      CONECTADO     13617    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13616    
+unix  3      [ ]         FLUJO      CONECTADO     13567    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13566    
+unix  3      [ ]         FLUJO      CONECTADO     13562    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13561    
+unix  3      [ ]         FLUJO      CONECTADO     13543    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13542    
+unix  3      [ ]         FLUJO      CONECTADO     13534    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13533    
+unix  3      [ ]         FLUJO      CONECTADO     13526    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13525    
+unix  3      [ ]         FLUJO      CONECTADO     13519    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13518    
+unix  3      [ ]         FLUJO      CONECTADO     13510    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13509    
+unix  3      [ ]         FLUJO      CONECTADO     13503    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13502    
+unix  3      [ ]         FLUJO      CONECTADO     13498    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13497    
+unix  3      [ ]         FLUJO      CONECTADO     13496    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13495    
+unix  3      [ ]         FLUJO      CONECTADO     13494    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13493    
+unix  3      [ ]         FLUJO      CONECTADO     13488    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13487    
+unix  3      [ ]         FLUJO      CONECTADO     13486    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13485    
+unix  3      [ ]         FLUJO      CONECTADO     13478    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13477    
+unix  3      [ ]         FLUJO      CONECTADO     13476    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13475    
+unix  3      [ ]         FLUJO      CONECTADO     13474    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13473    
+unix  2      [ ]         DGRAM                    13470    
+unix  3      [ ]         FLUJO      CONECTADO     13472    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13464    
+unix  3      [ ]         FLUJO      CONECTADO     13463    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13462    
+unix  3      [ ]         FLUJO      CONECTADO     13461    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13460    
+unix  3      [ ]         FLUJO      CONECTADO     13471    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13458    
+unix  3      [ ]         FLUJO      CONECTADO     13457    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13456    
+unix  3      [ ]         FLUJO      CONECTADO     13451    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13450    
+unix  3      [ ]         FLUJO      CONECTADO     13447    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13446    
+unix  3      [ ]         FLUJO      CONECTADO     13439    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13438    
+unix  3      [ ]         FLUJO      CONECTADO     13417    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13416    
+unix  3      [ ]         FLUJO      CONECTADO     13395    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13394    
+unix  3      [ ]         FLUJO      CONECTADO     13391    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13390    
+unix  3      [ ]         FLUJO      CONECTADO     13366    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13365    
+unix  3      [ ]         FLUJO      CONECTADO     13364    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13363    
+unix  3      [ ]         FLUJO      CONECTADO     13292    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13291    
+unix  3      [ ]         FLUJO      CONECTADO     13289    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13288    
+unix  3      [ ]         FLUJO      CONECTADO     13290    /home/pc/.pulse/1e22376c3f112bb37d4426db0000000c-runtime/native
+unix  3      [ ]         FLUJO      CONECTADO     13287    
+unix  3      [ ]         FLUJO      CONECTADO     13275    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13274    
+unix  3      [ ]         FLUJO      CONECTADO     13235    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13234    
+unix  3      [ ]         FLUJO      CONECTADO     13224    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13223    
+unix  3      [ ]         FLUJO      CONECTADO     13220    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13219    
+unix  3      [ ]         FLUJO      CONECTADO     13206    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13205    
+unix  3      [ ]         FLUJO      CONECTADO     13191    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13190    
+unix  3      [ ]         FLUJO      CONECTADO     13155    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13154    
+unix  3      [ ]         FLUJO      CONECTADO     13152    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13151    
+unix  3      [ ]         FLUJO      CONECTADO     13150    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13149    
+unix  3      [ ]         FLUJO      CONECTADO     13147    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     13146    
+unix  3      [ ]         FLUJO      CONECTADO     13091    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     13090    
+unix  3      [ ]         FLUJO      CONECTADO     13026    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13025    
+unix  3      [ ]         FLUJO      CONECTADO     13020    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13019    
+unix  3      [ ]         FLUJO      CONECTADO     13017    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     13016    
+unix  3      [ ]         FLUJO      CONECTADO     12983    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     12982    
+unix  3      [ ]         FLUJO      CONECTADO     12977    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     12976    
+unix  3      [ ]         FLUJO      CONECTADO     12972    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     12971    
+unix  3      [ ]         FLUJO      CONECTADO     12970    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     12969    
+unix  3      [ ]         FLUJO      CONECTADO     12962    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     12961    
+unix  3      [ ]         FLUJO      CONECTADO     12958    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     12957    
+unix  3      [ ]         FLUJO      CONECTADO     12955    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     12954    
+unix  3      [ ]         FLUJO      CONECTADO     12953    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     12952    
+unix  3      [ ]         FLUJO      CONECTADO     12811    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     12810    
+unix  3      [ ]         FLUJO      CONECTADO     12809    @/tmp/dbus-IcFTSatCMq
+unix  3      [ ]         FLUJO      CONECTADO     12808    
+unix  3      [ ]         FLUJO      CONECTADO     12807    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     12806    
+unix  3      [ ]         FLUJO      CONECTADO     12801    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     12800    
+unix  3      [ ]         FLUJO      CONECTADO     12799    
+unix  3      [ ]         FLUJO      CONECTADO     12798    
+unix  3      [ ]         FLUJO      CONECTADO     12785    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     12784    
+unix  3      [ ]         FLUJO      CONECTADO     12494    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     12493    
+unix  2      [ ]         DGRAM                    12313    
+unix  3      [ ]         FLUJO      CONECTADO     12305    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     12304    
+unix  2      [ ]         DGRAM                    12242    
+unix  3      [ ]         FLUJO      CONECTADO     11566    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     11565    
+unix  2      [ ]         DGRAM                    11563    
+unix  3      [ ]         FLUJO      CONECTADO     11329    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     11328    
+unix  3      [ ]         FLUJO      CONECTADO     11324    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     11323    
+unix  2      [ ]         DGRAM                    11269    
+unix  3      [ ]         FLUJO      CONECTADO     10952    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     10951    
+unix  3      [ ]         FLUJO      CONECTADO     10929    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     10928    
+unix  3      [ ]         FLUJO      CONECTADO     10833    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     10832    
+unix  3      [ ]         FLUJO      CONECTADO     10829    /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     10828    
+unix  3      [ ]         FLUJO      CONECTADO     10787    @/tmp/.X11-unix/X0
+unix  3      [ ]         FLUJO      CONECTADO     10786    
+unix  3      [ ]         FLUJO      CONECTADO     9486     /var/run/acpid.socket
+unix  3      [ ]         FLUJO      CONECTADO     9485     
+unix  3      [ ]         FLUJO      CONECTADO     9382     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     9381     
+unix  3      [ ]         FLUJO      CONECTADO     9308     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     9307     
+unix  2      [ ]         DGRAM                    9266     
+unix  3      [ ]         FLUJO      CONECTADO     9193     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     9192     
+unix  2      [ ]         DGRAM                    9191     
+unix  3      [ ]         FLUJO      CONECTADO     8857     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     8856     
+unix  2      [ ]         DGRAM                    8844     
+unix  3      [ ]         FLUJO      CONECTADO     8837     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     8836     
+unix  3      [ ]         FLUJO      CONECTADO     8746     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     8745     
+unix  2      [ ]         DGRAM                    8674     
+unix  3      [ ]         FLUJO      CONECTADO     8593     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     8592     
+unix  2      [ ]         DGRAM                    8591     
+unix  3      [ ]         FLUJO      CONECTADO     8517     @/com/ubuntu/upstart
+unix  3      [ ]         FLUJO      CONECTADO     8506     
+unix  2      [ ]         DGRAM                    7378     
+unix  3      [ ]         FLUJO      CONECTADO     7382     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     7373     
+unix  3      [ ]         FLUJO      CONECTADO     7368     
+unix  3      [ ]         FLUJO      CONECTADO     7367     
+unix  2      [ ]         DGRAM                    7364     
+unix  3      [ ]         FLUJO      CONECTADO     7313     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     7312     
+unix  3      [ ]         FLUJO      CONECTADO     7305     /var/run/dbus/system_bus_socket
+unix  3      [ ]         FLUJO      CONECTADO     7304     
+unix  3      [ ]         FLUJO      CONECTADO     7277     
+unix  3      [ ]         FLUJO      CONECTADO     7276     
+unix  3      [ ]         DGRAM                    7117     
+unix  3      [ ]         DGRAM                    7116     
+unix  3      [ ]         FLUJO      CONECTADO     7043     @/com/ubuntu/upstart
+unix  3      [ ]         FLUJO      CONECTADO     7037     

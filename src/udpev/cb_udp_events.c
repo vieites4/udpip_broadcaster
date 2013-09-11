@@ -25,7 +25,7 @@
 /* cb_print_recvfrom */
 void cb_print_recvfrom(public_ev_arg_t *arg)
 {
-
+	printf(">>> RECEIVED UDP MESSAGE >>>\n");
 	bool blocked = false;
 	arg->len = 0;
 
@@ -54,8 +54,8 @@ char data[__DATA_BUFFER_LEN];		/**< Static buffer. */
 /* cb_broadcast_sendto */
 void cb_broadcast_sendto(public_ev_arg_t *arg)
 {
-
-	sprintf(data, "BROADCAST-TEST#%d", arg->__test_number++);
+printf("escribo\n");
+	sprintf(data, "BROADCAST-TEST#%d", arg->__test_number++); //aqui están os datos que se envían na trama
 	int len = strlen(data);
 
 	sockaddr_t *dest_addr = (sockaddr_t *)
@@ -77,7 +77,7 @@ void cb_broadcast_sendto(public_ev_arg_t *arg)
 /* cb_forward_recvfrom */
 void cb_forward_recvfrom(public_ev_arg_t *arg)
 {
-
+	printf(">>> RECEIVED forward UDP MESSAGE >>>\n");
 	bool blocked = false;
 	arg->len = 0;
 
@@ -90,6 +90,7 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 						"Could not receive message.\n");
 		return;
 	}
+	printf(">>> esto ben >>>\n");
 
 	// 2) in case the message comes from the localhost, it is discarded
 	if ( blocked == true )
@@ -112,14 +113,15 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 				, arg->port, arg->forwarding_port, fwd_bytes);
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
-	}
+}
+printf(">>> todo ben >>>\n");
 
 }
 
 /* cb_broadcast_recvfrom */
 void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 {
-
+	printf(">>> RECEIVED broadcast UDP MESSAGE >>>\n");
 	bool blocked = false;
 	arg->len = 0;
 
@@ -133,12 +135,13 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 						"Could not receive message.\n");
 		return;
 	}
-
+	printf(">>> esto ben >>>\n");
 	// 2) broadcast application level UDP message to network level
 	int fwd_bytes = send_message
 						(	(sockaddr_t *)arg->forwarding_addr,
 							arg->forwarding_socket_fd,
 							arg->data, arg->len	);
+	printf("aqui tamén fago un envío");
 
 	if ( arg->print_forwarding_message == true )
 	{
@@ -147,5 +150,6 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
 	}
+	printf(">>> todo ben >>>\n");
 
 }

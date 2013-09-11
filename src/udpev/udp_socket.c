@@ -182,11 +182,14 @@ sockaddr_in_t *init_sockaddr_in(const char *address, const int port)
 
 	s->sin_family = AF_INET;
 	s->sin_port = (in_port_t)htons(port);
-
-	if ( ( s->sin_addr.s_addr = inet_addr(address) ) < 0 )
-		{ handle_sys_error("init_sockaddr_in: " \
-							"<inet_addr> returns error.\n"); }
-
+	printf("8\n");
+//	if ( ( s->sin_addr.s_addr = inet_addr(address) ) < 0 )
+//		{
+//
+//		printf("entro no erro\n");
+//		perror("init_sockaddr_in: " \
+//							"<inet_addr> returns error.\n"); }
+	printf("9\n");
 	return(s);
 
 }
@@ -308,7 +311,7 @@ int open_broadcast_udp_socket(const char *iface, const int port)
 		handle_app_error("open_broadcast_udp_socket: " \
 							"<set_bindtodevice_socket> returns error.\n");
 	}
-
+	printf("saio do open_broadcast_udp_socket\n");
 	return(fd);
 
 }
@@ -346,13 +349,13 @@ int set_bindtodevice_socket(const char *if_name, const int socket_fd)
 /* set_msghdrs_socket */
 int set_msghdrs_socket(const int socket_fd)
 {
-
 	ifreq_t *ifr = new_ifreq();
 
 	if ( setsockopt(socket_fd, IPPROTO_IP, IP_PKTINFO, &ifr, LEN__IFREQ)
 			< 0 )
 	{ handle_sys_error("set_generate_headers: " \
 						"<setsockopt> returns error"); }
+
 
 	return(EX_OK);
 
