@@ -36,15 +36,15 @@ int get_mac_address
 
 	int len_if_name = -1;
 
-	if ( if_name == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
+	if ( if_name == NULL )		{ return(EX_NULL_PARAM); }
 //if ( mac == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
 
-	if ( socket_fd < 0 )		{ return(EX_WRONG_PARAM);printf("no"); }
+	if ( socket_fd < 0 )		{ return(EX_WRONG_PARAM); }
 
 	len_if_name = strlen(if_name);
 
-	if ( len_if_name == 0 )		{ return(EX_EMPTY_PARAM);printf("no"); }
-	if ( len_if_name > IF_NAMESIZE )		{ return(EX_WRONG_PARAM);printf("no"); }
+	if ( len_if_name == 0 )		{ return(EX_EMPTY_PARAM); }
+	if ( len_if_name > IF_NAMESIZE )		{ return(EX_WRONG_PARAM); }
 
 	ifreq_t *ifr = new_ifreq();
 	strncpy(ifr->ifr_name, if_name, len_if_name);
@@ -631,6 +631,7 @@ ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char 
 	//f->buffer.header.h_proto = htons(ETH_P_ALL);//ll_sap;//cambio
 	memcpy(f->buffer.header.dest_address, h_dest, ETH_ALEN);
 	memcpy(f->buffer.header.src_address, h_source, ETH_ALEN);
+	//memcpy(f->info.frame_type,typo,2);
 	return(f);
 
 }
