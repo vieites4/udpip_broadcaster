@@ -164,8 +164,8 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 
 
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROAD,h_source);
-	tx_frame->buffer.frame_type=0x0800;
-			tx_frame->buffer.frame_len = sizeof(arg->data) +42;
+	tx_frame->buffer.frame_type=0xdc05;
+	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 	memcpy(tx_frame->buffer.data,arg->data,arg->len);
 
 	// 2) broadcast application level UDP message to network level

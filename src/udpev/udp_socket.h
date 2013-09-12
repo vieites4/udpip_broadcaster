@@ -93,9 +93,9 @@ typedef struct ieee80211_frame_buffer
 {
 
 	ieee80211_header_t header;	/*!< IEEE 802.11 header. */
-	int frame_type;				/*!< Type of the frame. */
-		int frame_len;
-		unsigned char recheo[22];
+	//int frame_type;				/*!< Type of the frame. */
+		//int frame_len;
+	//	unsigned char recheo[4];
 
 	//ll_frame_t info;
 	char data[IEEE_80211_BLEN];	/*!< Data body of the IEEE 802.11 frame. */
