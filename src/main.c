@@ -77,6 +77,8 @@ int main(int argc, char **argv)
 		net_events = init_tx_raw_events(cfg->if_name, cfg->tx_port, cb_raw_sendto,broad); //aqui teño a posibilidade de facer q non sexa solo broadcast
 		printf("> RAW TX socket open, port = %d, fd = %d.\n", cfg->tx_port, net_events->socket_fd);
 
+
+
 		app_events= init_tx_udp_events(cfg->if_name, cfg->app_tx_port,cfg->app_inet_addr, cb_udp_sendto,broad); //aqui teño a posibilidade de facer q non sexa solo broadcast
 	//	cb_udp_sendto();
 		printf("fin\n");
@@ -94,8 +96,11 @@ int main(int argc, char **argv)
 		log_app_msg(">>> UDP APP RX socket open!\n");
 		print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
 
+		ev_cb_t rx_cb = NULL;
+		rx_cb = (ev_cb_t)&cb_forward_recvfrom;
+
 		log_app_msg(">>> Opening RAW NET RX socket...\n");
-		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom);
+		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , rx_cb);
 		log_app_msg(">>> raw NET RX socket open!\n");
 		print_udp_events(net_events, cfg->rx_port, cfg->app_tx_port);
 

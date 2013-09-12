@@ -243,8 +243,8 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 	sockaddr_ll_t *s = new_sockaddr_ll();
 
 	s->sll_family = PF_PACKET;
-	s->sll_ifindex = (in_port_t)htons(port);//??
-	memcpy(s->sll_addr,ETH_ADDR_ANY , ETH_ALEN);
+	s->sll_ifindex = if_nametoindex("wlan0");//(in_port_t)htons(port);//??
+	memcpy(s->sll_addr,ETH_ADDR_BROADCAST , ETH_ALEN);
 
 	return(s);
 
@@ -433,7 +433,7 @@ int open_receiver_raw_socket(const int port)
 							"<socket> returns error. Description"); }
 	printf("what\n");
 	// 2) local address for binding
-	//sockaddr_ll_t* addr = init_any_sockaddr_ll(port);
+	sockaddr_ll_t* addr = init_any_sockaddr_ll(port);
 	//if ( bind(fd, (sockaddr_t *)addr, LEN__SOCKADDR_LL) < 0 )
 	//	{ handle_sys_error("open_receiver_RAW_socket: " \
 		//					"<bind> returns error. Description"); }
