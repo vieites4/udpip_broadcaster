@@ -105,9 +105,9 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 	arg->len = 0;
 printf("esto si\n");
 	// 1) read UDP message from network level
-	if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header
-								, arg->local_addr->sin_addr.s_addr
-								, &blocked) ) < 0 )
+if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, arg->msg_header, NULL, &blocked) ) < 0 )//arg->local_addr->sin_addr.s_addr
+
+
 	{
 		log_app_msg("cb_forward_recvfrom: <recv_msg> " \
 						"Could not receive message.\n");
@@ -166,8 +166,6 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROAD,h_source);
 			tx_frame->info.frame_len = IEEE_80211_HLEN + 10;
 	memcpy(tx_frame->buffer.data,arg->data,arg->len);
-
-print_eth_address(h_source);
 
 	// 2) broadcast application level UDP message to network level
 	int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);

@@ -257,15 +257,7 @@ sockaddr_ll_t *init_sockaddr_ll(const char *address, const int port)
 {
 
 
-
-
-
-
 	//	s.sll_ifindex  = if_index;//if_nametoindex(if_index);
-
-
-
-
 	sockaddr_ll_t *s = new_sockaddr_ll();
 	s->sll_family = PF_PACKET;
 	s->sll_halen = ETH_ALEN;
@@ -277,8 +269,8 @@ sockaddr_ll_t *init_sockaddr_ll(const char *address, const int port)
 	memset(s->sll_addr,address,ETH_ALEN);
 //	if ( ( s->sll_addr.s_addr = inet_addr(address) ) < 0 )
 	//	{ handle_sys_error("init_sockaddr_in: " \
-		//					"<inet_addr> returns error.\n"); }
 
+	//					"<inet_addr> returns error.\n"); }
 	return(s);
 
 
@@ -433,20 +425,23 @@ int open_receiver_raw_socket(const int port)
 	int fd = -1;
 
 	// 1) socket creation
-	if ( ( fd = socket(AF_PACKET, SOCK_RAW, port) ) < 0 )
+	sockaddr_ll_t *s= init_sockaddr_ll((const char *) NULL, port);
+
+
+	if ( ( fd = socket(PF_PACKET, SOCK_RAW,0 ) ) < 0 )// lsap é port
 		{ handle_sys_error("open_receiver_RAW_socket: " \
 							"<socket> returns error. Description"); }
-
+	printf("what\n");
 	// 2) local address for binding
-	sockaddr_ll_t* addr = init_any_sockaddr_ll(port);
+	//sockaddr_ll_t* addr = init_any_sockaddr_ll(port);
 	//if ( bind(fd, (sockaddr_t *)addr, LEN__SOCKADDR_LL) < 0 )
 	//	{ handle_sys_error("open_receiver_RAW_socket: " \
 		//					"<bind> returns error. Description"); }
 
 	// 3) for analyzing received message's headers
-//	if ( set_msghdrs_socket(fd) < 0 ) //PROBABLEMENTE BORRE ESTO
-//		{ handle_app_error("open_receiver_RAW_socket: " \
-//							"<set_msghdrs_socket> returns error.\n"); }
+	//if ( set_msghdrs_socket(fd) < 0 ) //PROBABLEMENTE BORRE ESTO
+		//{ handle_app_error("open_receiver_RAW_socket: " \
+							"<set_msghdrs_socket> returns error.\n"); }
 
 	return(fd);
 
@@ -461,7 +456,7 @@ int open_transmitter_udp_socket(const int port, in_addr_t addr) //non está comp
 	// 1) socket creation
 	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
 		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
-
+/**
 //	sockaddr_in_t server;
 	//	 memset(&server, 0, sizeof server);
 	//	    server.sin_family = AF_INET; // Use IPv4
@@ -472,7 +467,7 @@ int open_transmitter_udp_socket(const int port, in_addr_t addr) //non está comp
 //		    if ((bind(fd, (struct sockaddr *) &server, sizeof(server))) == -1) {
 //		    	close(fd);
 //		    	perror("Can't bind");
-	//	    }
+	//	    }***/
 
 	return(fd);
 
@@ -535,7 +530,7 @@ int open_broadcast_raw_socket(const char *iface, const int port) ///cambiar esto
 		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 	// 2) set broadcast socket options
-	if ( set_broadcast_socket(fd) < 0 )
+	/*if ( set_broadcast_socket(fd) < 0 )
 	{
 		handle_app_error("open_broadcast_udp_socket: " \
 							"<set_broadcast_socket> returns error.\n");
@@ -547,7 +542,7 @@ int open_broadcast_raw_socket(const char *iface, const int port) ///cambiar esto
 		handle_app_error("open_broadcast_udp_socket: " \
 							"<set_bindtodevice_socket> returns error.\n");
 	}
-
+*/
 	return(fd);
 
 }
@@ -633,12 +628,9 @@ ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char 
 
 	if ( set_ll_frame(&f->info, TYPE_IEEE_80211, ETH_FRAME_LEN) < 0 )
 		{ log_app_msg("Could not set info adequately!\n"); }
-	printf("ini3\n");
 	//f->buffer.header.h_proto = htons(ETH_P_ALL);//ll_sap;//cambio
 	memcpy(f->buffer.header.dest_address, h_dest, ETH_ALEN);
-	printf("ini3\n");
 	memcpy(f->buffer.header.src_address, h_source, ETH_ALEN);
-	printf("ini3\n");
 	return(f);
 
 }
@@ -651,7 +643,6 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 
 //teño que engadir aqui a cabeceira
 
-printf("pinto2\n");
 
 	if ( ( sent_bytes = sendto(socket_fd, buffer, len
 								, 0, dest_addr, LEN__SOCKADDR_LL) ) < 0 ) // solo habería que cambiar esta liña
@@ -680,6 +671,8 @@ int recv_message(const int socket_fd, void *data)
 	int rx_bytes = 0;
 
 	if ( ( rx_bytes = recvfrom(socket_fd, data, UDP_BUFFER_LEN, 0, NULL, NULL) ) < 0 )
+
+		//if((rx_bytes= recvfrom(socket_fd, msg,IEEE_80211_FRAME_LEN, 0,NULL,NULL))<0)
 	{
 		log_sys_error("recv_message: wrong <recvfrom> call. ");
 		return(EX_ERR);
@@ -688,7 +681,7 @@ int recv_message(const int socket_fd, void *data)
 	return(rx_bytes);
 
 }
-
+#define IEEE_80211_FRAME_LEN	2343	/*!< IEEE 802.11 frame length (B). */
 /* recv_msg */
 int recv_msg(	const int socket_fd, msg_header_t *msg, //FACER TAMÉN UNHA VERSION NET (RAW) DO SEND
 				const in_addr_t block_ip, bool *blocked	)
@@ -698,6 +691,7 @@ int recv_msg(	const int socket_fd, msg_header_t *msg, //FACER TAMÉN UNHA VERSIO
 
 	// 1) read UDP message from network level
 	if ( ( rx_bytes = recvmsg(socket_fd, msg, 0) ) < 0 ) //ESTO HAI QUE CAMBIALO!!!
+
 	{
 		log_sys_error("recv_msg: wrong <recvmsg> call. ");
 		return(EX_ERR);
