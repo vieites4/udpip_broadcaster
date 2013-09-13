@@ -244,8 +244,9 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 
 	s->sll_family = PF_PACKET;
 	s->sll_ifindex = if_nametoindex("wlan0");//(in_port_t)htons(port);//??
-	memcpy(s->sll_addr,ETH_ADDR_BROADCAST , ETH_ALEN);
-
+	memcpy(s->sll_addr,ETH_ADDR_ANY , ETH_ALEN);
+	s->sll_halen = ETH_ALEN;
+	s->sll_protocol = htons(ETH_P_ALL);
 	return(s);
 
 }
@@ -428,15 +429,16 @@ int open_receiver_raw_socket(const int port)
 	sockaddr_ll_t *s= init_sockaddr_ll((const char *) NULL, port);
 
 
-	if ( ( fd = socket(PF_PACKET, SOCK_RAW,0 ) ) < 0 )// lsap é port
+	if ( ( fd = socket(PF_PACKET, SOCK_RAW,port ) ) < 0 )// lsap é port
 		{ handle_sys_error("open_receiver_RAW_socket: " \
 							"<socket> returns error. Description"); }
-	printf("what\n");
+
 	// 2) local address for binding
 	sockaddr_ll_t* addr = init_any_sockaddr_ll(port);
-	//if ( bind(fd, (sockaddr_t *)addr, LEN__SOCKADDR_LL) < 0 )
-	//	{ handle_sys_error("open_receiver_RAW_socket: " \
-		//					"<bind> returns error. Description"); }
+
+	//sockaddr_ll_t *sll = init_sockaddr_ll(ll_socket,is_transmitter);
+
+	if ( bind(	fd,	(struct sockaddr *)addr, LEN__SOCKADDR_LL)< 0 )	{ handle_sys_error("Binding socket"); }
 
 	// 3) for analyzing received message's headers
 	//if ( set_msghdrs_socket(fd) < 0 ) //PROBABLEMENTE BORRE ESTO

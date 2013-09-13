@@ -103,7 +103,6 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 	printf("cb_forward_recvfrom\n");
 	bool blocked = false;
 	arg->len = 0;
-printf("esto si\n");
 	// 1) read UDP message from network level
 if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, arg->msg_header, NULL, &blocked) ) < 0 )//arg->local_addr->sin_addr.s_addr
 
@@ -113,7 +112,7 @@ if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, a
 						"Could not receive message.\n");
 		return;
 	}
-	printf("esto si2\n");
+
 	// 2) in case the message comes from the localhost, it is discarded
 	if ( blocked == true )
 	{
@@ -121,7 +120,7 @@ if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, a
 		return;
 	}
 
-	printf("esto si3\n");
+
 
 	// 3) forward network level UDP message to application level
 	int fwd_bytes = send_message
@@ -129,14 +128,14 @@ if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, a
 							arg->forwarding_socket_fd,
 							arg->data, arg->len	);
 
-	if ( arg->print_forwarding_message == true )
-	{
+	//if ( arg->print_forwarding_message == true )
+	//{
 		log_app_msg(">>> fwd(net:%d>app:%d), msg[%.2d] = {"
 				, arg->port, arg->forwarding_port, fwd_bytes);
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
-	}
-	printf("esto si4\n");
+	//}
+	printf("fin de cb_forward_recvfrom\n");
 
 }
 

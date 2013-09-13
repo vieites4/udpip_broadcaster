@@ -111,7 +111,7 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name, const ev_c
 
 	udp_events_t *s = new_udp_events();
 	s->socket_fd = open_receiver_raw_socket(port);
-	if ( init_watcher(s, callback, EV_IO, port, if_name,(in_addr_t) NULL) < 0 )
+	if ( init_watcher(s, callback, EV_READ, port, if_name,(in_addr_t) NULL) < 0 )
 		{ handle_app_error("init_rx_udp_events: <init_watcher> error.\n"); }
 
 	return(s);
@@ -138,6 +138,7 @@ udp_events_t *init_net_raw_events
 	arg->public_arg.nec_mode = nec_mode;
 	arg->public_arg.__test_number = 0;
 	arg->public_arg.print_forwarding_message = __verbose;
+	arg->cb_specfic	=callback;
 	return(s);
 
 }

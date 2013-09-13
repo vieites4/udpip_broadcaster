@@ -86,30 +86,24 @@ int main(int argc, char **argv)
 
 	}
 	else
-		//if (cfg->ladoapp ==false){
+
 
 	{
-		//}
-			//	else{
+
 		log_app_msg(">>> Opening UDP APP RX socket...\n");
 		app_events = init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom);//broadcast
 		log_app_msg(">>> UDP APP RX socket open!\n");
 		print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
 
-		ev_cb_t rx_cb = NULL;
-		rx_cb = (ev_cb_t)&cb_forward_recvfrom;
 
 		log_app_msg(">>> Opening RAW NET RX socket...\n");
-		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , rx_cb);
+		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom);
 		log_app_msg(">>> raw NET RX socket open!\n");
 		print_udp_events(net_events, cfg->rx_port, cfg->app_tx_port);
 
-	//}
+
 		}
 
-
-	// 3)int open_broadcast_udp_socket(const char *if_name, const int port); loop that waits for net_events to occur...
-	//ev_loop(net_events->loop, 0); //app_events
 	ev_loop(net_events->loop, 0); //app_events
 printf("ultimo!\n");
 	// 4) program finalization
