@@ -58,7 +58,8 @@ void Time_update(){}
 
 void Beacon_send(){
 
-	//crear unha Beacon.
+	//crear unha Beacon. é SO A COMMONHEADER
+
 	//algo dunha request?!
 	//enviar cara LL a beacon con destino broadcast
 	//inicializar o timer para a transmission periodica de beacons Tbeacons

@@ -98,6 +98,8 @@ typedef struct ieee80211_frame_buffer
 	//	unsigned char recheo[4];
 
 	//ll_frame_t info;
+	char btp1 [2];
+	char btp2[2];
 	char data[IEEE_80211_BLEN];	/*!< Data body of the IEEE 802.11 frame. */
 
 } ieee80211_buffer_t;

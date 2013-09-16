@@ -150,6 +150,8 @@ udp_events_t *init_app_udp_events
 					const ev_cb_t callback)
 {
 
+	//imos recibir unha request.
+
 	udp_events_t *s = init_rx_udp_events(app_rx_port, if_name, callback);
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
 

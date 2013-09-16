@@ -632,7 +632,7 @@ ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char 
 		{ log_app_msg("Could not set info adequately!\n"); }
 	//f->buffer.header.h_proto = htons(ETH_P_ALL);//ll_sap;//cambio
 	memcpy(f->buffer.header.dest_address, h_dest, ETH_ALEN);
-	memcpy(f->buffer.header.src_address, h_source, ETH_ALEN);
+	memcpy(f->buffer.header.src_address,h_source , ETH_ALEN);//h_source
 	//memcpy(f->info.frame_type,typo,2);
 	return(f);
 
@@ -686,14 +686,13 @@ int recv_message(const int socket_fd, void *data)
 }
 #define IEEE_80211_FRAME_LEN	2343	/*!< IEEE 802.11 frame length (B). */
 /* recv_msg */
-int recv_msg(	const int socket_fd, msg_header_t *msg, //FACER TAMÉN UNHA VERSION NET (RAW) DO SEND
-				const in_addr_t block_ip, bool *blocked	)
+int recv_msg(	const int socket_fd, msg_header_t *msg, const in_addr_t block_ip, bool *blocked	)
 {
 
 	int rx_bytes = 0;
 
 	// 1) read UDP message from network level
-	if ( ( rx_bytes = recvmsg(socket_fd, msg, 0) ) < 0 ) //ESTO HAI QUE CAMBIALO!!!
+	if ( ( rx_bytes = recvmsg(socket_fd, msg, 0) ) < 0 )
 
 	{
 		log_sys_error("recv_msg: wrong <recvmsg> call. ");
@@ -702,7 +701,7 @@ int recv_msg(	const int socket_fd, msg_header_t *msg, //FACER TAMÉN UNHA VERSIO
 
 	in_addr_t src_addr = get_source_address(msg);
 
-	if ( block_ip == src_addr )
+	if ( block_ip == src_addr ) //este é o sistema de bloqueo de richi
 		{ *blocked = true; }
 	else
 		{ *blocked = false; }

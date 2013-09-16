@@ -96,6 +96,7 @@ int main(int argc, char **argv)
 		print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
 
 
+
 		log_app_msg(">>> Opening RAW NET RX socket...\n");
 		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom);
 		log_app_msg(">>> raw NET RX socket open!\n");

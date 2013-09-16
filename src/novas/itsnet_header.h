@@ -84,7 +84,7 @@ typedef uint8_t  itsnet_txpower;     /** Transmission power level with which the
 typedef uint8_t  itsnet_flags;		/** Flags reserved to distinguish vehicle and RSU */
 typedef uint8_t  itsnet_traffic_class; /** Traffic class parameter*/
 
-/** The transport porotocol, i.e. the usage of port numbers are still under discussion.*/
+/** The transport protocol, i.e. the usage of port numbers are still under discussion.*/
 typedef uint16_t itsnet_source_port;  /** Port number of the sending application. It is zero if not used */
 typedef uint16_t itsnet_destination_port; /**Port number of the destination application. It is zero if not used.*/
 typedef uint16_t itsnet_radius;

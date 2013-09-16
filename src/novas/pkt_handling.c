@@ -11,6 +11,7 @@
 
 #include "pkt_handling.h"
 #include "netmanagement.h"
+#include "itsnet_header.h"
 
 void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
@@ -124,7 +125,66 @@ void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
 //};
 }
-void TSB(){}
+void TSB(public_ev_arg_t *arg){
+
+//	Create common header
+
+	itsnet_common_header ch;
+
+	char *TC=NULL;
+	TC = (char *)malloc(1);
+	memcpy(TC,arg->data +6,1);
+	char *LEN=NULL;
+	LEN = (char *)malloc(2);
+	memcpy(LEN,arg->data +4,2);
+	char *FLAGS=NULL;
+	FLAGS = (char *)malloc(1);
+	memcpy(FLAGS,arg->data +3,1);
+	char *HL=NULL;
+	HL = (char *)malloc(1);
+	memcpy(HL,arg->data +2,1);
+	char *HT=NULL;
+	HT = (char *)malloc(2);
+	memcpy(HT,arg->data +6,1);
+
+
+	ch->protocol_info=HT;
+	ch->txpower=0;
+	ch->flags=atoi(FLAGS);
+	ch->payload_lenght=atoi(LEN);
+	ch->traffic_class=atoi(FLAGS);
+	ch->hop_limit=atoi(HL);
+	ch->forwarder_position_vector=;
+
+//create extended header
+	char *TS=NULL;
+	TS = (char *)malloc(4);
+	memcpy(TS,arg->data +12,4);
+
+
+	itsnet_tsb_t tsb_h;
+	tsb_h->source_position_vector.time_stamp=TS;
+	//tsb_h->source_position_vector.node_id=; SN
+	//...LPV
+	memcpy(tsb_h->payload,arg->data +20,ch->payload_lenght);
+
+
+//NEIGHBOURS
+
+
+
+//REPETITION INTERVAL
+
+	char *REP=NULL;
+	REP = (char *)malloc(4);
+	memcpy(REP,arg->data +8,4);
+
+	if(atoi(REP)==0){
+		//GARDAR O PAQUETE
+		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
+
+	}
+}
 
 void SHB(){}
 

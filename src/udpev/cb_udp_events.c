@@ -103,6 +103,7 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 	printf("cb_forward_recvfrom\n");
 	bool blocked = false;
 	arg->len = 0;
+	void* datos;
 	// 1) read UDP message from network level
 if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, arg->msg_header, NULL, &blocked) ) < 0 )//arg->local_addr->sin_addr.s_addr
 
@@ -128,13 +129,13 @@ if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, a
 							arg->forwarding_socket_fd,
 							arg->data, arg->len	);
 
-	//if ( arg->print_forwarding_message == true )
-	//{
+	if ( arg->print_forwarding_message == true )
+	{
 		log_app_msg(">>> fwd(net:%d>app:%d), msg[%.2d] = {"
 				, arg->port, arg->forwarding_port, fwd_bytes);
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
-	//}
+	}
 	printf("fin de cb_forward_recvfrom\n");
 
 }
@@ -148,12 +149,10 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 
 	// 1) read UDP message from application level
 	//		(self-broadcast messages are not received)
-	if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header
-								, arg->local_addr->sin_addr.s_addr
-								, &blocked) ) < 0 )
+	if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header, arg->local_addr->sin_addr.s_addr, &blocked) ) < 0 )
 	{
 		log_app_msg("cb_broadcast_recvfrom: <recv_msg> " \
-						"Could not receive message.\n");
+				"Could not receive message.\n");
 		return;
 	}
 
@@ -165,6 +164,57 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROAD,h_source);
 	//tx_frame->buffer.frame_type=0xdc05;
 	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
+	const unsigned char tipoa[1]={0x01};
+	const unsigned char tipob[1]={0x02};
+	const unsigned char tsb0[1]={0x05};
+	const unsigned char tsb1[1]={0x15};
+	const unsigned char geobroad0[1]={0x04};
+	const unsigned char geobroad1[1]={0x14};
+	const unsigned char geobroad2[1]={0x24};
+	const unsigned char geoanycast0[1]={0x03};
+	const unsigned char geoanycast1[1]={0x13};
+	const unsigned char geoanycast2[1]={0x23};
+	const unsigned char geounicast[1]={0x02};
+	const unsigned char beacon[1]={0x01};
+	const unsigned char any[1]={0x00};
+	const unsigned char ls0[1]={0x06};
+	const unsigned char ls1[1]={0x16};
+	if (memcmp(arg->data +7,tipoa,1)==0)
+	{printf("é btp tipo a\n");
+
+	char *portoD=NULL;
+	char *portoO=NULL;
+	portoD = (char *)malloc(2);
+	portoO = (char *)malloc(2);
+	memcpy(arg->data + 16,portoO,2);
+	memcpy(arg->data + 18,portoD,2);
+	print_hex_data(portoD,2);
+	print_hex_data(arg->data,20);
+	memcpy(tx_frame->buffer.btp1, portoD,2);
+	memcpy(tx_frame->buffer.btp2, portoO,2);
+	}
+	else{
+		char *portoD=NULL;
+		portoD = (char *)malloc(2);
+		memcpy(arg->data + 18,portoD,2);
+		char *info_dest=NULL;
+		info_dest = (char *)malloc(2);
+		memset(info_dest,0,2);
+		memcpy(tx_frame->buffer.btp1, portoD,2);
+		memcpy(tx_frame->buffer.btp2, info_dest,2);
+	}
+
+//agora debo buscar o que pasa cando chega unha gn_data
+
+	char *HT=NULL;
+	HT = (char *)malloc(2);
+	memcpy(HT,arg->data,2);
+
+	if(memcmp(HT,tsb0,1)){TSB(public_ev_arg_t *arg);}
+	if(memcmp(HT,geounicast,1)){}
+	if(memcmp(HT,geounicast,1)){}
+	// este é o punto onde teño que modificar os datos do buffer que envio.
+
 	memcpy(tx_frame->buffer.data,arg->data,arg->len);
 
 	// 2) broadcast application level UDP message to network level
