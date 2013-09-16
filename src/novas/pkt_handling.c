@@ -4,14 +4,11 @@
  *  Created on: 04/09/2013
  *      Author: pc
  */
-//esta si
-//estaría ben agrupar a parte común do case 0 e 1.
 
 
 
 #include "pkt_handling.h"
-#include "netmanagement.h"
-#include "itsnet_header.h"
+
 
 void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
@@ -145,16 +142,16 @@ void TSB(public_ev_arg_t *arg){
 	memcpy(HL,arg->data +2,1);
 	char *HT=NULL;
 	HT = (char *)malloc(2);
-	memcpy(HT,arg->data +6,1);
+	memcpy(HT,arg->data ,2);
 
 
-	ch->protocol_info=HT;
-	ch->txpower=0;
-	ch->flags=atoi(FLAGS);
-	ch->payload_lenght=atoi(LEN);
-	ch->traffic_class=atoi(FLAGS);
-	ch->hop_limit=atoi(HL);
-	ch->forwarder_position_vector=;
+	memcpy(ch.protocol_info,HT,2); //te
+	ch.txpower=0;
+	ch.flags=atoi(FLAGS);
+	ch.payload_lenght=atoi(LEN);
+	ch.traffic_class=atoi(FLAGS);
+	ch.hop_limit=atoi(HL);
+	//ch->forwarder_position_vector=;
 
 //create extended header
 	char *TS=NULL;
@@ -163,14 +160,18 @@ void TSB(public_ev_arg_t *arg){
 
 
 	itsnet_tsb_t tsb_h;
-	tsb_h->source_position_vector.time_stamp=TS;
+	tsb_h.source_position_vector.time_stamp=TS;
 	//tsb_h->source_position_vector.node_id=; SN
 	//...LPV
-	memcpy(tsb_h->payload,arg->data +20,ch->payload_lenght);
+	memcpy(tsb_h.payload,arg->data +20,ch.payload_lenght);
 
 
-//NEIGHBOURS
+//NEIGHBOURS.
+	if  (exist_neighbours()== false){
 
+		//buffer in BC AND omit next executions
+
+	}
 
 
 //REPETITION INTERVAL

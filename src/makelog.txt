@@ -1,0 +1,2 @@
+gcc -DHAVE_CONFIG_H -I. -I..    --pedantic -std=gnu99 -Wall -O0 -g3 -g -O2 -MT netmanagement.o -MD -MP -MF .deps/netmanagement.Tpo -c -o netmanagement.o `test -f 'novas/netmanagement.c' || echo './'`novas/netmanagement.c
+gcc -DHAVE_CONFIG_H -I. -I..    --pedantic -std=gnu99 -Wall -O0 -g3 -g -O2 -MT netmanagement.o -MD -MP -MF .deps/netmanagement.Tpo -c -o netmanagement.o `test -f 'novas/netmanagement.c' || echo './'`novas/netmanagement.c

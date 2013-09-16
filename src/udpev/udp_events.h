@@ -67,7 +67,6 @@ typedef struct public_ev_arg
 	int __test_number;				/**< For testing, counts no tests. */
 
 } public_ev_arg_t;
-
 #define LEN__PUBLIC_EV_ARG sizeof(public_ev_arg_t)
 
 typedef void (*ev_cb_t)(public_ev_arg_t *);		/*!< Callback function. */

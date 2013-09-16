@@ -9,8 +9,9 @@
 #define PKT_HANDLING_H_
 
 
-
-
+#include "udpev/udp_events.h"
+#include "netmanagement.h"
+#include "itsnet_header.h"
 /*
  * pkt_handling.c
  *
@@ -20,7 +21,7 @@
 
 
 void GeoUnicast(int option);
-void TSB();
+void TSB(public_ev_arg_t *arg);
 
 void SHB();
 

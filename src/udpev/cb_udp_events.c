@@ -19,9 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with udpip-broadcaster.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include "udp_events.h"
 #include "cb_udp_events.h"
-const unsigned char ETH_ADDR_BROAD[ETH_ALEN]                    ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
+const unsigned char ETH_ADDR_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 /* cb_print_recvfrom */
 void cb_print_recvfrom(public_ev_arg_t *arg)
 {
@@ -77,23 +77,23 @@ printf("envio\n");
 
 void cb_raw_sendto(public_ev_arg_t *arg)
 {
-	printf("cb_raw_sendto\n");
-	sprintf(data, "BROADCAST-TEST#%d", arg->__test_number++);
-	int len = strlen(data);
-	printf("envio1\n");
-	sockaddr_t *dest_addr = (sockaddr_t *)
-			init_broadcast_sockaddr_ll(arg->port);
-
-	printf(">>> BROADCAST TEST (fd = %d): sending test[%d] = %s\n"
-			, arg->socket_fd, len, data);
-
-	send_message(dest_addr, arg->socket_fd, data, len);
-
-	if ( usleep(__TX_DELAY_US) < 0 )
-	{
-		log_app_msg("Could not sleep for %d (usecs).\n", __TX_DELAY_US);
-		return;
-	}
+//	printf("cb_raw_sendto\n");
+//	sprintf(data, "BROADCAST-TEST#%d", arg->__test_number++);
+//	int len = strlen(data);
+//	printf("envio1\n");
+//	sockaddr_t *dest_addr = (sockaddr_t *)
+//			init_broadcast_sockaddr_ll(arg->port);
+//
+//	printf(">>> BROADCAST TEST (fd = %d): sending test[%d] = %s\n"
+//			, arg->socket_fd, len, data);
+//
+//	send_message(dest_addr, arg->socket_fd, data, len);
+//
+//	if ( usleep(__TX_DELAY_US) < 0 )
+//	{
+//		log_app_msg("Could not sleep for %d (usecs).\n", __TX_DELAY_US);
+//		return;
+//	}
 
 }
 
@@ -210,7 +210,7 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	HT = (char *)malloc(2);
 	memcpy(HT,arg->data,2);
 
-	if(memcmp(HT,tsb0,1)){TSB(public_ev_arg_t *arg);}
+	if(memcmp(HT,tsb0,1)){TSB(*arg);}
 	if(memcmp(HT,geounicast,1)){}
 	if(memcmp(HT,geounicast,1)){}
 	// este é o punto onde teño que modificar os datos do buffer que envio.

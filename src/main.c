@@ -25,30 +25,32 @@
 #include "main.h"
 #include "logger.h"
 #include "configuration.h"
-#include "udpev/udp_events.h"
-#include "udpev/cb_udp_events.h"
 #include "novas/netmanagement.h"
-#include "novas/pkt_handling.h"
+
+//#include "novas/pkt_handling.h"
 
 /************************************************** Application definitions */
 
-static const char* __x_app_name = "udpip-broadcaster";
-static const char* __x_app_version = "0.1";
+//static const char* __x_app_name = "udpip-broadcaster";
+//static const char* __x_app_version = "0.1";
 
 /******************************************************* INTERNAL FUNCTIONS */
 
 /* print_help */
-void print_help()
-{
-	fprintf(stdout, "HELP, %s\n", __x_app_name);
-}
+//void print_help()
+//{
+//	fprintf(stdout, "HELP, %s\n", __x_app_name);
+//}
+//
+///* print_version */
+//void print_version()
+//{
+//	fprintf(stdout, "Version = %s\n", __x_app_version);
+//}
 
-/* print_version */
-void print_version()
-{
-	fprintf(stdout, "Version = %s\n", __x_app_version);
-}
-
+List_locT * locT; //variable global
+List_lsp * lsp;
+//List_buf * UCb, BCb;
 /* main */
 int main(int argc, char **argv)
 {
@@ -91,7 +93,7 @@ int main(int argc, char **argv)
 	{
 
 		log_app_msg(">>> Opening UDP APP RX socket...\n");
-		app_events = init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom);//broadcast
+		app_events = init_app_udp_events(cfg->app_rx_port, inet_addr(cfg->app_address),cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom);//broadcast
 		log_app_msg(">>> UDP APP RX socket open!\n");
 		print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
 

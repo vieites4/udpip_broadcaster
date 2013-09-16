@@ -146,7 +146,7 @@ bool tic=false;
 
 			case 'v':
 			
-				print_version();
+			//	print_version();
 				exit(EXIT_SUCCESS);
 				break;
 			case 'a':
@@ -155,7 +155,7 @@ bool tic=false;
 			case 'h':
 			default:
 			
-				print_help();
+			//	print_help();
 				exit(EXIT_SUCCESS);
 
 				printf("go2\n");

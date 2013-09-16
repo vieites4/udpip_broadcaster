@@ -22,10 +22,8 @@
 
 #ifndef CB_UDP_EVENTS_H_
 #define CB_UDP_EVENTS_H_
-
-#include <stdio.h>
-
 #include "udp_events.h"
+#include <stdio.h>
 #include "__NEC__gnbtpapi_udp_msg.h"
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

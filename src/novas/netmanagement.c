@@ -1,14 +1,9 @@
-
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "novas/itsnet_header.h"
-#include "novas/netmanagement.h"
-
+#include "../main.c"
+#include "netmanagement.h"
+//#include "novas/netmanagement.h"
 void startup1()
 {
+	locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
 
 //if (itsGnLocalAddrConfMethod=AUTO(0))
 //	autoaddrconf();
@@ -23,7 +18,7 @@ printf("teño que enviar unha Beacon\n");
 mac_addr autoaddrconf(){
 
 	mac_addr addr;
-	int i;
+	//int i;
 	//for (i=0;i<8;i++ ) addr[i]= rand() % 0xFF;//0x00;//buscar o modo de que sexa random
 	return(addr);
 
@@ -179,6 +174,168 @@ void LS(int option){
 
 
 }
+
+List_locT * init_locT ()
+{
+	//List_locT * locT;
+	locT->init = NULL;
+	locT->end = NULL;
+	locT ->len = 0;
+	return(locT);
+}
+
+/*add at list end  */
+int add_end_locT ( Element_locT * actual, itsnet_node data){
+  Element_locT *new_element;
+ new_element = (Element_locT *) malloc (sizeof (Element_locT));
+  //   return -1;
+ // if ((new_element->data = (char *) malloc (50 * sizeof (char)) == NULL)
+  //    return -1;
+ new_element->data= data;
+
+  actual->next = new_element;
+  new_element->next = NULL;
+
+  locT->end = new_element;
+
+  locT ->len++;
+  return 0;
+}
+
+/* erase after a position */
+int sup_elem_locT ( int pos){
+	 // if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
+	  //   return -1;
+  int i;
+  Element_locT *actual;
+  Element_locT *sup_elemento;
+  actual = locT ->init;
+
+  for (i = 1; i < pos; ++i)
+    actual = actual->next;
+
+  sup_elemento = actual->next;
+  actual->next = actual->next->next;
+  if(actual->next == NULL)
+	  locT->end = actual;
+ // free (sup_elemento->data);
+  free (sup_elemento);
+  locT->len--;
+  return 0;
+}
+
+/* view List */
+void view_locT (){
+  Element_locT *actual;
+  actual = locT->init;
+  while (actual != NULL){
+      //printf ("%p - %s\n", actual, actual->data);
+      actual = actual->next;
+  }
+}
+
+
+bool exist_neighbours(){
+
+	  Element_locT *actual;
+	  actual = locT->init;
+	  while (actual != NULL){
+	      if (actual->data.IS_NEIGHBOUR){return(true);}else{ actual = actual->next;}
+	  }
+	  return(false);
+}
+
+
+
+
+
+List_lsp * init_lsp ()
+{
+	//List_lsp * lsp;
+	lsp ->init = NULL;
+	lsp ->end = NULL;
+	lsp ->len = 0;
+	return(lsp);
+}
+
+/*add at list end  */
+int add_end_lsp ( Element_lsp * actual, itsnet_node data){
+  Element_lsp *new_element;
+  new_element = (Element_lsp *) malloc (sizeof (Element_lsp));
+  //   return -1;
+ // if ((new_element->data = (char *) malloc (50 * sizeof (char)) == NULL)
+  //    return -1;
+ new_element->data= data;
+
+  actual->next = new_element;
+  new_element->next = NULL;
+
+  lsp ->end = new_element;
+
+  lsp ->len++;
+  return 0;
+}
+
+/* erase after a position */
+int sup_elem_lsp (int pos){
+	 // if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
+	  //   return -1;
+  int i;
+  Element_lsp *actual;
+  Element_lsp *sup_elemento;
+  actual = lsp ->init;
+
+  for (i = 1; i < pos; ++i)
+    actual = actual->next;
+
+  sup_elemento = actual->next;
+  actual->next = actual->next->next;
+  if(actual->next == NULL)
+	  lsp->end = actual;
+ // free (sup_elemento->data);
+  free (sup_elemento);
+  lsp->len--;
+  return 0;
+}
+
+/* view List */
+void view_lsp(){
+  Element_lsp *actual;
+  actual = lsp->init;
+  while (actual != NULL){
+   //   printf ("%p - %s\n", actual, actual->data);
+      actual = actual->next;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

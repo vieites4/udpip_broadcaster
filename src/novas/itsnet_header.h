@@ -140,7 +140,7 @@ typedef struct itsnet_position_vector itsnet_position_vector;
  */
 struct itsnet_common_header
 {
-	itsnet_protocol_info protocol_info;
+	unsigned char protocol_info[2]; //itsnet_protocol_info
 	itsnet_txpower txpower;
 	itsnet_flags flags;
 	itsnet_payload_lenght payload_lenght;
