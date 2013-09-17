@@ -24,7 +24,7 @@ struct tq_elem
 	void (*task)(struct tq_elem *);	/* pointer to task      */
 };
 
-struct itsnet_node
+struct itsnet_node_
 {
 
 	struct mac_addr mac_id;
@@ -37,7 +37,7 @@ struct itsnet_node
 	int Sequence_number;
 	//struct list_head list;   			/** list head 			*/
 };
-typedef struct itsnet_node itsnet_node;
+typedef struct itsnet_node_ itsnet_node;
 
 struct ElementList_locT
 {
@@ -75,19 +75,19 @@ typedef struct ListIdent_lsp List_lsp;
 bool exist_neighbours();
 
 int sup_elem_locT ( int pos);
-int add_end_locT ( Element_locT * actual, itsnet_node data);
+int add_end_locT ( List_locT * locT, itsnet_node data);
 
 List_locT * init_locT ();
 void view_locT ();
 
 
 int sup_elem_lsp ( int pos);
-int add_end_lsp ( Element_lsp * actual, itsnet_node data); //hai que cambiar o itsnet_node
+int add_end_lsp ( List_lsp * locT, itsnet_node data); //hai que cambiar o itsnet_node
 List_lsp * init_lsp ();
 
 void view_lsp ();
 
-List_lsp * startup1();
+List_locT * startup1();
 
 
 void LPV_update();

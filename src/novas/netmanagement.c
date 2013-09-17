@@ -6,11 +6,13 @@ List_locT * locT; //variable global
 List_lsp * lsp;
 
 
-List_lsp * startup1()
+List_locT * startup1()
 {
 
 	locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
-    lsp=init_lsp();
+
+
+
 //if (itsGnLocalAddrConfMethod=AUTO(0))
 //	autoaddrconf();
 //else
@@ -184,6 +186,7 @@ void LS(int option){
 List_locT * init_locT ()
 {
 	List_locT * locT;
+	locT = (List_locT *) malloc (sizeof (List_locT));
 	locT->init = NULL;
 	locT->end = NULL;
 	locT ->len = 0;
@@ -191,20 +194,25 @@ List_locT * init_locT ()
 }
 
 /*add at list end  */
-int add_end_locT ( Element_locT * actual, itsnet_node data){
+int add_end_locT ( List_locT * locT, itsnet_node data){
   Element_locT *new_element;
  new_element = (Element_locT *) malloc (sizeof (Element_locT));
-  //   return -1;
- // if ((new_element->data = (char *) malloc (50 * sizeof (char)) == NULL)
-  //    return -1;
+ //new_element->data = (itsnet_node *) malloc ( sizeof (itsnet_node));
+ if (new_element==NULL) printf( "No hay memoria disponible!\n");
+//new_element->data = (itsnet_node *) malloc ( sizeof (itsnet_node)) ;
  new_element->data= data;
+ new_element->next = NULL;
+ Element_locT *inicio = (Element_locT *) malloc (sizeof (Element_locT));
 
-  actual->next = new_element;
-  new_element->next = NULL;
+ if (locT->init==NULL) {
+     printf( "Primeiro elemento\n");
+     locT->init =  new_element;  } else {
+	 printf( "Non é primeiro elemento\n");
+	 locT->end->next = new_element;}
 
-  locT->end = new_element;
-
+ locT->end = new_element;
   locT ->len++;
+
   return 0;
 }
 
@@ -258,6 +266,7 @@ bool exist_neighbours(){
 List_lsp * init_lsp ()
 {
 	List_lsp * lsp;
+	lsp = (List_lsp *) malloc (sizeof (List_lsp));
 	lsp ->init = NULL;
 	lsp ->end = NULL;
 	lsp ->len = 0;
@@ -265,19 +274,20 @@ List_lsp * init_lsp ()
 }
 
 /*add at list end  */
-int add_end_lsp ( Element_lsp * actual, itsnet_node data){
+int add_end_lsp ( List_lsp * lsp, itsnet_node data){
+
   Element_lsp *new_element;
   new_element = (Element_lsp *) malloc (sizeof (Element_lsp));
-  //   return -1;
+  if (new_element==NULL) printf( "No hay memoria disponible!\n");
  // if ((new_element->data = (char *) malloc (50 * sizeof (char)) == NULL)
-  //    return -1;
  new_element->data= data;
-
-  actual->next = new_element;
-  new_element->next = NULL;
-
-  lsp ->end = new_element;
-
+ new_element->next = NULL;
+ if (lsp->init==NULL) {
+  	     printf( "Primeiro elemento\n");
+  	     lsp->init =  new_element;  } else {
+  		 printf( "Non é primeiro elemento\n");
+  		 lsp->end->next = new_element;}
+   lsp ->end = new_element;
   lsp ->len++;
   return 0;
 }
