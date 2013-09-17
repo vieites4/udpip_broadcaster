@@ -51,10 +51,13 @@
 
 //List_buf * UCb, BCb;
 /* main */
+
+int SN_g;//sequence number
 int main(int argc, char **argv)
 {
 	List_locT * locT_g; //variable global
 	List_lsp * lsp_g;
+
 	// 1) Runtime configuration is read from the CLI (POSIX.2).
 	log_app_msg(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
@@ -64,8 +67,8 @@ int main(int argc, char **argv)
 
 	//1.a Start-up
 	// address configuration
-	lsp_g=startup1();
-
+	locT_g=startup1();
+	lsp_g=init_lsp();
 
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
@@ -78,11 +81,7 @@ int main(int argc, char **argv)
 		printf("chego\n");
 		net_events = init_tx_raw_events(cfg->if_name, cfg->tx_port, cb_raw_sendto,broad); //aqui teño a posibilidade de facer q non sexa solo broadcast
 		printf("> RAW TX socket open, port = %d, fd = %d.\n", cfg->tx_port, net_events->socket_fd);
-
-
-
 		app_events= init_tx_udp_events(cfg->if_name, cfg->app_tx_port,cfg->app_inet_addr, cb_udp_sendto,broad); //aqui teño a posibilidade de facer q non sexa solo broadcast
-	//	cb_udp_sendto();
 		printf("fin\n");
 		printf("> UDP TX socket open, port = %d , fd= ", cfg->tx_port);//, net_events->socket_fd);//, fd = %d. // da erro o de net_events->socket_fd-> buscar a solución
 

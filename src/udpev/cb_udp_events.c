@@ -23,6 +23,7 @@
 #include "cb_udp_events.h"
 const unsigned char ETH_ADDR_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 /* cb_print_recvfrom */
+extern int SN_g;
 void cb_print_recvfrom(public_ev_arg_t *arg)
 {
 

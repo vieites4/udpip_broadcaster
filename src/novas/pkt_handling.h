@@ -20,7 +20,7 @@
  */
 
 
-void GeoUnicast(int option);
+//void GeoUnicast(int option);
 void TSB(public_ev_arg_t *arg);
 
 void SHB();
@@ -29,7 +29,7 @@ void GeoBroadcast();
 void GeoAnycast();
 void CommonHeader_processing();
 void determine_nexthop();
-
+void GeoUnicast();
 
 
 

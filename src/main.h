@@ -28,6 +28,38 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+
+#define itsGnLocalGnAddr 1
+#define itsGnLocalAddrConfMethod  0//Managed(1) Auto (0)
+#define itsGnProtocolVersion 0
+#define itsGnStationType 0 //0 vehicle 1 roadside
+#define itsGnMinimunUpdateFrequencyLPV 1000//0 roadside
+#define itsGnMaxSduSize 1398
+#define itsGnMaxGeoNetworkingHeaderSize 88
+#define itsGnLifetimeLocTE 20
+#define itsGnLocationServiceMaxRetrans 10
+#define itsGnLocationServiceRetransmitTimer 1000
+#define itsGnLocationServicePacketBufferSize 1024
+#define itsGnBeaconServiceRetransmitTimer 3000
+#define itsGnBeaconServiceMaxJitter itsGnMaxPacketLifetime/4
+#define itsGnDefaultHopLimit 10
+#define itsGnMaxPacketLifeTime 600
+#define itsGnMinPacketRepetitionInterval 100
+#define itsGnGeoUnicastForwardingAlgorithm 0//unspecified 0, greedy 1, cbf 2
+#define itsGnGeoBroadcastForwardingAlgorithm 0 //1 simple
+#define itsGnGeoUnicastCbfMinTime 1
+#define itsGnGeoUnicastCbfMaxTime 100
+#define itsGnDefaultMaxCommunicationRange 1000
+#define itsGnGeoAreaLineForwarding 0//1 enabled
+#define itsGnUcForwardingPacketBufferSize 256
+#define itsGnBcForwardingPacketBufferSize 1024
+#define itsGnCbForwardingPacketBufferSize 256
+#define itsGnTrafficClassRelevance 3
+#define itsGnTrafficClassReliability 10
+#define itsGnTrafficClassLatency 10
+
+
+
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdio.h>

@@ -5,7 +5,7 @@
 List_locT * locT; //variable global
 List_lsp * lsp;
 
-
+extern int SN_g;
 List_locT * startup1()
 {
 

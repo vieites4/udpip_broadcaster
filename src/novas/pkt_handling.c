@@ -9,8 +9,8 @@
 
 #include "pkt_handling.h"
 
-
-void GeoUnicast(int option){ //send(source),forward,reception(destination)
+extern int SN_g;
+/*void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
 	switch(option)
 				{
@@ -121,7 +121,7 @@ void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
 
 //};
-}
+}*/
 void TSB(public_ev_arg_t *arg){
 
 //	Create common header
@@ -157,17 +157,27 @@ void TSB(public_ev_arg_t *arg){
 	char *TS=NULL;
 	TS = (char *)malloc(4);
 	memcpy(TS,arg->data +12,4);
+	char *SN=NULL;
+	SN= (char *)malloc(2);
+	memcpy(SN,(char *)SN_g,2); //podía ser o que devolve a funcion.
+	SN_g++;
+	char *SO_pv=NULL;
+	SO_pv= (char *)malloc(28);
 
 
-	itsnet_tsb_t tsb_h;
+	itsnet_tsb_t tsb_h; //PENSO QUE É MELLOR CREAR UNHA CABECEIRA PROPIA PARA ISTO
 	tsb_h.source_position_vector.time_stamp=TS;
 	//tsb_h->source_position_vector.node_id=; SN
 	//...LPV
 	memcpy(tsb_h.payload,arg->data +20,ch.payload_lenght);
 
+//hoxe teño que deixar o paquete construido
+
 
 //NEIGHBOURS.
 	if  (exist_neighbours()== false){
+
+	//	add_end_lsp();
 
 		//buffer in BC AND omit next executions
 
@@ -191,6 +201,7 @@ void TSB(public_ev_arg_t *arg){
 void SHB(){}
 
 void GeoBroadcast(){}
+void GeoUnicast(){}
 void GeoAnycast(){}
 void CommonHeader_processing(){
 
