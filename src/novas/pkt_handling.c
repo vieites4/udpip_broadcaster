@@ -10,6 +10,7 @@
 #include "pkt_handling.h"
 
 extern int SN_g;
+extern List_lsp * lsp_bc_g;
 /*void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
 	switch(option)
@@ -122,8 +123,10 @@ extern int SN_g;
 
 //};
 }*/
-void TSB(public_ev_arg_t *arg){
+itsnet_packet TSB(public_ev_arg_t *arg){
+	itsnet_packet pkt;
 
+	//pkt = (itsnet_packet *)malloc(size(itsnet_packet));
 //	Create common header
 
 	itsnet_common_header ch;
@@ -145,7 +148,7 @@ void TSB(public_ev_arg_t *arg){
 	memcpy(HT,arg->data ,2);
 
 
-	memcpy(ch.protocol_info,HT,2); //te
+	memcpy(ch.protocol_info,HT,2);
 	ch.txpower=0;
 	ch.flags=atoi(FLAGS);
 	ch.payload_lenght=atoi(LEN);
@@ -157,19 +160,27 @@ void TSB(public_ev_arg_t *arg){
 	char *TS=NULL;
 	TS = (char *)malloc(4);
 	memcpy(TS,arg->data +12,4);
-	char *SN=NULL;
-	SN= (char *)malloc(2);
-	memcpy(SN,(char *)SN_g,2); //podía ser o que devolve a funcion.
-	SN_g++;
+	//char *SN=NULL;
+	//SN= (char *)malloc(2);
+	//memcpy(SN,(char *)SN_g,2); //podía ser o que devolve a funcion.
+
 	char *SO_pv=NULL;
 	SO_pv= (char *)malloc(28);
 
+	//itsnet_packet pkt;
+	itsnet_tsb_t tsb_h;
 
-	itsnet_tsb_t tsb_h; //PENSO QUE É MELLOR CREAR UNHA CABECEIRA PROPIA PARA ISTO
-	tsb_h.source_position_vector.time_stamp=TS;
+	tsb_h.sequencenumber=SN_g;
+	tsb_h.lt=atoi(TS);
+
+			SN_g++;
+	//tsb_h.source_position_vector=;
 	//tsb_h->source_position_vector.node_id=; SN
 	//...LPV
 	memcpy(tsb_h.payload,arg->data +20,ch.payload_lenght);
+
+	pkt.payload.itsnet_tsb=tsb_h;
+	pkt.common_header=ch;
 
 //hoxe teño que deixar o paquete construido
 
@@ -177,8 +188,10 @@ void TSB(public_ev_arg_t *arg){
 //NEIGHBOURS.
 	if  (exist_neighbours()== false){
 
-	//	add_end_lsp();
-
+		itsnet_packet pkt1;
+		// *pkt1=NULL;
+	//int i =add_end_lsp(lsp_bc_g, pkt);
+return(pkt1);
 		//buffer in BC AND omit next executions
 
 	}
@@ -195,7 +208,7 @@ void TSB(public_ev_arg_t *arg){
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 		 }
 
-
+return(pkt);
 }
 
 void SHB(){}

@@ -26,6 +26,7 @@
 #include "logger.h"
 #include "configuration.h"
 #include "novas/netmanagement.h"
+//#include <gpsd.h>
 
 //#include "novas/pkt_handling.h"
 
@@ -53,10 +54,11 @@
 /* main */
 
 int SN_g;//sequence number
+List_lsp * lsp_bc_g;
 int main(int argc, char **argv)
 {
 	List_locT * locT_g; //variable global
-	List_lsp * lsp_g;
+
 
 	// 1) Runtime configuration is read from the CLI (POSIX.2).
 	log_app_msg(">>> Reading configuration...\n");
@@ -68,7 +70,7 @@ int main(int argc, char **argv)
 	//1.a Start-up
 	// address configuration
 	locT_g=startup1();
-	lsp_g=init_lsp();
+	lsp_bc_g=init_lsp();
 
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;

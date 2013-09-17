@@ -77,6 +77,9 @@ typedef uint32_t itsnet_time_stamp;   /** time stamp at which the position was a
 
 typedef uint32_t itsnet_latitude;  /** latitude of the ITS station */
 typedef uint32_t itsnet_longitude;  /** longitude of the ITS station*/
+typedef uint16_t itsnet_sequencenumber;
+typedef uint8_t  itsnet_reserved;
+typedef uint8_t itsnet_lt;
 typedef uint16_t itsnet_speed;  /** speed of the ITS station*/
 typedef uint16_t itsnet_heading;  /** heading of the ITS station*/
 typedef uint16_t itsnet_altitude;    /** altitude of the ITS station*/
@@ -278,6 +281,9 @@ typedef struct itsnet_geobroadcast_t itsnet_geobroadcast_t;
  */
 struct itsnet_tsb_t
 {
+	itsnet_sequencenumber sequencenumber;
+	itsnet_lt lt;
+    itsnet_reserved reserved;
 	itsnet_position_vector source_position_vector;/** Source node position vector */
 	short payload[ITSNET_DATA_SIZE];/** data temp must be fixed*/
 };

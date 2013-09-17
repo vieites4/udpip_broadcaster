@@ -20,6 +20,7 @@
  * along with udpip-broadcaster.  If not, see <http://www.gnu.org/licenses/>.
  */
 //#include "udp_events.h"
+#include "novas/itsnet_header.h"
 #include "cb_udp_events.h"
 const unsigned char ETH_ADDR_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 /* cb_print_recvfrom */
@@ -213,13 +214,18 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	char *HT=NULL;
 	HT = (char *)malloc(2);
 	memcpy(HT,arg->data,2);
+	itsnet_packet * pkt;
+	if(memcmp(HT,tsb0,1)==0){
 
-	if(memcmp(HT,tsb0,1)){TSB(*arg);}
-	if(memcmp(HT,geounicast,1)){}
-	if(memcmp(HT,geounicast,1)){}
+	pkt = TSB(*arg);
+
+	}
+	if(memcmp(HT,geounicast,1)==0){}
+	if(memcmp(HT,geounicast,1)==0){}
 	// este é o punto onde teño que modificar os datos do buffer que envio.
 
-	memcpy(tx_frame->buffer.data,arg->data,arg->len);
+//	memcpy(tx_frame->buffer.data,arg->data,arg->len);
+memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 
 	// 2) broadcast application level UDP message to network level
 	int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
@@ -233,3 +239,5 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	printf("saio ben do cb_broadcast_recvfrom\n");
 
 }
+
+

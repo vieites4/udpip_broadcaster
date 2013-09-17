@@ -197,9 +197,7 @@ List_locT * init_locT ()
 int add_end_locT ( List_locT * locT, itsnet_node data){
   Element_locT *new_element;
  new_element = (Element_locT *) malloc (sizeof (Element_locT));
- //new_element->data = (itsnet_node *) malloc ( sizeof (itsnet_node));
  if (new_element==NULL) printf( "No hay memoria disponible!\n");
-//new_element->data = (itsnet_node *) malloc ( sizeof (itsnet_node)) ;
  new_element->data= data;
  new_element->next = NULL;
  Element_locT *inicio = (Element_locT *) malloc (sizeof (Element_locT));
@@ -274,12 +272,11 @@ List_lsp * init_lsp ()
 }
 
 /*add at list end  */
-int add_end_lsp ( List_lsp * lsp, itsnet_node data){
+int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 
   Element_lsp *new_element;
   new_element = (Element_lsp *) malloc (sizeof (Element_lsp));
   if (new_element==NULL) printf( "No hay memoria disponible!\n");
- // if ((new_element->data = (char *) malloc (50 * sizeof (char)) == NULL)
  new_element->data= data;
  new_element->next = NULL;
  if (lsp->init==NULL) {

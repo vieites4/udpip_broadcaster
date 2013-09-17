@@ -21,7 +21,7 @@
 
 
 //void GeoUnicast(int option);
-void TSB(public_ev_arg_t *arg);
+itsnet_packet TSB(public_ev_arg_t *arg);
 
 void SHB();
 

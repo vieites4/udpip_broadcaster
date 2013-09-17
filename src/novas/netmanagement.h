@@ -58,7 +58,7 @@ typedef struct List_locT List_locT;
 
 struct ElementList_lsp
 {
-  itsnet_node data;
+	itsnet_packet data;
   struct ElementList_lsp *next;
 };
 typedef struct ElementList_lsp Element_lsp;
@@ -82,7 +82,7 @@ void view_locT ();
 
 
 int sup_elem_lsp ( int pos);
-int add_end_lsp ( List_lsp * locT, itsnet_node data); //hai que cambiar o itsnet_node
+int add_end_lsp ( List_lsp * lsp, itsnet_packet data); //hai que cambiar o itsnet_node
 List_lsp * init_lsp ();
 
 void view_lsp ();
