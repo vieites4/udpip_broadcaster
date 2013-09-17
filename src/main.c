@@ -48,13 +48,13 @@
 //	fprintf(stdout, "Version = %s\n", __x_app_version);
 //}
 
-List_locT * locT; //variable global
-List_lsp * lsp;
+
 //List_buf * UCb, BCb;
 /* main */
 int main(int argc, char **argv)
 {
-	
+	List_locT * locT_g; //variable global
+	List_lsp * lsp_g;
 	// 1) Runtime configuration is read from the CLI (POSIX.2).
 	log_app_msg(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 
 	//1.a Start-up
 	// address configuration
-	startup1();
+	lsp_g=startup1();
 
 
 	// 2) Create UDP socket event managers:
@@ -93,12 +93,9 @@ int main(int argc, char **argv)
 	{
 
 		log_app_msg(">>> Opening UDP APP RX socket...\n");
-		app_events = init_app_udp_events(cfg->app_rx_port, inet_addr(cfg->app_address),cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom);//broadcast
+		app_events = init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom);//broadcast
 		log_app_msg(">>> UDP APP RX socket open!\n");
 		print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
-
-
-
 		log_app_msg(">>> Opening RAW NET RX socket...\n");
 		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom);
 		log_app_msg(">>> raw NET RX socket open!\n");

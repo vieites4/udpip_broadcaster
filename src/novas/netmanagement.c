@@ -1,8 +1,12 @@
-#include "../main.c"
+//#include "main.c"
 #include "netmanagement.h"
 //#include "novas/netmanagement.h"
-void startup1()
+
+List_locT * locT; //variable global
+List_lsp * lsp;
+List_lsp * startup1()
 {
+
 	locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
 
 //if (itsGnLocalAddrConfMethod=AUTO(0))
@@ -12,7 +16,7 @@ void startup1()
 printf("teño que enviar unha Beacon\n");
 //Beacon_send();
 //LPV_ini();//teñen que estar todos os elementos a 0-> páx 16
-
+return (locT);
 }
 
 mac_addr autoaddrconf(){
@@ -177,7 +181,7 @@ void LS(int option){
 
 List_locT * init_locT ()
 {
-	//List_locT * locT;
+	List_locT * locT;
 	locT->init = NULL;
 	locT->end = NULL;
 	locT ->len = 0;

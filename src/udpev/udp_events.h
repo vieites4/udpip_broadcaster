@@ -22,11 +22,11 @@
 
 #ifndef UDPEV_MANAGER_H_
 #define UDPEV_MANAGER_H_
-
+#include <sys/socket.h>
 #include <errno.h>
 #include <ev.h>
 #include <unistd.h>
-
+#include "cb_udp_events.h"
 #include "../configuration.h"
 #include "../execution_codes.h"
 
@@ -43,7 +43,12 @@
  * @brief Structure for holding public arguments to be passed to callback
  * 			functions.
  */
-typedef struct public_ev_arg
+//typedef struct public_ev_arg public_ev_arg_r;
+	/*!< Callback function. */
+
+#define LEN__PUBLIC_EV_ARG sizeof(public_ev_arg_t)
+
+ struct public_ev_arg
 {
 
 	int socket_fd;					/**< Socket file descriptor. */
@@ -66,10 +71,9 @@ typedef struct public_ev_arg
 
 	int __test_number;				/**< For testing, counts no tests. */
 
-} public_ev_arg_t;
-#define LEN__PUBLIC_EV_ARG sizeof(public_ev_arg_t)
-
-typedef void (*ev_cb_t)(public_ev_arg_t *);		/*!< Callback function. */
+};
+typedef struct public_ev_arg public_ev_arg_r;
+typedef void (*ev_cb_tr)(public_ev_arg_r *);
 
 /**
  * @struct ev_io_arg
@@ -79,9 +83,9 @@ typedef struct ev_io_arg
 {
 
 	struct ev_io watcher;					/**< Event watcher. */
-	ev_cb_t cb_specfic;						/**< Callback function. */
+	ev_cb_tr cb_specfic;						/**< Callback function. */
 	//void (*cb_function) (public_ev_arg_t *arg);	/**< Watcher callback. */
-	public_ev_arg_t public_arg;		/*!< Data for external callbacks. */
+	public_ev_arg_r public_arg;		/*!< Data for external callbacks. */
 
 } ev_io_arg_t;
 
@@ -96,7 +100,7 @@ typedef struct udp_events
 
 	int socket_fd;			/**< FD of the UDP socket. */
 
-	ev_cb_t cb_event;		/**< Callback frame rx function. */
+	ev_cb_tr cb_event;		/**< Callback frame rx function. */
 
 	struct ev_loop *loop;	/**< Default event loop. */
 	struct ev_io *watcher;	/**< Event watcher. */
@@ -128,10 +132,10 @@ udp_events_t *new_udp_events();
  */
 udp_events_t *init_tx_udp_events
 				(const char* if_name, const int port, in_addr_t addr
-						, const ev_cb_t callback, const bool broadcast);
+						, const ev_cb_tr callback, const bool broadcast);
 udp_events_t *init_tx_raw_events
 				(const char* if_name, const int port
-						, const ev_cb_t callback, const bool broadcast);
+						, const ev_cb_tr callback, const bool broadcast);
 
 /**
  * @brief Initializes a new structure for handling libev's transmission
@@ -145,9 +149,9 @@ udp_events_t *init_tx_raw_events
  * @return Manager's structure configured.
  */
 udp_events_t *init_rx_udp_events(const int port, const char* if_name
-									, const ev_cb_t callback);
+									, const ev_cb_tr callback);
 udp_events_t *init_rx_raw_events(const int port, const char* if_name
-									, const ev_cb_t callback);
+									, const ev_cb_tr callback);
 /**
  * @brief Initializes a new structure for handling libev's reception events
  * 			for an UDP socket which will trigger the immediate forwarding
@@ -161,12 +165,12 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name
  */
 udp_events_t *init_net_raw_events
 (	const int net_rx_port, const char* net_if_name,const char *app_fwd_addr, const int app_fwd_port,
-					const bool nec_mode,	const ev_cb_t callback)	;
+					const bool nec_mode,	const ev_cb_tr callback)	;
 
 udp_events_t *init_app_udp_events
 				(	const int app_rx_port,in_addr_t addr,
 					const char* if_name, const int net_fwd_port,
-					const ev_cb_t callback);
+					const ev_cb_tr callback);
 
 /**
  * @brief Releases all resources that previously were allocated for this
@@ -201,7 +205,7 @@ ev_io_arg_t *new_ev_io_arg();
  * @return A pointer to the initialized structure.
  */
 ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
-							, const ev_cb_t callback
+							, const ev_cb_tr callback
 							, const int port
 							, const char* if_name);
 
@@ -216,7 +220,7 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
  * @param if_name Name of the interface.
  */
 int init_watcher(udp_events_t *m
-				, const ev_cb_t callback, const int events
+				, const ev_cb_tr callback, const int events
 				, const int port, const char* if_name, in_addr_t addr);
 
 /**

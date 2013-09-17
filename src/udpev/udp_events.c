@@ -95,7 +95,7 @@ udp_events_t *init_tx_raw_events
 udp_events_t *init_rx_udp_events(const int port, const char* if_name
 									, const ev_cb_t callback)
 {
-
+	printf("hola1\n");
 	udp_events_t *s = new_udp_events();
 	s->socket_fd = open_receiver_udp_socket(port);
 	if ( init_watcher(s, callback, EV_READ, port, if_name,(in_addr_t) NULL) < 0 )
@@ -151,8 +151,9 @@ udp_events_t *init_app_udp_events
 {
 
 	//imos recibir unha request.
-
+	printf("hola\n");
 	udp_events_t *s = init_rx_udp_events(app_rx_port, if_name, callback);
+
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
 
 	arg->public_arg.local_addr = init_if_sockaddr_ll(if_name, net_fwd_port);

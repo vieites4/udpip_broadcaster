@@ -19,22 +19,26 @@
  * You should have received a copy of the GNU General Public License
  * along with udpip-broadcaster.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #ifndef CB_UDP_EVENTS_H_
 #define CB_UDP_EVENTS_H_
-#include "udp_events.h"
+#include <sys/socket.h>
+#include "udp_socket.h"
 #include <stdio.h>
 #include "__NEC__gnbtpapi_udp_msg.h"
-
+#include "udp_events.h"
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // LIBEV CALLBACK FUNCTIONS
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 /**
  * @brief Callback function that reads the given socket which has just been
  * 			put available for reading.
  * @param public_arg Public arguments for this callback function.
+ *
  */
+
+// typedef void  (* public_ev_arg)(ev_cb_t *)  ;
+typedef struct public_ev_arg public_ev_arg_t;
+typedef void (*ev_cb_t)(public_ev_arg_t *);
 void cb_print_recvfrom(public_ev_arg_t *arg);
 
 /**

@@ -128,7 +128,7 @@ void TSB(public_ev_arg_t *arg){
 
 	itsnet_common_header ch;
 
-	char *TC=NULL;
+	/*char *TC=NULL;
 	TC = (char *)malloc(1);
 	memcpy(TC,arg->data +6,1);
 	char *LEN=NULL;
@@ -183,8 +183,9 @@ void TSB(public_ev_arg_t *arg){
 	if(atoi(REP)==0){
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
+		 }
+*/
 
-	}
 }
 
 void SHB(){}

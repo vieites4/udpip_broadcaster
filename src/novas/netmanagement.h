@@ -87,7 +87,7 @@ List_lsp * init_lsp ();
 
 void view_lsp ();
 
-void startup1();
+List_lsp * startup1();
 
 
 void LPV_update();
