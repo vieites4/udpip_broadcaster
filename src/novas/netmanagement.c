@@ -4,11 +4,13 @@
 
 List_locT * locT; //variable global
 List_lsp * lsp;
+
+
 List_lsp * startup1()
 {
 
 	locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
-
+    lsp=init_lsp();
 //if (itsGnLocalAddrConfMethod=AUTO(0))
 //	autoaddrconf();
 //else
@@ -255,7 +257,7 @@ bool exist_neighbours(){
 
 List_lsp * init_lsp ()
 {
-	//List_lsp * lsp;
+	List_lsp * lsp;
 	lsp ->init = NULL;
 	lsp ->end = NULL;
 	lsp ->len = 0;

@@ -166,7 +166,7 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROAD,h_source);
 	//tx_frame->buffer.frame_type=0xdc05;
 	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
-	/*
+
 	const unsigned char tipoa[1]={0x01};
 	const unsigned char tipob[1]={0x02};
 	const unsigned char tsb0[1]={0x05};
@@ -217,7 +217,7 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	if(memcmp(HT,geounicast,1)){}
 	if(memcmp(HT,geounicast,1)){}
 	// este é o punto onde teño que modificar os datos do buffer que envio.
-*/
+
 	memcpy(tx_frame->buffer.data,arg->data,arg->len);
 
 	// 2) broadcast application level UDP message to network level
