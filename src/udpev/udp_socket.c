@@ -663,6 +663,8 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 		return(EX_ERR);
 	}
 
+
+
 	return(sent_bytes);
 
 }
@@ -748,15 +750,42 @@ int print_hex_data(const char *buffer, const int len)
 
 	for ( int i = 0; i < len; i++ )
 	{
-		if ( ( i != 0 ) && ( ( i % BYTES_PER_LINE ) == 0 ) )
-			{ log_app_msg("\n\t\t\t"); }
-		log_app_msg("%02X", 0xFF & (unsigned int)buffer[i]);
+		//if ( ( i != 0 ) && ( ( i % BYTES_PER_LINE ) == 0 ) )
+			//{// log_app_msg("\n\t\t\t"); } //liñas novas e tabs
+	//	log_app_msg("%02X", 0xFF & ( int)buffer[i]); // o 0xff é necesario
+		log_app_msg("%02X", 0xFF & ( int)buffer[i]); // o 0xff é necesario
 		if ( i < last_byte ) { log_app_msg(":"); }
 	}
 
 	return(EX_OK);
 
 }
+
+
+int sprint_hex_data(const char *buffer, const int len)
+{
+
+	char res[len];
+	int num;
+	int last_byte = len - 1;
+
+	for ( int i = 0; i < len; i++ )
+	{char hex[3] = {'\0'};
+		int go=0xFF & ( int)buffer[i];
+		sprintf (hex, "%02X",go);
+		printf(hex);printf("\n");
+		if (i==0){strcpy(res,hex);}else{strcat(res, hex);}	}
+	printf("%d\n",sizeof(res));
+	num=strtol(res, NULL,16);
+	return(num);
+
+}
+
+
+
+
+
+
 
 /* print_eth_address */
 void print_eth_address(const unsigned char *eth_address)

@@ -10,7 +10,6 @@
 #include "pkt_handling.h"
 
 extern int SN_g;
-extern List_lsp * lsp_bc_g;
 /*void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
 	switch(option)
@@ -123,43 +122,87 @@ extern List_lsp * lsp_bc_g;
 
 //};
 }*/
-itsnet_packet TSB(public_ev_arg_t *arg){
-	itsnet_packet pkt;
 
-	//pkt = (itsnet_packet *)malloc(size(itsnet_packet));
+
+
+/**
+ * @brief convert a hexidecimal string to a signed long
+ * will not produce or process negative numbers except
+ * to signal error.
+ *
+ * @param hex without decoration, case insensative.
+ *
+ * @return -1 on error, or result (max sizeof(long)-1 bits)
+ */
+
+
+
+
+itsnet_packet * TSB(void *dato){
+
 //	Create common header
-
+	itsnet_packet * pkt = NULL;
+	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	itsnet_common_header ch;
+//void *data=NULL;
+//data=(void *)malloc(20);
 
-	char *TC=NULL;
+printf("xa estou dentro de tsb \n");
+
+print_hex_data(dato,20);
+//memcpy(data,dato,20);
+
+char *TC=NULL;
 	TC = (char *)malloc(1);
-	memcpy(TC,arg->data +6,1);
-	char *LEN=NULL;
-	LEN = (char *)malloc(2);
-	memcpy(LEN,arg->data +4,2);
+	memcpy((void *) TC,dato +6,1);
+	//char *LEN=NULL;
+	//LEN = (char *)malloc(2);
+	char LEN[2] ; //colle perfectamente os valores sen facer a reserva de memoria
+	memcpy(LEN,dato +4,2);
 	char *FLAGS=NULL;
 	FLAGS = (char *)malloc(1);
-	memcpy(FLAGS,arg->data +3,1);
+	memcpy(FLAGS,dato +3,1);
 	char *HL=NULL;
 	HL = (char *)malloc(1);
-	memcpy(HL,arg->data +2,1);
+	memcpy(HL,dato +2,1);
 	char *HT=NULL;
 	HT = (char *)malloc(2);
-	memcpy(HT,arg->data ,2);
+	memcpy(HT,dato ,2);
+	printf("\n");
 
-
+	//print_hex_data( LEN, 2);
+	int res_hex;
+	res_hex=sprint_hex_data( LEN, 2);
+	printf("%d \n",res_hex);
+printf("\n");
+	//hex();
+printf("XA\n");
 	memcpy(ch.protocol_info,HT,2);
 	ch.txpower=0;
-	ch.flags=atoi(FLAGS);
-	ch.payload_lenght=atoi(LEN);
-	ch.traffic_class=atoi(FLAGS);
+	memcpy(ch.flags,FLAGS,1);
+//	ch.flags=atoi(FLAGS);
+//	ch.payload_lenght=;
+	//ch.payload_lenght
+
+	char LENPROBA[5]="03e8";
+	//int io=sizeof(LENPROBA); //o resultado é 5
+
+
+	//ch.payload_lenght=0;
+
+
+	printf("len: %ld\n", res_hex);//ch.payload_lenght);
+//	printf("%s \n",pasonum);
+
+
+	memcpy(ch.traffic_class,TC,1);
 	ch.hop_limit=atoi(HL);
 	//ch->forwarder_position_vector=;
 
 //create extended header
 	char *TS=NULL;
 	TS = (char *)malloc(4);
-	memcpy(TS,arg->data +12,4);
+	memcpy(TS,dato +12,4);
 	//char *SN=NULL;
 	//SN= (char *)malloc(2);
 	//memcpy(SN,(char *)SN_g,2); //podía ser o que devolve a funcion.
@@ -172,42 +215,42 @@ itsnet_packet TSB(public_ev_arg_t *arg){
 
 	tsb_h.sequencenumber=SN_g;
 	tsb_h.lt=atoi(TS);
-
+	ch.payload_lenght=0;
 			SN_g++;
 	//tsb_h.source_position_vector=;
 	//tsb_h->source_position_vector.node_id=; SN
 	//...LPV
-	memcpy(tsb_h.payload,arg->data +20,ch.payload_lenght);
+	memcpy(tsb_h.payload,dato +20,ch.payload_lenght);
 
-	pkt.payload.itsnet_tsb=tsb_h;
-	pkt.common_header=ch;
+	pkt->payload.itsnet_tsb=tsb_h;
+	pkt->common_header=ch;
 
 //hoxe teño que deixar o paquete construido
 
 
 //NEIGHBOURS.
-	if  (exist_neighbours()== false){
+//	if  (exist_neighbours()== false){
 
-		itsnet_packet pkt1;
+	itsnet_packet * pkt1 = NULL;
+	//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 		// *pkt1=NULL;
 	//int i =add_end_lsp(lsp_bc_g, pkt);
-return(pkt1);
+//return(pkt1);
 		//buffer in BC AND omit next executions
 
-	}
+	//}
 
 
 //REPETITION INTERVAL
 
 	char *REP=NULL;
 	REP = (char *)malloc(4);
-	memcpy(REP,arg->data +8,4);
-
+	memcpy(REP,dato +8,4);
 	if(atoi(REP)==0){
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 		 }
-
+	printf("saio de tsb\n");
 return(pkt);
 }
 

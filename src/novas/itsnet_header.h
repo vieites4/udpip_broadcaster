@@ -145,9 +145,9 @@ struct itsnet_common_header
 {
 	unsigned char protocol_info[2]; //itsnet_protocol_info
 	itsnet_txpower txpower;
-	itsnet_flags flags;
+	unsigned char flags [1];
 	itsnet_payload_lenght payload_lenght;
-	itsnet_traffic_class traffic_class;
+	unsigned char traffic_class [1];
 	itsnet_hop_limit hop_limit;
 	itsnet_position_vector forwarder_position_vector;/** The Position Vector of the last forwarder (node from which the packet comes)*/
 };

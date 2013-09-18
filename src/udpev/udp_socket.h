@@ -328,6 +328,7 @@ int print_hex_data(const char *buffer, const int len);
  * @brief Prints the given Ethernet address.
  * @param eth_address Ethernet address as an array.
  */
+int sprint_hex_data(const char *buffer, const int len);
 void print_eth_address(const unsigned char *eth_address);
 int set_ll_frame
 	(ll_frame_t *frame, const int frame_type, const int frame_len);

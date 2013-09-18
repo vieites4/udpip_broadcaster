@@ -21,7 +21,7 @@
 
 
 //void GeoUnicast(int option);
-itsnet_packet TSB(public_ev_arg_t *arg);
+itsnet_packet * TSB(void *data);
 
 void SHB();
 
@@ -30,7 +30,6 @@ void GeoAnycast();
 void CommonHeader_processing();
 void determine_nexthop();
 void GeoUnicast();
-
 
 
 
