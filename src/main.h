@@ -28,8 +28,17 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
 
-#define itsGnLocalGnAddr 1
+
+//MIB ATTRIBUTES
+
+//#define itsGnLocalGnAddr GNAD;// {"0x14","0x00","0x00","0x00","0x00","0x00","0x00","0x00"} //é do tipo itnet_node_id
 #define itsGnLocalAddrConfMethod  0//Managed(1) Auto (0)
 #define itsGnProtocolVersion 0
 #define itsGnStationType 0 //0 vehicle 1 roadside
@@ -59,17 +68,12 @@
 #define itsGnTrafficClassLatency 10
 
 
-
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "udpev/udp_events.h"
 #include "udpev/cb_udp_events.h"
 
 #include "execution_codes.h"
+
+
 
 /*!< Flag for activating the verbose mode. */
 extern bool __verbose;

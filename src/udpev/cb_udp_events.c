@@ -160,6 +160,9 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 
 	char h_source[ETH_ALEN];
 
+	//printf("CHEGOU ESTE DATOS\n");
+		//		print_hex_data(arg->data, arg->len);
+
 
 	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 
@@ -168,6 +171,8 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROAD,h_source);
 	//tx_frame->buffer.frame_type=0xdc05;
 	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
+char tipo[2]={0x07,0x07};
+	memcpy(tx_frame->buffer.header.type,tipo,2);
 
 	const unsigned char tipoa[1]={0x01};
 	const unsigned char tipob[1]={0x02};
@@ -185,35 +190,10 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	const unsigned char ls0[1]={0x06};
 	const unsigned char ls1[1]={0x16};
 
-	if (memcmp(arg->data +7,tipoa,1)==0)
-	{printf("é btp tipo a\n");
-
-	char *portoD=NULL;
-	char *portoO=NULL;
-	portoD = (char *)malloc(2);
-	portoO = (char *)malloc(2);
-	memcpy(portoO,arg->data + 16,2);
-	memcpy(portoD,arg->data + 18,2);
-	//print_hex_data(portoD,2);
-	//printf("\n");
-	memcpy(tx_frame->buffer.btp1, portoD,2);
-	memcpy(tx_frame->buffer.btp2, portoO,2);
-
-	}
-	else{
-		char *portoD=NULL;
-		portoD = (char *)malloc(2);
-		memcpy(portoD,arg->data + 18,2);
-		char *info_dest=NULL;
-		info_dest = (char *)malloc(2);
-		memset(info_dest,0,2);
-		memcpy(tx_frame->buffer.btp1, portoD,2);
-		memcpy(tx_frame->buffer.btp2, info_dest,2);
-	}
-	char *datos= (char *)malloc(20);
-			memcpy(datos,arg->data,20);
-			//print_hex_data(datos,20);
-			//printf("\n");
+	char *datos= (char *)malloc(arg->len);
+			memcpy(datos,arg->data,arg->len);
+//			print_hex_data(datos,20);
+//			printf("\n");
 
 //agora debo buscar o que pasa cando chega unha gn_data
 
@@ -228,6 +208,33 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	pkt = TSB(datos);
 	//printf("aqui chego1\n");
 	}
+
+	if (memcmp(arg->data +7,tipoa,1)==0)
+	{printf("é btp tipo a\n");
+
+	char *portoD=NULL;
+	char *portoO=NULL;
+	portoD = (char *)malloc(2);
+	portoO = (char *)malloc(2);
+	memcpy(portoO,arg->data + 16,2);
+	memcpy(portoD,arg->data + 18,2);
+	//print_hex_data(portoD,2);
+	//printf("\n");
+	memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
+	memcpy(pkt->payload.itsnet_tsb.payload.btp2,portoO,2);
+
+	}
+	else{
+		char *portoD=NULL;
+		portoD = (char *)malloc(2);
+		memcpy(portoD,arg->data + 18,2);
+		char *info_dest=NULL;
+		info_dest = (char *)malloc(2);
+		memset(info_dest,0,2);
+		memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
+		memcpy(pkt->payload.itsnet_tsb.payload.btp2,info_dest,2);
+
+	}
 	if(memcmp(HT,geounicast,1)==0){}
 	//if(memcmp(HT,geounicast,1)==0){}
 	// este é o punto onde teño que modificar os datos do buffer que envio.
@@ -237,6 +244,8 @@ memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 
 	// 2) broadcast application level UDP message to network level
 	int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
+
+	printf("ENVIO UN PAQUETE\n");
 	int i=print_hex_data(&tx_frame->buffer, arg->len);
 	printf("envio trama\n");
 

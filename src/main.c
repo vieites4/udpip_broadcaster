@@ -55,6 +55,7 @@
 
 int SN_g;//sequence number
 List_lsp * lsp_bc_g;
+itsnet_node_id GN_ADDR;
 int main(int argc, char **argv)
 {
 	List_locT * locT_g; //variable global

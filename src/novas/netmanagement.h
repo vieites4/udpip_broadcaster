@@ -14,6 +14,8 @@
 #include <string.h>
 #include <list.h>
 #include "itsnet_header.h"
+#include "main.h"
+
 
 
 struct tq_elem
@@ -95,5 +97,4 @@ void Time_update();
 
 void Beacon_send();
 void LS(int option);
-
 #endif /* NETMANAGEMENT_H_ */

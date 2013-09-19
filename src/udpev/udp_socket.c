@@ -773,9 +773,9 @@ int sprint_hex_data(const char *buffer, const int len)
 	{char hex[3] = {'\0'};
 		int go=0xFF & ( int)buffer[i];
 		sprintf (hex, "%02X",go);
-		printf(hex);printf("\n");
+		//printf(hex);printf("\n");
 		if (i==0){strcpy(res,hex);}else{strcat(res, hex);}	}
-	printf("%d\n",sizeof(res));
+//	printf("%d\n",sizeof(res));
 	num=strtol(res, NULL,16);
 	return(num);
 

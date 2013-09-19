@@ -1,13 +1,103 @@
 //#include "main.c"
+
+//2947 porto para gps, deixo correndo o sistema e
 #include "netmanagement.h"
+#include "/home/pc/Descargas/gpsd-3.9/gps.h"
+//#include <gpsd_config.h>
+//#include <gpsdclient.h>
 //#include "novas/netmanagement.h"
 
 List_locT * locT; //variable global
 List_lsp * lsp;
 
-extern int SN_g;
+//extern int SN_g;
+extern itsnet_node_id GN_ADDR;
+struct gps_data_t gpsdata;
+
+
+
 List_locT * startup1()
 {
+if (itsGnLocalAddrConfMethod==0){
+
+	printf("AUTOADDRESS CONFIGURATION\n");
+	//GN_ADDR = (itsnet_node_id)malloc(8);
+	GN_ADDR.id[0]=0x14;//itsGnLocalGnAddr(0);
+	GN_ADDR.id[1]=0x00;
+	GN_ADDR.id[2]=0x00;
+	GN_ADDR.id[3]=0x00;
+	GN_ADDR.id[4]=0x00;
+	GN_ADDR.id[5]=0x00;
+	GN_ADDR.id[6]=0x00;
+	GN_ADDR.id[7]=0x00;
+	//itsGnLocalGnAddr
+
+
+}else{
+
+	printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
+
+
+}
+
+
+//gpsd_activate();
+int af;
+
+af=gps_open("localhost","2947",&gpsdata);
+
+if (&gpsdata == NULL) {
+		g_print("Could not connect to gpsd!\n");
+
+	}
+
+printf("an %d\n",af);
+
+//if (gps_waiting(&gpsdata, 5000000)) {
+//af=gps_read(&gpsdata);
+//printf("an\n");
+//}
+//printf("o gps funciona %d\n",a);
+//gps_set_raw_hook(gpsdata, (void *)updateGPSdata);
+  //      gps_query(gpsdata, "w+x\n");
+
+
+(void) gps_stream(&gpsdata, WATCH_ENABLE, NULL);
+    /* Put this in a loop with a call to a high resolution sleep () in it. */
+    if (gps_waiting (&gpsdata, 500)) {
+        errno = 0;
+        if (gps_read (&gpsdata) == -1) {
+          } else {
+            /* Display data from the GPS receiver. */
+        	    char * datos;
+        	  datos=gps_data(&gpsdata);
+        	  printf("latitude %f\n",gpsdata.fix.latitude);
+            printf("\n");
+        }
+    }
+
+    /* When you are done... */
+//   gps_stream(&gpsdata, WATCH_ENABLE, datos);
+
+    gps_close (&gpsdata);
+
+
+
+
+
+
+//gps_stream(&gpsdata, WATCH_ENABLE,NULL);
+//printf("%d\n",gpsdata.PRN,);
+  //      gps_close(&gpsdata);
+
+
+//void * data;
+//bool a=gps_waiting(gpsdata,af);
+//printf("o gps funciona %d\n",a);
+//gps_stream(gpsdata, WATCH_ENABLE, data);
+//gps_close(gpsdata);
+
+
 
 	locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
 

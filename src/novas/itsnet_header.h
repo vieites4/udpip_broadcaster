@@ -38,7 +38,7 @@
 
 #include <stdint.h>
 
-
+//const uint8_t itsGnLocalGnAddr[8] = {0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 #define ITSNET_DATA_SIZE 1500
 
 
@@ -143,13 +143,14 @@ typedef struct itsnet_position_vector itsnet_position_vector;
  */
 struct itsnet_common_header
 {
-	unsigned char protocol_info[2]; //itsnet_protocol_info
-	itsnet_txpower txpower;
+	unsigned char version_nh[1]; //itsnet_protocol_info
+	unsigned char HT_HST[1];
+	unsigned char txpower[1];//reserved
 	unsigned char flags [1];
-	itsnet_payload_lenght payload_lenght;
+	unsigned char payload_lenght[2];
 	unsigned char traffic_class [1];
-	itsnet_hop_limit hop_limit;
-	itsnet_position_vector forwarder_position_vector;/** The Position Vector of the last forwarder (node from which the packet comes)*/
+	unsigned char hop_limit[1];
+	itsnet_position_vector forwarder_position_vector;/** The Position Vector of the last forwarder (node from which the packet comes)*/ //penso que vou ter que redefinilo porque o espacio que lle da é un cuarto do necesario
 };
 
 typedef struct itsnet_common_header itsnet_common_header;
@@ -279,16 +280,28 @@ typedef struct itsnet_geobroadcast_t itsnet_geobroadcast_t;
 /**
  *The structure describes itsnet_tsb packet
  */
-struct itsnet_tsb_t
+struct itsnet_btp
 {
-	itsnet_sequencenumber sequencenumber;
-	itsnet_lt lt;
-    itsnet_reserved reserved;
-	itsnet_position_vector source_position_vector;/** Source node position vector */
+	char btp1 [2];
+	char btp2[2];
 	short payload[ITSNET_DATA_SIZE];/** data temp must be fixed*/
 };
 
+typedef struct itsnet_btp itsnet_btp;
+struct itsnet_tsb_t
+{
+	itsnet_sequencenumber sequencenumber;
+	//itsnet_lt
+	unsigned char lt[1];
+    unsigned char reserved[1];
+	itsnet_position_vector source_position_vector;/** Source node position vector */
+	itsnet_btp payload;
+
+};
+
 typedef struct itsnet_tsb_t itsnet_tsb_t;
+
+
 
 /**
  *The structure describes the Location service request subtypes

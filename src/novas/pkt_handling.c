@@ -149,14 +149,12 @@ itsnet_packet * TSB(void *dato){
 
 printf("xa estou dentro de tsb \n");
 
-print_hex_data(dato,20);
+//print_hex_data(dato,20);
 //memcpy(data,dato,20);
 
-char *TC=NULL;
+	char *TC=NULL;
 	TC = (char *)malloc(1);
 	memcpy((void *) TC,dato +6,1);
-	//char *LEN=NULL;
-	//LEN = (char *)malloc(2);
 	char LEN[2] ; //colle perfectamente os valores sen facer a reserva de memoria
 	memcpy(LEN,dato +4,2);
 	char *FLAGS=NULL;
@@ -168,35 +166,18 @@ char *TC=NULL;
 	char *HT=NULL;
 	HT = (char *)malloc(2);
 	memcpy(HT,dato ,2);
-	printf("\n");
-
-	//print_hex_data( LEN, 2);
-	int res_hex;
-	res_hex=sprint_hex_data( LEN, 2);
-	printf("%d \n",res_hex);
-printf("\n");
-	//hex();
-printf("XA\n");
-	memcpy(ch.protocol_info,HT,2);
-	ch.txpower=0;
+	memcpy(ch.payload_lenght,LEN,2);
+	int lon_int=sprint_hex_data( LEN, 2);
+memcpy(ch.version_nh,dato +7,1);
+	memcpy(ch.HT_HST,HT,1);
+//	ch.txpower=0;
 	memcpy(ch.flags,FLAGS,1);
-//	ch.flags=atoi(FLAGS);
-//	ch.payload_lenght=;
-	//ch.payload_lenght
-
-	char LENPROBA[5]="03e8";
-	//int io=sizeof(LENPROBA); //o resultado é 5
-
-
-	//ch.payload_lenght=0;
-
-
-	printf("len: %ld\n", res_hex);//ch.payload_lenght);
-//	printf("%s \n",pasonum);
-
-
+	//char LENPROBA[5]="03e8";
 	memcpy(ch.traffic_class,TC,1);
-	ch.hop_limit=atoi(HL);
+	memcpy(ch.hop_limit,HL,1);
+
+	printf("TC mide %d ,PV mide %d\n", sizeof(TC), sizeof(itsnet_position_vector));
+
 	//ch->forwarder_position_vector=;
 
 //create extended header
@@ -209,18 +190,23 @@ printf("XA\n");
 
 	char *SO_pv=NULL;
 	SO_pv= (char *)malloc(28);
-
-	//itsnet_packet pkt;
 	itsnet_tsb_t tsb_h;
 
 	tsb_h.sequencenumber=SN_g;
-	tsb_h.lt=atoi(TS);
-	ch.payload_lenght=0;
+	printf("SN %d\n",tsb_h.sequencenumber);
+	char TS_default[1]={0xf2}; //habería que ver como facer a conversión de segundos a o sistema dun so byte que está formado polo multiplier e a base.
+
+	memcpy(tsb_h.lt,TS_default,1);
 			SN_g++;
+
 	//tsb_h.source_position_vector=;
 	//tsb_h->source_position_vector.node_id=; SN
 	//...LPV
-	memcpy(tsb_h.payload,dato +20,ch.payload_lenght);
+	memcpy(tsb_h.payload.payload,dato +20,lon_int);
+
+	//printf("METINO AQUI\n");
+		//	print_hex_data(tsb_h.payload.payload, lon_int);
+
 
 	pkt->payload.itsnet_tsb=tsb_h;
 	pkt->common_header=ch;
