@@ -91,10 +91,11 @@ void view_lsp ();
 
 List_locT * startup1();
 
-
-void LPV_update();
-void Time_update();
-
+itsnet_position_vector * LPV_ini();
+itsnet_position_vector * LPV_update();
 void Beacon_send();
+
+
+
 void LS(int option);
 #endif /* NETMANAGEMENT_H_ */
