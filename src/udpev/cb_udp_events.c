@@ -159,14 +159,7 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	}
 
 	char h_source[ETH_ALEN];
-
-	//printf("CHEGOU ESTE DATOS\n");
-		//		print_hex_data(arg->data, arg->len);
-
-
 	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-
-
 
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROAD,h_source);
 	//tx_frame->buffer.frame_type=0xdc05;
@@ -203,21 +196,37 @@ char tipo[2]={0x07,0x07};
 	itsnet_packet * pkt;
 	pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 
-	if(memcmp(HT,tsb0,1)==0){
+	char *portoD=NULL;
+		char *portoO=NULL;
+		portoD = (char *)malloc(2);
+		portoO = (char *)malloc(2);
+
+	if(memcmp(HT,tsb1,1)==0){
 	//	printf("entro en tsb\n");
 	pkt = TSB(datos);
+	memcpy(portoO,arg->data + 16,2);
+		memcpy(portoD,arg->data + 18,2);
 	//printf("aqui chego1\n");
-	}
+	} else if(memcmp(HT,tsb0,1)==0){
+		//	printf("entro en tsb\n");
+		pkt = SHB(datos);
+		memcpy(portoO,arg->data + 16,2);
+		memcpy(portoD,arg->data + 18,2);
+		//printf("aqui chego1\n");
+		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
+			//	printf("entro en tsb\n");
+			pkt = SHB(datos);
+			memcpy(portoO,arg->data + 32,2);
+			memcpy(portoD,arg->data + 34,2);
+			//printf("aqui chego1\n");
+			}
 
 	if (memcmp(arg->data +7,tipoa,1)==0)
 	{printf("é btp tipo a\n");
 
-	char *portoD=NULL;
-	char *portoO=NULL;
-	portoD = (char *)malloc(2);
-	portoO = (char *)malloc(2);
-	memcpy(portoO,arg->data + 16,2);
-	memcpy(portoD,arg->data + 18,2);
+
+
+
 	//print_hex_data(portoD,2);
 	//printf("\n");
 	memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
@@ -243,7 +252,7 @@ char tipo[2]={0x07,0x07};
 memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 
 	// 2) broadcast application level UDP message to network level
-	int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
+	int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
 
 	printf("ENVIO UN PAQUETE\n");
 	int i=print_hex_data(&tx_frame->buffer, arg->len);

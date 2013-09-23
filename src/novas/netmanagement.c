@@ -42,7 +42,7 @@ printf("teño que enviar unha Beacon\n");
 //Beacon_send();
 //LPV=LPV_ini();//teñen que estar todos os elementos a 0-> páx 16
 LPV= LPV_update( );
-
+printf("aqui chego1\n");
 return (locT);
 }
 

@@ -267,19 +267,7 @@ typedef struct itsnet_geoanycast_t itsnet_geoanycast_t;
 /**
  *The structure describes itsnet_geobroadcast packet
  */
-struct itsnet_geobroadcast_t
-{
-	itsnet_position_vector source_position_vector;/** Source node position vector */
-	itsnet_radius geo_area_size;/** radius/height,latitude and longitude (geo-area destination)   */
-	itsnet_latitude dest_latitude;
-	itsnet_longitude dest_longitude;
-	short payload[ITSNET_DATA_SIZE];/** data temp must be fixed*/
-};
-typedef struct itsnet_geobroadcast_t itsnet_geobroadcast_t;
 
-/**
- *The structure describes itsnet_tsb packet
- */
 struct itsnet_btp
 {
 	char btp1 [2];
@@ -288,6 +276,26 @@ struct itsnet_btp
 };
 
 typedef struct itsnet_btp itsnet_btp;
+struct itsnet_geobroadcast_t
+{
+
+	itsnet_sequencenumber sequencenumber;
+		unsigned char lt[1];
+		itsnet_position_vector source_position_vector;/** Source node position vector */
+		itsnet_latitude dest_latitude;
+			itsnet_longitude dest_longitude;
+	itsnet_radius distanceA;/** radius/height,latitude and longitude (geo-area destination)   */
+	itsnet_radius distanceB;/** radius/height,latitude and longitude (geo-area destination)   */
+	itsnet_radius angle; //orientation
+	  unsigned char reserved[1];
+			itsnet_btp payload;
+};
+typedef struct itsnet_geobroadcast_t itsnet_geobroadcast_t;
+
+/**
+ *The structure describes itsnet_tsb packet
+ */
+
 struct itsnet_tsb_t
 {
 	itsnet_sequencenumber sequencenumber;
@@ -301,6 +309,15 @@ struct itsnet_tsb_t
 
 typedef struct itsnet_tsb_t itsnet_tsb_t;
 
+
+struct itsnet_shb_t
+{
+
+	itsnet_btp payload;
+
+};
+
+typedef struct itsnet_shb_t itsnet_shb_t;
 
 
 /**
@@ -359,6 +376,8 @@ struct itsnet_packet
 		struct itsnet_geobroadcast_t itsnet_geobroadcast;/** Geo-broadcast */
 		struct itsnet_tsb_t itsnet_tsb;/** Topologically-scoped broadcast */
 		struct itsnet_ls_t itsnet_ls;/** Location service */
+		struct itsnet_shb_t itsnet_shb;
+
 	} payload;
 };
 

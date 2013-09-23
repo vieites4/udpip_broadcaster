@@ -12,20 +12,12 @@
 #include "udpev/udp_events.h"
 #include "netmanagement.h"
 #include "itsnet_header.h"
-/*
- * pkt_handling.c
- *
- *  Created on: 04/09/2013
- *      Author: pc
- */
 
-
-//void GeoUnicast(int option);
 itsnet_packet * TSB(void *data);
 
-void SHB();
+itsnet_packet * SHB(void *dato);
 
-void GeoBroadcast();
+itsnet_packet * GeoBroadcast(void *dato);
 void GeoAnycast();
 void CommonHeader_processing();
 void determine_nexthop();

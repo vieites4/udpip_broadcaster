@@ -240,9 +240,206 @@ memcpy(ch.version_nh,dato +7,1);
 return(pkt);
 }
 
-void SHB(){}
+itsnet_packet * SHB(void *dato){
 
-void GeoBroadcast(){}
+
+
+
+	//	Create common header
+		itsnet_packet * pkt = NULL;
+		pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		itsnet_common_header ch;
+	//void *data=NULL;
+	//data=(void *)malloc(20);
+
+	printf("xa estou dentro de tsb \n");
+
+	//print_hex_data(dato,20);
+	//memcpy(data,dato,20);
+
+		char *TC=NULL;
+		TC = (char *)malloc(1);
+		memcpy((void *) TC,dato +6,1);
+		char LEN[2] ; //colle perfectamente os valores sen facer a reserva de memoria
+		memcpy(LEN,dato +4,2);
+		char *FLAGS=NULL;
+		FLAGS = (char *)malloc(1);
+		memcpy(FLAGS,dato +3,1);
+		char *HL=NULL;
+		HL = (char *)malloc(1);
+		memcpy(HL,dato +2,1);
+		char *HT=NULL;
+		HT = (char *)malloc(2);
+		memcpy(HT,dato ,2);
+		memcpy(ch.payload_lenght,LEN,2);
+		int lon_int=sprint_hex_data( LEN, 2);
+	memcpy(ch.version_nh,dato +7,1);
+		memcpy(ch.HT_HST,HT,1);
+	//	ch.txpower=0;
+		memcpy(ch.flags,FLAGS,1);
+		//char LENPROBA[5]="03e8";
+		memcpy(ch.traffic_class,TC,1);
+		memcpy(ch.hop_limit,HL,1);
+
+		printf("TC mide %d ,PV mide %d\n", sizeof(TC), sizeof(itsnet_position_vector));
+
+		//ch->forwarder_position_vector=;
+
+	//create extended header
+
+		itsnet_shb_t shb_h;
+
+				SN_g++;
+
+		//tsb_h.source_position_vector=;
+		//tsb_h->source_position_vector.node_id=; SN
+		//...LPV
+		memcpy(shb_h.payload.payload,dato +20,lon_int);
+
+		//printf("METINO AQUI\n");
+			//	print_hex_data(tsb_h.payload.payload, lon_int);
+		pkt->common_header=ch;
+		pkt->payload.itsnet_shb=shb_h;
+
+	//hoxe teño que deixar o paquete construido
+
+
+	//NEIGHBOURS.
+	//	if  (exist_neighbours()== false){
+
+		itsnet_packet * pkt1 = NULL;
+		//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+			// *pkt1=NULL;
+		//int i =add_end_lsp(lsp_bc_g, pkt);
+	//return(pkt1);
+			//buffer in BC AND omit next executions
+
+		//}
+
+
+	//REPETITION INTERVAL
+
+		char *REP=NULL;
+		REP = (char *)malloc(4);
+		memcpy(REP,dato +8,4);
+		if(atoi(REP)==0){
+			//GARDAR O PAQUETE
+			//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
+			 }
+		printf("saio de shb\n");
+	return(pkt);
+
+
+}
+
+itsnet_packet * GeoBroadcast(void *dato){
+
+
+//	Create common header
+	itsnet_packet * pkt = NULL;
+	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+	itsnet_common_header ch;
+printf("xa estou dentro de geobroadcast \n");
+
+	char *TC=NULL;
+	TC = (char *)malloc(1);
+	memcpy((void *) TC,dato +6,1);
+	memcpy(ch.traffic_class,TC,1);
+	char LEN[2] ; //colle perfectamente os valores sen facer a reserva de memoria
+	memcpy(LEN,dato +4,2);
+	memcpy(ch.payload_lenght,LEN,2);
+	int lon_int=sprint_hex_data( LEN, 2);
+	char *FLAGS=NULL;
+	FLAGS = (char *)malloc(1);
+	memcpy(FLAGS,dato +3,1);
+	memcpy(ch.flags,FLAGS,1);
+	char *HL=NULL;
+	HL = (char *)malloc(1);
+	memcpy(HL,dato +2,1);
+	memcpy(ch.hop_limit,HL,1);
+	char *HT=NULL;
+	HT = (char *)malloc(2);
+	memcpy(HT,dato ,2);
+    memcpy(ch.version_nh,dato +7,1);
+	memcpy(ch.HT_HST,HT,1);
+	char *TS=NULL;
+	TS = (char *)malloc(4);
+	memcpy(TS,dato +12,4);
+	char TS_default[1]={0xf2}; //habería que ver como facer a conversión de segundos a o sistema dun so byte que está formado polo multiplier e a base.
+
+//	ch.txpower=0;
+	//ch->forwarder_position_vector=;
+
+//create extended header
+
+	char *SO_pv=NULL;
+	SO_pv= (char *)malloc(28);
+	itsnet_geobroadcast_t gbc_h;
+	memcpy(gbc_h.lt,TS_default,1);
+	gbc_h.sequencenumber=SN_g;
+	printf("SN %d\n",gbc_h.sequencenumber);
+		SN_g++;
+	char LAT[4] ;
+	memcpy(LAT,dato +16,4);
+	memcpy(gbc_h.dest_latitude,LAT,4);
+	char LON[4] ;
+	memcpy(LON,dato +20,4);
+	memcpy(gbc_h.dest_longitude,LON,4);
+	char dista[2] ;
+	memcpy(dista,dato +24,2);
+	memcpy(gbc_h.distanceA,dista,2);
+	char distb[2] ;
+	memcpy(distb,dato +26,2);
+	memcpy(gbc_h.distanceB,distb,2);
+	char angle[2] ;
+	memcpy(angle,dato +28,2);
+	memcpy(gbc_h.angle,angle,2);
+	//tsb_h.source_position_vector=;
+	//tsb_h->source_position_vector.node_id=; SN
+	//...LPV
+	memcpy(gbc_h.payload.payload,dato +36,lon_int);
+
+	//printf("METINO AQUI\n");
+		//	print_hex_data(tsb_h.payload.payload, lon_int);
+
+
+	pkt->payload.itsnet_geobroadcast=gbc_h;
+	pkt->common_header=ch;
+
+//hoxe teño que deixar o paquete construido
+
+
+//NEIGHBOURS.
+//	if  (exist_neighbours()== false){
+
+	itsnet_packet * pkt1 = NULL;
+	//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		// *pkt1=NULL;
+	//int i =add_end_lsp(lsp_bc_g, pkt);
+//return(pkt1);
+		//buffer in BC AND omit next executions
+
+	//}
+
+
+//REPETITION INTERVAL
+
+	char *REP=NULL;
+	REP = (char *)malloc(4);
+	memcpy(REP,dato +8,4);
+	if(atoi(REP)==0){
+		//GARDAR O PAQUETE
+		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
+		 }
+	printf("saio de tsb\n");
+return(pkt);
+}
+
+
+
+
+
+
 void GeoUnicast(){}
 void GeoAnycast(){}
 void CommonHeader_processing(){
