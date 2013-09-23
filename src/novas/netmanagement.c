@@ -4,6 +4,7 @@
 #include "netmanagement.h"
 #include "/home/pc/Descargas/gpsd-3.9/gps.h"
 #include "/home/pc/Descargas/gpsd-3.9/gpsdclient.h"
+const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 //#include <gpsd_config.h>
 //#include <gpsdclient.h>
 //#include "novas/netmanagement.h"
@@ -183,7 +184,59 @@ return(correct);
 
 }
 
-void Beacon_send(){
+void Beacon_send(public_ev_arg_t *arg){
+
+	char h_source[ETH_ALEN];
+	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
+
+	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
+	//tx_frame->buffer.frame_type=0xdc05;
+	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
+char tipo[2]={0x07,0x07};
+	memcpy(tx_frame->buffer.header.type,tipo,2);
+	const unsigned char beacon[1]={0x01};
+	version_nh * res;
+	itsnet_packet * pkt = NULL;
+	trafficclass_t *tc;
+	tc=(trafficclass_t *)malloc(1);
+	res= (version_nh *)malloc(1);
+	flags_t * flags;
+	flags= (flags_t *)malloc(1);
+	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		res->version=itsGnProtocolVersion;
+	res->nh=0;
+	memcpy(pkt->common_header.version_nh,res,1);
+	memcpy(pkt->common_header.HT_HST,beacon,1);
+memset(flags,0,1);
+flags->itsStation=itsGnStationType;
+memcpy(pkt->common_header.flags,flags,1);
+memset(pkt->common_header.payload_lenght,0,1);
+memset(pkt->common_header.txpower,0,1);
+memset(pkt->common_header.hop_limit,1,1);
+tc->reserved=0;
+tc->relevance=itsGnTrafficClassRelevance;
+tc->reliability=itsGnTrafficClassReliability;
+tc->latency=itsGnTrafficClassLatency;
+memset(pkt->common_header.traffic_class,tc,1);
+
+char *portoD=NULL;
+		char *portoO=NULL;
+		portoD = (char *)malloc(2);
+		portoO = (char *)malloc(2);
+
+		memcpy(portoO,arg->port,2);
+					memcpy(portoD,arg->forwarding_port,2);
+		memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
+			memcpy(pkt->payload.itsnet_tsb.payload.btp2,portoO,2);
+
+
+
+memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
+
+	// 2) broadcast application level UDP message to network level
+	int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
+
+ //valor do PV
 
 	//crear unha Beacon. é SO A COMMONHEADER
 

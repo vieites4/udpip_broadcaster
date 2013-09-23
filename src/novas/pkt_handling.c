@@ -168,7 +168,7 @@ printf("xa estou dentro de tsb \n");
 	memcpy(HT,dato ,2);
 	memcpy(ch.payload_lenght,LEN,2);
 	int lon_int=sprint_hex_data( LEN, 2);
-memcpy(ch.version_nh,dato +7,1);
+    memcpy(ch.version_nh,dato +7,1);
 	memcpy(ch.HT_HST,HT,1);
 //	ch.txpower=0;
 	memcpy(ch.flags,FLAGS,1);
@@ -243,19 +243,12 @@ return(pkt);
 itsnet_packet * SHB(void *dato){
 
 
-
-
 	//	Create common header
 		itsnet_packet * pkt = NULL;
 		pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 		itsnet_common_header ch;
-	//void *data=NULL;
-	//data=(void *)malloc(20);
 
-	printf("xa estou dentro de tsb \n");
-
-	//print_hex_data(dato,20);
-	//memcpy(data,dato,20);
+	printf("xa estou dentro de shb \n");
 
 		char *TC=NULL;
 		TC = (char *)malloc(1);
@@ -273,7 +266,7 @@ itsnet_packet * SHB(void *dato){
 		memcpy(HT,dato ,2);
 		memcpy(ch.payload_lenght,LEN,2);
 		int lon_int=sprint_hex_data( LEN, 2);
-	memcpy(ch.version_nh,dato +7,1);
+    	memcpy(ch.version_nh,dato +7,1);
 		memcpy(ch.HT_HST,HT,1);
 	//	ch.txpower=0;
 		memcpy(ch.flags,FLAGS,1);
@@ -399,14 +392,8 @@ printf("xa estou dentro de geobroadcast \n");
 	//...LPV
 	memcpy(gbc_h.payload.payload,dato +36,lon_int);
 
-	//printf("METINO AQUI\n");
-		//	print_hex_data(tsb_h.payload.payload, lon_int);
-
-
 	pkt->payload.itsnet_geobroadcast=gbc_h;
 	pkt->common_header=ch;
-
-//hoxe teño que deixar o paquete construido
 
 
 //NEIGHBOURS.
@@ -431,7 +418,16 @@ printf("xa estou dentro de geobroadcast \n");
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 		 }
-	printf("saio de tsb\n");
+
+	if (itsGnGeoBroadcastForwardingAlgorithm==0 || itsGnGeoBroadcastForwardingAlgorithm==1){
+
+		//execute simple geobroadcast forwarding algorithm
+
+		//implement F function to obtain LL_ADDR
+	}
+
+
+	printf("saio de geobroadcast\n");
 return(pkt);
 }
 
@@ -442,7 +438,7 @@ return(pkt);
 
 void GeoUnicast(){}
 void GeoAnycast(){}
-void CommonHeader_processing(){
+void CommonHeader_processing(public_ev_arg_t *arg){
 
 	////this is the first think we must do after reception of a GN pkt.
 

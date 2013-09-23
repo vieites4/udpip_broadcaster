@@ -123,6 +123,7 @@ if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, a
 		return;
 	}
 
+	//CommonHeader_processing(public_ev_arg_t *arg);
 
 
 	// 3) forward network level UDP message to application level
@@ -215,7 +216,7 @@ char tipo[2]={0x07,0x07};
 		//printf("aqui chego1\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			//	printf("entro en tsb\n");
-			pkt = SHB(datos);
+			pkt = GeoBroadcast(datos);
 			memcpy(portoO,arg->data + 32,2);
 			memcpy(portoD,arg->data + 34,2);
 			//printf("aqui chego1\n");
@@ -223,10 +224,6 @@ char tipo[2]={0x07,0x07};
 
 	if (memcmp(arg->data +7,tipoa,1)==0)
 	{printf("é btp tipo a\n");
-
-
-
-
 	//print_hex_data(portoD,2);
 	//printf("\n");
 	memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
@@ -234,8 +231,6 @@ char tipo[2]={0x07,0x07};
 
 	}
 	else{
-		char *portoD=NULL;
-		portoD = (char *)malloc(2);
 		memcpy(portoD,arg->data + 18,2);
 		char *info_dest=NULL;
 		info_dest = (char *)malloc(2);

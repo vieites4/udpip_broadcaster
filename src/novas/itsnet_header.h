@@ -111,16 +111,42 @@ typedef struct itsnet_node_id itsnet_node_id;
 struct itsnet_accuracy
 {
 unsigned char time_ac :	4; /**time accuracy */
-unsigned char pos_ac :
-	4; /**position accuracy*/
-unsigned char speed_ac :
-	3; /**speed accuracy */
-unsigned char head_ac :
-	3; /**heading accuracy */
-unsigned char alt_ac :
-	2; /**altitude accuracy */
+unsigned char pos_ac :	4; /**position accuracy*/
+unsigned char speed_ac :	3; /**speed accuracy */
+unsigned char head_ac :	3; /**heading accuracy */
+unsigned char alt_ac :	2; /**altitude accuracy */
 };
 typedef struct itsnet_accuracy itsnet_accuracy;
+
+
+struct version_nh
+{
+unsigned char version :	4;
+unsigned char nh :	4;
+
+};
+typedef struct version_nh version_nh;
+
+
+struct flags_t
+{
+unsigned char ceros :	6;
+unsigned char itsStation :	1;
+unsigned char cero :1;
+
+};
+typedef struct flags_t flags_t;
+
+struct trafficclass_t
+{
+unsigned char reserved :	1;
+unsigned char relevance :	3;
+unsigned char reliability :2;
+unsigned char latency :2;
+
+};
+typedef struct trafficclass_t trafficclass_t;
+
 
 /**
  *itsnet position vector

@@ -15,6 +15,7 @@
 #include <list.h>
 #include "itsnet_header.h"
 #include "main.h"
+//#include "udpev/cb_udp_events.c"
 
 
 
@@ -93,7 +94,7 @@ List_locT * startup1();
 
 itsnet_position_vector * LPV_ini();
 itsnet_position_vector * LPV_update();
-void Beacon_send();
+void Beacon_send(public_ev_arg_t *arg);
 
 
 
