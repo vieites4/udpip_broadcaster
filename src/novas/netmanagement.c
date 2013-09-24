@@ -64,9 +64,6 @@ itsnet_position_vector * LPV_update(){
 	    {
 	        if (gps_read (&gpsdata) == -1) {
 	          } else {
-
-
-	        //	  gps_poll(&gpsdata);
 	            /* Display data from the GPS receiver. */
 	if (gpsdata.fix.mode>=2){
 	printf("latitude %f\n",gpsdata.fix.latitude);
@@ -82,55 +79,81 @@ itsnet_position_vector * LPV_update(){
 	printf("HAcc %f\n",gpsdata.fix.ept);
 	printf("AltAcc %f\n",gpsdata.fix.epv);
 	printf("mode %d \n",gpsdata.fix.mode);
-	i=10;
-
-
-	LPV->altitude=gpsdata.fix.altitude; //metros en ambos casos
-
-	LPV->longitude=gpsdata.fix.longitude * 10000000;//recibe en degrees e quereo en 1/10 micro degrees
-	LPV->latitude=gpsdata.fix.latitude * 10000000;
-	LPV->time_stamp=gpsdata.fix.time *1000;// recibe Unix time in seconds with fractional part  e quere miliseconds
-	LPV->speed=gpsdata.fix.speed /100 ; //recibe metros por segundo e quere 1/100 m/s
 	LPV->node_id=GN_ADDR;
 	LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
-	LPV->accuracy.alt_ac=ceil(log2(gpsdata.fix.epv));
-	LPV->accuracy.pos_ac=ceil(log2(sqrt(pow(gpsdata.fix.epx,2)+(pow(gpsdata.fix.epy,2)))/4));
-	LPV->accuracy.speed_ac=ceil(log2(100*gpsdata.fix.eps));
+	char str1[2] = {'\0'};
+	char str2[2] = {'\0'};
+	char str3[2] = {'\0'};
+	char str4[2] = {'\0'};
+	char str5[2] = {'\0'};
+	char str6[9] = {'\0'};
+	char str7[9] = {'\0'};
+	char str8[9] = {'\0'};
+	char str9[5] = {'\0'};
+	char str10[5] = {'\0'};
+	//if (memcmp(gpsdata.fix.altitude,nan(sizeof(sou)))){printf("É UNHA NAAAAAN\n");}
+	sprintf(str1, "%01X",(int) ceil(log2(1000*gpsdata.fix.ept)));//ceil(log2(1000*gpsdata.fix.ept)));
+	sprintf(str2, "%01X",(int) ceil(log2(sqrt(pow(gpsdata.fix.epx,2)+(pow(gpsdata.fix.epy,2)))/4)));
+	sprintf(str3, "%01X",(int) ceil(log2(100*gpsdata.fix.eps)));
+	sprintf(str4, "%01X",(int) ceil(log2((1/0.005493247)*gpsdata.fix.ept)));
+	sprintf(str5, "%01X",(int) ceil(log2(gpsdata.fix.epv)));
+	sprintf(str6, "%08X",(int) ceil(gpsdata.fix.latitude * 10000000));
+	sprintf(str7, "%08X",(int) ceil(gpsdata.fix.longitude * 10000000));
+	sprintf(str8, "%08X",(int) ceil(gpsdata.fix.time *1000));
+	sprintf(str9, "%04X",(int)floor(gpsdata.fix.altitude));
+	sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
+	printf(str2);printf("\n");
+	printf(str3);printf("\n");
+	printf(str4);printf("\n");
+	printf(str5);printf("\n");
+	printf(str6);printf("\n");
+	printf(str7);printf("\n");
+	printf(str8);printf("\n");
+	printf(str9);printf("\n");
+	printf(str10);printf("\n");
 
-	char* cadena1,entero1_b;
-	cadena1=(char *) malloc (3*sizeof(char));
-	printf("an\n");
-	int entero1=ceil(log2((1/0.005493247)*gpsdata.fix.ept));
-	printf("an\n");
-	sprintf(cadena1, "%d", entero1);
-	printf("an1\n");
-	int entero_bin=strtol(cadena1,NULL,2);
-	printf("an2\n");
-	sprintf( entero1_b, "%d", entero_bin);
-	printf("an3\n");
-	printf(cadena1);
-	printf("an\n");
-	memcpy(LPV->accuracy.head_ac,entero1_b,3);
-	printf("an\n");
-	LPV->accuracy.time_ac=ceil(log2(1000*gpsdata.fix.ept));
-	printf("an\n");
-
-	printf("latitude %f\n",LPV->latitude);
-	printf("longitude %f\n",LPV->longitude);
-	printf("altitude %f\n",LPV->altitude);
-	printf("TST %f\n",LPV->time_stamp);
-	printf("speed %f\n",LPV->speed);
-	printf("TAcc %f\n",LPV->accuracy.time_ac);
-	printf("PosAcc %f\n",LPV->accuracy.pos_ac);
-	printf("SAcc %f\n",LPV->accuracy.speed_ac);
-	printf("HAcc %f\n",LPV->accuracy.head_ac);
-	printf("AltAcc %f\n",ceil(log2(1000*gpsdata.fix.ept)));
+	int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;
+	num1=strtol(str1,NULL,16);
+	printf("%d\n",num1);
+	num2=strtol(str2,NULL,16);
+	printf("%d\n",num2);
+	num3=strtol(str3,NULL,16);
+	printf("%d\n",num3);
+	num4=strtol(str4,NULL,16);
+	printf("%d\n",num4);
+	num5=strtol(str5,NULL,16);
+	printf("%d\n",num5);
+	int num6=strtol(str6,NULL,16);
+	int num7=strtol(str7,NULL,16);
+	int num8=strtol(str8,NULL,16);
+	int num9=strtol(str9,NULL,16);
+	int num10=strtol(str10,NULL,16);
 
 
+	LPV->latitude=num6;
+	LPV->longitude=num7;//recibe en degrees e quereo en 1/10 micro degrees
+	LPV->time_stamp=num8;// recibe Unix time in seconds with fractional part  e quere miliseconds
+	LPV->altitude=num9; //metros en ambos casos
+    LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
 
+	printf("latitude %d\n",LPV->latitude);
+	printf("longitude %d\n",LPV->longitude);
+	printf("altitude %d\n",LPV->altitude);//2
+	printf("TST %d\n",LPV->time_stamp);//4
+	printf("speed %d\n",LPV->speed);//2
 
+LPV->accuracy.alt_ac=num5;
+LPV->accuracy.pos_ac=num2;
+LPV->accuracy.speed_ac=num3;
+LPV->accuracy.head_ac=num4;
+LPV->accuracy.time_ac=num1;
+	printf("TAcc %d ",LPV->accuracy.time_ac," \n");
+	printf("PosAcc %d",LPV->accuracy.pos_ac," \n");
+	printf("SAcc %d",LPV->accuracy.speed_ac," \n");
+	printf("HAcc %d",LPV->accuracy.head_ac," \n");
+	printf("AltAcc %d",LPV->accuracy.alt_ac," \n");
 
-
+i=10;
 	} } }    }
 	gps_close (&gpsdata);
 

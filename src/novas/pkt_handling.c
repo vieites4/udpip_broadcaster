@@ -8,7 +8,7 @@
 
 
 #include "pkt_handling.h"
-
+extern itsnet_position_vector * LPV;
 extern int SN_g;
 /*void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
@@ -199,7 +199,7 @@ printf("xa estou dentro de tsb \n");
 	memcpy(tsb_h.lt,TS_default,1);
 			SN_g++;
 
-	//tsb_h.source_position_vector=;
+	tsb_h.source_position_vector=* LPV;
 	//tsb_h->source_position_vector.node_id=; SN
 	//...LPV
 	memcpy(tsb_h.payload.payload,dato +20,lon_int);

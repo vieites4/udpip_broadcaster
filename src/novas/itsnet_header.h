@@ -110,11 +110,11 @@ typedef struct itsnet_node_id itsnet_node_id;
 
 struct itsnet_accuracy
 {
-unsigned char time_ac :	4; /**time accuracy */
-unsigned char pos_ac :	4; /**position accuracy*/
-unsigned char speed_ac :	3; /**speed accuracy */
-unsigned char head_ac :	3; /**heading accuracy */
-unsigned char alt_ac :	2; /**altitude accuracy */
+unsigned int time_ac :	4; /**time accuracy */
+unsigned int pos_ac :	4; /**position accuracy*/
+unsigned int speed_ac :	3; /**speed accuracy */
+unsigned int head_ac :	3; /**heading accuracy */
+unsigned int alt_ac :	2; /**altitude accuracy */
 };
 typedef struct itsnet_accuracy itsnet_accuracy;
 
@@ -163,10 +163,24 @@ struct itsnet_position_vector
 	itsnet_accuracy accuracy;
 };
 typedef struct itsnet_position_vector itsnet_position_vector;
-
 /**
  *common header for all its net packets
  */
+
+//struct itsnet_position_vector
+//{
+//	itsnet_node_id node_id;
+//	unsigned char time_stamp:	4;   /** UTC time in seconds, when the GPS data was calculated,NOT the time this message was generated */
+//	unsigned char  latitude:	4;  /** the latitude of the global position in 1/8 microdegree */
+//	unsigned char  longitude:	4;  /** the longitude of the global position in 1/8 microdegree*/
+//	unsigned char speed:	2;  /** current speed in 0.01 meters per second*/
+//	unsigned char heading:	2;  /** current curse in 0.005493247 degrees*/
+//	unsigned char altitude:	2;    /** the altitude (meter over mean sea level)*/
+	//uint8_t altitude[2];
+////	itsnet_accuracy accuracy;
+//};
+//typedef struct itsnet_position_vector itsnet_position_vector;
+
 struct itsnet_common_header
 {
 	unsigned char version_nh[1]; //itsnet_protocol_info

@@ -19,7 +19,7 @@ itsnet_packet * SHB(void *dato);
 
 itsnet_packet * GeoBroadcast(void *dato);
 void GeoAnycast();
-void CommonHeader_processing();
+void CommonHeader_processing(public_ev_arg_t *arg);
 void determine_nexthop();
 void GeoUnicast();
 
