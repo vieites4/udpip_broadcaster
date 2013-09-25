@@ -86,6 +86,7 @@ udp_events_t *init_tx_raw_events
 
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
 	arg->public_arg.__test_number = 0;
+	//Beacon_send(arg);
 
 	return(s);
 
@@ -162,7 +163,7 @@ udp_events_t *init_app_udp_events
 	arg->public_arg.forwarding_addr= init_sockaddr_ll(addr,net_fwd_port);
 	arg->public_arg.forwarding_port = net_fwd_port;
 	arg->public_arg.print_forwarding_message = __verbose;
-
+	//Beacon_send(arg);
 	return(s);
 
 }

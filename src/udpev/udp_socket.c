@@ -35,7 +35,7 @@ int get_mac_address
 {
 
 	int len_if_name = -1;
-
+	printf("aqui1\n");
 	if ( if_name == NULL )		{ return(EX_NULL_PARAM); }
 //if ( mac == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
 
@@ -48,10 +48,10 @@ int get_mac_address
 
 	ifreq_t *ifr = new_ifreq();
 	strncpy(ifr->ifr_name, if_name, len_if_name);
+	printf("aqui1\n");
+	if ( ioctl(socket_fd, SIOCGIFHWADDR, ifr) < 0 )	{		log_sys_error("Could not get interface index");		return(EX_SYS);}
 
-	if ( ioctl(socket_fd, SIOCGIFHWADDR, ifr) < 0 )	{		log_sys_error("Could not get interface index");		return(EX_SYS);printf("no");}
-
-
+	printf("aqui2\n");
 	memcpy(mac, ifr->ifr_hwaddr.sa_data, ETH_ALEN);
 	return(EX_OK);
 

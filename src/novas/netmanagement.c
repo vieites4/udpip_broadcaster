@@ -39,10 +39,12 @@ if (itsGnLocalAddrConfMethod==0){
 	printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 }
 locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
-printf("teño que enviar unha Beacon\n");
-//Beacon_send();
+
+
 //LPV=LPV_ini();//teñen que estar todos os elementos a 0-> páx 16
+
 LPV= LPV_update( );
+
 printf("aqui chego1\n");
 return (locT);
 }
@@ -65,7 +67,7 @@ itsnet_position_vector * LPV_update(){
 	        if (gps_read (&gpsdata) == -1) {
 	          } else {
 	            /* Display data from the GPS receiver. */
-	if (gpsdata.fix.mode>=2){
+	if (gpsdata.fix.mode>=2 && 	(gpsdata.fix.epx>=0 && gpsdata.fix.epx<366)){
 	printf("latitude %f\n",gpsdata.fix.latitude);
 	printf("longitude %f\n",gpsdata.fix.longitude);
 	printf("altitude %f\n",gpsdata.fix.altitude);
@@ -81,79 +83,62 @@ itsnet_position_vector * LPV_update(){
 	printf("mode %d \n",gpsdata.fix.mode);
 	LPV->node_id=GN_ADDR;
 	LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
-	char str1[2] = {'\0'};
-	char str2[2] = {'\0'};
-	char str3[2] = {'\0'};
-	char str4[2] = {'\0'};
-	char str5[2] = {'\0'};
-	char str6[9] = {'\0'};
-	char str7[9] = {'\0'};
-	char str8[9] = {'\0'};
-	char str9[5] = {'\0'};
-	char str10[5] = {'\0'};
+	char str1[2] = {'\0'};	char str2[2] = {'\0'};	char str3[2] = {'\0'};	char str4[2] = {'\0'};	char str5[2] = {'\0'};	char str6[9] = {'\0'};	char str7[9] = {'\0'};
+	char str8[9] = {'\0'};	char str9[5] = {'\0'};	char str10[5] = {'\0'};
 	//if (memcmp(gpsdata.fix.altitude,nan(sizeof(sou)))){printf("É UNHA NAAAAAN\n");}
-	sprintf(str1, "%01X",(int) ceil(log2(1000*gpsdata.fix.ept)));//ceil(log2(1000*gpsdata.fix.ept)));
-	sprintf(str2, "%01X",(int) ceil(log2(sqrt(pow(gpsdata.fix.epx,2)+(pow(gpsdata.fix.epy,2)))/4)));
-	sprintf(str3, "%01X",(int) ceil(log2(100*gpsdata.fix.eps)));
-	sprintf(str4, "%01X",(int) ceil(log2((1/0.005493247)*gpsdata.fix.ept)));
-	sprintf(str5, "%01X",(int) ceil(log2(gpsdata.fix.epv)));
+	if(gpsdata.fix.ept==0){memcpy(str1,"0",1);}else {sprintf(str1, "%01X",(int) ceil(log2(1000*gpsdata.fix.ept)));}//ceil(log2(1000*gpsdata.fix.ept)));
+	if(gpsdata.fix.epx==0 && gpsdata.fix.epx==0){memcpy(str2,"0",1);}else {sprintf(str2, "%01X",(int) ceil(log2(sqrt(pow(gpsdata.fix.epx,2)+(pow(gpsdata.fix.epy,2)))/4)));}
+	if(gpsdata.fix.eps==0){memcpy(str3,"0",1);}else {sprintf(str3, "%01X",(int) ceil(log2(100*gpsdata.fix.eps)));}
+	if(gpsdata.fix.ept==0){memcpy(str4,"0",1);}else {sprintf(str4, "%01X",(int) ceil(log2((1/0.005493247)*gpsdata.fix.ept)));}
+	if(gpsdata.fix.epv==0){memcpy(str5,"0",1);}else {sprintf(str5, "%01X",(int) ceil(log2(gpsdata.fix.epv)));}
 	sprintf(str6, "%08X",(int) ceil(gpsdata.fix.latitude * 10000000));
 	sprintf(str7, "%08X",(int) ceil(gpsdata.fix.longitude * 10000000));
 	sprintf(str8, "%08X",(int) ceil(gpsdata.fix.time *1000));
 	sprintf(str9, "%04X",(int)floor(gpsdata.fix.altitude));
 	sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
-	printf(str2);printf("\n");
-	printf(str3);printf("\n");
-	printf(str4);printf("\n");
-	printf(str5);printf("\n");
-	printf(str6);printf("\n");
-	printf(str7);printf("\n");
-	printf(str8);printf("\n");
-	printf(str9);printf("\n");
-	printf(str10);printf("\n");
-
 	int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;
 	num1=strtol(str1,NULL,16);
-	printf("%d\n",num1);
 	num2=strtol(str2,NULL,16);
-	printf("%d\n",num2);
 	num3=strtol(str3,NULL,16);
-	printf("%d\n",num3);
 	num4=strtol(str4,NULL,16);
-	printf("%d\n",num4);
 	num5=strtol(str5,NULL,16);
-	printf("%d\n",num5);
 	int num6=strtol(str6,NULL,16);
 	int num7=strtol(str7,NULL,16);
 	int num8=strtol(str8,NULL,16);
 	int num9=strtol(str9,NULL,16);
 	int num10=strtol(str10,NULL,16);
-
-
 	LPV->latitude=num6;
 	LPV->longitude=num7;//recibe en degrees e quereo en 1/10 micro degrees
 	LPV->time_stamp=num8;// recibe Unix time in seconds with fractional part  e quere miliseconds
 	LPV->altitude=num9; //metros en ambos casos
     LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
-
+    LPV->accuracy.alt_ac=num5;
+    LPV->accuracy.pos_ac=num2;
+    LPV->accuracy.speed_ac=num3;
+    LPV->accuracy.head_ac=num4;
+    LPV->accuracy.time_ac=num1;
+    printf(str2);printf("\n");
+    printf(str3);printf("\n");
+    printf(str4);printf("\n");
+    printf(str5);printf("\n");
+    printf(str6);printf("\n");
+    printf(str7);printf("\n");
+    printf(str8);printf("\n");
+    printf(str9);printf("\n");
+    printf(str10);printf("\n");
+    printf("%d\n",num1);    printf("%d\n",num2);    printf("%d\n",num3);    printf("%d\n",num4);    printf("%d\n",num5);
 	printf("latitude %d\n",LPV->latitude);
 	printf("longitude %d\n",LPV->longitude);
 	printf("altitude %d\n",LPV->altitude);//2
 	printf("TST %d\n",LPV->time_stamp);//4
 	printf("speed %d\n",LPV->speed);//2
-
-LPV->accuracy.alt_ac=num5;
-LPV->accuracy.pos_ac=num2;
-LPV->accuracy.speed_ac=num3;
-LPV->accuracy.head_ac=num4;
-LPV->accuracy.time_ac=num1;
 	printf("TAcc %d ",LPV->accuracy.time_ac," \n");
 	printf("PosAcc %d",LPV->accuracy.pos_ac," \n");
 	printf("SAcc %d",LPV->accuracy.speed_ac," \n");
 	printf("HAcc %d",LPV->accuracy.head_ac," \n");
 	printf("AltAcc %d",LPV->accuracy.alt_ac," \n");
 
-i=10;
+	i=10;
 	} } }    }
 	gps_close (&gpsdata);
 
@@ -208,14 +193,13 @@ return(correct);
 }
 
 void Beacon_send(public_ev_arg_t *arg){
-
+	printf("teño que enviar unha Beacon\n");
 	char h_source[ETH_ALEN];
-	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-
+	//get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 	//tx_frame->buffer.frame_type=0xdc05;
 	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
-char tipo[2]={0x07,0x07};
+	char tipo[2]={0x07,0x07};
 	memcpy(tx_frame->buffer.header.type,tipo,2);
 	const unsigned char beacon[1]={0x01};
 	version_nh * res;
@@ -223,38 +207,41 @@ char tipo[2]={0x07,0x07};
 	trafficclass_t *tc;
 	tc=(trafficclass_t *)malloc(1);
 	res= (version_nh *)malloc(1);
+
 	flags_t * flags;
 	flags= (flags_t *)malloc(1);
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		res->version=itsGnProtocolVersion;
+	res->version=itsGnProtocolVersion;
 	res->nh=0;
+
 	memcpy(pkt->common_header.version_nh,res,1);
 	memcpy(pkt->common_header.HT_HST,beacon,1);
-memset(flags,0,1);
-flags->itsStation=itsGnStationType;
-memcpy(pkt->common_header.flags,flags,1);
-memset(pkt->common_header.payload_lenght,0,1);
-memset(pkt->common_header.txpower,0,1);
-memset(pkt->common_header.hop_limit,1,1);
-tc->reserved=0;
-tc->relevance=itsGnTrafficClassRelevance;
-tc->reliability=itsGnTrafficClassReliability;
-tc->latency=itsGnTrafficClassLatency;
-memset(pkt->common_header.traffic_class,tc,1);
+	memset(flags,0,1);
+	flags->itsStation=itsGnStationType;
+	memcpy(pkt->common_header.flags,flags,1);
+	memset(pkt->common_header.payload_lenght,0,1);
+	memset(pkt->common_header.txpower,0,1);
+	memset(pkt->common_header.hop_limit,1,1);
+	pkt->common_header.forwarder_position_vector=*LPV;
+	tc->reserved=0;
+	tc->relevance=itsGnTrafficClassRelevance;
+	tc->reliability=itsGnTrafficClassReliability;
+	tc->latency=itsGnTrafficClassLatency;
 
-char *portoD=NULL;
-		char *portoO=NULL;
-		portoD = (char *)malloc(2);
-		portoO = (char *)malloc(2);
+	memset(pkt->common_header.traffic_class,tc,1);
+	char *portoD=NULL;
+	char *portoO=NULL;
 
-		memcpy(portoO,arg->port,2);
-					memcpy(portoD,arg->forwarding_port,2);
-		memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
-			memcpy(pkt->payload.itsnet_tsb.payload.btp2,portoO,2);
+	portoD = (char *)malloc(2);
+	portoO = (char *)malloc(2);
 
-
-
-memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
+	memcpy(portoO,arg->port,2);
+	printf("aqui0\n");
+	memcpy(portoD,arg->forwarding_port,2);
+	printf("aqui0\n");
+	memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
+	memcpy(pkt->payload.itsnet_tsb.payload.btp2,portoO,2);
+	memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 
 	// 2) broadcast application level UDP message to network level
 	int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
@@ -268,7 +255,8 @@ memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 	//inicializar o timer para a transmission periodica de beacons Tbeacons
 
 	//recorda que hai que controlar sempre o Tbeacon!! //crear timer que fagan un evento ó terminar
-
+	printf("ENVIO UN PAQUETE\n");
+		int i=print_hex_data(&tx_frame->buffer, arg->len);
 
 }
 
@@ -520,36 +508,3 @@ void view_lsp(){
       actual = actual->next;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

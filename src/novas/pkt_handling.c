@@ -9,6 +9,8 @@
 
 #include "pkt_handling.h"
 extern itsnet_position_vector * LPV;
+
+extern List_locT * locT;
 extern int SN_g;
 /*void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
@@ -431,20 +433,58 @@ printf("xa estou dentro de geobroadcast \n");
 return(pkt);
 }
 
-
-
-
-
-
 void GeoUnicast(){}
 void GeoAnycast(){}
 void CommonHeader_processing(public_ev_arg_t *arg){
 
 	////this is the first think we must do after reception of a GN pkt.
+	char *dato= (char *)malloc(arg->len);
+	memcpy(dato,arg->data,arg->len);
 
 
-	//update PV in the SE LocTE with SE PV fields of CommonHeader
-	//IS_NEIGHBOUR=TRUE of SE LocTE
+
+	itsnet_position_vector * PV=NULL;//
+	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	memcpy( PV,dato +8,28);// ESTO TEÑO QUE METELO NO LOCT E POÑER O IS_NEIGHBOUR A TRUE
+	flags_t * FLAG=NULL;//
+	FLAG= (flags_t *)malloc(sizeof(flags_t));
+		memcpy( FLAG,dato +3,1);// ESTO TEÑO QUE METELO NO LOCT E POÑER O IS_NEIGHBOUR A TRUE
+
+
+	itsnet_node * data=NULL;//
+		data= (itsnet_node *)malloc(sizeof(itsnet_node));
+
+	data->IS_NEIGHBOUR=true;
+	data->pos_vector= * PV;
+	//data.mac_id=arg->local_addr;
+	data->node_id=PV->node_id;
+	//data.expires;
+	data->tstation=FLAG->itsStation;
+	//data.tqe;
+	data->LS_PENDING=false;
+	//segundo sexan dun tipo ou doutro terán SN no extended headerdata.Sequence_number=
+	add_end_locT (  locT, *data);
+
+
+
+	char *HT=NULL;
+		HT = (char *)malloc(2);
+		memcpy(HT,dato ,2);
+		int num=strtol(HT,NULL,16);
+
+		printf("%02x /n",num);
+		printf(HT);
+		int num1=0x0f00*num;
+		int num2=0x00f0*num;
+		if (num1==0 || num2==0){
+
+			//discard the packet
+				//break;
+
+		}
+
+
+
 	////flush pkt buffers
 	//if(SE LS_pending){
 	//flush the SE LS_pkt_buffer
@@ -459,15 +499,7 @@ void CommonHeader_processing(public_ev_arg_t *arg){
 	//flush the BC forwarding pkt buffer
 	//forward stored pkts //quere dicir que se envíen os pkts que quitamos mediante o flush??
 	//}
-	//if (NH field of CM=0){
-	//discard the packet
-	//break;
-	//}
 
-	//if (HT field of CM=0){
-	//discard the packet
-	//break;
-	//}
 
 }
 
@@ -493,4 +525,10 @@ void determine_nexthop(){
 //	return(LL_ADDR_NH);
 
 }
+
+itsnet_packet_f * TSB_f(void *data){}
+
+itsnet_packet_f * SHB_f(void *dato){}
+
+itsnet_packet_f * GeoBroadcast_f(void *dato){}
 

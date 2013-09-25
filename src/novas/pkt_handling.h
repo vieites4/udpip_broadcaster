@@ -18,6 +18,11 @@ itsnet_packet * TSB(void *data);
 itsnet_packet * SHB(void *dato);
 
 itsnet_packet * GeoBroadcast(void *dato);
+itsnet_packet_f * TSB_f(void *data);
+
+itsnet_packet_f * SHB_f(void *dato);
+
+itsnet_packet_f * GeoBroadcast_f(void *dato);
 void GeoAnycast();
 void CommonHeader_processing(public_ev_arg_t *arg);
 void determine_nexthop();

@@ -70,8 +70,8 @@ int main(int argc, char **argv)
 
 	//1.a Start-up
 	// address configuration
-	locT_g=startup1();
 	lsp_bc_g=init_lsp();
+	locT_g=startup1();
 
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;

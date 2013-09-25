@@ -29,15 +29,16 @@ struct tq_elem
 
 struct itsnet_node_
 {
-
-	struct mac_addr mac_id;
 	struct itsnet_node_id node_id;			/** node identity		*/
-	struct tq_elem tqe;                    /** Timer queue entry */
-	struct timespec expires;       		/** expire time for message 	*/
+	struct mac_addr mac_id;
+	unsigned char tstation:1;
 	struct itsnet_position_vector pos_vector;	/** position vector		*/
 	bool LS_PENDING;
 	bool IS_NEIGHBOUR;
 	int Sequence_number;
+	struct tq_elem tqe;                    /** Timer queue entry */
+	struct timespec expires;       		/** expire time for message 	*/
+
 	//struct list_head list;   			/** list head 			*/
 };
 typedef struct itsnet_node_ itsnet_node;

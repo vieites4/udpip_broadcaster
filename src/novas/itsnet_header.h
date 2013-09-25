@@ -195,6 +195,22 @@ struct itsnet_common_header
 
 typedef struct itsnet_common_header itsnet_common_header;
 
+
+struct itsnet_common
+{
+	unsigned char pkt_type[1]; //itsnet_protocol_info
+	unsigned char pkt_stype[1];
+	unsigned char hop_limit[1];
+	unsigned char flags [1];
+	unsigned char payload_lenght[2];
+	unsigned char traffic_class [1];
+	unsigned char btp[1];
+	itsnet_position_vector pv;
+};
+
+typedef struct itsnet_common itsnet_common;
+
+
 /**
 * value of packet type
 */
@@ -256,6 +272,43 @@ enum traffic_class
 /**
  *The structure describes itsnet_any packet
  */
+
+struct itsnet_btp
+{
+	char btp1 [2];
+	char btp2[2];
+	short payload[ITSNET_DATA_SIZE];/** data temp must be fixed*/
+};
+
+typedef struct itsnet_btp itsnet_btp;
+
+
+
+struct itsnet_geo_t
+{
+	 unsigned char repetitionInterval[4];
+	 unsigned char lt[4];
+	itsnet_radius distanceA;/** radius/height,latitude and longitude (geo-area destination)   */
+	itsnet_radius distanceB;/** radius/height,latitude and longitude (geo-area destination)   */
+	itsnet_radius angle; //orientation
+	  unsigned char reserved[1];
+	itsnet_btp payload;
+};
+
+typedef struct itsnet_geo_t itsnet_geo_t;
+
+struct itsnet_uni_t
+{
+
+
+	itsnet_btp payload;
+};
+
+typedef struct itsnet_uni_t itsnet_uni_t;
+
+
+
+
 struct itsnet_any_t
 {
 	itsnet_common_header header;
@@ -308,14 +361,7 @@ typedef struct itsnet_geoanycast_t itsnet_geoanycast_t;
  *The structure describes itsnet_geobroadcast packet
  */
 
-struct itsnet_btp
-{
-	char btp1 [2];
-	char btp2[2];
-	short payload[ITSNET_DATA_SIZE];/** data temp must be fixed*/
-};
 
-typedef struct itsnet_btp itsnet_btp;
 struct itsnet_geobroadcast_t
 {
 
@@ -422,6 +468,19 @@ struct itsnet_packet
 };
 
 typedef struct itsnet_packet itsnet_packet;
+
+struct itsnet_packet_f
+{
+	struct itsnet_common common_header;/** packet header */
+	union payload_pkt   /**this is to reserve the maximum space used by packets*/
+	{
+		struct itsnet_uni_t itsnet_unicast;/** unspecified */
+		struct itsnet_geo_t itsnet_geocast;/** Beacon */
+
+	} payload;
+};
+
+typedef struct itsnet_packet_f itsnet_packet_f;
 
 /**
  *The structure describes adress
