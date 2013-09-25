@@ -23,8 +23,7 @@
 #include "novas/itsnet_header.h"
 #include "cb_udp_events.h"
 const unsigned char ETH_ADDR_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
-const unsigned char tipoa[1]={0x01};
-const unsigned char tipob[1]={0x02};
+
 const unsigned char tsb0[1]={0x05};
 const unsigned char tsb1[1]={0x15};
 const unsigned char geobroad0[1]={0x04};
@@ -140,20 +139,19 @@ char *HT=NULL;
 	itsnet_packet_f * pkt;
 	pkt =(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	if(memcmp(HT,tsb1,1)==0){
-		//	printf("entro en tsb\n");
+printf("entro en tsb\n");
 		pkt = TSB_f(datos);
-
-		//printf("aqui chego1\n");
+printf("saio de tsb_f\n");
 		} else if(memcmp(HT,tsb0,1)==0){
-			//	printf("entro en tsb\n");
+printf("entro en shb\n");
 			pkt = SHB_f(datos);
 
-			//printf("aqui chego1\n");
+printf("saio de shb_f\n");
 			} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
-				//	printf("entro en tsb\n");
+printf("entro en geobroadcast\n");
 				pkt = GeoBroadcast_f(datos);
 
-				//printf("aqui chego1\n");
+printf("saio de geobroadcast_f\n");
 				}
 	// 2) in case the message comes from the localhost, it is discarded
 	//if ( blocked == true )
@@ -207,8 +205,6 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 char tipo[2]={0x07,0x07};
 	memcpy(tx_frame->buffer.header.type,tipo,2);
 
-
-
 	char *datos= (char *)malloc(arg->len);
 			memcpy(datos,arg->data,arg->len);
 //			print_hex_data(datos,20);
@@ -222,48 +218,24 @@ char tipo[2]={0x07,0x07};
 	itsnet_packet * pkt;
 	pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 
-	char *portoD=NULL;
-		char *portoO=NULL;
-		portoD = (char *)malloc(2);
-		portoO = (char *)malloc(2);
-
 	if(memcmp(HT,tsb1,1)==0){
 	//	printf("entro en tsb\n");
 	pkt = TSB(datos);
-	memcpy(portoO,arg->data + 16,2);
-		memcpy(portoD,arg->data + 18,2);
+
 	//printf("aqui chego1\n");
 	} else if(memcmp(HT,tsb0,1)==0){
 		//	printf("entro en tsb\n");
 		pkt = SHB(datos);
-		memcpy(portoO,arg->data + 16,2);
-		memcpy(portoD,arg->data + 18,2);
+
 		//printf("aqui chego1\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			//	printf("entro en tsb\n");
 			pkt = GeoBroadcast(datos);
-			memcpy(portoO,arg->data + 32,2);
-			memcpy(portoD,arg->data + 34,2);
+
 			//printf("aqui chego1\n");
 			}
 
-	if (memcmp(arg->data +7,tipoa,1)==0)
-	{printf("é btp tipo a\n");
-	//print_hex_data(portoD,2);
-	//printf("\n");
-	memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
-	memcpy(pkt->payload.itsnet_tsb.payload.btp2,portoO,2);
 
-	}
-	else{
-		memcpy(portoD,arg->data + 18,2);
-		char *info_dest=NULL;
-		info_dest = (char *)malloc(2);
-		memset(info_dest,0,2);
-		memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
-		memcpy(pkt->payload.itsnet_tsb.payload.btp2,info_dest,2);
-
-	}
 	if(memcmp(HT,geounicast,1)==0){}
 	//if(memcmp(HT,geounicast,1)==0){}
 	// este é o punto onde teño que modificar os datos do buffer que envio.
@@ -274,8 +246,8 @@ memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 	// 2) broadcast application level UDP message to network level
 	int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
 
-	//printf("ENVIO UN PAQUETE\n");
-	//int i=print_hex_data(&tx_frame->buffer, arg->len);
+	printf("ENVIO UN PAQUETE\n");
+	int i=print_hex_data(&tx_frame->buffer, arg->len);
 	printf("envio trama\n");
 
 	if ( arg->print_forwarding_message == true )

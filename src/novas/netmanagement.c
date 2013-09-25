@@ -91,24 +91,25 @@ itsnet_position_vector * LPV_update(){
 	if(gpsdata.fix.eps==0){memcpy(str3,"0",1);}else {sprintf(str3, "%01X",(int) ceil(log2(100*gpsdata.fix.eps)));}
 	if(gpsdata.fix.ept==0){memcpy(str4,"0",1);}else {sprintf(str4, "%01X",(int) ceil(log2((1/0.005493247)*gpsdata.fix.ept)));}
 	if(gpsdata.fix.epv==0){memcpy(str5,"0",1);}else {sprintf(str5, "%01X",(int) ceil(log2(gpsdata.fix.epv)));}
-	sprintf(str6, "%08X",(int) ceil(gpsdata.fix.latitude * 10000000));
-	sprintf(str7, "%08X",(int) ceil(gpsdata.fix.longitude * 10000000));
-	sprintf(str8, "%08X",(int) ceil(gpsdata.fix.time *1000));
+	if(gpsdata.fix.latitude<0){sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.latitude * -10000000));}else{sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.latitude * 10000000));}
+	if(gpsdata.fix.longitude<0){sprintf(str7, "%08X",(signed int) ceil(gpsdata.fix.longitude * -10000000));}else{sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.longitude * 10000000));}
+	int num0=(int)gpsdata.fix.time *1000;
+	sprintf(str8, "%08X",(int) ceil(num0%(4294967296)));
 	sprintf(str9, "%04X",(int)floor(gpsdata.fix.altitude));
 	sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
-	int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;
+	int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
 	num1=strtol(str1,NULL,16);
 	num2=strtol(str2,NULL,16);
 	num3=strtol(str3,NULL,16);
 	num4=strtol(str4,NULL,16);
 	num5=strtol(str5,NULL,16);
-	int num6=strtol(str6,NULL,16);
-	int num7=strtol(str7,NULL,16);
-	int num8=strtol(str8,NULL,16);
-	int num9=strtol(str9,NULL,16);
-	int num10=strtol(str10,NULL,16);
-	LPV->latitude=num6;
-	LPV->longitude=num7;//recibe en degrees e quereo en 1/10 micro degrees
+	num6=strtol(str6,NULL,16);
+	num7=strtol(str7,NULL,16);
+	num8=strtol(str8,NULL,16);
+	num9=strtol(str9,NULL,16);
+	num10=strtol(str10,NULL,16);
+	if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
+	if(gpsdata.fix.longitude<0){LPV->longitude=0xffff-num7;}else{LPV->longitude=num7;}
 	LPV->time_stamp=num8;// recibe Unix time in seconds with fractional part  e quere miliseconds
 	LPV->altitude=num9; //metros en ambos casos
     LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
@@ -122,11 +123,11 @@ itsnet_position_vector * LPV_update(){
     printf(str4);printf("\n");
     printf(str5);printf("\n");
     printf(str6);printf("\n");
-    printf(str7);printf("\n");
-    printf(str8);printf("\n");
+    printf("longitude ");printf(str7);printf("\n");
+    printf("tst ");printf(str8);printf("\n");
     printf(str9);printf("\n");
     printf(str10);printf("\n");
-    printf("%d\n",num1);    printf("%d\n",num2);    printf("%d\n",num3);    printf("%d\n",num4);    printf("%d\n",num5);
+    //printf("%d\n",num1);    printf("%d\n",num2);    printf("%d\n",num3);    printf("%d\n",num4);    printf("%d\n",num5);
 	printf("latitude %d\n",LPV->latitude);
 	printf("longitude %d\n",LPV->longitude);
 	printf("altitude %d\n",LPV->altitude);//2
@@ -391,9 +392,9 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
  Element_locT *inicio = (Element_locT *) malloc (sizeof (Element_locT));
 
  if (locT->init==NULL) {
-     printf( "Primeiro elemento\n");
+    // printf( "Primeiro elemento\n");
      locT->init =  new_element;  } else {
-	 printf( "Non é primeiro elemento\n");
+	 //printf( "Non é primeiro elemento\n");
 	 locT->end->next = new_element;}
 
  locT->end = new_element;
@@ -432,6 +433,26 @@ void view_locT (){
       //printf ("%p - %s\n", actual, actual->data);
       actual = actual->next;
   }
+}
+
+int search_in_locT (itsnet_node * data){
+  Element_locT *actual;
+  actual = locT->init;
+  int i=0;
+  while (actual != NULL){
+      //printf ("%p - %s\n", actual, actual->data);
+	  if (strcmp(actual->data.mac_id.address,data->mac_id.address)==0){
+		  i=1;
+if(((actual->data.pos_vector.time_stamp < data->pos_vector.time_stamp ) &&(data->pos_vector.time_stamp - actual->data.pos_vector.time_stamp <=4294967296/2))||((actual->data.pos_vector.time_stamp > data->pos_vector.time_stamp)&&(-data->pos_vector.time_stamp + actual->data.pos_vector.time_stamp >4294967296/2)))
+{
+actual->data.pos_vector=data->pos_vector;
+actual->data.expires.tv_sec= itsGnLifetimeLocTE;
+		  actual->data.IS_NEIGHBOUR=true;
+	  }
+	  }
+      actual = actual->next;
+  }
+  return(i);
 }
 
 

@@ -8,6 +8,9 @@
 
 
 #include "pkt_handling.h"
+
+const unsigned char tipoa[1]={0x01};
+const unsigned char tipob[1]={0x02};
 extern itsnet_position_vector * LPV;
 
 extern List_locT * locT;
@@ -154,6 +157,14 @@ printf("xa estou dentro de tsb \n");
 //print_hex_data(dato,20);
 //memcpy(data,dato,20);
 
+char *portoD=NULL;
+	char *portoO=NULL;
+	portoD = (char *)malloc(2);
+	portoO = (char *)malloc(2);
+memcpy(portoO,dato + 16,2);
+	memcpy(portoD,dato + 18,2);
+
+
 	char *TC=NULL;
 	TC = (char *)malloc(1);
 	memcpy((void *) TC,dato +6,1);
@@ -177,7 +188,7 @@ printf("xa estou dentro de tsb \n");
 	//char LENPROBA[5]="03e8";
 	memcpy(ch.traffic_class,TC,1);
 	memcpy(ch.hop_limit,HL,1);
-
+	ch.forwarder_position_vector=* LPV;
 	printf("TC mide %d ,PV mide %d\n", sizeof(TC), sizeof(itsnet_position_vector));
 
 	//ch->forwarder_position_vector=;
@@ -228,7 +239,23 @@ printf("xa estou dentro de tsb \n");
 
 	//}
 
+	if (memcmp(dato +7,tipoa,1)==0)
+		{printf("é btp tipo a\n");
+		//print_hex_data(portoD,2);
+		//printf("\n");
+		memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
+		memcpy(pkt->payload.itsnet_tsb.payload.btp2,portoO,2);
 
+		}
+		else{
+			memcpy(portoD,dato + 18,2);
+			char *info_dest=NULL;
+			info_dest = (char *)malloc(2);
+			memset(info_dest,0,2);
+			memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
+			memcpy(pkt->payload.itsnet_tsb.payload.btp2,info_dest,2);
+
+		}
 //REPETITION INTERVAL
 
 	char *REP=NULL;
@@ -244,7 +271,12 @@ return(pkt);
 
 itsnet_packet * SHB(void *dato){
 
-
+	char *portoD=NULL;
+		char *portoO=NULL;
+		portoD = (char *)malloc(2);
+		portoO = (char *)malloc(2);
+	memcpy(portoO,dato + 16,2);
+		memcpy(portoD,dato + 18,2);
 	//	Create common header
 		itsnet_packet * pkt = NULL;
 		pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -272,11 +304,11 @@ itsnet_packet * SHB(void *dato){
 		memcpy(ch.HT_HST,HT,1);
 	//	ch.txpower=0;
 		memcpy(ch.flags,FLAGS,1);
-		//char LENPROBA[5]="03e8";
+		char LENPROBA[3]="ff";
 		memcpy(ch.traffic_class,TC,1);
 		memcpy(ch.hop_limit,HL,1);
-
-		printf("TC mide %d ,PV mide %d\n", sizeof(TC), sizeof(itsnet_position_vector));
+ch.forwarder_position_vector=* LPV;
+//print_hex_data((char *) LPV,28);
 
 		//ch->forwarder_position_vector=;
 
@@ -294,6 +326,7 @@ itsnet_packet * SHB(void *dato){
 		//printf("METINO AQUI\n");
 			//	print_hex_data(tsb_h.payload.payload, lon_int);
 		pkt->common_header=ch;
+//memcpy(pkt->proba,LENPROBA,1);
 		pkt->payload.itsnet_shb=shb_h;
 
 	//hoxe teño que deixar o paquete construido
@@ -312,6 +345,23 @@ itsnet_packet * SHB(void *dato){
 		//}
 
 
+		if (memcmp(dato +7,tipoa,1)==0)
+		{//printf("é btp tipo a\n");
+		//print_hex_data(portoD,2);
+		//printf("\n");
+		memcpy(pkt->payload.itsnet_shb.payload.btp1,portoD,2);
+		memcpy(pkt->payload.itsnet_shb.payload.btp2,portoO,2);
+
+		}
+		else{
+			memcpy(portoD,dato + 18,2);
+			char *info_dest=NULL;
+			info_dest = (char *)malloc(2);
+			memset(info_dest,0,2);
+			memcpy(pkt->payload.itsnet_shb.payload.btp1,portoD,2);
+			memcpy(pkt->payload.itsnet_shb.payload.btp2,info_dest,2);
+
+		}
 	//REPETITION INTERVAL
 
 		char *REP=NULL;
@@ -328,7 +378,12 @@ itsnet_packet * SHB(void *dato){
 }
 
 itsnet_packet * GeoBroadcast(void *dato){
-
+	char *portoD=NULL;
+		char *portoO=NULL;
+		portoD = (char *)malloc(2);
+		portoO = (char *)malloc(2);
+		memcpy(portoO,dato + 32,2);
+		memcpy(portoD,dato + 34,2);
 
 //	Create common header
 	itsnet_packet * pkt = NULL;
@@ -366,7 +421,7 @@ printf("xa estou dentro de geobroadcast \n");
 	//ch->forwarder_position_vector=;
 
 //create extended header
-
+	ch.forwarder_position_vector=* LPV;
 	char *SO_pv=NULL;
 	SO_pv= (char *)malloc(28);
 	itsnet_geobroadcast_t gbc_h;
@@ -393,6 +448,7 @@ printf("xa estou dentro de geobroadcast \n");
 	//tsb_h->source_position_vector.node_id=; SN
 	//...LPV
 	memcpy(gbc_h.payload.payload,dato +36,lon_int);
+	gbc_h.source_position_vector=* LPV;
 
 	pkt->payload.itsnet_geobroadcast=gbc_h;
 	pkt->common_header=ch;
@@ -429,6 +485,29 @@ printf("xa estou dentro de geobroadcast \n");
 	}
 
 
+
+
+
+
+
+	if (memcmp(dato +7,tipoa,1)==0)
+	{printf("é btp tipo a\n");
+	//print_hex_data(portoD,2);
+	//printf("\n");
+	memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,portoD,2);
+	memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,portoO,2);
+
+	}
+	else{
+		memcpy(portoD,dato + 18,2);
+		char *info_dest=NULL;
+		info_dest = (char *)malloc(2);
+		memset(info_dest,0,2);
+		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,portoD,2);
+		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,info_dest,2);
+
+	}
+
 	printf("saio de geobroadcast\n");
 return(pkt);
 }
@@ -441,7 +520,7 @@ void CommonHeader_processing(public_ev_arg_t *arg){
 	char *dato= (char *)malloc(arg->len);
 	memcpy(dato,arg->data,arg->len);
 
-
+printf("entro en common header processing\n");
 
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
@@ -456,15 +535,15 @@ void CommonHeader_processing(public_ev_arg_t *arg){
 
 	data->IS_NEIGHBOUR=true;
 	data->pos_vector= * PV;
-	//data.mac_id=arg->local_addr;
+	itsnet_time_stamp tst=data->pos_vector.time_stamp;
+	//data->mac_id=arg->local_addr->sin_addr.s_addr; // teño que buscar esta dirección!
 	data->node_id=PV->node_id;
-	//data.expires;
+	data->expires.tv_sec= itsGnLifetimeLocTE;
 	data->tstation=FLAG->itsStation;
 	//data.tqe;
 	data->LS_PENDING=false;
 	//segundo sexan dun tipo ou doutro terán SN no extended headerdata.Sequence_number=
-	add_end_locT (  locT, *data);
-
+	if (search_in_locT(data)==0){add_end_locT (  locT,*data);}
 
 
 	char *HT=NULL;
@@ -472,8 +551,8 @@ void CommonHeader_processing(public_ev_arg_t *arg){
 		memcpy(HT,dato ,2);
 		int num=strtol(HT,NULL,16);
 
-		printf("%02x /n",num);
-		printf(HT);
+		//printf("%02x \n",num);
+		//printf(HT);
 		int num1=0x0f00*num;
 		int num2=0x00f0*num;
 		if (num1==0 || num2==0){
@@ -500,7 +579,7 @@ void CommonHeader_processing(public_ev_arg_t *arg){
 	//forward stored pkts //quere dicir que se envíen os pkts que quitamos mediante o flush??
 	//}
 
-
+		printf("saio de common header processing\n");
 }
 
 
@@ -528,7 +607,40 @@ void determine_nexthop(){
 
 itsnet_packet_f * TSB_f(void *data){}
 
-itsnet_packet_f * SHB_f(void *dato){}
+itsnet_packet_f * SHB_f(void *dato){
+
+
+	//	Create common header
+		itsnet_packet_f * pkt = NULL;
+		pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
+
+
+	printf("xa estou dentro de shb_f \n");
+
+		memcpy(pkt->common_header.btp,dato+7,1);
+		itsnet_position_vector * PV=NULL;//
+			PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	    memcpy(PV,dato +8,28);
+	    pkt->common_header.pv=*PV;
+		memcpy(pkt->common_header.traffic_class,dato +6,1);
+
+		char LEN[2] ; //colle perfectamente os valores sen facer a reserva de memoria
+		memcpy(LEN,dato +4,2);
+		int lon_int=sprint_hex_data( LEN, 2);
+		memcpy(pkt->common_header.payload_lenght,LEN,2);
+		memcpy(pkt->common_header.flags,dato +3,1);
+		memcpy(pkt->common_header.hop_limit,dato+2,1);
+		memcpy(pkt->payload.itsnet_unicast.payload,dato+36,lon_int);
+		memcpy(pkt->common_header.pkt_type,dato,1); //non teño moi claro que realmente sexan estes os datos que se esperan no pkt type e subtype
+		memcpy(pkt->common_header.pkt_stype,dato+1,1);
+
+		printf(pkt->common_header.payload_lenght); // este para probar se realmente podemos saltarnos o paso anterior no que se garda o valor, neste caso eliminalo tamén nos tsb,shb e gbroadcast do outro lado.
+
+		printf("saio de shb_f \n");
+	return(pkt);
+
+
+}
 
 itsnet_packet_f * GeoBroadcast_f(void *dato){}
 

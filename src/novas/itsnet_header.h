@@ -75,8 +75,8 @@ typedef uint32_t itsnet_time_stamp;   /** time stamp at which the position was a
 
 /*typedef char itsnet_node_id[8];*/   /** identifier of the ITS station (not yet defined)*/
 
-typedef uint32_t itsnet_latitude;  /** latitude of the ITS station */
-typedef uint32_t itsnet_longitude;  /** longitude of the ITS station*/
+typedef int32_t itsnet_latitude;  /** latitude of the ITS station */
+typedef int32_t itsnet_longitude;  /** longitude of the ITS station*/
 typedef uint16_t itsnet_sequencenumber;
 typedef uint8_t  itsnet_reserved;
 typedef uint8_t itsnet_lt;
@@ -110,11 +110,11 @@ typedef struct itsnet_node_id itsnet_node_id;
 
 struct itsnet_accuracy
 {
-unsigned int time_ac :	4; /**time accuracy */
-unsigned int pos_ac :	4; /**position accuracy*/
-unsigned int speed_ac :	3; /**speed accuracy */
-unsigned int head_ac :	3; /**heading accuracy */
-unsigned int alt_ac :	2; /**altitude accuracy */
+unsigned char time_ac :	4; /**time accuracy */
+unsigned char pos_ac :	4; /**position accuracy*/
+unsigned char speed_ac :	3; /**speed accuracy */
+unsigned char head_ac :	3; /**heading accuracy */
+unsigned char alt_ac :	2; /**altitude accuracy */
 };
 typedef struct itsnet_accuracy itsnet_accuracy;
 
@@ -292,7 +292,7 @@ struct itsnet_geo_t
 	itsnet_radius distanceB;/** radius/height,latitude and longitude (geo-area destination)   */
 	itsnet_radius angle; //orientation
 	  unsigned char reserved[1];
-	itsnet_btp payload;
+	  short payload[ITSNET_DATA_SIZE];
 };
 
 typedef struct itsnet_geo_t itsnet_geo_t;
@@ -301,7 +301,7 @@ struct itsnet_uni_t
 {
 
 
-	itsnet_btp payload;
+	short payload[ITSNET_DATA_SIZE];
 };
 
 typedef struct itsnet_uni_t itsnet_uni_t;
@@ -454,7 +454,7 @@ struct itsnet_packet
 {
 	struct itsnet_common_header common_header;/** packet header */
 	union payload_packet   /**this is to reserve the maximum space used by packets*/
-	{
+	{struct itsnet_shb_t itsnet_shb;
 		struct itsnet_any_t itsnet_any;/** unspecified */
 		struct itsnet_beacon_t itsnet_beacon;/** Beacon */
 		struct itsnet_unicast_t itsnet_unicast;/** Geo-unicast  */
@@ -462,7 +462,7 @@ struct itsnet_packet
 		struct itsnet_geobroadcast_t itsnet_geobroadcast;/** Geo-broadcast */
 		struct itsnet_tsb_t itsnet_tsb;/** Topologically-scoped broadcast */
 		struct itsnet_ls_t itsnet_ls;/** Location service */
-		struct itsnet_shb_t itsnet_shb;
+
 
 	} payload;
 };

@@ -83,7 +83,7 @@ int add_end_locT ( List_locT * locT, itsnet_node data);
 
 List_locT * init_locT ();
 void view_locT ();
-
+int search_in_locT (itsnet_node * data);
 
 int sup_elem_lsp ( int pos);
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data); //hai que cambiar o itsnet_node
