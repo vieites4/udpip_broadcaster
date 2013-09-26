@@ -126,7 +126,7 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 	{log_app_msg("cb_forward_recvfrom: <recv_msg> " \
 			"Could not receive message.\n");
 	return;}
-	printf("PAQUETE RECIBIDO POLO ENLACE\n");
+	//printf("PAQUETE RECIBIDO POLO ENLACE\n");
 	//	int i=print_hex_data(&arg->data, arg->len);
 	char *datos= (char *)malloc(arg->len);
 	memcpy(datos,arg->data,arg->len);
@@ -198,7 +198,7 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
 	}**/
-		printf("fin de cb_forward_recvfrom\n");
+	//	printf("fin de cb_forward_recvfrom\n");
 
 	}
 
@@ -280,7 +280,7 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 		//	print_hex_data(arg->data, arg->len);
 		//	log_app_msg("}\n");
 		//	}
-		printf("saio ben do cb_broadcast_recvfrom\n");
+	//	printf("saio ben do cb_broadcast_recvfrom\n");
 		//return();
 	}
 

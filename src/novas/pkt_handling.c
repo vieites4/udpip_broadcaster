@@ -15,118 +15,7 @@ extern itsnet_position_vector * LPV;
 extern List_locT * locT;
 extern int SN_g;
 
-/*void GeoUnicast(int option){ //send(source),forward,reception(destination)
 
-	switch(option)
-				{
-					case 0: //send
-					//	{
-					//{////if a GN-DATA.request arrive with a Pkt transport type=GeoUnicast and GN_ADDR=GN_ADDR in DE pv
-			//		LL_ADDR_NH=determine_nexthop();
-					////create GNPFU
-					// set Common Header fields
-					//set GeoUnicast Extended Header
-			//		if (LL_ADDR_NH=0){
-						//buffer pkt in UC_forwardin_pkt_buffer
-						//break;
-
-				//	}
-	//			if (Repetitional interval of GN-DATA.request){ // este terá que ser variable de entrada
-						//save GeoUnicast pkt
-						//retransmit pkt with period Repetition interval until Maximum lifetime[LT] (at GN-DATA.request)//tamén variable de entrada
-	//				}
-					//				if (Communication profile of GN-DATA.request= ITS-G5A){
-						//operations specified in i.2???????????
-					//				}
-					//enviar GN-PDU->LL, destination=LL_ADDR_NH
-
-
-						//break;
-				//	}
-					case 1: //forward
-				//	{ ////if a GN-DATA.request arrive with a Pkt transport type=GeoUnicast and GN_ADDR/=GN_ADDR in DE pv
-						////itsGnGeoUnicastForwardingAlgorithm. annex C
-						//------------------------x-----------------////inicio da parte común
-						CommonHeader_processing(); //114 de netmanagement.c
-						if( mngdaddrconf(3)){ //duplicate
-
-						}
-
-											//discard the packet
-											break;
-					//					}
-						//update SO PVlocT=PV do LS Reply Extended Header [algoritmo B.2]
-							//				if (so/=se){ IS_NEIGHBOUR=FALSE}
-
-						//								if (SO LS_pending){
-												//flush packet buffers. SO LS packet buffer
-												//forward the stored packets
-												// SO LS_pending=false;
-						//									}
-
-									//		if(UC_forwarding_pkt_buffer!=empty){//flush the UC_forwarding_pkt_buffer
-												//forward the stored packets
-
-									//		}
-					//------------------------x-----------------////fin da parte común
-						//update DE PVlocT=PV do LS Reply Extended Header [algoritmo B.2]
-					////update fields of Common Header
-					//HL--
-					//SE PV=LPV
-
-					// DE PV=DE PE of LocT (clause B.3)
-	//				if (HL=0){
-						//discard GN-PDU
-						//break;
-	//						}
-	//				LL_ADDR_NH= determine_nexthop();
-					//		if (LL_ADDR_NH=0){
-					//buffer pkt in UC_forwardin_pkt_buffer
-					//break;
-					//	}
-//					if (Communication profile of GN-DATA.request= ITS-G5A){
-											//operations specified in i.2???????????
-//										}
-					//enviar GN-PDU->LL, destination=LL_ADDR_NH
-
-	//					break;
-				//	}
-
-					default://reception
-					{
-						//------------------------x-----------------////inicio da parte común
-						CommonHeader_processing(); //114 de netmanagement.c
-						if( mngdaddrconf(3)){ //duplicate
-						//discard the packet
-						break;
-						}
-						//update SO PVlocT=PV do LS Reply Extended Header [algoritmo B.2]
-						//				if (so/=se){ IS_NEIGHBOUR=FALSE}
-
-	//					if (SO LS_pending){
-						//flush packet buffers. SO LS packet buffer
-						//forward the stored packets
-						// SO LS_pending=false;
-																		}
-//
-						//		if(UC_forwarding_pkt_buffer!=empty){//flush the UC_forwarding_pkt_buffer
-						//forward the stored packets
-
-						//		}
-						//------------------------x-----------------////fin da parte común
-
-						//pass the payload to upper protocol with GN-DATA.indication and parameters of table 22
-
-				//		break;
-				//	}
-
-
-				}
-
-
-
-//};
-}*/
 itsnet_packet * TSB(void *dato){
 
 //	Create common header
@@ -346,7 +235,7 @@ void CommonHeader_processing(public_ev_arg_t *arg){
 	////this is the first thing we must do after reception of a GN pkt.
 	char *dato= (char *)malloc(arg->len);
 	memcpy(dato,arg->data,arg->len);
-    printf("entro en common header processing\n");
+    //printf("entro en common header processing\n");
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy( PV,dato +8,28);
@@ -373,7 +262,10 @@ void CommonHeader_processing(public_ev_arg_t *arg){
 	int lon_int=sprint_hex_data( SN, 2);
 
     if ((memcmp(HT1,tsb1,1)==0)||(memcmp(HT1,geobroad2,1)==0)||(memcmp(HT1,geobroad1,1)==0)||(memcmp(HT1,geobroad0,1)==0))
-	{data->Sequence_number=lon_int;    printf("entro en asignacion do SN\n");}else{data->Sequence_number=0;    printf("entro en asignacion a 0\n");}
+	{data->Sequence_number=lon_int;    printf("entro en asignacion do SN\n");}else{data->Sequence_number=0;    //printf("entro en asignacion a 0\n");
+
+
+	}
 
 	data->LS_PENDING=false;
 	//segundo sexan dun tipo ou doutro terán SN no extended headerdata.Sequence_number=
@@ -401,7 +293,7 @@ void CommonHeader_processing(public_ev_arg_t *arg){
 	//forward stored pkts //quere dicir que se envíen os pkts que quitamos mediante o flush??
 	//}
 
-		printf("saio de common header processing\n");
+	//	printf("saio de common header processing\n");
 }
 
 

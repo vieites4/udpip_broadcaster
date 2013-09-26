@@ -92,7 +92,7 @@ void view_lsp ();
 List_locT * startup1();
 
 itsnet_position_vector * LPV_ini();
-itsnet_position_vector * LPV_update();
+itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
 void Beacon_send(public_ev_arg_t *arg);
 int duplicate_control(void * data);
 

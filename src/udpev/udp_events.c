@@ -254,7 +254,7 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
 void cb_common
 	(struct ev_loop *loop, struct ev_io *watcher, int revents)
 {
-printf("cb_common\n");
+//printf("cb_common\n");
 	if ( EV_ERROR & revents )
 		{ log_sys_error("Invalid event"); return; }
 

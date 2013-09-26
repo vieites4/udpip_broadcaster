@@ -4,6 +4,7 @@
 #include "netmanagement.h"
 #include "/home/pc/Descargas/gpsd-3.9/gps.h"
 #include "/home/pc/Descargas/gpsd-3.9/gpsdclient.h"
+#include <ev.h>
 const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 //#include <gpsd_config.h>
 //#include <gpsdclient.h>
@@ -11,14 +12,14 @@ const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 
 List_locT * locT; //variable global
 List_lsp * lsp;
-
+extern struct ev_loop * l_LPV;
+extern ev_timer t_LPV;
 //extern int SN_g;
 extern itsnet_node_id GN_ADDR;
 
-//static struct fixsource_t source;
 itsnet_position_vector * LPV;
 struct gps_data_t gpsdata;
-
+int revents;
 List_locT * startup1()
 {
 if (itsGnLocalAddrConfMethod==0){
@@ -39,18 +40,20 @@ if (itsGnLocalAddrConfMethod==0){
 	printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 }
 locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
+LPV= LPV_update(l_LPV,&t_LPV, revents );
 
 
-//LPV=LPV_ini();//teñen que estar todos os elementos a 0-> páx 16
 
-LPV= LPV_update( );
+
+//ev_timer_again(*l_LPV,t_LPV);
+//ev_run(l_LPV,0);
 
 printf("aqui chego1\n");
 return (locT);
 }
 
-itsnet_position_vector * LPV_update(){
-	itsnet_position_vector * LPV;
+itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
+	//itsnet_position_vector * LPV;
 	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	gps_open("localhost","2947",&gpsdata);
 
@@ -72,7 +75,7 @@ itsnet_position_vector * LPV_update(){
 	            /* Display data from the GPS receiver. */
 	if (gpsdata.fix.mode>=2 && 	(gpsdata.fix.epx>=0 && gpsdata.fix.epx<366) && 	(gpsdata.fix.epy>=0 && gpsdata.fix.epy<366) && 	(gpsdata.fix.epv>=0 && gpsdata.fix.epv<366)){
 
-		printf ("ENTRO NO if do read\n");
+	/**	printf ("ENTRO NO if do read\n");
 	printf("latitude %f\n",gpsdata.fix.latitude);
 	printf("longitude %f\n",gpsdata.fix.longitude);
 	printf("altitude %f\n",gpsdata.fix.altitude);
@@ -85,7 +88,7 @@ itsnet_position_vector * LPV_update(){
 	printf("SAcc %f\n",gpsdata.fix.eps);
 	printf("HAcc %f\n",gpsdata.fix.ept);
 	printf("AltAcc %f\n",gpsdata.fix.epv);
-	printf("mode %d \n",gpsdata.fix.mode);
+	printf("mode %d \n",gpsdata.fix.mode);**/
 	LPV->node_id=GN_ADDR;
 	LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
 	char str1[2] = {'\0'};	char str2[2] = {'\0'};	char str3[2] = {'\0'};	char str4[2] = {'\0'};	char str5[2] = {'\0'};	char str6[9] = {'\0'};	char str7[9] = {'\0'};
@@ -268,115 +271,6 @@ void Beacon_send(public_ev_arg_t *arg){
 }
 
 
-void LS(int option){
-	switch(option)
-				{
-					case 1: //initial transmission of LS Request
-					{
-						printf("initial LS Request\n");
-//						if (LS_pending){
-//							pkt2buffer();
-//							break;
-//										}
-			//			else{printf("envío o paquete LS request");
-					     //start timer Tls_gnaddr= itsGnLocationServiceRetransmitTimer"
-						//initialize the retransmit counter RTCls_gnaddr==0;
-						//add the packet in LocTE and set LS_pending=true
-				//
-				//		}
-						break;
-					}
-					case 2://LS Request re-transmission
-					{
-						//aquí entraríamos no caso de que o timer Tls_gnaddr expirara
-
-
-//			if( RTCls_gnaddr<itsGnLocationServiceMaxRetrans){
-//
-			//reenviar o packete LS Request como un TSB.
-			//restart Tls_gnaddr=itsGnLocationServiceRetransmitTimer
-			//RTCls_gnaddr++;
-
-//			}
-//			else{
-				//flush the LS packet buffer for the sought GN_ADDR and discard the stored packets;
-				//remove the LocTE for the sought(desexado) GN_ADDR
-
-//			}
-
-			printf("LS Request re-transmission");
-
-
-						break;
-
-					}
-					case(3)://receive LS Reply //sería a opcion 3
-					{
-						//if the source receives a LS Reply packet for the sought GN_ADDR
-
-						//------------------------x-----------------////inicio da parte común
-				//Common Header processing
-				if( mngdaddrconf(3)){
-
-					//discard the packet
-				//	break;
-				}else{
-
-//update SO PVlocT=PV do LS Reply Extended Header [algoritmo B.2]
-	//				if (so/=se){ IS_NEIGHBOUR=FALSE}
-
-				//	if (SO LS_pending){
-						//flush packet buffers. SO LS packet buffer
-						//forward the stored packets
-						// SO LS_pending=false;
-						}
-
-			//		if(UC_forwarding_pkt_buffer!=empty){//flush the UC_forwarding_pkt_buffer
-						//forward the stored packets
-
-			//		}
-					//------------------------x-----------------////fin da parte común
-
-					//flush LS_pkt_buffer for the sought GN_ADDR & forward the stored packets
-					//LS_pending=false of GN_ADDR
-					//stop Tls_gnaddr
-					//reset RTCls_gnaddr
-
-
-					//}
-
-
-					printf("LS Reply\n");
-
-										break;
-
-
-
-				}
-
-
-					default:{ //recepción da LS Request
-						//despois de comprobar na recepcion  que ten o GN_ADDR correcto
-
-						//Common Header processing
-						if( mngdaddrconf(3)){
-
-						//discard the packet
-						break;
-					}else{
-						//B.2
-						//IF(SO/=SE)SO IS_NEIGHBOUR=FALSE
-						//
-
-					}
-
-					break;
-					}
-				}
-
-
-
-}
 
 List_locT * init_locT ()
 {

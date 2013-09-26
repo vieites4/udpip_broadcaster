@@ -26,6 +26,8 @@
 #include "logger.h"
 #include "configuration.h"
 #include "novas/netmanagement.h"
+#include <pthread.h>
+
 //#include <gpsd.h>
 
 //#include "novas/pkt_handling.h"
@@ -52,15 +54,34 @@
 
 //List_buf * UCb, BCb;
 /* main */
-
+struct ev_loop * l_LPV;
+	ev_timer t_LPV;
 int SN_g;//sequence number
 List_lsp * lsp_bc_g;
 itsnet_node_id GN_ADDR;
+
+void *thr_h1(){
+
+
+	 //ollo!! teño que reiniciar o temporizador cando se renove o LPV por outros medios!
+	l_LPV=EV_DEFAULT;
+
+	ev_timer_init(&t_LPV,LPV_update,0.,itsGnMinimunUpdateFrequencyLPV); //
+	ev_timer_start(l_LPV,&t_LPV);
+//t_LPV.repeat=1.;
+	return NULL;
+}
+void *thr_h2(){
+
+	return NULL;
+}
+
 int main(int argc, char **argv)
 {
 	List_locT * locT_g; //variable global
-
-
+pthread_t h1,h2;
+ //pthread_create(&h1, NULL , slowprintf , (void *)hola)  o ultimo parámetro é o dos argumentos
+pthread_create(&h2,NULL, thr_h2, NULL);
 	// 1) Runtime configuration is read from the CLI (POSIX.2).
 	log_app_msg(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
@@ -72,7 +93,7 @@ int main(int argc, char **argv)
 	// address configuration
 	lsp_bc_g=init_lsp();
 	locT_g=startup1();
-
+	pthread_create(&h1,NULL, thr_h1, NULL);
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
@@ -107,6 +128,10 @@ int main(int argc, char **argv)
 		}
 
 	ev_loop(net_events->loop, 0); //app_events
+
+
+	pthread_join(h1, NULL);
+	pthread_join(h2, NULL);
 printf("ultimo!\n");
 	// 4) program finalization
 	exit(EXIT_SUCCESS);
