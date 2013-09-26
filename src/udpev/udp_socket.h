@@ -62,6 +62,8 @@
 
 #define IEEE_80211_BLEN 		2312	/*!< IEEE 802.11 body length (B). */
 #define typo[2] =                          {0x08,0x00}
+
+
 typedef struct ieee80211_header_frame_control
 {
 

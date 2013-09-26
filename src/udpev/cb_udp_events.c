@@ -22,21 +22,23 @@
 //#include "udp_events.h"
 #include "novas/itsnet_header.h"
 #include "cb_udp_events.h"
-const unsigned char ETH_ADDR_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
+//#include "define.h"
 
-const unsigned char tsb0[1]={0x05};
-const unsigned char tsb1[1]={0x15};
-const unsigned char geobroad0[1]={0x04};
-const unsigned char geobroad1[1]={0x14};
-const unsigned char geobroad2[1]={0x24};
-const unsigned char geoanycast0[1]={0x03};
-const unsigned char geoanycast1[1]={0x13};
-const unsigned char geoanycast2[1]={0x23};
-const unsigned char geounicast[1]={0x02};
-const unsigned char beacon[1]={0x01};
-const unsigned char any[1]={0x00};
-const unsigned char ls0[1]={0x06};
-const unsigned char ls1[1]={0x16};
+const unsigned char ETH_ADDR_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
+extern const unsigned char tsb0[1];
+extern const unsigned char tsb1[1];
+extern const unsigned char geobroad0[1];
+extern const unsigned char geobroad1[1];
+extern const unsigned char geobroad2[1];
+extern const unsigned char geoanycast0[1];
+extern const unsigned char geoanycast1[1];
+extern const unsigned char geoanycast2[1];
+extern const unsigned char geounicast[1];
+extern const unsigned char beacon[1];
+extern const unsigned char any[1];
+extern const unsigned char ls0[1];
+extern const unsigned char ls1[1];
+
 /* cb_print_recvfrom */
 //extern int SN_g;
 void cb_print_recvfrom(public_ev_arg_t *arg)
@@ -140,17 +142,22 @@ char *HT=NULL;
 	pkt =(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	if(memcmp(HT,tsb1,1)==0){
 printf("entro en tsb\n");
-		pkt = TSB_f(datos);
+//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
+if(duplicate_control(datos)==1){
+	//discard packet
+	//omit next steps
+}
+
+// update de PV(SO)
+pkt = TSB_f(datos);
 printf("saio de tsb_f\n");
 		} else if(memcmp(HT,tsb0,1)==0){
 printf("entro en shb\n");
 			pkt = SHB_f(datos);
-
 printf("saio de shb_f\n");
 			} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 printf("entro en geobroadcast\n");
 				pkt = GeoBroadcast_f(datos);
-
 printf("saio de geobroadcast_f\n");
 				}
 	// 2) in case the message comes from the localhost, it is discarded
@@ -221,6 +228,7 @@ char tipo[2]={0x07,0x07};
 	if(memcmp(HT,tsb1,1)==0){
 	//	printf("entro en tsb\n");
 	pkt = TSB(datos);
+
 
 	//printf("aqui chego1\n");
 	} else if(memcmp(HT,tsb0,1)==0){

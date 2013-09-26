@@ -58,16 +58,21 @@ itsnet_position_vector * LPV_update(){
 			g_print("Could not connect to gpsd!\n");
 
 		}
+
+
+	printf ("ENTRO NO DO LPV\n");
 	(void) gps_stream(&gpsdata, WATCH_ENABLE, NULL);//gpsdata.dev);
 	    /* Put this in a loop with a call to a high resolution sleep () in it. */
 	   int i;
-	for(i = 0; i < 10; i++){
+	for(i = 0; i < 100; i++){
 	if (gps_waiting (&gpsdata, 50000000))
 	    {
-	        if (gps_read (&gpsdata) == -1) {
-	          } else {
+	        if (gps_read (&gpsdata) == -1) {//printf ("ENTRO MAL NO read\n");
+	          } else {//printf ("ENTRO NO read\n");
 	            /* Display data from the GPS receiver. */
-	if (gpsdata.fix.mode>=2 && 	(gpsdata.fix.epx>=0 && gpsdata.fix.epx<366)){
+	if (gpsdata.fix.mode>=2 && 	(gpsdata.fix.epx>=0 && gpsdata.fix.epx<366) && 	(gpsdata.fix.epy>=0 && gpsdata.fix.epy<366) && 	(gpsdata.fix.epv>=0 && gpsdata.fix.epv<366)){
+
+		printf ("ENTRO NO if do read\n");
 	printf("latitude %f\n",gpsdata.fix.latitude);
 	printf("longitude %f\n",gpsdata.fix.longitude);
 	printf("altitude %f\n",gpsdata.fix.altitude);
@@ -95,7 +100,7 @@ itsnet_position_vector * LPV_update(){
 	if(gpsdata.fix.longitude<0){sprintf(str7, "%08X",(signed int) ceil(gpsdata.fix.longitude * -10000000));}else{sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.longitude * 10000000));}
 	int num0=(int)gpsdata.fix.time *1000;
 	sprintf(str8, "%08X",(int) ceil(num0%(4294967296)));
-	sprintf(str9, "%04X",(int)floor(gpsdata.fix.altitude));
+	if(gpsdata.fix.altitude<0){sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude*-1));}else {sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude));}
 	sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
 	int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
 	num1=strtol(str1,NULL,16);
@@ -110,8 +115,9 @@ itsnet_position_vector * LPV_update(){
 	num10=strtol(str10,NULL,16);
 	if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
 	if(gpsdata.fix.longitude<0){LPV->longitude=0xffff-num7;}else{LPV->longitude=num7;}
+	if(gpsdata.fix.altitude<0){LPV->altitude=0xffff-num9;}else{LPV->altitude=num9;}
 	LPV->time_stamp=num8;// recibe Unix time in seconds with fractional part  e quere miliseconds
-	LPV->altitude=num9; //metros en ambos casos
+	//LPV->altitude=num9; //metros en ambos casos
     LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
     LPV->accuracy.alt_ac=num5;
     LPV->accuracy.pos_ac=num2;
@@ -139,7 +145,7 @@ itsnet_position_vector * LPV_update(){
 	printf("HAcc %d",LPV->accuracy.head_ac," \n");
 	printf("AltAcc %d",LPV->accuracy.alt_ac," \n");
 
-	i=10;
+	i=100;
 	} } }    }
 	gps_close (&gpsdata);
 
@@ -202,7 +208,7 @@ void Beacon_send(public_ev_arg_t *arg){
 	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 	char tipo[2]={0x07,0x07};
 	memcpy(tx_frame->buffer.header.type,tipo,2);
-	const unsigned char beacon[1]={0x01};
+	const unsigned char beaco[1]={0x01};
 	version_nh * res;
 	itsnet_packet * pkt = NULL;
 	trafficclass_t *tc;
@@ -216,7 +222,7 @@ void Beacon_send(public_ev_arg_t *arg){
 	res->nh=0;
 
 	memcpy(pkt->common_header.version_nh,res,1);
-	memcpy(pkt->common_header.HT_HST,beacon,1);
+	memcpy(pkt->common_header.HT_HST, beaco,1);
 	memset(flags,0,1);
 	flags->itsStation=itsGnStationType;
 	memcpy(pkt->common_header.flags,flags,1);
@@ -528,4 +534,36 @@ void view_lsp(){
    //   printf ("%p - %s\n", actual, actual->data);
       actual = actual->next;
   }
+}
+
+
+
+int duplicate_control(void * data){
+
+	Element_locT *actual;
+	  actual = locT->init;
+	  int i=1;
+
+	  itsnet_node_id * dato=NULL;//
+	  			dato= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
+	  	    memcpy(dato,data +8,8);
+
+	  char *SN= (char *)malloc(2);
+	  memcpy(SN,data+36,2);
+		int lon_int=sprint_hex_data( SN, 2);
+
+	  while (actual != NULL){
+	      //printf ("%p - %s\n", actual, actual->data);
+		  if (actual->data.node_id.id==dato->id){
+			  i=0;
+	if(((actual->data.Sequence_number < lon_int ) &&(lon_int- actual->data.Sequence_number <=65536/2))||((actual->data.Sequence_number > lon_int)&&(-lon_int + actual->data.Sequence_number >65536/2)))
+	{
+	actual->data.Sequence_number=lon_int;
+		  }
+		  }
+	      actual = actual->next;
+	  }
+	  return(i);
+
+
 }

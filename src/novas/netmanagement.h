@@ -17,8 +17,6 @@
 #include "main.h"
 //#include "udpev/cb_udp_events.c"
 
-
-
 struct tq_elem
 {
 	struct list_head list;
@@ -96,7 +94,7 @@ List_locT * startup1();
 itsnet_position_vector * LPV_ini();
 itsnet_position_vector * LPV_update();
 void Beacon_send(public_ev_arg_t *arg);
-
+int duplicate_control(void * data);
 
 
 void LS(int option);
