@@ -9,9 +9,8 @@
 #define PKT_HANDLING_H_
 
 
-#include "udpev/udp_events.h"
+//#include "udpev/udp_events.h"
 #include "netmanagement.h"
-#include "itsnet_header.h"
 
 itsnet_packet * TSB(void *data);
 
@@ -24,7 +23,7 @@ itsnet_packet_f * SHB_f(void *dato);
 
 itsnet_packet_f * GeoBroadcast_f(void *dato);
 void GeoAnycast();
-void CommonHeader_processing(public_ev_arg_t *arg);
+void CommonHeader_processing(public_ev_arg_r *arg);
 void determine_nexthop();
 void GeoUnicast();
 

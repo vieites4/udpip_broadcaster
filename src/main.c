@@ -23,9 +23,8 @@
  */
 //este está en workspace/udp..
 #include "main.h"
-#include "logger.h"
-#include "configuration.h"
-#include "novas/netmanagement.h"
+
+
 #include <pthread.h>
 
 //#include <gpsd.h>
@@ -38,7 +37,6 @@
 //static const char* __x_app_version = "0.1";
 
 /******************************************************* INTERNAL FUNCTIONS */
-
 
 
 
@@ -61,17 +59,13 @@ void *thr_h1(){
 //t_LPV.repeat=1.;
 	return NULL;
 }
-void *thr_h2(){
-
-	return NULL;
-}
 
 int main(int argc, char **argv)
 {
-	List_locT * locT_g; //variable global
+	List_locT0 * locT_g; //variable global
 pthread_t h1,h2;
  //pthread_create(&h1, NULL , slowprintf , (void *)hola)  o ultimo parámetro é o dos argumentos
-pthread_create(&h2,NULL, thr_h2, NULL);
+//pthread_create(&h2,NULL, thr_h2, NULL);
 	// 1) Runtime configuration is read from the CLI (POSIX.2).
 	log_app_msg(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);

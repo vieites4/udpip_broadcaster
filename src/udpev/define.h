@@ -8,20 +8,35 @@
 #ifndef DEFINE_H_
 #define DEFINE_H_
 
-const unsigned char tsb0[1]={0x05};
-const unsigned char tsb1[1]={0x15};
-const unsigned char geobroad0[1]={0x04};
-const unsigned char geobroad1[1]={0x14};
-const unsigned char geobroad2[1]={0x24};
-const unsigned char geoanycast0[1]={0x03};
-const unsigned char geoanycast1[1]={0x13};
-const unsigned char geoanycast2[1]={0x23};
-const unsigned char geounicast[1]={0x02};
-const unsigned char beacon[1]={0x01};
-const unsigned char any[1]={0x00};
-const unsigned char ls0[1]={0x06};
-const unsigned char ls1[1]={0x16};
 
+#define itsGnLocalAddrConfMethod  0//Managed(1) Auto (0)
+#define itsGnProtocolVersion 0
+#define itsGnStationType 0 //0 vehicle 1 roadside
+#define itsGnMinimunUpdateFrequencyLPV 1000//0 roadside
+#define itsGnMaxSduSize 1398
+#define itsGnMaxGeoNetworkingHeaderSize 88
+#define itsGnLifetimeLocTE 20
+#define itsGnLocationServiceMaxRetrans 10
+#define itsGnLocationServiceRetransmitTimer 1000
+#define itsGnLocationServicePacketBufferSize 1024
+#define itsGnBeaconServiceRetransmitTimer 3000
+#define itsGnBeaconServiceMaxJitter itsGnMaxPacketLifetime/4
+#define itsGnDefaultHopLimit 10
+#define itsGnMaxPacketLifeTime 600
+#define itsGnMinPacketRepetitionInterval 100
+#define itsGnGeoUnicastForwardingAlgorithm 0//unspecified 0, greedy 1, cbf 2
+#define itsGnGeoBroadcastForwardingAlgorithm 0 //1 simple
+#define itsGnGeoUnicastCbfMinTime 1
+#define itsGnGeoUnicastCbfMaxTime 100
+#define itsGnDefaultMaxCommunicationRange 1000
+#define itsGnGeoAreaLineForwarding 0//1 enabled
+#define itsGnUcForwardingPacketBufferSize 256
+#define itsGnBcForwardingPacketBufferSize 1024
+#define itsGnCbForwardingPacketBufferSize 256
+#define itsGnTrafficClassRelevance 3
+#define itsGnTrafficClassReliability 10
+#define itsGnTrafficClassLatency 10
+#define ETH_ALEN	6
 #endif /* DEFINE_H_ */
 
 

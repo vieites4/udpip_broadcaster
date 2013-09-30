@@ -20,11 +20,7 @@
  * along with udpip-broadcaster.  If not, see <http://www.gnu.org/licenses/>.
  */
 //#include "udp_events.h"
-#include "novas/itsnet_header.h"
-#include "cb_udp_events.h"
-//#include "define.h"
 
-const unsigned char ETH_ADDR_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 extern const unsigned char tsb0[1];
 extern const unsigned char tsb1[1];
 extern const unsigned char geobroad0[1];
@@ -39,13 +35,15 @@ extern const unsigned char any[1];
 extern const unsigned char ls0[1];
 extern const unsigned char ls1[1];
 extern itsnet_position_vector * LPV;
+
+#include "cb_udp_events.h"
 /* cb_print_recvfrom */
 //extern int SN_g;
-void cb_print_recvfrom(public_ev_arg_t *arg)
+/**void cb_print_recvfrom(public_ev_arg_t *arg)
 {
 
 	bool blocked = false;
-	arg->len = 0;
+	//arg->len = 0;
 
 	// 1) read UDP message from network level
 	//		(self-broadcast messages are not received)
@@ -62,7 +60,7 @@ void cb_print_recvfrom(public_ev_arg_t *arg)
 	print_hex_data(arg->data, arg->len);
 	printf("\n");
 
-}
+}**/
 
 #define __TX_DELAY_US 1000000		/**< (usecs) without sending. */
 
@@ -70,7 +68,7 @@ void cb_print_recvfrom(public_ev_arg_t *arg)
 char data[__DATA_BUFFER_LEN];		/**< Static buffer. */
 
 /* cb_broadcast_sendto */
-void cb_udp_sendto(public_ev_arg_t *arg)
+/**void cb_udp_sendto(public_ev_arg_t *arg)
 {
 	printf("cb_udp_sendto\n");
 	sprintf(data, "TEST#%d", arg->__test_number++);
@@ -90,10 +88,10 @@ void cb_udp_sendto(public_ev_arg_t *arg)
 		return;
 	}
 
-}
+}**/
 
 
-void cb_raw_sendto(public_ev_arg_t *arg)
+void cb_raw_sendto(public_ev_arg_r *arg)
 {
 	//	printf("cb_raw_sendto\n");
 	//	sprintf(data, "BROADCAST-TEST#%d", arg->__test_number++);
@@ -116,7 +114,7 @@ void cb_raw_sendto(public_ev_arg_t *arg)
 }
 
 /* cb_forward_recvfrom */
-void cb_forward_recvfrom(public_ev_arg_t *arg)
+void cb_forward_recvfrom(public_ev_arg_r *arg)
 {
 	printf("cb_forward_recvfrom\n");
 	bool blocked = false;
@@ -203,7 +201,7 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 	}
 
 	/* cb_broadcast_recvfrom */
-	void cb_broadcast_recvfrom(public_ev_arg_t *arg)
+	void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	{
 		printf("cb_broadcast_recvfrom\n");
 		bool blocked = false;

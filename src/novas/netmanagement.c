@@ -2,25 +2,30 @@
 
 //2947 porto para gps, deixo correndo o sistema e
 #include "netmanagement.h"
-#include "/home/pc/Descargas/gpsd-3.9/gps.h"
-#include "/home/pc/Descargas/gpsd-3.9/gpsdclient.h"
-#include <ev.h>
+
 const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 //#include <gpsd_config.h>
 //#include <gpsdclient.h>
 //#include "novas/netmanagement.h"
 
-List_locT * locT; //variable global
+List_locT0 * locT; //variable global
 List_lsp * lsp;
-extern struct ev_loop * l_LPV;
-extern ev_timer t_LPV;
+//extern struct ev_loop * l_LPV;
+//extern ev_timer t_LPV;
 //extern int SN_g;
 extern itsnet_node_id GN_ADDR;
 
 itsnet_position_vector * LPV;
 struct gps_data_t gpsdata;
 int revents;
-List_locT * startup1()
+
+void *thr_h2(){
+
+	return NULL;
+}
+
+
+List_locT0 * startup1()
 {
 if (itsGnLocalAddrConfMethod==0){
 
@@ -40,7 +45,7 @@ if (itsGnLocalAddrConfMethod==0){
 	printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 }
 locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
-LPV= LPV_update(l_LPV,&t_LPV, revents );
+//LPV= LPV_update(l_LPV,&t_LPV, revents );
 
 
 
@@ -202,15 +207,15 @@ return(correct);
 
 }
 
-void Beacon_send(public_ev_arg_t *arg){
+void Beacon_send(public_ev_arg_r *arg){
 	printf("teño que enviar unha Beacon\n");
 	char h_source[ETH_ALEN];
 	//get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
+	//ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 	//tx_frame->buffer.frame_type=0xdc05;
 	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 	char tipo[2]={0x07,0x07};
-	memcpy(tx_frame->buffer.header.type,tipo,2);
+	//memcpy(tx_frame->buffer.header.type,tipo,2);
 	const unsigned char beaco[1]={0x01};
 	version_nh * res;
 	itsnet_packet * pkt = NULL;
@@ -245,16 +250,16 @@ void Beacon_send(public_ev_arg_t *arg){
 	portoD = (char *)malloc(2);
 	portoO = (char *)malloc(2);
 
-	memcpy(portoO,arg->port,2);
+	//memcpy(portoO,arg->port,2);
 	printf("aqui0\n");
-	memcpy(portoD,arg->forwarding_port,2);
+	//memcpy(portoD,arg->forwarding_port,2);
 	printf("aqui0\n");
 	memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
 	memcpy(pkt->payload.itsnet_tsb.payload.btp2,portoO,2);
-	memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
+//	memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 
 	// 2) broadcast application level UDP message to network level
-	int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
+	//int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
 
  //valor do PV
 
@@ -266,16 +271,16 @@ void Beacon_send(public_ev_arg_t *arg){
 
 	//recorda que hai que controlar sempre o Tbeacon!! //crear timer que fagan un evento ó terminar
 	printf("ENVIO UN PAQUETE\n");
-		int i=print_hex_data(&tx_frame->buffer, arg->len);
+	//	int i=print_hex_data(&tx_frame->buffer, arg->len);
 
 }
 
 
 
-List_locT * init_locT ()
+List_locT0 * init_locT ()
 {
-	List_locT * locT;
-	locT = (List_locT *) malloc (sizeof (List_locT));
+	List_locT0 * locT;
+	locT = (List_locT0 *) malloc (sizeof (List_locT0));
 	locT->init = NULL;
 	locT->end = NULL;
 	locT ->len = 0;
@@ -283,7 +288,10 @@ List_locT * init_locT ()
 }
 
 /*add at list end  */
-int add_end_locT ( List_locT * locT, itsnet_node data){
+int add_end_locT ( List_locT0 * locT, itsnet_node data){
+
+	pthread_t h1;
+	struct parametros argumento;
   Element_locT *new_element;
  new_element = (Element_locT *) malloc (sizeof (Element_locT));
  if (new_element==NULL) printf( "No hay memoria disponible!\n");
@@ -292,36 +300,56 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
  Element_locT *inicio = (Element_locT *) malloc (sizeof (Element_locT));
 
  if (locT->init==NULL) {
-    // printf( "Primeiro elemento\n");
+
      locT->init =  new_element;  } else {
 	 //printf( "Non é primeiro elemento\n");
 	 locT->end->next = new_element;}
 
  locT->end = new_element;
   locT ->len++;
-
+argumento.thread=h1;
+argumento.locT=locT;
+pthread_create(&h1,NULL,sup_elem_locT,(void *)&argumento);
   return 0;
 }
 
 /* erase after a position */
-int sup_elem_locT ( int pos){
+int sup_elem_locT ( void * arg){
 	 // if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
 	  //   return -1;
   int i;
-  Element_locT *actual;
-  Element_locT *sup_elemento;
-  actual = locT ->init;
+  struct parametros *p;
+     p=(struct parametros *) arg;
+  Element_locT *pos=p->pos;
+  Element_locT *actual=p->pos;
+  Element_locT *actua;
+  pthread_t h2=p->thread;
+    List_locT0 * locT=p->locT;
+    printf("AQUI ! %d \n",locT->len);
 
-  for (i = 1; i < pos; ++i)
-    actual = actual->next;
+    if(&pos==NULL){
+    printf("este caso \n");
+    actua=locT->init;
+     locT->init=locT->init->next;
 
-  sup_elemento = actual->next;
-  actual->next = actual->next->next;
-  if(actual->next == NULL)
-	  locT->end = actual;
- // free (sup_elemento->data);
-  free (sup_elemento);
+     if(locT->len ==1)locT->end=NULL;
+      free (actua);
+      free(&actua->data);
+     } else{
+    printf("entro este caso \n");
+
+    printf("saimos de suprimir elemento da loct0\n");
+      if(&pos->next == NULL)
+      {	printf("AQUI %d \n",locT->len);locT->end =NULL;// pos;
+      }else { printf("AQUI ! %d \n",locT->len);pos->next = pos->next->next;}
+
+      printf("saimos de suprimir elemento da loct1\n");
+
+
+
+      free(actual->next);free(&actual->next->data);}
   locT->len--;
+  pthread_join(h2, NULL);
   return 0;
 }
 

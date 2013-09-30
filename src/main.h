@@ -34,50 +34,25 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-
+#include "logger.h"
+#include "configuration.h"
 
 //MIB ATTRIBUTES
 
 //#define itsGnLocalGnAddr GNAD;// {"0x14","0x00","0x00","0x00","0x00","0x00","0x00","0x00"} //é do tipo itnet_node_id
-#define itsGnLocalAddrConfMethod  0//Managed(1) Auto (0)
-#define itsGnProtocolVersion 0
-#define itsGnStationType 0 //0 vehicle 1 roadside
-#define itsGnMinimunUpdateFrequencyLPV 1000//0 roadside
-#define itsGnMaxSduSize 1398
-#define itsGnMaxGeoNetworkingHeaderSize 88
-#define itsGnLifetimeLocTE 20
-#define itsGnLocationServiceMaxRetrans 10
-#define itsGnLocationServiceRetransmitTimer 1000
-#define itsGnLocationServicePacketBufferSize 1024
-#define itsGnBeaconServiceRetransmitTimer 3000
-#define itsGnBeaconServiceMaxJitter itsGnMaxPacketLifetime/4
-#define itsGnDefaultHopLimit 10
-#define itsGnMaxPacketLifeTime 600
-#define itsGnMinPacketRepetitionInterval 100
-#define itsGnGeoUnicastForwardingAlgorithm 0//unspecified 0, greedy 1, cbf 2
-#define itsGnGeoBroadcastForwardingAlgorithm 0 //1 simple
-#define itsGnGeoUnicastCbfMinTime 1
-#define itsGnGeoUnicastCbfMaxTime 100
-#define itsGnDefaultMaxCommunicationRange 1000
-#define itsGnGeoAreaLineForwarding 0//1 enabled
-#define itsGnUcForwardingPacketBufferSize 256
-#define itsGnBcForwardingPacketBufferSize 1024
-#define itsGnCbForwardingPacketBufferSize 256
-#define itsGnTrafficClassRelevance 3
-#define itsGnTrafficClassReliability 10
-#define itsGnTrafficClassLatency 10
+
 
 
 #include "udpev/udp_events.h"
 #include "udpev/cb_udp_events.h"
-
+#include "novas/netmanagement.h"
 #include "execution_codes.h"
 
 
 
 /*!< Flag for activating the verbose mode. */
 extern bool __verbose;
-
+void *thr_h1();
 void print_version();
 void print_help();
 

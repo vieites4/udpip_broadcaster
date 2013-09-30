@@ -22,10 +22,13 @@
 #ifndef CB_UDP_EVENTS_H_
 #define CB_UDP_EVENTS_H_
 #include <sys/socket.h>
-#include "udp_socket.h"
+//#include "udp_socket.h
 #include <stdio.h>
 #include "__NEC__gnbtpapi_udp_msg.h"
 #include "udp_events.h"
+#include "define.h"
+
+//#include "novas/itsnet_header.h"
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // LIBEV CALLBACK FUNCTIONS
@@ -38,23 +41,23 @@
  */
 
 // typedef void  (* public_ev_arg)(ev_cb_t *)  ;
-typedef struct public_ev_arg public_ev_arg_t;
-typedef void (*ev_cb_t)(public_ev_arg_t *);
-void cb_print_recvfrom(public_ev_arg_t *arg);
+//typedef struct public_ev_arg public_ev_arg_t;
+
+void cb_print_recvfrom(public_ev_arg_r *arg);
 
 /**
  * @brief Callback function that writes the given socket which has just been
  * 			put available for writing. Messages are sent in broadcast mode.
  * @param public_arg Public arguments for this callback function.
  */
-void cb_udp_sendto(public_ev_arg_t *arg);
-void cb_raw_sendto(public_ev_arg_t *arg);
+void cb_udp_sendto(public_ev_arg_r *arg);
+void cb_raw_sendto(public_ev_arg_r *arg);
 /**
  * @brief Callback function that forwards an UDP message that it receives to
  * 			a given forwarding socket.
  * @param public_arg Public arguments for this callback function.
  */
-void cb_forward_recvfrom(public_ev_arg_t *arg);
+void cb_forward_recvfrom(public_ev_arg_r *arg);
 
 /**
  * @brief Callback function that forwards an UDP message that it receives to
@@ -62,6 +65,6 @@ void cb_forward_recvfrom(public_ev_arg_t *arg);
  * 			broadcast.
  * @param public_arg Public arguments for this callback function.
  */
-void cb_broadcast_recvfrom(public_ev_arg_t *arg);
+void cb_broadcast_recvfrom(public_ev_arg_r *arg);
 
 #endif /* CB_UDP_EVENTS_H_ */

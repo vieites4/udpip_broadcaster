@@ -26,9 +26,10 @@
 #include <errno.h>
 #include <ev.h>
 #include <unistd.h>
-#include "cb_udp_events.h"
+//#include "cb_udp_events.h"
 #include "../configuration.h"
-#include "../execution_codes.h"
+//#include "../execution_codes.h"
+#include "../novas/netmanagement.h"
 
 #include "udp_socket.h"
 
@@ -37,7 +38,7 @@
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 #define LEN__EV_IO 		sizeof(struct ev_io)
-
+typedef void (*ev_cb_t)(public_ev_arg_r *);
 /**
  * @struct public_ev_arg
  * @brief Structure for holding public arguments to be passed to callback
@@ -48,31 +49,7 @@
 
 #define LEN__PUBLIC_EV_ARG sizeof(public_ev_arg_t)
 
- struct public_ev_arg
-{
 
-	int socket_fd;					/**< Socket file descriptor. */
-	int port;						/**< Port to be used. */
-
-	int forwarding_socket_fd;		/**< Socket for message forwarding. */
-	int forwarding_port;			/**< Port for message forwarding. */
-
-	sockaddr_in_t *forwarding_addr;	/**< Forwarding address. */
-	sockaddr_in_t *local_addr;		/**< Local address (NOT localhost) */
-
-	bool print_forwarding_message;	/**< Flag that enables verbose. */
-
-	void *data;						/**< Buffer for frames reception. */
-	int len;						/**< Data length within the buffer. */
-
-	msg_header_t *msg_header;		/**< Buffer for msg_header reception. */
-
-	bool nec_mode;					/**< Flag that indicates NEC mode. */
-
-	int __test_number;				/**< For testing, counts no tests. */
-
-};
-typedef struct public_ev_arg public_ev_arg_r;
 typedef void (*ev_cb_tr)(public_ev_arg_r *);
 
 /**

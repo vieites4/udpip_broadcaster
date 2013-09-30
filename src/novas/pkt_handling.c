@@ -6,15 +6,29 @@
  */
 
 
-#include "../udpev/define.h"
+//#include "../udpev/define.h"
+
+
 #include "pkt_handling.h"
 //#include "../udpev/cb_udp_events.c"
 const unsigned char tipoa[1]={0x01};
 const unsigned char tipob[1]={0x02};
 extern itsnet_position_vector * LPV;
-extern List_locT * locT;
+extern List_locT0 * locT;
 extern int SN_g;
-
+const unsigned char tsb0[1]={0x05};
+const unsigned char tsb1[1]={0x15};
+const unsigned char geobroad0[1]={0x04};
+const unsigned char geobroad1[1]={0x14};
+const unsigned char geobroad2[1]={0x24};
+const unsigned char geoanycast0[1]={0x03};
+const unsigned char geoanycast1[1]={0x13};
+const unsigned char geoanycast2[1]={0x23};
+const unsigned char geounicast[1]={0x02};
+const unsigned char beacon[1]={0x01};
+const unsigned char any[1]={0x00};
+const unsigned char ls0[1]={0x06};
+const unsigned char ls1[1]={0x16};
 
 itsnet_packet * TSB(void *dato){
 
@@ -230,7 +244,7 @@ return(pkt);
 
 void GeoUnicast(){}
 void GeoAnycast(){}
-void CommonHeader_processing(public_ev_arg_t *arg){
+void CommonHeader_processing(public_ev_arg_r *arg){
 
 	////this is the first thing we must do after reception of a GN pkt.
 	char *dato= (char *)malloc(arg->len);

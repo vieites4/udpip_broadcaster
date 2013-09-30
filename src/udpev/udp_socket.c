@@ -21,7 +21,7 @@
  */
 
 #include "udp_socket.h"
-#include <sys/socket.h>
+
 const unsigned char ETH_ADDR_BROADCAST[ETH_ALEN]                    ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 const unsigned char ETH_ADDR_ANY[ETH_ALEN]                                    ={ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 

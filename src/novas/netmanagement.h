@@ -13,10 +13,42 @@
 #include <stdlib.h>
 #include <string.h>
 #include <list.h>
-#include "itsnet_header.h"
-#include "main.h"
-//#include "udpev/cb_udp_events.c"
 
+#include "/home/pc/Descargas/gpsd-3.9/gps.h"
+#include "/home/pc/Descargas/gpsd-3.9/gpsdclient.h"
+#include <ev.h>
+#include "itsnet_header.h"
+#include "../udpev/define.h"
+//#include "udpev/cb_udp_events.h"
+typedef struct List_locT List_locT0;
+typedef struct msghdr msg_header_t;
+typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
+ struct public_ev_arg
+{
+
+	int socket_fd;					/**< Socket file descriptor. */
+	int port;						/**< Port to be used. */
+	List_locT0 *locT;
+	int forwarding_socket_fd;		/**< Socket for message forwarding. */
+	int forwarding_port;			/**< Port for message forwarding. */
+
+	sockaddr_in_t *forwarding_addr;	/**< Forwarding address. */
+	sockaddr_in_t *local_addr;		/**< Local address (NOT localhost) */
+
+	bool print_forwarding_message;	/**< Flag that enables verbose. */
+
+	void *data;						/**< Buffer for frames reception. */
+	int len;						/**< Data length within the buffer. */
+
+	msg_header_t *msg_header;		/**< Buffer for msg_header reception. */
+
+	bool nec_mode;					/**< Flag that indicates NEC mode. */
+
+	int __test_number;				/**< For testing, counts no tests. */
+};
+
+
+typedef struct public_ev_arg public_ev_arg_r;
 struct tq_elem
 {
 	struct list_head list;
@@ -56,7 +88,7 @@ struct List_locT
   int len;
 };
 
-typedef struct List_locT List_locT;
+
 
 struct ElementList_lsp
 {
@@ -71,15 +103,20 @@ struct ListIdent_lsp
   Element_lsp *end;
   int len;
 } ;
+struct parametros{
+Element_locT * pos;
+pthread_t thread;
+List_locT0 * locT;
+};
 
 typedef struct ListIdent_lsp List_lsp;
 
 bool exist_neighbours();
 
-int sup_elem_locT ( int pos);
-int add_end_locT ( List_locT * locT, itsnet_node data);
+int sup_elem_locT (void * arg);
+int add_end_locT ( List_locT0 * locT, itsnet_node data);
 
-List_locT * init_locT ();
+List_locT0 * init_locT ();
 void view_locT ();
 int search_in_locT (itsnet_node * data);
 
@@ -89,13 +126,13 @@ List_lsp * init_lsp ();
 
 void view_lsp ();
 
-List_locT * startup1();
+List_locT0 * startup1();
 
 itsnet_position_vector * LPV_ini();
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
-void Beacon_send(public_ev_arg_t *arg);
+void Beacon_send(public_ev_arg_r *arg);
 int duplicate_control(void * data);
 
-
+void *thr_h2();
 void LS(int option);
 #endif /* NETMANAGEMENT_H_ */

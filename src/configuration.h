@@ -28,7 +28,12 @@
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
 
-#include "main.h"
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
 #include "execution_codes.h"
 #include "logger.h"
 

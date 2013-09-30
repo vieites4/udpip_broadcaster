@@ -33,25 +33,17 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
 #include "../logger.h"
 #include "../execution_codes.h"
-
-
-
-
 #include <stdio.h>
-
 #include <unistd.h>
 #include <linux/if_packet.h>
-
 #include <net/ethernet.h> /* the L2 protocols */
 #include <netinet/in.h>
 #include <sys/types.h>
-
 #include <sys/mman.h>
-#include "udp_socket.h"
 #include <ev.h>
+#include "../novas/netmanagement.h"
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // SOCKET STRUCTURES
@@ -140,7 +132,7 @@ typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
  */
 sockaddr_t *new_sockaddr();
 
-typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
+
 #define LEN__SOCKADDR_IN sizeof(sockaddr_in_t)
 #define LEN__SOCKADDR_LL sizeof(sockaddr_ll_t)
 /**
@@ -159,7 +151,7 @@ typedef struct iovec iovec_t;
  */
 iovec_t *new_iovec();
 
-typedef struct msghdr msg_header_t;
+
 #define LEN__MSG_HEADER sizeof(msg_header_t)
 
 #define CONTROL_BUFFER_LEN 0x100	/**< Length of the control buffer. */

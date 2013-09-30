@@ -259,7 +259,7 @@ void cb_common
 		{ log_sys_error("Invalid event"); return; }
 
 	ev_io_arg_t *arg = (ev_io_arg_t *)watcher;
-	public_ev_arg_t *public_arg = &arg->public_arg;
+	public_ev_arg_r *public_arg = &arg->public_arg;
 	public_arg->socket_fd = watcher->fd;
 
 	if ( arg->cb_specfic == NULL )
