@@ -22,7 +22,7 @@
 #ifndef CB_UDP_EVENTS_H_
 #define CB_UDP_EVENTS_H_
 #include <sys/socket.h>
-//#include "udp_socket.h
+#include "../novas/itsnet_header.h"
 #include <stdio.h>
 #include "__NEC__gnbtpapi_udp_msg.h"
 #include "udp_events.h"

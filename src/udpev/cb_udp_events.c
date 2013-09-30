@@ -34,9 +34,12 @@ extern const unsigned char beacon[1];
 extern const unsigned char any[1];
 extern const unsigned char ls0[1];
 extern const unsigned char ls1[1];
-extern itsnet_position_vector * LPV;
+extern const unsigned char ETH_ADDR_BROADCAST[6];
+
 
 #include "cb_udp_events.h"
+extern itsnet_position_vector * LPV;
+
 /* cb_print_recvfrom */
 //extern int SN_g;
 /**void cb_print_recvfrom(public_ev_arg_t *arg)
@@ -68,7 +71,7 @@ extern itsnet_position_vector * LPV;
 char data[__DATA_BUFFER_LEN];		/**< Static buffer. */
 
 /* cb_broadcast_sendto */
-/**void cb_udp_sendto(public_ev_arg_t *arg)
+void cb_udp_sendto(public_ev_arg_r *arg)
 {
 	printf("cb_udp_sendto\n");
 	sprintf(data, "TEST#%d", arg->__test_number++);
@@ -88,7 +91,7 @@ char data[__DATA_BUFFER_LEN];		/**< Static buffer. */
 		return;
 	}
 
-}**/
+}
 
 
 void cb_raw_sendto(public_ev_arg_r *arg)
@@ -219,7 +222,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 
-		ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROAD,h_source);
+		ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROADCAST,h_source);
 		//tx_frame->buffer.frame_type=0xdc05;
 		//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 		char tipo[2]={0x07,0x07};
