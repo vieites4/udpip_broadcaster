@@ -132,7 +132,7 @@ pthread_create(&h2,NULL, thr_h2, NULL);
 
 	pthread_join(h1, NULL);
 	pthread_join(h2, NULL);
-printf("ultimo!\n");
+
 	// 4) program finalization
 	exit(EXIT_SUCCESS);
 
