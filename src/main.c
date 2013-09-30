@@ -39,17 +39,7 @@
 
 /******************************************************* INTERNAL FUNCTIONS */
 
-/* print_help */
-//void print_help()
-//{
-//	fprintf(stdout, "HELP, %s\n", __x_app_name);
-//}
-//
-///* print_version */
-//void print_version()
-//{
-//	fprintf(stdout, "Version = %s\n", __x_app_version);
-//}
+
 
 
 //List_buf * UCb, BCb;
