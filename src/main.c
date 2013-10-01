@@ -42,8 +42,8 @@
 
 //List_buf * UCb, BCb;
 /* main */
-struct ev_loop * l_LPV;
-	ev_timer t_LPV;
+	struct ev_loop * l_LPV;
+		ev_timer t_LPV;
 int SN_g;//sequence number
 List_lsp * lsp_bc_g;
 itsnet_node_id GN_ADDR;
@@ -62,7 +62,7 @@ void *thr_h1(){
 
 int main(int argc, char **argv)
 {
-	List_locT0 * locT_g; //variable global
+	List_locT * locT_g; //variable global
 pthread_t h1,h2;
  //pthread_create(&h1, NULL , slowprintf , (void *)hola)  o ultimo parámetro é o dos argumentos
 //pthread_create(&h2,NULL, thr_h2, NULL);
@@ -100,11 +100,11 @@ pthread_t h1,h2;
 	{
 
 		log_app_msg(">>> Opening UDP APP RX socket...\n");
-		app_events = init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom);//broadcast
+		app_events = init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g);//broadcast
 		log_app_msg(">>> UDP APP RX socket open!\n");
 		print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
 		log_app_msg(">>> Opening RAW NET RX socket...\n");
-		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom);
+		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g);
 		log_app_msg(">>> raw NET RX socket open!\n");
 		print_udp_events(net_events, cfg->rx_port, cfg->app_tx_port);
 

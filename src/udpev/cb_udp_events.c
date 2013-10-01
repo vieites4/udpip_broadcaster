@@ -119,7 +119,7 @@ void cb_raw_sendto(public_ev_arg_r *arg)
 /* cb_forward_recvfrom */
 void cb_forward_recvfrom(public_ev_arg_r *arg)
 {
-	printf("cb_forward_recvfrom\n");
+//	printf("cb_forward_recvfrom\n");
 	bool blocked = false;
 	arg->len = 0;
 	// 1) read UDP message from network level
@@ -141,7 +141,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	if(memcmp(HT,tsb1,1)==0){
 		printf("entro en tsb\n");
 		//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
-		if(duplicate_control(datos)==1){
+		if(duplicate_control(datos,arg->locT)==1){
 			//discard packet
 			//omit next steps
 		}
@@ -206,7 +206,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	/* cb_broadcast_recvfrom */
 	void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	{
-		printf("cb_broadcast_recvfrom\n");
+	//	printf("cb_broadcast_recvfrom\n");
 		bool blocked = false;
 		arg->len = 0;
 
@@ -270,9 +270,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		// 2) broadcast application level UDP message to network level
 		int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
 
-		printf("ENVIO UN PAQUETE\n");
-		int i=print_hex_data(&tx_frame->buffer, arg->len);
-		printf("envio trama\n");
+	//	printf("ENVIO UN PAQUETE\n");
+	//	int i=print_hex_data(&tx_frame->buffer, arg->len);
+	//	printf("envio trama\n");
 
 		//	if ( arg->print_forwarding_message == true )
 		//{

@@ -122,7 +122,7 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name, const ev_c
 /* init_net_udp_events */
 udp_events_t *init_net_raw_events
 				(	const int net_rx_port, const char* net_if_name,const char *app_fwd_addr, const int app_fwd_port,
-					const bool nec_mode,	const ev_cb_t callback)
+					const bool nec_mode,	const ev_cb_t callback, List_locT *locT)
 {
 
 
@@ -140,6 +140,7 @@ udp_events_t *init_net_raw_events
 	arg->public_arg.__test_number = 0;
 	arg->public_arg.print_forwarding_message = __verbose;
 	arg->cb_specfic	=callback;
+	arg->public_arg.locT=locT;
 	return(s);
 
 }
@@ -148,7 +149,7 @@ udp_events_t *init_net_raw_events
 udp_events_t *init_app_udp_events
 				(	const int app_rx_port,in_addr_t addr,
 					const char* if_name, const int net_fwd_port,
-					const ev_cb_t callback)
+					const ev_cb_t callback, List_locT *locT)
 {
 
 	//imos recibir unha request.
@@ -163,6 +164,7 @@ udp_events_t *init_app_udp_events
 	arg->public_arg.forwarding_addr= init_sockaddr_ll(addr,net_fwd_port);
 	arg->public_arg.forwarding_port = net_fwd_port;
 	arg->public_arg.print_forwarding_message = __verbose;
+	arg->public_arg.locT=locT;
 	//Beacon_send(arg);
 	return(s);
 

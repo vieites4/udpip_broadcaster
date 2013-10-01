@@ -20,7 +20,7 @@
 #include "itsnet_header.h"
 #include "../udpev/define.h"
 //#include "udpev/cb_udp_events.h"
-typedef struct List_locT List_locT0;
+typedef struct List_locT List_locT;
 typedef struct msghdr msg_header_t;
 typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
  struct public_ev_arg
@@ -28,7 +28,7 @@ typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
 
 	int socket_fd;					/**< Socket file descriptor. */
 	int port;						/**< Port to be used. */
-	List_locT0 *locT;
+	List_locT *locT;
 	int forwarding_socket_fd;		/**< Socket for message forwarding. */
 	int forwarding_port;			/**< Port for message forwarding. */
 
@@ -77,6 +77,7 @@ struct ElementList_locT
 {
   itsnet_node data;
   struct ElementList_locT *next;
+  struct ElementList_locT *before;
 };
 
 typedef struct ElementList_locT Element_locT;
@@ -106,19 +107,20 @@ struct ListIdent_lsp
 struct parametros{
 Element_locT * pos;
 pthread_t thread;
-List_locT0 * locT;
+List_locT * locT;
+int num;
 };
 
 typedef struct ListIdent_lsp List_lsp;
 
-bool exist_neighbours();
+bool exist_neighbours(List_locT * locT);
 
-int sup_elem_locT (void * arg);
-int add_end_locT ( List_locT0 * locT, itsnet_node data);
+int sup_elem_locT (EV_P_ ev_timer *w, int revents);//void * arg);//EV_P_ ev_timer *w,
+int add_end_locT ( List_locT * locT, itsnet_node data);
 
-List_locT0 * init_locT ();
-void view_locT ();
-int search_in_locT (itsnet_node * data);
+List_locT * init_locT ();
+void view_locT (List_locT * locT);
+int search_in_locT (itsnet_node * data, List_locT * locT);
 
 int sup_elem_lsp ( int pos);
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data); //hai que cambiar o itsnet_node
@@ -126,13 +128,13 @@ List_lsp * init_lsp ();
 
 void view_lsp ();
 
-List_locT0 * startup1();
+List_locT * startup1();
 
 itsnet_position_vector * LPV_ini();
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
 void Beacon_send(public_ev_arg_r *arg);
-int duplicate_control(void * data);
+int duplicate_control(void * data,List_locT * locT);
 
-void *thr_h2();
+void *thr_h2(void * arg);
 void LS(int option);
 #endif /* NETMANAGEMENT_H_ */

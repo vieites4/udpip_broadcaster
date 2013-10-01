@@ -14,7 +14,6 @@
 const unsigned char tipoa[1]={0x01};
 const unsigned char tipob[1]={0x02};
 extern itsnet_position_vector * LPV;
-extern List_locT0 * locT;
 extern int SN_g;
 const unsigned char tsb0[1]={0x05};
 const unsigned char tsb1[1]={0x15};
@@ -283,7 +282,7 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 
 	data->LS_PENDING=false;
 	//segundo sexan dun tipo ou doutro terán SN no extended headerdata.Sequence_number=
-	if (search_in_locT(data)==0){add_end_locT (  locT,*data);}
+	if (search_in_locT(data,arg->locT)==0){add_end_locT (  arg->locT,*data);}
 		int num=strtol(HT1,NULL,16);
 		int num1=0x0f00*num;
 		int num2=0x00f0*num;

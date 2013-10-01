@@ -142,12 +142,12 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name
  */
 udp_events_t *init_net_raw_events
 (	const int net_rx_port, const char* net_if_name,const char *app_fwd_addr, const int app_fwd_port,
-					const bool nec_mode,	const ev_cb_tr callback)	;
+					const bool nec_mode,	const ev_cb_tr callback, List_locT *locT)	;
 
 udp_events_t *init_app_udp_events
 				(	const int app_rx_port,in_addr_t addr,
 					const char* if_name, const int net_fwd_port,
-					const ev_cb_tr callback);
+					const ev_cb_tr callback, List_locT *locT);
 
 /**
  * @brief Releases all resources that previously were allocated for this

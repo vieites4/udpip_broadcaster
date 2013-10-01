@@ -8,7 +8,7 @@ const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 //#include <gpsdclient.h>
 //#include "novas/netmanagement.h"
 
-List_locT0 * locT; //variable global
+//List_locT * locT; //variable global
 List_lsp * lsp;
 //extern struct ev_loop * l_LPV;
 //extern ev_timer t_LPV;
@@ -19,16 +19,38 @@ itsnet_position_vector * LPV;
 struct gps_data_t gpsdata;
 int revents;
 
-void *thr_h2(){
+ev_timer t_Loct;
 
+struct ev_loop  *addr[10];
+int variables[10];
+struct ev_loop * b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10;
+
+
+
+void *thr_h2(void * arg){
+	struct ev_loop *l_Loct;
+
+	l_Loct=EV_DEFAULT;
+t_Loct.data=(void *)&arg;
+struct parametros *p;
+  p=(struct parametros *) arg;
+int num=p->num;
+*addr[num]=l_Loct;
+variables[num]=1;
+		ev_timer_init(&t_Loct,sup_elem_locT,8.0,0.0); //itsGnLifetimeLocTE
+		ev_timer_start(l_Loct,&t_Loct);
+		// ev_loop (l_Loct, 0);
+		printf("entro aqui\n");
 	return NULL;
 }
 
 
-List_locT0 * startup1()
+List_locT * startup1()
 {
 if (itsGnLocalAddrConfMethod==0){
 
+	addr[0] = &b0;	addr[1] = &b1;	addr[2] = &b2;	addr[3] = &b3;	addr[4] = &b4;	addr[5] = &b5;	addr[6] = &b6;
+	addr[7] = &b7;addr[8] = &b8;addr[9] = &b9;addr[10] = &b10;
 	printf("AUTOADDRESS CONFIGURATION\n");
 	//GN_ADDR = (itsnet_node_id)malloc(8);
 	GN_ADDR.id[0]=0x14;//itsGnLocalGnAddr(0);
@@ -44,7 +66,7 @@ if (itsGnLocalAddrConfMethod==0){
 
 	printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 }
-locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
+List_locT * locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
 //LPV= LPV_update(l_LPV,&t_LPV, revents );
 
 
@@ -277,84 +299,100 @@ void Beacon_send(public_ev_arg_r *arg){
 
 
 
-List_locT0 * init_locT ()
+List_locT * init_locT ()
 {
-	List_locT0 * locT;
-	locT = (List_locT0 *) malloc (sizeof (List_locT0));
+	List_locT * locT;
+	locT = (List_locT *) malloc (sizeof (List_locT));
 	locT->init = NULL;
 	locT->end = NULL;
 	locT ->len = 0;
+    printf("AQUI en init ! %d \n",locT->len);
+
 	return(locT);
 }
 
 /*add at list end  */
-int add_end_locT ( List_locT0 * locT, itsnet_node data){
+int add_end_locT ( List_locT * locT, itsnet_node data){
 
 	pthread_t h1;
-	struct parametros argumento;
+	struct parametros * argumento;
+	printf("\n aqui fago un malloc\n");
+	argumento = (struct parametros *) malloc (sizeof (struct parametros));
   Element_locT *new_element;
  new_element = (Element_locT *) malloc (sizeof (Element_locT));
  if (new_element==NULL) printf( "No hay memoria disponible!\n");
  new_element->data= data;
  new_element->next = NULL;
- Element_locT *inicio = (Element_locT *) malloc (sizeof (Element_locT));
+ //lement_locT *inicio = (Element_locT *) malloc (sizeof (Element_locT));
 
  if (locT->init==NULL) {
-
-     locT->init =  new_element;  } else {
+      new_element->before=locT->init; new_element->next=locT->end; locT->init=new_element;  } else {
 	 //printf( "Non é primeiro elemento\n");
+new_element->before=locT->end;
 	 locT->end->next = new_element;}
 
  locT->end = new_element;
+ argumento->pos=locT->end;
   locT ->len++;
-argumento.thread=h1;
-argumento.locT=locT;
-pthread_create(&h1,NULL,sup_elem_locT,(void *)&argumento);
+  printf("AQUI en engadir ! %d \n",locT->len);
+argumento->thread=h1;
+int a=0;
+int num=0;
+while(a==0){
+num=(num +1) % 10;
+if (variables[num]==0) a=1;
+}
+argumento->num=num;
+argumento->locT=locT;
+pthread_create(&h1,NULL,thr_h2,(void *)argumento);
+
+printf("saio de add\n");
   return 0;
 }
 
 /* erase after a position */
-int sup_elem_locT ( void * arg){
+int sup_elem_locT (EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
+{
 	 // if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
 	  //   return -1;
   int i;
+  printf("entro en cb\n");
   struct parametros *p;
-     p=(struct parametros *) arg;
+     p=(struct parametros *) w->data;
+
   Element_locT *pos=p->pos;
-  Element_locT *actual=p->pos;
-  Element_locT *actua;
   pthread_t h2=p->thread;
-    List_locT0 * locT=p->locT;
-    printf("AQUI ! %d \n",locT->len);
 
-    if(&pos==NULL){
-    printf("este caso \n");
-    actua=locT->init;
-     locT->init=locT->init->next;
+    List_locT * locT=p->locT;
+    printf("entro en cb\n");
+   printf("AQUI en suprimir ! %d \n",locT->len);
+    printf("entro en cb\n");
+    if(pos->before==NULL){
+    	printf("eliminamos o primeiro \n");
+    	locT->init=locT->init->next;
+    	if(locT->len==1){locT->end=NULL;    	printf("eliminamos o unico \n");}else{locT->init->before=NULL;}
+    }else if (pos->next==NULL){    	printf("eliminamos o ultimo \n");
+    	locT->end->before->next=NULL;
+    	locT->end=locT->end->before;
+    }else{
+    	printf("eliminamos outro \n");
+    	pos->before->next=pos->next;
+    	pos->next->before=pos->before;
+    }
 
-     if(locT->len ==1)locT->end=NULL;
-      free (actua);
-      free(&actua->data);
-     } else{
-    printf("entro este caso \n");
-
-    printf("saimos de suprimir elemento da loct0\n");
-      if(&pos->next == NULL)
-      {	printf("AQUI %d \n",locT->len);locT->end =NULL;// pos;
-      }else { printf("AQUI ! %d \n",locT->len);pos->next = pos->next->next;}
-
-      printf("saimos de suprimir elemento da loct1\n");
-
-
-
-      free(actual->next);free(&actual->next->data);}
-  locT->len--;
-  pthread_join(h2, NULL);
+     free (pos);
+     // free(&pos->data);
+     locT->len--;
+     printf("saimos de suprimir elemento da loct1\n");
+  //   ev_timer_stop (EV_A_ w);
+     variables[p->num]=0;
+     pthread_join(h2, NULL);
+  printf("saimos de suprimir elemento da loct1\n");
   return 0;
 }
 
 /* view List */
-void view_locT (){
+void view_locT (List_locT * locT){
   Element_locT *actual;
   actual = locT->init;
   while (actual != NULL){
@@ -363,7 +401,7 @@ void view_locT (){
   }
 }
 
-int search_in_locT (itsnet_node * data){
+int search_in_locT (itsnet_node * data, List_locT * locT){
   Element_locT *actual;
   actual = locT->init;
   int i=0;
@@ -384,7 +422,7 @@ actual->data.expires.tv_sec= itsGnLifetimeLocTE;
 }
 
 
-bool exist_neighbours(){
+bool exist_neighbours(List_locT * locT){
 
 	  Element_locT *actual;
 	  actual = locT->init;
@@ -460,7 +498,7 @@ void view_lsp(){
 
 
 
-int duplicate_control(void * data){
+int duplicate_control(void * data,List_locT * locT){
 
 	Element_locT *actual;
 	  actual = locT->init;
