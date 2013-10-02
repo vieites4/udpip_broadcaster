@@ -77,7 +77,7 @@ printf("escribo\n");
 /* cb_forward_recvfrom */
 void cb_forward_recvfrom(public_ev_arg_t *arg)
 {
-	printf(">>> RECEIVED forward UDP MESSAGE >>>\n");
+	printf(">>> RECEIVED11111 forward UDP MESSAGE >>>\n");
 	bool blocked = false;
 	arg->len = 0;
 
@@ -121,7 +121,7 @@ printf(">>> todo ben >>>\n");
 /* cb_broadcast_recvfrom */
 void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 {
-	printf(">>> RECEIVED broadcast UDP MESSAGE >>>\n");
+	printf(">>> RECEIVED222222 broadcast UDP MESSAGE >>>\n");
 	bool blocked = false;
 	arg->len = 0;
 
