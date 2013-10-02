@@ -31,9 +31,7 @@ void cb_print_recvfrom(public_ev_arg_t *arg)
 
 	// 1) read UDP message from network level
 	//		(self-broadcast messages are not received)
-	if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header
-								, arg->local_addr->sin_addr.s_addr
-								, &blocked) ) < 0 )
+	if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header, arg->local_addr->sin6_addr, &blocked) ) < 0 )
 	{
 		log_app_msg("cb_print_recvfrom: <recv_msg> " \
 						"Could not receive message.\n");
@@ -77,13 +75,13 @@ printf("escribo\n");
 /* cb_forward_recvfrom */
 void cb_forward_recvfrom(public_ev_arg_t *arg)
 {
-	printf(">>> RECEIVED forward UDP MESSAGE >>>\n");
+	printf(">>> 22222 RECEIVED forward UDP MESSAGE >>>\n");
 	bool blocked = false;
 	arg->len = 0;
 
 	// 1) read UDP message from network level
 	if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header
-								, arg->local_addr->sin_addr.s_addr
+								, arg->local_addr->sin6_addr
 								, &blocked) ) < 0 )
 	{
 		log_app_msg("cb_forward_recvfrom: <recv_msg> " \
@@ -121,14 +119,14 @@ printf(">>> todo ben >>>\n");
 /* cb_broadcast_recvfrom */
 void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 {
-	printf(">>> RECEIVED broadcast UDP MESSAGE >>>\n");
+	printf(">>>11111 RECEIVED broadcast UDP MESSAGE >>>\n");
 	bool blocked = false;
 	arg->len = 0;
 
 	// 1) read UDP message from application level
 	//		(self-broadcast messages are not received)
 	if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header
-								, arg->local_addr->sin_addr.s_addr
+								, arg->local_addr->sin6_addr
 								, &blocked) ) < 0 )
 	{
 		log_app_msg("cb_broadcast_recvfrom: <recv_msg> " \

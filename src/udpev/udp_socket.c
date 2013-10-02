@@ -151,10 +151,9 @@ sockaddr_in_t *init_broadcast_sockaddr_in(const int port)
 {
 
 	sockaddr_in_t *s = new_sockaddr_in();
-
-	s->sin_family = AF_INET;
-	s->sin_port = (in_port_t)htons(port);
-	s->sin_addr.s_addr = htonl(INADDR_BROADCAST);
+	s->sin6_family = AF_INET6;
+	s->sin6_port = (in_port_t)htons(port);
+	s->sin6_addr = in6addr_any;//IN6ADDR_ANY_INIT;//htonl(INADDR_BROADCAST);
 
 	return(s);
 
@@ -166,9 +165,9 @@ sockaddr_in_t *init_any_sockaddr_in(const int port)
 
 	sockaddr_in_t *s = new_sockaddr_in();
 
-	s->sin_family = AF_INET;
-	s->sin_port = (in_port_t)htons(port);
-	s->sin_addr.s_addr = htonl(INADDR_ANY);
+	s->sin6_family = AF_INET6;
+	s->sin6_port = (in_port_t)htons(port);
+	s->sin6_addr =in6addr_any;// htonl(INADDR_ANY);
 
 	return(s);
 
@@ -180,8 +179,8 @@ sockaddr_in_t *init_sockaddr_in(const char *address, const int port)
 
 	sockaddr_in_t *s = new_sockaddr_in();
 
-	s->sin_family = AF_INET;
-	s->sin_port = (in_port_t)htons(port);
+	s->sin6_family = AF_INET6;
+	s->sin6_port = (in_port_t)htons(port);
 	printf("8\n");
 //	if ( ( s->sin_addr.s_addr = inet_addr(address) ) < 0 )
 //		{
@@ -215,11 +214,11 @@ sockaddr_in_t *init_if_sockaddr_in(const char *if_name, const int port)
 
         if ( ifa->ifa_addr == NULL ) { continue; }
 
-        i = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in)
+        i = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6)
         					, host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
         if ( 	( strcmp(ifa->ifa_name,if_name) == 0 ) &&
-        		( ifa->ifa_addr->sa_family == AF_INET )		)
+        		( ifa->ifa_addr->sa_family == AF_INET6 )		)
         {
 
             if ( i != 0 )
@@ -255,7 +254,7 @@ int open_receiver_udp_socket(const int port)
 	int fd = -1;
 
 	// 1) socket creation
-	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
+	if ( ( fd = socket(AF_INET6, SOCK_DGRAM, 0) ) < 0 )
 		{ handle_sys_error("open_receiver_udp_socket: " \
 							"<socket> returns error. Description"); }
 
@@ -281,7 +280,7 @@ int open_transmitter_udp_socket(const int port)
 	int fd = -1;
 
 	// 1) socket creation
-	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
+	if ( ( fd = socket(AF_INET6, SOCK_DGRAM, 0) ) < 0 )
 		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 	return(fd);
@@ -295,7 +294,7 @@ int open_broadcast_udp_socket(const char *iface, const int port)
 	int fd = -1;
 
 	// 1) socket creation
-	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
+	if ( ( fd = socket(AF_INET6, SOCK_DGRAM, 0) ) < 0 )
 		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 	// 2) set broadcast socket options
@@ -337,10 +336,18 @@ int set_bindtodevice_socket(const char *if_name, const int socket_fd)
 
 	ifreq_t *ifr = init_ifreq(if_name);
 
-	if ( setsockopt(socket_fd, SOL_SOCKET, SO_BINDTODEVICE, ifr, LEN__IFREQ)
+	int on = 1;
+//	if (addr->sa_family == AF_INET6) {
+	  if(setsockopt(socket_fd, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on))< 0 )
+		  handle_sys_error("set_bindtodevice_socket: <setsockopt> returns error");
+
+	        /* error */
+//	}
+
+	/**if ( setsockopt(socket_fd, SOL_SOCKET, SO_BINDTODEVICE, ifr, LEN__IFREQ)
 			< 0 )
 		{ handle_sys_error("set_bindtodevice_socket: " \
-							"<setsockopt> returns error"); }
+							"<setsockopt> returns error"); }**/
 
 	return(EX_OK);
 
@@ -366,10 +373,17 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 					const void *buffer, const int len	)
 {
 
+	 struct addrinfo sainfo, *psinfo;
+	 sainfo.ai_flags = 0;
+	    sainfo.ai_family = PF_INET6;
+	    sainfo.ai_socktype = SOCK_DGRAM;
+	    sainfo.ai_protocol = IPPROTO_UDP;
+	    int status = getaddrinfo(NULL, "http", &sainfo, &psinfo);//"ip6-localhost"
+	 //   status = sendto(sock, buffer, strlen(buffer), 0,(struct sockaddr *)psinfo->ai_addr, sin6len);
 	int sent_bytes = 0;
 
-	if ( ( sent_bytes = sendto(socket_fd, buffer, len
-								, 0, dest_addr, LEN__SOCKADDR_IN) ) < 0 )
+	//if ( ( sent_bytes = sendto(socket_fd, buffer, len , 0, dest_addr, LEN__SOCKADDR_IN) ) < 0 )
+	if ( ( sent_bytes = sendto(socket_fd, buffer, len , 0,  (struct sockaddr *)psinfo->ai_addr, LEN__SOCKADDR_IN) ) < 0 )
 	{
 		log_sys_error("cb_broadcast_sendto (fd=%d): <sendto> ERROR.\n"
 						, socket_fd);
@@ -383,6 +397,8 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 						, sent_bytes, len);
 		return(EX_ERR);
 	}
+	freeaddrinfo(psinfo);
+	   psinfo = NULL;
 
 	return(sent_bytes);
 
@@ -407,7 +423,7 @@ int recv_message(const int socket_fd, void *data)
 
 /* recv_msg */
 int recv_msg(	const int socket_fd, msg_header_t *msg,
-				const in_addr_t block_ip, bool *blocked	)
+				const in6_addr_t block_ip, bool *blocked	)
 {
 
 	int rx_bytes = 0;
@@ -418,20 +434,18 @@ int recv_msg(	const int socket_fd, msg_header_t *msg,
 		log_sys_error("recv_msg: wrong <recvmsg> call. ");
 		return(EX_ERR);
 	}
-
-	in_addr_t src_addr = get_source_address(msg);
-
-	if ( block_ip == src_addr )
+	//in6_addr_t src_addr = get_source_address(msg);
+	/**if (memcmp( block_ip,src_addr,sizeof(in6_addr_t))==0 )
 		{ *blocked = true; }
 	else
 		{ *blocked = false; }
-
+**/
 	return(rx_bytes);
 
 }
 
 /* get_source_address */
-in_addr_t get_source_address(msg_header_t *msg)
+in6_addr_t get_source_address(msg_header_t *msg) //en principio esta funcion solo sirve para comprobar se é unha mensaxe que enviamos nos mesmos
 {
 
 	sockaddr_in_t *src = NULL;
@@ -445,7 +459,7 @@ in_addr_t get_source_address(msg_header_t *msg)
 	{
 
 		// ignore the control headers that don't match what we want
-	    if (	( cmsg->cmsg_level 	!= IPPROTO_IP ) 	||
+	    if (	( cmsg->cmsg_level 	!= IPPROTO_IPV6 ) 	||
 	    		( cmsg->cmsg_type 	!= IP_PKTINFO ) )
 	    	{ continue; }
 
@@ -455,7 +469,7 @@ in_addr_t get_source_address(msg_header_t *msg)
 
 	}
 
-	return(src->sin_addr.s_addr);
+	return(src->sin6_addr);
 
 }
 

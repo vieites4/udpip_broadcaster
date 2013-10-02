@@ -40,7 +40,7 @@
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // SOCKET STRUCTURES
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+typedef struct in6_addr in6_addr_t;
 typedef struct ifreq ifreq_t;				/**< Type for ifreq. */
 #define LEN__IFREQ sizeof(ifreq_t)
 
@@ -66,7 +66,7 @@ typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
  */
 sockaddr_t *new_sockaddr();
 
-typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
+typedef struct sockaddr_in6 sockaddr_in_t;		/*!< Type for sockaddr_in. */
 #define LEN__SOCKADDR_IN sizeof(sockaddr_in_t)
 
 /**
@@ -222,7 +222,7 @@ int recv_message(const int socket_fd, void *data);
  * 			blocked flag values shall not be taken into consideration.
  */
 int recv_msg(	const int socket_fd, msg_header_t *msg,
-				const in_addr_t block_ip, bool *blocked	);
+				const in6_addr_t block_ip, bool *blocked	);
 
 /**
  * Gets the source address of the given message, by iterating along all
@@ -232,7 +232,7 @@ int recv_msg(	const int socket_fd, msg_header_t *msg,
  * 				headers with associated information.
  * @return Source address of the given message.
  */
-in_addr_t get_source_address(msg_header_t *msg);
+in6_addr_t get_source_address(msg_header_t *msg);
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // COMMON SOCKET TOOLS
