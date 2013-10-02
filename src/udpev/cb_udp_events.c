@@ -91,11 +91,11 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 	printf(">>> esto ben >>>\n");
 
 	// 2) in case the message comes from the localhost, it is discarded
-	if ( blocked == true )
+	/**if ( blocked == true )
 	{
 		log_app_msg(">>>@cb_forward_recvfrom: Message blocked!\n");
 		return;
-	}
+	}**/
 
 
 
@@ -141,13 +141,13 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 							arg->data, arg->len	);
 	printf("aqui tamén fago un envío");
 
-	if ( arg->print_forwarding_message == true )
-	{
+	//if ( arg->print_forwarding_message == true )
+	//{
 		log_app_msg(">>> BROADCAST(app:%d>net:%d), msg[%.2d] = {"
 				, arg->port, arg->forwarding_port, fwd_bytes);
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
-	}
+		//}
 	printf(">>> todo ben >>>\n");
 
 }
