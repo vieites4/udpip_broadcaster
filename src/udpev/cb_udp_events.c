@@ -62,7 +62,7 @@ printf("escribo\n");
 	printf(">>> BROADCAST TEST (fd = %d): sending test[%d] = %s\n"
 			, arg->socket_fd, len, data);
 
-	send_message(dest_addr, arg->socket_fd, data, len);
+	send_message(dest_addr, arg->socket_fd, data, len,arg->forwarding_port);
 
 	if ( usleep(__TX_DELAY_US) < 0 )
 	{
@@ -88,7 +88,8 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 						"Could not receive message.\n");
 		return;
 	}
-	printf(">>> esto ben >>>\n");
+
+	//print_hex_data(arg->data, arg->len);
 
 	// 2) in case the message comes from the localhost, it is discarded
 	/**if ( blocked == true )
@@ -98,12 +99,9 @@ void cb_forward_recvfrom(public_ev_arg_t *arg)
 	}**/
 
 
-
+	printf(">>> esto ben >>>\n");
 	// 3) forward network level UDP message to application level
-	int fwd_bytes = send_message
-						(	(sockaddr_t *)arg->forwarding_addr,
-							arg->forwarding_socket_fd,
-							arg->data, arg->len	);
+	int fwd_bytes = send_message	(	(sockaddr_t *)arg->forwarding_addr,	arg->forwarding_socket_fd,	arg->data, arg->len	,arg->forwarding_port);
 
 	if ( arg->print_forwarding_message == true )
 	{
@@ -133,21 +131,20 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 						"Could not receive message.\n");
 		return;
 	}
+
+	int fwd_bytes;
 	printf(">>> esto ben >>>\n");
 	// 2) broadcast application level UDP message to network level
-	int fwd_bytes = send_message
-						(	(sockaddr_t *)arg->forwarding_addr,
-							arg->forwarding_socket_fd,
-							arg->data, arg->len	);
+	fwd_bytes = send_message		(	(sockaddr_t *)arg->forwarding_addr,		arg->forwarding_socket_fd,	arg->data, arg->len,arg->forwarding_port	);
 	printf("aqui tamén fago un envío");
-
-	//if ( arg->print_forwarding_message == true )
-	//{
+	printf("%d /n",arg->forwarding_port);
+	if ( arg->print_forwarding_message == true )
+	{
 		log_app_msg(">>> BROADCAST(app:%d>net:%d), msg[%.2d] = {"
 				, arg->port, arg->forwarding_port, fwd_bytes);
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
-		//}
+		}
 	printf(">>> todo ben >>>\n");
 
 }

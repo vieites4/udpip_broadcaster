@@ -370,15 +370,23 @@ int set_msghdrs_socket(const int socket_fd)
 
 /* send_message */
 int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
-					const void *buffer, const int len	)
+					const void *buffer, const int len,int port	)
 {
-
 	 struct addrinfo sainfo, *psinfo;
 	 sainfo.ai_flags = 0;
 	    sainfo.ai_family = PF_INET6;
 	    sainfo.ai_socktype = SOCK_DGRAM;
 	    sainfo.ai_protocol = IPPROTO_UDP;
-	    int status = getaddrinfo(NULL, "http", &sainfo, &psinfo);//"ip6-localhost"
+int num=port;
+	    int contador=1;
+	    while(num/10>0)
+	       {num=num/10;   contador++;   }
+	    char port_char[contador];
+	   // printf("\n");
+sprintf(port_char,"%d",port);
+	 //   printf("%d cifras %d\n",port, contador);
+//printf(port_char);   printf("\n");
+	    int status = getaddrinfo("ff02::1",port_char, &sainfo, &psinfo);//"ip6-localhost"
 	 //   status = sendto(sock, buffer, strlen(buffer), 0,(struct sockaddr *)psinfo->ai_addr, sin6len);
 	int sent_bytes = 0;
 
