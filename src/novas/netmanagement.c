@@ -26,7 +26,7 @@ unsigned short variables[16]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0
 bool taken[16];
 //struct ev_loop * b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10;
 
-
+pthread_t h_locT;
 
 /*void *thr_h2(void * arg){
 	struct ev_loop *l_Loct;
@@ -44,6 +44,14 @@ variables[num]=1;
 		printf("entro aqui\n");
 	return NULL;
 }*/
+
+void thr_h2(void *arg){
+	while(1){
+	sleep(1);
+		SystemTickEvent();
+
+	}
+}
 
 
 List_locT * startup1()
@@ -69,8 +77,13 @@ if (itsGnLocalAddrConfMethod==0){
 }
 List_locT * locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
 //LPV= LPV_update(l_LPV,&t_LPV, revents );
+struct parametros * argumento;
+/**argumento = (struct parametros *) malloc (sizeof (struct parametros));
 
-
+	argumento->num=num;
+	argumento->locT=locT;
+	 argumento->pos=locT->end;**/ //(void *)argumento
+pthread_create(&h_locT,NULL,thr_h2,NULL);
 
 
 //ev_timer_again(*l_LPV,t_LPV);
@@ -315,9 +328,10 @@ List_locT * init_locT ()
 /*add at list end  */
 int add_end_locT ( List_locT * locT, itsnet_node data){
 //	pthread_t h1;
-	struct parametros * argumento;
+
 	printf("\n aqui fago un malloc\n");
-	argumento = (struct parametros *) malloc (sizeof (struct parametros));
+
+
   Element_locT *new_element;
  new_element = (Element_locT *) malloc (sizeof (Element_locT));
  if (new_element==NULL) printf( "No hay memoria disponible!\n");
@@ -332,7 +346,7 @@ new_element->before=locT->end;
 	 locT->end->next = new_element;}
 
  locT->end = new_element;
- argumento->pos=locT->end;
+
   locT ->len++;
   printf("AQUI en engadir ! %d \n",locT->len);
 //argumento->thread=h1;
@@ -342,8 +356,7 @@ while(a==0){
 num2=(num2 +1) % 16;
 if (taken[num2]==false){num=variables[num2]; taken[num2]=true; a=1;}
 }
-argumento->num=num;
-argumento->locT=locT;
+
 
 //pthread_create(&h1,NULL,thr_h2,(void *)argumento);
 AddTimer(num);
@@ -568,7 +581,7 @@ bool AddTimer(unsigned short TimerId)
 }
 
 #pragma inline SystemTickEvent
-void SystemTickEvent(void)
+void SystemTickEvent(void) //facer un fio que repita todo o tempo (bucle while(1)) esta temporizacion, cada segundo, poñer un sleep(1) xusto antes desta funcion
 {
 	tTimer *pTimer;
 	// Update the timers
@@ -583,27 +596,10 @@ void SystemTickEvent(void)
     	// Move to the next timer in the list
     	pTimer = pTimer->pNext;
     }
+	if (gTimer!=0){//producese un evento que vai a checktimerevent, sería a callback}
 }
 
-#pragma interrupt_level 0
-void TimerBase(void)
-{
-	// Check the bit for a timer 0 interrupt
-	if(TMRFLAG == 1)
-    {
-		// Reset corresponding bit
-    	TMRFLAG = 0;
 
-    	// Reload the corresponding register value
-    	RELOAD_TIMER0();
-
-    	// Process timer event
-    	SystemTickEvent();
-
-    	// Enable the timer0 again
-       // ......
-    }
-}
 
 void CheckTimerEvent()
 {
@@ -613,7 +609,7 @@ void CheckTimerEvent()
 	nTimer = gTimer;
 	gTimer = 0;
     /* Check for TimerId */
-int revents;
+
 	if( nTimer != 0)
     {   if(nTimer & TIMER_1)        {      	sup_elem_locT ();        }
     	if(nTimer & TIMER_2)        {     	Timer2Function();        }
