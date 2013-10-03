@@ -114,7 +114,7 @@ itsnet_packet * SHB(void *dato){
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	itsnet_common_header ch;
-	printf("xa estou dentro de shb \n");
+	//printf("xa estou dentro de shb \n");
 	char LEN[2] ;
 	memcpy(LEN,dato +4,2);
 	int lon_int=sprint_hex_data( LEN, 2);
@@ -157,7 +157,7 @@ itsnet_packet * SHB(void *dato){
 			//GARDAR O PAQUETE
 			//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 			 }
-	printf("saio de shb\n");
+//	printf("saio de shb\n");
 	return(pkt);}
 
 itsnet_packet * GeoBroadcast(void *dato){

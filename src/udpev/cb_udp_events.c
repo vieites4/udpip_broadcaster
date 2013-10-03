@@ -115,11 +115,29 @@ void cb_raw_sendto(public_ev_arg_r *arg)
 	//	}
 
 }
-
+volatile sig_atomic_t keep_going = 1;
 /* cb_forward_recvfrom */
+
 void cb_forward_recvfrom(public_ev_arg_r *arg)
 {
-	printf("cb_forward_recvfrom\n");
+
+	//printf("cb_forward_recvfrom111");
+
+/**	struct itimerval tout_val;
+
+	  tout_val.it_interval.tv_sec = 0;
+	  tout_val.it_interval.tv_usec = 0;
+	  tout_val.it_value.tv_sec = 5; // set timer for "INTERVAL (10) seconds
+	  tout_val.it_value.tv_usec = 0;
+	  setitimer(ITIMER_REAL, &tout_val,0);
+
+	  signal(SIGALRM,handler_tempo); // set the Alarm signal capture
+
+	  while (keep_going)
+	  {
+	    ;
+	  }**/
+printf("cb_forward_recvfrom\n");
 	bool blocked = false;
 	arg->len = 0;
 	// 1) read UDP message from network level
@@ -129,7 +147,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	return;}
 	//printf("PAQUETE RECIBIDO POLO ENLACE\n");
 	//	int i=print_hex_data(&arg->data, arg->len);
-		printf("porto %d %d\n",arg->port,arg->socket_fd);
+	printf("porto %d socket %d len %d\n",arg->port,arg->socket_fd,arg->len);
 	char *datos= (char *)malloc(arg->len);
 	memcpy(datos,arg->data,arg->len);
 
@@ -270,7 +288,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 		// 2) broadcast application level UDP message to network level
 		int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
-
+		log_app_msg(">>> BROADCAST(app:%d>net:%d), msg[%.2d] = {"			, arg->port, arg->forwarding_port, fwd_bytes);
+		log_app_msg("}\n");
 	//	printf("ENVIO UN PAQUETE\n");
 	//	int i=print_hex_data(&tx_frame->buffer, arg->len);
 	//	printf("envio trama\n");

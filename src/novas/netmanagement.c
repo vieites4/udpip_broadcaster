@@ -44,12 +44,121 @@ variables[num]=1;
 		printf("entro aqui\n");
 	return NULL;
 }*/
+static tTimer *mpTimerList = NULL;
+//Global variable for reference
+static unsigned short gTimer;
+#pragma inline SystemTickEvent
+int cont=0;
 
+void Timer2Function(){}
+
+static tTimer * FindTimer(unsigned short TimerId)
+{
+	tTimer *pTimer;
+    // Move to the start of the list
+	pTimer = mpTimerList;
+    // Check if list is empty
+	if(pTimer != NULL)
+    {        // Move through the list until the timer id is found
+    	while((pTimer->pNext != NULL) && (pTimer->TimerId != TimerId))
+        {            // Timer ids - not match, Move onto the next timer
+        	pTimer = pTimer->pNext;        }    }
+	return (pTimer);
+}
+
+bool AddTimer(unsigned short TimerId)
+{	tTimer *pTimer;
+	tTimer *pNewTimer = NULL;
+	bool ReturnValue = false;
+    // Look for the timer – if already exists
+	pTimer = FindTimer(TimerId);
+	// Check if the timer was found
+	if((pTimer == NULL) || (pTimer->TimerId != TimerId))
+    {		// Create a new timer
+    	pNewTimer = malloc(sizeof(tTimer));
+    	if(pNewTimer != NULL)
+        {     	pNewTimer->TimerId = TimerId;
+        	pNewTimer->pNext = NULL;
+        	// Check if the list is empty
+        	if(pTimer == NULL)
+            {   // Store the address of this timer as a first element in the list
+            	mpTimerList = pNewTimer;
+            }	else
+            {        		// Add the new timer to the end of the list
+            	pTimer = pNewTimer;            }        }
+    	// Select the new timer
+    	pTimer = pNewTimer;    }
+	if(pTimer != NULL)
+    {	// Set the timer interval
+    	pTimer->Period = itsGnLifetimeLocTE;
+    	ReturnValue = true;    }
+	return ReturnValue;
+}
+void CheckTimerEvent()
+{	printf("5555555\n");
+	signal(SIGINT, CheckTimerEvent);
+	unsigned short nTimer;
+
+    // Read the global variable gTimer and reset the value
+	nTimer = gTimer;
+	gTimer = 0;
+    // Check for TimerId
+
+	if( nTimer != 0)
+    {   if(nTimer & TIMER_1)        {     	Timer2Function();       }
+    	if(nTimer & TIMER_2)        {     	Timer2Function();        }
+    	if(nTimer & TIMER_3)        {       Timer2Function();        }
+    	if(nTimer & TIMER_4)        {        	Timer2Function();        }
+    	if(nTimer & TIMER_5)    	{      	Timer2Function();        }
+    	if(nTimer & TIMER_6)    	{     	Timer2Function();        }
+    	if(nTimer & TIMER_7)    	{        	Timer2Function();        }
+    	if(nTimer & TIMER_8)    	{        	Timer2Function();        }
+    	if(nTimer & TIMER_9)    	{      	Timer2Function();        }
+        if(nTimer & TIMER_10)    	{     	Timer2Function();        }
+        if(nTimer & TIMER_11)       {        	Timer2Function();        }
+    	if(nTimer & TIMER_12)       {        	Timer2Function();        }
+    	if(nTimer & TIMER_13)    	{      	Timer2Function();        }
+    	if(nTimer & TIMER_14)    	{     	Timer2Function();        }
+    	if(nTimer & TIMER_15)  	    {        	Timer2Function();        }
+    	if(nTimer & TIMER_16)    	{        	Timer2Function();        }
+    }
+}
+void SystemTickEvent(void) //facer un fio que repita todo o tempo (bucle while(1)) esta temporizacion, cada segundo, poñer un sleep(1) xusto antes desta funcion
+{
+	alarm(1);
+		signal(SIGALRM, SystemTickEvent);
+	tTimer *pTimer;
+	// Update the timers
+	pTimer = mpTimerList;
+	while(pTimer != NULL)
+    { 	if(pTimer->Period != 0)
+        {  	pTimer->Period--;
+      	if(pTimer->Period == 0)
+            { 		// Set the corresponding bit when the timer reaches zero
+            	gTimer = gTimer | pTimer->TimerId;
+            }        }
+    	// Move to the next timer in the list
+    	pTimer = pTimer->pNext;
+    }
+	printf("ENTRA O SIGNAL\n");
+	cont++;
+	if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
+	if (gTimer!=0){//raise(SIGINT);
+
+	}
+}
+
+void handler_tempo(int sig){
+
+	//printf("ENTRA O SIGNAL\n");
+
+}
 void thr_h2(void *arg){
+	alarm(1);
+	signal(SIGALRM,SystemTickEvent);
 	while(1){
-	sleep(1);
-		SystemTickEvent();
-
+	//	SystemTickEvent();
+		signal(SIGINT, CheckTimerEvent);
 	}
 }
 
@@ -532,103 +641,13 @@ int duplicate_control(void * data,List_locT * locT){
 	      actual = actual->next;
 	  }
 	  return(i);}
-
-static tTimer *mpTimerList = NULL;
-//Global variable for reference
-static unsigned short gTimer;
-
-static tTimer * FindTimer(unsigned short TimerId)
-{
-	tTimer *pTimer;
-    // Move to the start of the list
-	pTimer = mpTimerList;
-    // Check if list is empty
-	if(pTimer != NULL)
-    {        // Move through the list until the timer id is found
-    	while((pTimer->pNext != NULL) && (pTimer->TimerId != TimerId))
-        {            // Timer ids - not match, Move onto the next timer
-        	pTimer = pTimer->pNext;        }    }
-	return (pTimer);
-}
-
-bool AddTimer(unsigned short TimerId)
-{	tTimer *pTimer;
-	tTimer *pNewTimer = NULL;
-	bool ReturnValue = false;
-    // Look for the timer – if already exists
-	pTimer = FindTimer(TimerId);
-	// Check if the timer was found
-	if((pTimer == NULL) || (pTimer->TimerId != TimerId))
-    {		// Create a new timer
-    	pNewTimer = malloc(sizeof(tTimer));
-    	if(pNewTimer != NULL)
-        {     	pNewTimer->TimerId = TimerId;
-        	pNewTimer->pNext = NULL;
-        	// Check if the list is empty
-        	if(pTimer == NULL)
-            {   // Store the address of this timer as a first element in the list
-            	mpTimerList = pNewTimer;
-            }	else
-            {        		// Add the new timer to the end of the list
-            	pTimer = pNewTimer;            }        }
-    	// Select the new timer
-    	pTimer = pNewTimer;    }
-	if(pTimer != NULL)
-    {	// Set the timer interval
-    	pTimer->Period = itsGnLifetimeLocTE;
-    	ReturnValue = true;    }
-	return ReturnValue;
-}
-
-#pragma inline SystemTickEvent
-void SystemTickEvent(void) //facer un fio que repita todo o tempo (bucle while(1)) esta temporizacion, cada segundo, poñer un sleep(1) xusto antes desta funcion
-{
-	tTimer *pTimer;
-	// Update the timers
-	pTimer = mpTimerList;
-	while(pTimer != NULL)
-    { 	if(pTimer->Period != 0)
-        {  	pTimer->Period--;
-      	if(pTimer->Period == 0)
-            { 		// Set the corresponding bit when the timer reaches zero
-            	gTimer = gTimer | pTimer->TimerId;
-            }        }
-    	// Move to the next timer in the list
-    	pTimer = pTimer->pNext;
-    }
-	if (gTimer!=0){//producese un evento que vai a checktimerevent, sería a callback}
-}
+/**
 
 
 
-void CheckTimerEvent()
-{
-	unsigned short nTimer;
+**/
 
-    /* Read the global variable gTimer and reset the value */
-	nTimer = gTimer;
-	gTimer = 0;
-    /* Check for TimerId */
 
-	if( nTimer != 0)
-    {   if(nTimer & TIMER_1)        {      	sup_elem_locT ();        }
-    	if(nTimer & TIMER_2)        {     	Timer2Function();        }
-    	if(nTimer & TIMER_3)        {       Timer1Function();        }
-    	if(nTimer & TIMER_4)        {        	Timer2Function();        }
-    	if(nTimer & TIMER_5)    	{      	Timer1Function();        }
-    	if(nTimer & TIMER_6)    	{     	Timer2Function();        }
-    	if(nTimer & TIMER_7)    	{        	Timer1Function();        }
-    	if(nTimer & TIMER_8)    	{        	Timer2Function();        }
-    	if(nTimer & TIMER_9)    	{      	Timer1Function();        }
-        if(nTimer & TIMER_10)    	{     	Timer2Function();        }
-        if(nTimer & TIMER_11)       {        	Timer1Function();        }
-    	if(nTimer & TIMER_12)       {        	Timer2Function();        }
-    	if(nTimer & TIMER_13)    	{      	Timer1Function();        }
-    	if(nTimer & TIMER_14)    	{     	Timer2Function();        }
-    	if(nTimer & TIMER_15)  	    {        	Timer1Function();        }
-    	if(nTimer & TIMER_16)    	{        	Timer2Function();        }
-    }
-}
 
 
 

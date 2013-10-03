@@ -132,7 +132,7 @@ typedef struct ListIdent_lsp List_lsp;
 
 bool exist_neighbours(List_locT * locT);
 
-int sup_elem_locT (EV_P_ ev_timer *w, int revents);//void * arg);//EV_P_ ev_timer *w,
+int sup_elem_locT (struct parametros *p);//EV_P_ ev_timer *w, int revents);//void * arg);//EV_P_ ev_timer *w,
 int add_end_locT ( List_locT * locT, itsnet_node data);
 
 List_locT * init_locT ();
@@ -167,8 +167,7 @@ typedef struct Timer
 
 bool AddTimer(unsigned short TimerId);
 static tTimer * FindTimer(unsigned short TimerId);
-
-
-
+void handler_tempo(int sig);
+void Timer2Function();
 
 #endif /* NETMANAGEMENT_H_ */
