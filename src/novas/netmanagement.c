@@ -21,13 +21,14 @@ int revents;
 
 ev_timer t_Loct;
 
-struct ev_loop  *addr[10];
-int variables[10];
-struct ev_loop * b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10;
+//struct ev_loop  *addr[10];
+unsigned short variables[16]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
+bool taken[16];
+//struct ev_loop * b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10;
 
 
 
-void *thr_h2(void * arg){
+/*void *thr_h2(void * arg){
 	struct ev_loop *l_Loct;
 
 	l_Loct=EV_DEFAULT;
@@ -35,22 +36,22 @@ t_Loct.data=(void *)&arg;
 struct parametros *p;
   p=(struct parametros *) arg;
 int num=p->num;
-*addr[num]=l_Loct;
+//*addr[num]=l_Loct;
 variables[num]=1;
 		ev_timer_init(&t_Loct,sup_elem_locT,8.0,0.0); //itsGnLifetimeLocTE
 		ev_timer_start(l_Loct,&t_Loct);
 		// ev_loop (l_Loct, 0);
 		printf("entro aqui\n");
 	return NULL;
-}
+}*/
 
 
 List_locT * startup1()
 {
 if (itsGnLocalAddrConfMethod==0){
 
-	addr[0] = &b0;	addr[1] = &b1;	addr[2] = &b2;	addr[3] = &b3;	addr[4] = &b4;	addr[5] = &b5;	addr[6] = &b6;
-	addr[7] = &b7;addr[8] = &b8;addr[9] = &b9;addr[10] = &b10;
+	//addr[0] = &b0;	addr[1] = &b1;	addr[2] = &b2;	addr[3] = &b3;	addr[4] = &b4;	addr[5] = &b5;	addr[6] = &b6;
+	//addr[7] = &b7;addr[8] = &b8;addr[9] = &b9;addr[10] = &b10;
 	printf("AUTOADDRESS CONFIGURATION\n");
 	//GN_ADDR = (itsnet_node_id)malloc(8);
 	GN_ADDR.id[0]=0x14;//itsGnLocalGnAddr(0);
@@ -313,8 +314,7 @@ List_locT * init_locT ()
 
 /*add at list end  */
 int add_end_locT ( List_locT * locT, itsnet_node data){
-
-	pthread_t h1;
+//	pthread_t h1;
 	struct parametros * argumento;
 	printf("\n aqui fago un malloc\n");
 	argumento = (struct parametros *) malloc (sizeof (struct parametros));
@@ -335,33 +335,34 @@ new_element->before=locT->end;
  argumento->pos=locT->end;
   locT ->len++;
   printf("AQUI en engadir ! %d \n",locT->len);
-argumento->thread=h1;
-int a=0;
-int num=0;
+//argumento->thread=h1;
+int num2,a=0;
+unsigned short num=0;
 while(a==0){
-num=(num +1) % 10;
-if (variables[num]==0) a=1;
+num2=(num2 +1) % 16;
+if (taken[num2]==false){num=variables[num2]; taken[num2]=true; a=1;}
 }
 argumento->num=num;
 argumento->locT=locT;
-pthread_create(&h1,NULL,thr_h2,(void *)argumento);
 
+//pthread_create(&h1,NULL,thr_h2,(void *)argumento);
+AddTimer(num);
 printf("saio de add\n");
   return 0;
 }
 
 /* erase after a position */
-int sup_elem_locT (EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
+int sup_elem_locT (struct parametros *p)//(EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
 {
 	 // if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
 	  //   return -1;
   int i;
   printf("entro en cb\n");
-  struct parametros *p;
-     p=(struct parametros *) w->data;
+ // struct parametros *p;
+  //   p=(struct parametros *) w->data;
 
   Element_locT *pos=p->pos;
-  pthread_t h2=p->thread;
+ // pthread_t h2=p->thread;
 
     List_locT * locT=p->locT;
     printf("entro en cb\n");
@@ -386,7 +387,7 @@ int sup_elem_locT (EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_time
      printf("saimos de suprimir elemento da loct1\n");
   //   ev_timer_stop (EV_A_ w);
      variables[p->num]=0;
-     pthread_join(h2, NULL);
+  //   pthread_join(h2, NULL);
   printf("saimos de suprimir elemento da loct1\n");
   return 0;
 }
@@ -503,27 +504,136 @@ int duplicate_control(void * data,List_locT * locT){
 	Element_locT *actual;
 	  actual = locT->init;
 	  int i=1;
-
 	  itsnet_node_id * dato=NULL;//
-	  			dato= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
-	  	    memcpy(dato,data +8,8);
-
+	 dato= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
+	  memcpy(dato,data +8,8);
 	  char *SN= (char *)malloc(2);
 	  memcpy(SN,data+36,2);
 		int lon_int=sprint_hex_data( SN, 2);
-
 	  while (actual != NULL){
 	      //printf ("%p - %s\n", actual, actual->data);
 		  if (actual->data.node_id.id==dato->id){
 			  i=0;
 	if(((actual->data.Sequence_number < lon_int ) &&(lon_int- actual->data.Sequence_number <=65536/2))||((actual->data.Sequence_number > lon_int)&&(-lon_int + actual->data.Sequence_number >65536/2)))
-	{
-	actual->data.Sequence_number=lon_int;
-		  }
-		  }
+	{	actual->data.Sequence_number=lon_int;		  }		  }
 	      actual = actual->next;
 	  }
-	  return(i);
+	  return(i);}
 
+static tTimer *mpTimerList = NULL;
+//Global variable for reference
+static unsigned short gTimer;
 
+static tTimer * FindTimer(unsigned short TimerId)
+{
+	tTimer *pTimer;
+    // Move to the start of the list
+	pTimer = mpTimerList;
+    // Check if list is empty
+	if(pTimer != NULL)
+    {        // Move through the list until the timer id is found
+    	while((pTimer->pNext != NULL) && (pTimer->TimerId != TimerId))
+        {            // Timer ids - not match, Move onto the next timer
+        	pTimer = pTimer->pNext;        }    }
+	return (pTimer);
 }
+
+bool AddTimer(unsigned short TimerId)
+{	tTimer *pTimer;
+	tTimer *pNewTimer = NULL;
+	bool ReturnValue = false;
+    // Look for the timer – if already exists
+	pTimer = FindTimer(TimerId);
+	// Check if the timer was found
+	if((pTimer == NULL) || (pTimer->TimerId != TimerId))
+    {		// Create a new timer
+    	pNewTimer = malloc(sizeof(tTimer));
+    	if(pNewTimer != NULL)
+        {     	pNewTimer->TimerId = TimerId;
+        	pNewTimer->pNext = NULL;
+        	// Check if the list is empty
+        	if(pTimer == NULL)
+            {   // Store the address of this timer as a first element in the list
+            	mpTimerList = pNewTimer;
+            }	else
+            {        		// Add the new timer to the end of the list
+            	pTimer = pNewTimer;            }        }
+    	// Select the new timer
+    	pTimer = pNewTimer;    }
+	if(pTimer != NULL)
+    {	// Set the timer interval
+    	pTimer->Period = itsGnLifetimeLocTE;
+    	ReturnValue = true;    }
+	return ReturnValue;
+}
+
+#pragma inline SystemTickEvent
+void SystemTickEvent(void)
+{
+	tTimer *pTimer;
+	// Update the timers
+	pTimer = mpTimerList;
+	while(pTimer != NULL)
+    { 	if(pTimer->Period != 0)
+        {  	pTimer->Period--;
+      	if(pTimer->Period == 0)
+            { 		// Set the corresponding bit when the timer reaches zero
+            	gTimer = gTimer | pTimer->TimerId;
+            }        }
+    	// Move to the next timer in the list
+    	pTimer = pTimer->pNext;
+    }
+}
+
+#pragma interrupt_level 0
+void TimerBase(void)
+{
+	// Check the bit for a timer 0 interrupt
+	if(TMRFLAG == 1)
+    {
+		// Reset corresponding bit
+    	TMRFLAG = 0;
+
+    	// Reload the corresponding register value
+    	RELOAD_TIMER0();
+
+    	// Process timer event
+    	SystemTickEvent();
+
+    	// Enable the timer0 again
+       // ......
+    }
+}
+
+void CheckTimerEvent()
+{
+	unsigned short nTimer;
+
+    /* Read the global variable gTimer and reset the value */
+	nTimer = gTimer;
+	gTimer = 0;
+    /* Check for TimerId */
+int revents;
+	if( nTimer != 0)
+    {   if(nTimer & TIMER_1)        {      	sup_elem_locT ();        }
+    	if(nTimer & TIMER_2)        {     	Timer2Function();        }
+    	if(nTimer & TIMER_3)        {       Timer1Function();        }
+    	if(nTimer & TIMER_4)        {        	Timer2Function();        }
+    	if(nTimer & TIMER_5)    	{      	Timer1Function();        }
+    	if(nTimer & TIMER_6)    	{     	Timer2Function();        }
+    	if(nTimer & TIMER_7)    	{        	Timer1Function();        }
+    	if(nTimer & TIMER_8)    	{        	Timer2Function();        }
+    	if(nTimer & TIMER_9)    	{      	Timer1Function();        }
+        if(nTimer & TIMER_10)    	{     	Timer2Function();        }
+        if(nTimer & TIMER_11)       {        	Timer1Function();        }
+    	if(nTimer & TIMER_12)       {        	Timer2Function();        }
+    	if(nTimer & TIMER_13)    	{      	Timer1Function();        }
+    	if(nTimer & TIMER_14)    	{     	Timer2Function();        }
+    	if(nTimer & TIMER_15)  	    {        	Timer1Function();        }
+    	if(nTimer & TIMER_16)    	{        	Timer2Function();        }
+    }
+}
+
+
+
+

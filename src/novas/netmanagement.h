@@ -19,6 +19,23 @@
 #include <ev.h>
 #include "itsnet_header.h"
 #include "../udpev/define.h"
+
+#define TIMER_1	            (unsigned short)0x0001
+#define TIMER_2	            (unsigned short)0x0002
+#define TIMER_3	            (unsigned short)0x0004
+#define TIMER_4	            (unsigned short)0x0008
+#define TIMER_5	            (unsigned short)0x0010
+#define TIMER_6	            (unsigned short)0x0020
+#define TIMER_7	            (unsigned short)0x0040
+#define TIMER_8	            (unsigned short)0x0080
+#define TIMER_9	            (unsigned short)0x0100
+#define TIMER_10	        (unsigned short)0x0200
+#define TIMER_11	        (unsigned short)0x0400
+#define TIMER_12	        (unsigned short)0x0800
+#define TIMER_13	        (unsigned short)0x1000
+#define TIMER_14	        (unsigned short)0x2000
+#define TIMER_15	        (unsigned short)0x4000
+#define TIMER_16	        (unsigned short)0x8000
 //#include "udpev/cb_udp_events.h"
 typedef struct List_locT List_locT;
 typedef struct msghdr msg_header_t;
@@ -106,9 +123,9 @@ struct ListIdent_lsp
 } ;
 struct parametros{
 Element_locT * pos;
-pthread_t thread;
+unsigned short num;
+//pthread_t thread;
 List_locT * locT;
-int num;
 };
 
 typedef struct ListIdent_lsp List_lsp;
@@ -135,6 +152,23 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
 void Beacon_send(public_ev_arg_r *arg);
 int duplicate_control(void * data,List_locT * locT);
 
-void *thr_h2(void * arg);
+//void *thr_h2(void * arg);
 void LS(int option);
+
+
+
+/* Timer record for each timer */
+typedef struct Timer
+{
+	unsigned short TimerId;
+	int Period;
+	struct Timer *pNext;
+}tTimer;
+
+bool AddTimer(unsigned short TimerId);
+static tTimer * FindTimer(unsigned short TimerId);
+
+
+
+
 #endif /* NETMANAGEMENT_H_ */

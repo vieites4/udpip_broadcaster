@@ -231,7 +231,7 @@ sockaddr_in_t *init_any_sockaddr_in(const int port)
 
 	s->sin_family = AF_INET;
 	s->sin_port = (in_port_t)htons(port);
-	s->sin_addr.s_addr = htonl(INADDR_ANY);
+	s->sin_addr.s_addr = htons(INADDR_ANY);
 
 	return(s);
 
@@ -243,10 +243,12 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 	sockaddr_ll_t *s = new_sockaddr_ll();
 
 	s->sll_family = PF_PACKET;
-	s->sll_ifindex = if_nametoindex("wlan0");//(in_port_t)htons(port);//??
+	s->sll_ifindex = if_nametoindex("wlan0");//?? //(in_port_t)htons(port);
 	memcpy(s->sll_addr,ETH_ADDR_ANY , ETH_ALEN);
 	s->sll_halen = ETH_ALEN;
-	s->sll_protocol = htons(ETH_P_ALL);
+	printf("esto faino\n");
+	s->sll_protocol = htons(ETH_P_ALL); // se poño htons entra todo.
+	printf("esto faino\n");
 	return(s);
 
 }
@@ -396,6 +398,7 @@ int open_receiver_udp_socket(const int port)
 {
 
 	int fd = -1;
+	printf("porto udp %d\n",port);
 
 	// 1) socket creation
 	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
@@ -427,7 +430,7 @@ int open_receiver_raw_socket(const int port)
 
 	// 1) socket creation
 	sockaddr_ll_t *s= init_sockaddr_ll((const char *) NULL, port);
-
+printf("porto raw %d\n",port);
 
 	if ( ( fd = socket(PF_PACKET, SOCK_RAW,port ) ) < 0 )// lsap é port
 		{ handle_sys_error("open_receiver_RAW_socket: " \
@@ -438,7 +441,7 @@ int open_receiver_raw_socket(const int port)
 
 	//sockaddr_ll_t *sll = init_sockaddr_ll(ll_socket,is_transmitter);
 
-	if ( bind(	fd,	(struct sockaddr *)addr, LEN__SOCKADDR_LL)< 0 )	{ handle_sys_error("Binding socket"); }
+	if ( bind(	fd,	(sockaddr_t *)addr, LEN__SOCKADDR_LL)< 0 )	{ handle_sys_error("Binding socket"); }
 
 	// 3) for analyzing received message's headers
 	//if ( set_msghdrs_socket(fd) < 0 ) //PROBABLEMENTE BORRE ESTO
@@ -532,7 +535,7 @@ int open_broadcast_raw_socket(const char *iface, const int port) ///cambiar esto
 		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 	// 2) set broadcast socket options
-	/*if ( set_broadcast_socket(fd) < 0 )
+if ( set_broadcast_socket(fd) < 0 )
 	{
 		handle_app_error("open_broadcast_udp_socket: " \
 							"<set_broadcast_socket> returns error.\n");
@@ -544,7 +547,7 @@ int open_broadcast_raw_socket(const char *iface, const int port) ///cambiar esto
 		handle_app_error("open_broadcast_udp_socket: " \
 							"<set_bindtodevice_socket> returns error.\n");
 	}
-*/
+
 	return(fd);
 
 }

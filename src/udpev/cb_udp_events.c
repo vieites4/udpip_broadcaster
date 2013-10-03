@@ -119,7 +119,7 @@ void cb_raw_sendto(public_ev_arg_r *arg)
 /* cb_forward_recvfrom */
 void cb_forward_recvfrom(public_ev_arg_r *arg)
 {
-//	printf("cb_forward_recvfrom\n");
+	printf("cb_forward_recvfrom\n");
 	bool blocked = false;
 	arg->len = 0;
 	// 1) read UDP message from network level
@@ -129,6 +129,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	return;}
 	//printf("PAQUETE RECIBIDO POLO ENLACE\n");
 	//	int i=print_hex_data(&arg->data, arg->len);
+		printf("porto %d %d\n",arg->port,arg->socket_fd);
 	char *datos= (char *)malloc(arg->len);
 	memcpy(datos,arg->data,arg->len);
 
@@ -206,7 +207,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	/* cb_broadcast_recvfrom */
 	void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	{
-	//	printf("cb_broadcast_recvfrom\n");
+		printf("cb_broadcast_recvfrom\n");
 		bool blocked = false;
 		arg->len = 0;
 
