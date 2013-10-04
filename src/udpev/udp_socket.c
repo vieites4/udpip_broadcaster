@@ -244,10 +244,10 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 
 	s->sll_family = PF_PACKET;
 	s->sll_ifindex = if_nametoindex("wlan0");//?? //(in_port_t)htons(port);
-	memcpy(s->sll_addr,ETH_ADDR_ANY , ETH_ALEN);
+	//memcpy(s->sll_addr,ETH_ADDR_ANY , ETH_ALEN);
 	s->sll_halen = ETH_ALEN;
-	printf("esto faino\n");
-	s->sll_protocol = htons(ETH_P_ALL); // se poño htons entra todo.
+	s->sll_protocol = htons(ETH_P_ALL); // se poño htons entra todo.//htons(0x0707);//
+	//s->sll_protocol =  htons(0x0707);//engadido//htons(ETH_P_ALL);	//
 	printf("esto faino\n");
 	return(s);
 
@@ -268,8 +268,8 @@ sockaddr_ll_t *init_sockaddr_ll(const char *address, const int port)
 	//s->sin_port = (in_port_t)htons(port);
 	s->sll_ifindex =if_nametoindex("wlan0");//if_index; -> FALTA DAR ESTA INFO
 	//s->sll_protocol=htons(port);
-	s->sll_protocol = htons(ETH_P_ALL);	// htons(0x0707);//engadido
-	memset(s->sll_addr,address,ETH_ALEN);
+	s->sll_protocol =  htons(0x0707);//engadido//htons(ETH_P_ALL);	//
+	//memset(s->sll_addr,address,ETH_ALEN);
 //	if ( ( s->sll_addr.s_addr = inet_addr(address) ) < 0 )
 	//	{ handle_sys_error("init_sockaddr_in: " \
 
@@ -292,7 +292,7 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port)
     int i;
     char host[NI_MAXHOST];
     bool if_found = false;
-
+    /**
     if ( getifaddrs(&ifaddr) < 0 )
     {
     	handle_sys_error("init_if_sockaddr_ll: " \
@@ -308,7 +308,7 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port)
         					, host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
         if ( 	( strcmp(ifa->ifa_name,if_name) == 0 ) &&
-        		( ifa->ifa_addr->sa_family == AF_INET )		)
+        		( ifa->ifa_addr->sa_family == AF_PACKET )		)
         {
 
             if ( i != 0 )
@@ -318,10 +318,10 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port)
                 						, gai_strerror(i));
             }
 
-            s = init_sockaddr_ll(host, port);
+
             if_found = true;
 
-        }
+
 
     }
 
@@ -331,7 +331,8 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port)
     {
     	handle_app_error("Could not get local interface, if_name = %s.\n"
     						, if_name);
-    }
+    } }**/
+    s = init_sockaddr_ll(host, port);
 
 	return(s);
 
@@ -429,8 +430,9 @@ int open_receiver_raw_socket(const int port)
 	int fd = -1;
 
 	// 1) socket creation
-	sockaddr_ll_t *s= init_sockaddr_ll((const char *) NULL, port);
+//	sockaddr_ll_t *s= init_sockaddr_ll((const char *) NULL, port);
 printf("porto raw %d\n",port);
+
 
 	if ( ( fd = socket(PF_PACKET, SOCK_RAW,port ) ) < 0 )// lsap é port
 		{ handle_sys_error("open_receiver_RAW_socket: " \
@@ -444,8 +446,9 @@ printf("porto raw %d\n",port);
 	if ( bind(	fd,	(sockaddr_t *)addr, LEN__SOCKADDR_LL)< 0 )	{ handle_sys_error("Binding socket"); }
 
 	// 3) for analyzing received message's headers
-	//if ( set_msghdrs_socket(fd) < 0 ) //PROBABLEMENTE BORRE ESTO
-		//{ handle_app_error("open_receiver_RAW_socket: " \
+     if ( set_msghdrs_socket_raw(fd) < 0 ) //PROBABLEMENTE BORRE ESTO
+		//
+      { handle_app_error("open_receiver_RAW_socket: " \
 							"<set_msghdrs_socket> returns error.\n"); }
 
 	return(fd);
@@ -485,7 +488,7 @@ int open_transmitter_raw_socket(const int port) //non está completo, non?
 	int fd = -1;
 
 	// 1) socket creation
-	if ( ( fd = socket(AF_PACKET, SOCK_RAW, 0) ) < 0 )
+	if ( ( fd = socket(AF_PACKET, SOCK_RAW, port) ) < 0 )
 		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 
@@ -531,7 +534,7 @@ int open_broadcast_raw_socket(const char *iface, const int port) ///cambiar esto
 	int fd = -1;
 
 	// 1) socket creation
-	if ( ( fd = socket(AF_PACKET, SOCK_RAW, 0) ) < 0 )
+	if ( ( fd = socket(AF_PACKET, SOCK_RAW, port) ) < 0 )
 		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 	// 2) set broadcast socket options
@@ -592,6 +595,19 @@ int set_msghdrs_socket(const int socket_fd)
 	if ( setsockopt(socket_fd, IPPROTO_IP, IP_PKTINFO, &ifr, LEN__IFREQ)
 			< 0 )
 	{ handle_sys_error("set_generate_headers: " \
+						"<setsockopt> returns error"); }
+
+	return(EX_OK);
+
+
+
+}
+int set_msghdrs_socket_raw(const int socket_fd)
+{
+
+	ifreq_t *ifr = new_ifreq();
+
+	//if ( setsockopt(socket_fd, IPPROTO_IP, IP_PKTINFO, &ifr, LEN__IFREQ)			< 0 )	{ handle_sys_error("set_generate_headers: " \
 						"<setsockopt> returns error"); }
 
 	return(EX_OK);
@@ -679,7 +695,7 @@ int recv_message(const int socket_fd, void *data)
 	int rx_bytes = 0;
 
 	if ( ( rx_bytes = recvfrom(socket_fd, data, UDP_BUFFER_LEN, 0, NULL, NULL) ) < 0 )
-
+	//if ( ( rx_bytes = recvmsg(socket_fd, data, 0) ) < 0 )
 		//if((rx_bytes= recvfrom(socket_fd, msg,IEEE_80211_FRAME_LEN, 0,NULL,NULL))<0)
 	{
 		log_sys_error("recv_message: wrong <recvfrom> call. ");

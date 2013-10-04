@@ -45,7 +45,7 @@ typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
 
 	int socket_fd;					/**< Socket file descriptor. */
 	int port;						/**< Port to be used. */
-	List_locT *locT;
+
 	int forwarding_socket_fd;		/**< Socket for message forwarding. */
 	int forwarding_port;			/**< Port for message forwarding. */
 
@@ -62,6 +62,7 @@ typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
 	bool nec_mode;					/**< Flag that indicates NEC mode. */
 
 	int __test_number;				/**< For testing, counts no tests. */
+	List_locT *locT;
 };
 
 

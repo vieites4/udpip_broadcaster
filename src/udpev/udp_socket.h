@@ -227,7 +227,7 @@ int set_broadcast_socket(const int socket_fd);
 int set_bindtodevice_socket(const char *if_name, const int socket_fd);
 
 int set_msghdrs_socket(const int socket_fd);
-
+int set_msghdrs_socket_raw(const int socket_fd);
 /**
  * @brief Creates and binds an UDP socket that uses the given port.
  * @param port The UDP port to be used by this socket.

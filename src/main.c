@@ -92,12 +92,8 @@ pthread_t h1,h2;
 		app_events= init_tx_udp_events(cfg->if_name, cfg->app_tx_port,cfg->app_inet_addr, cb_udp_sendto,broad); //aqui teño a posibilidade de facer q non sexa solo broadcast
 		printf("fin\n");
 		printf("> UDP TX socket open, port = %d , fd= ", cfg->tx_port);//, net_events->socket_fd);//, fd = %d. // da erro o de net_events->socket_fd-> buscar a solución
-
 	}
-	else
-
-
-	{
+	else	{
 
 		log_app_msg(">>> Opening UDP APP RX socket...\n");
 		app_events = init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g);//broadcast
@@ -110,8 +106,8 @@ pthread_t h1,h2;
 
 
 		}
-
-	ev_loop(net_events->loop, 0); //app_events
+printf("next\n");
+	ev_loop(net_events->loop, 0); //realmente é este o bucle infinito que vai sendo interrumpido por sinais ev_read que despertan o common_cb q desperta o broadcast ou o forwarding segundo chegue por un porto ou polo outro.
 
 
 	pthread_join(h1, NULL);

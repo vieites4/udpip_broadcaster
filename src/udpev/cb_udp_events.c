@@ -121,37 +121,25 @@ volatile sig_atomic_t keep_going = 1;
 void cb_forward_recvfrom(public_ev_arg_r *arg)
 {
 
-	//printf("cb_forward_recvfrom111");
 
-/**	struct itimerval tout_val;
-
-	  tout_val.it_interval.tv_sec = 0;
-	  tout_val.it_interval.tv_usec = 0;
-	  tout_val.it_value.tv_sec = 5; // set timer for "INTERVAL (10) seconds
-	  tout_val.it_value.tv_usec = 0;
-	  setitimer(ITIMER_REAL, &tout_val,0);
-
-	  signal(SIGALRM,handler_tempo); // set the Alarm signal capture
-
-	  while (keep_going)
-	  {
-	    ;
-	  }**/
 printf("cb_forward_recvfrom\n");
 	bool blocked = false;
 	arg->len = 0;
 	// 1) read UDP message from network level
-	if ( ( arg->len = recv_message(arg->socket_fd,arg->data))<0)//(arg->socket_fd, arg->msg_header, NULL, &blocked) ) < 0 )//arg->local_addr->sin_addr.s_addr
-	{log_app_msg("cb_forward_recvfrom: <recv_msg> " \
-			"Could not receive message.\n");
-	return;}
+	void *data=NULL;
+	data=(void *)malloc(ITSNET_DATA_SIZE);
+	if ( ( arg->len = recv_message(arg->socket_fd,data))<0)//(arg->socket_fd, arg->data, NULL, &blocked) ) < 0 )//arg->local_addr->sin_addr.s_addr
+	{log_app_msg("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
+	memcpy(arg->data,data,arg->len);
 	//printf("PAQUETE RECIBIDO POLO ENLACE\n");
-	//	int i=print_hex_data(&arg->data, arg->len);
-	printf("porto %d socket %d len %d\n",arg->port,arg->socket_fd,arg->len);
+	//if (arg->len==1020 ||arg->len==92)	print_hex_data(arg->msg_header, arg->len);
+	if (arg->len==1020)	print_hex_data(arg->data, arg->len);
+	//printf("porto %d socket %d len %d len %d\n",arg->port,arg->socket_fd,arg->len);
+
 	char *datos= (char *)malloc(arg->len);
 	memcpy(datos,arg->data,arg->len);
 
-	CommonHeader_processing(arg);
+	//CommonHeader_processing(arg);
 	char *HT=NULL;
 	HT = (char *)malloc(2);
 	memcpy(HT,arg->data,2);
@@ -197,10 +185,10 @@ printf("cb_forward_recvfrom\n");
 			printf("saio de geobroadcast_f\n");
 		}
 		// 2) in case the message comes from the localhost, it is discarded
-		if ( blocked == true )
-		{
-			log_app_msg(">>>@cb_forward_recvfrom: Message blocked!\n");
-			return;	}
+		//if ( blocked == true )
+		//{
+		//	log_app_msg(">>>@cb_forward_recvfrom: Message blocked!\n");
+		//	return;	}
 
 
 		// 3) forward network level UDP message to application level
@@ -225,12 +213,14 @@ printf("cb_forward_recvfrom\n");
 	/* cb_broadcast_recvfrom */
 	void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	{
+
 		printf("cb_broadcast_recvfrom\n");
 		bool blocked = false;
 		arg->len = 0;
 
 		// 1) read UDP message from application level
 		//		(self-broadcast messages are not received)
+
 		if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header, arg->local_addr->sin_addr.s_addr, &blocked) ) < 0 )
 		{
 			log_app_msg("cb_broadcast_recvfrom: <recv_msg> " \
