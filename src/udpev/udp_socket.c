@@ -253,9 +253,6 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 
 }
 
-
-
-
 sockaddr_ll_t *init_sockaddr_ll(const char *address, const int port)
 {
 
@@ -416,8 +413,6 @@ int open_receiver_udp_socket(const int port)
 	if ( set_msghdrs_socket(fd) < 0 )
 		{ handle_app_error("open_receiver_udp_socket: " \
 							"<set_msghdrs_socket> returns error.\n"); }
-
-
 	return(fd);
 
 }

@@ -23,6 +23,9 @@
 #include "udp_events.h"
 
 /* new_udp_events */
+	struct ev_loop * l_Beacon;
+		ev_timer t_Beacon;
+		pthread_t h3;
 udp_events_t *new_udp_events()
 {
 	udp_events_t *s = NULL;
@@ -118,7 +121,19 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name, const ev_c
 	return(s);
 
 }
+void *thr_h3(void *arg){
 
+
+	 //ollo!! teño que reiniciar o temporizador cando se renove o LPV por outros medios!
+	t_Beacon.data=arg;
+	l_Beacon= EV_DEFAULT;
+
+	ev_timer_init(&t_Beacon,Beacon_send,0.,itsGnBeaconServiceRetransmitTimer); //
+
+	ev_timer_start(l_Beacon,&t_Beacon);
+//t_LPV.repeat=1.;
+	return NULL;
+}
 /* init_net_udp_events */
 udp_events_t *init_net_raw_events
 				(	const int net_rx_port, const char* net_if_name,const char *app_fwd_addr, const int app_fwd_port,
@@ -141,6 +156,10 @@ udp_events_t *init_net_raw_events
 	arg->public_arg.print_forwarding_message = __verbose;
 	arg->cb_specfic	=callback;
 	arg->public_arg.locT=locT;
+	printf("socket %d \n",arg->public_arg.socket_fd);
+	//arg->
+	public_ev_arg_r * argum= &arg->public_arg;
+	pthread_create(&h3,NULL, thr_h3, (void *) argum);
 	return(s);
 
 }
@@ -299,18 +318,7 @@ void cb_common
 		log_app_msg("cb_common (ev=%d,fd=%d): <cb_function> NULL!\n", revents, watcher->fd);
 		return;
 	}
-	//printf("!!!!!!!!!!CANDO AS RECIBO00!!!!!!!!!!! \n");
-		//	print_hex_data(&arg->public_arg.data, arg->public_arg.len);
-		//	printf("\n");
-	void * tipo=NULL;
-	tipo=(void *)malloc(2);
-	memcpy(tipo,arg->public_arg.data + 12 ,2);
-	char tipoX[2]={0x07,0x07};
-	if((memcmp(tipo,tipoX,2)==0 && arg->cb_specfic==cb_forward_recvfrom) ||arg->cb_specfic!=cb_forward_recvfrom ){arg->cb_specfic(public_arg); } //aqui apuntaría que non pase cara fora
+	arg->cb_specfic(public_arg);
 
-	//	if(memcmp(tipo,tipoX,2)!=0 && arg->cb_specfic==cb_forward_recvfrom ){return;}
-	//if(memcmp(tipo,tipoX,2)!=0 && arg->cb_specfic==cb_forward_recvfrom ){print_hex_data(tipo,2);}
-	//printf("porto no cb_common %d ou %d, as lonxitudes %d %d \n",watcher->fd,arg->public_arg.len,sizeof(sockaddr_in_t),sizeof(sockaddr_ll_t));
-	//arg->cb_specfic(public_arg); //aquí e onde estou executando o forwarding ou o broadcast
 
 }

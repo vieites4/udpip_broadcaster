@@ -52,7 +52,7 @@
 #define IEEE_80211_HLEN 		30		/*!< IEEE 802.11 header length (B). */
 #define TYPE_IEEE_80211 	2	/*!< Buffer with an IEEE 802.11 frame. */
 
-#define IEEE_80211_BLEN 		2312	/*!< IEEE 802.11 body length (B). */
+
 #define typo[2] =                          {0x08,0x00}
 
 
@@ -65,46 +65,9 @@ typedef struct ieee80211_header_frame_control
 } ieee80211_header_frame_control_t;
 
 
-typedef struct ieee80211_header
-{
-
-	unsigned char dest_address[ETH_ALEN]; //é importante a orde na que coloco os compoñentes do struct
-	unsigned char src_address[ETH_ALEN];	/*!< Source MAC address. */
-    unsigned char type[2];
-
-//	unsigned char recheo[28];
-} ieee80211_header_t ;
-typedef struct ll_frame
-{
-
-	int frame_type;				/*!< Type of the frame. */
-	int frame_len;				/*!< Length of the total bytes read. */
-//unsigned char recheo[26];
-	struct timeval timestamp;	/*!< Frame creation timestamp (usecs). */
-
-} ll_frame_t;
-typedef struct ieee80211_frame_buffer
-{
-
-	ieee80211_header_t header;	/*!< IEEE 802.11 header. */
-	//int frame_type;				/*!< Type of the frame. */
-		//int frame_len;
-	//	unsigned char recheo[4];
-
-	//ll_frame_t info;
-
-	char data[IEEE_80211_BLEN];	/*!< Data body of the IEEE 802.11 frame. */
-
-} ieee80211_buffer_t;
 
 
-typedef struct ieee80211_frame
-{
 
-	ll_frame_t info;			/*!< Info relative to frame management. */
-	ieee80211_buffer_t buffer;	/*!< Buffer with frame contents. */
-
-} ieee80211_frame_t;
 
 typedef struct ifreq ifreq_t;				/**< Type for ifreq. */
 #define LEN__IFREQ sizeof(ifreq_t)
@@ -123,7 +86,7 @@ ifreq_t *new_ifreq();
  */
 ifreq_t *init_ifreq(const char *if_name);
 
-typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
+
 #define LEN__SOCKADDR sizeof(sockaddr_t)
 
 /**

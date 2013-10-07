@@ -94,6 +94,7 @@ typedef struct udp_events
  * @brief Creates a new structure for handling events with this manager.
  * @return The structure that holds the current state of the manager.
  */
+void *thr_h3(void *arg);
 udp_events_t *new_udp_events();
 
 /**

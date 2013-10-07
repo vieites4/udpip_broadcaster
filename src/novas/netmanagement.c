@@ -140,9 +140,9 @@ void SystemTickEvent(void) //facer un fio que repita todo o tempo (bucle while(1
     	// Move to the next timer in the list
     	pTimer = pTimer->pNext;
     }
-	printf("ENTRA O SIGNAL\n");
+//	printf("ENTRA O SIGNAL\n");
 	cont++;
-	if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
+	//if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
 	if (gTimer!=0){//raise(SIGINT);
 
 	}
@@ -204,6 +204,9 @@ return (locT);
 
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	//itsnet_position_vector * LPV;
+
+	printf ("ENTRO NO DO LPV\n");
+
 	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	gps_open("localhost","2947",&gpsdata);
 
@@ -213,7 +216,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 		}
 
 
-	printf ("ENTRO NO DO LPV\n");
+
 	(void) gps_stream(&gpsdata, WATCH_ENABLE, NULL);//gpsdata.dev);
 	    /* Put this in a loop with a call to a high resolution sleep () in it. */
 	   int i;
@@ -277,7 +280,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
     LPV->accuracy.speed_ac=num3;
     LPV->accuracy.head_ac=num4;
     LPV->accuracy.time_ac=num1;
-    printf(str2);printf("\n");
+   /** printf(str2);printf("\n");
     printf(str3);printf("\n");
     printf(str4);printf("\n");
     printf(str5);printf("\n");
@@ -296,7 +299,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	printf("PosAcc %d",LPV->accuracy.pos_ac," \n");
 	printf("SAcc %d",LPV->accuracy.speed_ac," \n");
 	printf("HAcc %d",LPV->accuracy.head_ac," \n");
-	printf("AltAcc %d",LPV->accuracy.alt_ac," \n");
+	printf("AltAcc %d",LPV->accuracy.alt_ac," \n");**/
 
 	i=100;
 	} } }    }
@@ -352,14 +355,19 @@ return(correct);
 
 }
 
-void Beacon_send(public_ev_arg_r *arg){
+void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	printf("teño que enviar unha Beacon\n");
 	char h_source[ETH_ALEN];
+	public_ev_arg_r * arg=(public_ev_arg_r *)w->data;
+	printf("porto %d \n",arg->socket_fd);
+			get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
+
 	//get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-	//ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
+	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 	//tx_frame->buffer.frame_type=0xdc05;
 	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 	char tipo[2]={0x07,0x07};
+	memcpy(tx_frame->buffer.header.type,tipo,2);
 	//memcpy(tx_frame->buffer.header.type,tipo,2);
 	const unsigned char beaco[1]={0x01};
 	version_nh * res;
@@ -375,8 +383,10 @@ void Beacon_send(public_ev_arg_r *arg){
 	res->nh=0;
 
 	memcpy(pkt->common_header.version_nh,res,1);
-	memcpy(pkt->common_header.HT_HST, beaco,1);
-	memset(flags,0,1);
+
+	pkt->common_header.HT_HST.HT=1;
+    pkt->common_header.HT_HST.HST=0;
+		memset(flags,0,1);
 	flags->itsStation=itsGnStationType;
 	memcpy(pkt->common_header.flags,flags,1);
 	memset(pkt->common_header.payload_lenght,0,1);
@@ -396,16 +406,15 @@ void Beacon_send(public_ev_arg_r *arg){
 	portoO = (char *)malloc(2);
 
 	//memcpy(portoO,arg->port,2);
-	printf("aqui0\n");
 	//memcpy(portoD,arg->forwarding_port,2);
-	printf("aqui0\n");
-	memcpy(pkt->payload.itsnet_tsb.payload.btp1,portoD,2);
-	memcpy(pkt->payload.itsnet_tsb.payload.btp2,portoO,2);
-//	memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
+	memcpy(pkt->payload.itsnet_beacon.payload.btp1,portoD,2);
+	memcpy(pkt->payload.itsnet_beacon.payload.btp2,portoO,2);
+memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 
 	// 2) broadcast application level UDP message to network level
-	//int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
+int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(tx_frame->buffer));
 
+print_hex_data(&tx_frame->buffer,tx_frame->buffer);printf(" %d \n",sizeof(itsnet_btp_wo_payload_t )+sizeof(itsnet_common_header)+14);
  //valor do PV
 
 	//crear unha Beacon. é SO A COMMONHEADER

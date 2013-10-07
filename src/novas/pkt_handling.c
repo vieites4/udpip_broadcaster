@@ -42,7 +42,8 @@ printf("xa estou dentro de tsb \n");
 	memcpy(ch.traffic_class,dato +6,1);
 	memcpy(ch.flags,dato +3,1);
 	memcpy(ch.hop_limit,dato +2,1);
-	memcpy(ch.HT_HST,dato,1);
+	ch.HT_HST.HT=5;
+		ch.HT_HST.HST=1;
     memcpy(ch.payload_lenght,dato +4,2);
     memcpy(ch.version_nh,dato +7,1);
 	ch.forwarder_position_vector=* LPV;
@@ -107,8 +108,8 @@ return(pkt);
 itsnet_packet * SHB(void *dato){
 
 
-//	printf("GEOBROAD ");
-	//	printf(geobroad1);
+	printf("SHB ");
+	//printf(geobroad1);
 	//	printf("\n");
 	//	Create common header
 	itsnet_packet * pkt = NULL;
@@ -121,7 +122,8 @@ itsnet_packet * SHB(void *dato){
 	memcpy(ch.traffic_class,dato +6,1);
 	memcpy(ch.flags,dato +3,1);
 	memcpy(ch.hop_limit,dato +2,1);
-	memcpy(ch.HT_HST,dato,1);
+	ch.HT_HST.HT=5;
+	ch.HT_HST.HST=0;
     memcpy(ch.payload_lenght,dato +4,2);
     memcpy(ch.version_nh,dato +7,1);
     ch.forwarder_position_vector=* LPV;
@@ -173,7 +175,8 @@ itsnet_packet * GeoBroadcast(void *dato){
 	memcpy(ch.traffic_class,dato +6,1);
 	memcpy(ch.flags,dato +3,1);
 	memcpy(ch.hop_limit,dato +2,1);
-	memcpy(ch.HT_HST,dato,1);
+	ch.HT_HST.HT=4;
+		ch.HT_HST.HST=0; //ESTE HAI QUE ADAPTALO
 	memcpy(ch.payload_lenght,dato +4,2);
 	memcpy(ch.version_nh,dato +7,1);
 	ch.forwarder_position_vector=* LPV;
@@ -378,7 +381,6 @@ itsnet_packet_f * SHB_f(void *dato){
 		memcpy(pkt->common_header.pkt_type,dato,1); //non teño moi claro que realmente sexan estes os datos que se esperan no pkt type e subtype
 		memcpy(pkt->common_header.pkt_stype,dato+1,1);
 		printf(pkt->common_header.payload_lenght); // este para probar se realmente podemos saltarnos o paso anterior no que se garda o valor, neste caso eliminalo tamén nos tsb,shb e gbroadcast do outro lado.
-		printf("saio de shb_f \n");
 	return(pkt);
 }
 

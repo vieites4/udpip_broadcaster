@@ -121,8 +121,7 @@ volatile sig_atomic_t keep_going = 1;
 void cb_forward_recvfrom(public_ev_arg_r *arg)
 {
 
-
-printf("cb_forward_recvfrom\n");
+	char tipoX[2]={0x07,0x07};
 	bool blocked = false;
 	arg->len = 0;
 	// 1) read UDP message from network level
@@ -130,19 +129,21 @@ printf("cb_forward_recvfrom\n");
 	data=(void *)malloc(ITSNET_DATA_SIZE);
 	if ( ( arg->len = recv_message(arg->socket_fd,data))<0)//(arg->socket_fd, arg->data, NULL, &blocked) ) < 0 )//arg->local_addr->sin_addr.s_addr
 	{log_app_msg("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
+	if (memcmp(tipoX,data+12,2)==0){
 	memcpy(arg->data,data,arg->len);
-	//printf("PAQUETE RECIBIDO POLO ENLACE\n");
-	//if (arg->len==1020 ||arg->len==92)	print_hex_data(arg->msg_header, arg->len);
-	if (arg->len==1020)	print_hex_data(arg->data, arg->len);
-	//printf("porto %d socket %d len %d len %d\n",arg->port,arg->socket_fd,arg->len);
+		printf("cb_forward_recvfrom\n");
+
+	void * tipo=NULL;
+	tipo=(void *)malloc(2);
+	memcpy(tipo,arg->data + 12 ,2);
 
 	char *datos= (char *)malloc(arg->len);
-	memcpy(datos,arg->data,arg->len);
+	memcpy(datos,arg->data +14,arg->len -14);
 
 	//CommonHeader_processing(arg);
 	char *HT=NULL;
 	HT = (char *)malloc(2);
-	memcpy(HT,arg->data,2);
+	memcpy(HT,arg->data +15,1);
 	itsnet_packet_f * pkt;
 	pkt =(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	if(memcmp(HT,tsb1,1)==0){
@@ -163,7 +164,10 @@ printf("cb_forward_recvfrom\n");
 
 		char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
 		memcpy(Hop,datos+2,1);
+		printf("esta conversion\n");
 		int lon_int=sprint_hex_data(Hop, 2);
+		printf("esta conversion\n");
+
 		if (lon_int==1){//descartamos o paquete e omitimos os seguintes pasos
 			}
 
@@ -177,7 +181,7 @@ printf("cb_forward_recvfrom\n");
 		} else if(memcmp(HT,tsb0,1)==0){
 			printf("entro en shb\n");
 			pkt = SHB_f(datos);
-			printf("saio de shb_f\n");
+			//printf("saio de shb_f\n");
 			int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			printf("entro en geobroadcast\n");
@@ -206,8 +210,8 @@ printf("cb_forward_recvfrom\n");
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
 	}**/
-	//	printf("fin de cb_forward_recvfrom\n");
-
+	printf("fin de cb_forward_recvfrom\n");
+	}
 	}
 
 	/* cb_broadcast_recvfrom */
@@ -225,9 +229,9 @@ printf("cb_forward_recvfrom\n");
 		{
 			log_app_msg("cb_broadcast_recvfrom: <recv_msg> " \
 					"Could not receive message.\n");
-			return;
-		}
-
+			return;		}
+		//printf("RECIBO UN PAQUETE\n");
+	//	print_hex_data(arg->data, arg->len);
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 
@@ -251,18 +255,18 @@ printf("cb_forward_recvfrom\n");
 		pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 
 		if(memcmp(HT,tsb1,1)==0){
-			//	printf("entro en tsb\n");
+				printf("entro en tsb1\n");
 			pkt = TSB(datos);
 
 
 			//printf("aqui chego1\n");
 		} else if(memcmp(HT,tsb0,1)==0){
-			//	printf("entro en tsb\n");
+				printf("entro en tsb0\n");
 			pkt = SHB(datos);
 
 			//printf("aqui chego1\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
-			//	printf("entro en tsb\n");
+				printf("entro en geobroad\n");
 			pkt = GeoBroadcast(datos);
 
 			//printf("aqui chego1\n");
@@ -270,7 +274,7 @@ printf("cb_forward_recvfrom\n");
 
 
 		if(memcmp(HT,geounicast,1)==0){}
-		//if(memcmp(HT,geounicast,1)==0){}
+		if(memcmp(HT,geounicast,1)==0){}
 		// este é o punto onde teño que modificar os datos do buffer que envio.
 
 		//	memcpy(tx_frame->buffer.data,arg->data,arg->len);
@@ -281,7 +285,7 @@ printf("cb_forward_recvfrom\n");
 		log_app_msg(">>> BROADCAST(app:%d>net:%d), msg[%.2d] = {"			, arg->port, arg->forwarding_port, fwd_bytes);
 		log_app_msg("}\n");
 	//	printf("ENVIO UN PAQUETE\n");
-	//	int i=print_hex_data(&tx_frame->buffer, arg->len);
+//	int i=print_hex_data(&tx_frame->buffer, arg->len);
 	//	printf("envio trama\n");
 
 		//	if ( arg->print_forwarding_message == true )

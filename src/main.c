@@ -56,9 +56,12 @@ void *thr_h1(){
 
 	ev_timer_init(&t_LPV,LPV_update,0.,itsGnMinimunUpdateFrequencyLPV); //
 	ev_timer_start(l_LPV,&t_LPV);
+
 //t_LPV.repeat=1.;
 	return NULL;
 }
+
+
 
 int main(int argc, char **argv)
 {
@@ -78,6 +81,7 @@ pthread_t h1,h2;
 	lsp_bc_g=init_lsp();
 	locT_g=startup1();
 	pthread_create(&h1,NULL, thr_h1, NULL);
+
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
@@ -109,9 +113,9 @@ pthread_t h1,h2;
 printf("next\n");
 	ev_loop(net_events->loop, 0); //realmente é este o bucle infinito que vai sendo interrumpido por sinais ev_read que despertan o common_cb q desperta o broadcast ou o forwarding segundo chegue por un porto ou polo outro.
 
-
+//pthread_join(h3,NULL);
 	pthread_join(h1, NULL);
-	pthread_join(h2, NULL);
+	//pthread_join(h2, NULL);
 
 	// 4) program finalization
 	exit(EXIT_SUCCESS);

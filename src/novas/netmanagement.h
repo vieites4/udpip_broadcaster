@@ -128,6 +128,46 @@ unsigned short num;
 //pthread_t thread;
 List_locT * locT;
 };
+typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
+typedef struct ieee80211_header
+{
+
+	unsigned char dest_address[ETH_ALEN]; //é importante a orde na que coloco os compoñentes do struct
+	unsigned char src_address[ETH_ALEN];	/*!< Source MAC address. */
+    unsigned char type[2];
+
+//	unsigned char recheo[28];
+} ieee80211_header_t ;
+typedef struct ieee80211_frame_buffer
+{
+
+	ieee80211_header_t header;	/*!< IEEE 802.11 header. */
+	//int frame_type;				/*!< Type of the frame. */
+		//int frame_len;
+	//	unsigned char recheo[4];
+
+	//ll_frame_t info;
+#define IEEE_80211_BLEN 		2312	/*!< IEEE 802.11 body length (B). */
+	char data[IEEE_80211_BLEN];	/*!< Data body of the IEEE 802.11 frame. */
+
+} ieee80211_buffer_t;
+typedef struct ll_frame
+{
+
+	int frame_type;				/*!< Type of the frame. */
+	int frame_len;				/*!< Length of the total bytes read. */
+//unsigned char recheo[26];
+	struct timeval timestamp;	/*!< Frame creation timestamp (usecs). */
+
+} ll_frame_t;
+
+typedef struct ieee80211_frame
+{
+
+	ll_frame_t info;			/*!< Info relative to frame management. */
+	ieee80211_buffer_t buffer;	/*!< Buffer with frame contents. */
+
+} ieee80211_frame_t;
 
 typedef struct ListIdent_lsp List_lsp;
 
@@ -150,7 +190,7 @@ List_locT * startup1();
 
 itsnet_position_vector * LPV_ini();
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
-void Beacon_send(public_ev_arg_r *arg);
+void Beacon_send(EV_P_ ev_timer *w, int revents) ;//void Beacon_send(public_ev_arg_r *arg);
 int duplicate_control(void * data,List_locT * locT);
 
 //void *thr_h2(void * arg);

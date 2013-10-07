@@ -12,14 +12,14 @@
 #define itsGnLocalAddrConfMethod  0//Managed(1) Auto (0)
 #define itsGnProtocolVersion 0
 #define itsGnStationType 0 //0 vehicle 1 roadside
-#define itsGnMinimunUpdateFrequencyLPV 1000//0 roadside
+#define itsGnMinimunUpdateFrequencyLPV 1//0 roadside //1000 ms
 #define itsGnMaxSduSize 1398
 #define itsGnMaxGeoNetworkingHeaderSize 88
 #define itsGnLifetimeLocTE 20
 #define itsGnLocationServiceMaxRetrans 10
 #define itsGnLocationServiceRetransmitTimer 1000
 #define itsGnLocationServicePacketBufferSize 1024
-#define itsGnBeaconServiceRetransmitTimer 3000
+#define itsGnBeaconServiceRetransmitTimer 3 //3000 ms
 #define itsGnBeaconServiceMaxJitter itsGnMaxPacketLifetime/4
 #define itsGnDefaultHopLimit 10
 #define itsGnMaxPacketLifeTime 600

@@ -146,8 +146,13 @@ unsigned char latency :2;
 
 };
 typedef struct trafficclass_t trafficclass_t;
+struct ht_hst_t{
 
+	unsigned char HT :4;
+	unsigned char HST :4;
 
+};
+typedef struct ht_hst_t ht_hst_t;
 /**
  *itsnet position vector
  */
@@ -184,7 +189,7 @@ typedef struct itsnet_position_vector itsnet_position_vector;
 struct itsnet_common_header
 {
 	unsigned char version_nh[1]; //itsnet_protocol_info
-	unsigned char HT_HST[1];
+	ht_hst_t HT_HST;
 	unsigned char txpower[1];//reserved
 	unsigned char flags [1];
 	unsigned char payload_lenght[2];
@@ -281,6 +286,14 @@ struct itsnet_btp
 };
 
 typedef struct itsnet_btp itsnet_btp;
+struct itsnet_btp_wo_payload
+{
+	char btp1 [2];
+	char btp2[2];
+
+};
+
+typedef struct itsnet_btp_wo_payload itsnet_btp_wo_payload_t;
 
 
 
@@ -324,7 +337,7 @@ typedef struct itsnet_any_t itsnet_any_t;
 struct itsnet_beacon_t
 {
 
-	itsnet_position_vector source_position_vector;
+	itsnet_btp_wo_payload_t payload;
 };
 
 typedef struct itsnet_beacon_t itsnet_beacon_t;
