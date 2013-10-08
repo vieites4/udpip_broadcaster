@@ -241,6 +241,7 @@ itsnet_packet * GeoBroadcast(void *dato){
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,dato + 34,2);
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,info_dest,2);	}
 	printf("saio de geobroadcast\n");
+	//free(TS);free(SO_pv);
 return(pkt);
 }
 

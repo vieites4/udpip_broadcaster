@@ -156,10 +156,10 @@ udp_events_t *init_net_raw_events
 	arg->public_arg.print_forwarding_message = __verbose;
 	arg->cb_specfic	=callback;
 	arg->public_arg.locT=locT;
-	printf("socket %d \n",arg->public_arg.socket_fd);
+
 	//arg->
-	public_ev_arg_r * argum= &arg->public_arg;
-	pthread_create(&h3,NULL, thr_h3, (void *) argum);
+
+
 	return(s);
 
 }
@@ -184,7 +184,9 @@ udp_events_t *init_app_udp_events
 	arg->public_arg.forwarding_port = net_fwd_port;
 	arg->public_arg.print_forwarding_message = __verbose;
 	arg->public_arg.locT=locT;
-
+	printf("socket %d \n",arg->public_arg.socket_fd);
+	public_ev_arg_r * argum= &arg->public_arg;
+	pthread_create(&h3,NULL, thr_h3, (void *) argum);
 	//Beacon_send(arg);
 	return(s);
 
@@ -193,7 +195,7 @@ udp_events_t *init_app_udp_events
 /* free_udp_events */
 void free_udp_events(udp_events_t *m)
 {
-	free(m);
+	//free(m);
 }
 
 /* print_udp_events */
@@ -305,7 +307,7 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
 void cb_common
 	(struct ev_loop *loop, struct ev_io *watcher, int revents)
 {
-//printf("cb_common\n");
+printf("cb_common\n");
 	if ( EV_ERROR & revents )
 		{ log_sys_error("Invalid event"); return; }
 
@@ -313,6 +315,7 @@ void cb_common
 	public_ev_arg_r *public_arg = &arg->public_arg;
 	public_arg->socket_fd = watcher->fd;
 //memcpy(public_arg->data,watcher->data,arg->public_arg.len);
+	printf("saio de cb_common\n");
 	if ( arg->cb_specfic == NULL )
 	{
 		log_app_msg("cb_common (ev=%d,fd=%d): <cb_function> NULL!\n", revents, watcher->fd);
@@ -320,5 +323,5 @@ void cb_common
 	}
 	arg->cb_specfic(public_arg);
 
-
+	printf("saio de cb_common\n");
 }

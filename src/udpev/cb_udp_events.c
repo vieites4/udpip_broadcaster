@@ -179,7 +179,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 			printf("saio de tsb_f\n");
 		} else if(memcmp(HT,tsb0,1)==0){
-			printf("entro en shb\n");
+			//printf("entro en shb\n");
 			pkt = SHB_f(datos);
 			//printf("saio de shb_f\n");
 			int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
@@ -210,6 +210,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		print_hex_data(arg->data, arg->len);
 		log_app_msg("}\n");
 	}**/
+	//free(&data);free(tipo);free(datos);free(pkt);free(HT);
+
 	printf("fin de cb_forward_recvfrom\n");
 	}
 	}
@@ -230,7 +232,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			log_app_msg("cb_broadcast_recvfrom: <recv_msg> " \
 					"Could not receive message.\n");
 			return;		}
-		//printf("RECIBO UN PAQUETE\n");
+		printf("RECIBO UN PAQUETE\n");
 	//	print_hex_data(arg->data, arg->len);
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
@@ -240,7 +242,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 		char tipo[2]={0x07,0x07};
 		memcpy(tx_frame->buffer.header.type,tipo,2);
-
+		printf("RECIBO UN PAQUETE1\n");
 		char *datos= (char *)malloc(arg->len);
 		memcpy(datos,arg->data,arg->len);
 		//			print_hex_data(datos,20);
@@ -252,8 +254,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		HT = (char *)malloc(2);
 		memcpy(HT,arg->data,2);
 		itsnet_packet * pkt;
+		printf("RECIBO UN PAQUETE3\n");
 		pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
-
+		printf("RECIBO UN PAQUETE2\n");
 		if(memcmp(HT,tsb1,1)==0){
 				printf("entro en tsb1\n");
 			pkt = TSB(datos);
@@ -279,9 +282,10 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 		//	memcpy(tx_frame->buffer.data,arg->data,arg->len);
 		memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
-
+		printf("vou enviar UN PAQUETE\n");
 		// 2) broadcast application level UDP message to network level
 		int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);
+		printf("porto de saida das forward %d \n",arg->forwarding_socket_fd);
 		log_app_msg(">>> BROADCAST(app:%d>net:%d), msg[%.2d] = {"			, arg->port, arg->forwarding_port, fwd_bytes);
 		log_app_msg("}\n");
 	//	printf("ENVIO UN PAQUETE\n");
@@ -297,6 +301,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//	}
 	//	printf("saio ben do cb_broadcast_recvfrom\n");
 		//return();
+		//free(HT);	free(&data);free(tipo);free(datos);free(pkt);
 	}
 
 

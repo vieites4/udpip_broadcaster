@@ -34,8 +34,8 @@
 #define itsGnBcForwardingPacketBufferSize 1024
 #define itsGnCbForwardingPacketBufferSize 256
 #define itsGnTrafficClassRelevance 3
-#define itsGnTrafficClassReliability 10
-#define itsGnTrafficClassLatency 10
+#define itsGnTrafficClassReliability 2//10 é binario
+#define itsGnTrafficClassLatency 2 //10 é binario
 #define ETH_ALEN	6
 #endif /* DEFINE_H_ */
 

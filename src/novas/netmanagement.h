@@ -40,6 +40,7 @@
 typedef struct List_locT List_locT;
 typedef struct msghdr msg_header_t;
 typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
+typedef struct gps_data_t gps_data_t;
  struct public_ev_arg
 {
 

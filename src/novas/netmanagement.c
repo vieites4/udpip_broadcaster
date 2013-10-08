@@ -16,7 +16,7 @@ List_lsp * lsp;
 extern itsnet_node_id GN_ADDR;
 
 itsnet_position_vector * LPV;
-struct gps_data_t gpsdata;
+
 int revents;
 
 ev_timer t_Loct;
@@ -201,21 +201,23 @@ pthread_create(&h_locT,NULL,thr_h2,NULL);
 printf("aqui chego1\n");
 return (locT);
 }
+static 	gps_data_t gpsdata;
 
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	//itsnet_position_vector * LPV;
-
 	printf ("ENTRO NO DO LPV\n");
-
+	printf("e tamén saio \n");
 	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	printf("e tamén saio \n");
+	printf("e tamén saio \n");
 	gps_open("localhost","2947",&gpsdata);
-
+	printf("e tamén saio \n");
 	if (&gpsdata == NULL) {
-			g_print("Could not connect to gpsd!\n");
+			printf("Could not connect to gpsd!\n");
 
 		}
 
-
+	printf("e tamén saio \n");
 
 	(void) gps_stream(&gpsdata, WATCH_ENABLE, NULL);//gpsdata.dev);
 	    /* Put this in a loop with a call to a high resolution sleep () in it. */
@@ -243,6 +245,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	printf("AltAcc %f\n",gpsdata.fix.epv);
 	printf("mode %d \n",gpsdata.fix.mode);**/
 	LPV->node_id=GN_ADDR;
+	printf("e tamén saio \n");
 	LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
 	char str1[2] = {'\0'};	char str2[2] = {'\0'};	char str3[2] = {'\0'};	char str4[2] = {'\0'};	char str5[2] = {'\0'};	char str6[9] = {'\0'};	char str7[9] = {'\0'};
 	char str8[9] = {'\0'};	char str9[5] = {'\0'};	char str10[5] = {'\0'};
@@ -263,6 +266,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	num2=strtol(str2,NULL,16);
 	num3=strtol(str3,NULL,16);
 	num4=strtol(str4,NULL,16);
+	printf("e tamén saio \n");
 	num5=strtol(str5,NULL,16);
 	num6=strtol(str6,NULL,16);
 	num7=strtol(str7,NULL,16);
@@ -280,6 +284,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
     LPV->accuracy.speed_ac=num3;
     LPV->accuracy.head_ac=num4;
     LPV->accuracy.time_ac=num1;
+    printf("e tamén saio \n");
    /** printf(str2);printf("\n");
     printf(str3);printf("\n");
     printf(str4);printf("\n");
@@ -304,6 +309,8 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	i=100;
 	} } }    }
 	gps_close (&gpsdata);
+	//free(gpsdata);
+	printf("e tamén saio \n");
 
 	return(LPV);
 }
@@ -370,63 +377,56 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	memcpy(tx_frame->buffer.header.type,tipo,2);
 	//memcpy(tx_frame->buffer.header.type,tipo,2);
 	const unsigned char beaco[1]={0x01};
-	version_nh * res;
+	version_nh * res=NULL;
 	itsnet_packet * pkt = NULL;
 	trafficclass_t *tc;
 	tc=(trafficclass_t *)malloc(1);
 	res= (version_nh *)malloc(1);
-
-	flags_t * flags;
+	flags_t * flags=NULL;
 	flags= (flags_t *)malloc(1);
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	res->version=itsGnProtocolVersion;
 	res->nh=0;
-
 	memcpy(pkt->common_header.version_nh,res,1);
-
 	pkt->common_header.HT_HST.HT=1;
     pkt->common_header.HT_HST.HST=0;
 		memset(flags,0,1);
 	flags->itsStation=itsGnStationType;
 	memcpy(pkt->common_header.flags,flags,1);
 	memset(pkt->common_header.payload_lenght,0,1);
-	memset(pkt->common_header.txpower,0,1);
+//	pkt->common_header.txpower="0"
 	memset(pkt->common_header.hop_limit,1,1);
 	pkt->common_header.forwarder_position_vector=*LPV;
 	tc->reserved=0;
 	tc->relevance=itsGnTrafficClassRelevance;
-	tc->reliability=itsGnTrafficClassReliability;
+	tc->reliability=itsGnTrafficClassReliability; //non caben esos valores nese espacio
 	tc->latency=itsGnTrafficClassLatency;
-
 	memset(pkt->common_header.traffic_class,tc,1);
-	char *portoD=NULL;
-	char *portoO=NULL;
-
-	portoD = (char *)malloc(2);
-	portoO = (char *)malloc(2);
-
 	//memcpy(portoO,arg->port,2);
 	//memcpy(portoD,arg->forwarding_port,2);
-	memcpy(pkt->payload.itsnet_beacon.payload.btp1,portoD,2);
-	memcpy(pkt->payload.itsnet_beacon.payload.btp2,portoO,2);
+	int num=1024;
+	char *num1[3];
+	sprintf(num1,"%04X",(unsigned int)arg->port);
+	char *num2[3];
+	sprintf(num2,"%04X",(unsigned int)arg->forwarding_port);
+	memcpy(pkt->payload.itsnet_beacon.payload.btp1,num1,4);
+	memcpy(pkt->payload.itsnet_beacon.payload.btp2,num2,4);
 memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
-
+printf("porto de saida das beacon %d \n",arg->forwarding_socket_fd);
 	// 2) broadcast application level UDP message to network level
-int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(tx_frame->buffer));
+int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
 
-print_hex_data(&tx_frame->buffer,tx_frame->buffer);printf(" %d \n",sizeof(itsnet_btp_wo_payload_t )+sizeof(itsnet_common_header)+14);
+//print_hex_data(&tx_frame->buffer,tx_frame->buffer);printf(" %d \n",sizeof(itsnet_btp_wo_payload_t )+sizeof(itsnet_common_header)+14);
  //valor do PV
-
 	//crear unha Beacon. é SO A COMMONHEADER
-
 	//algo dunha request?!
 	//enviar cara LL a beacon con destino broadcast
 	//inicializar o timer para a transmission periodica de beacons Tbeacons
-
 	//recorda que hai que controlar sempre o Tbeacon!! //crear timer que fagan un evento ó terminar
-	printf("ENVIO UN PAQUETE\n");
-	//	int i=print_hex_data(&tx_frame->buffer, arg->len);
+	printf("ENVIO UN PAQUETE fin\n");
+		int i=print_hex_data(&tx_frame->buffer,  sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
 
+//free(res); free(tc); free(flags); free(pkt);
 }
 
 
@@ -512,7 +512,7 @@ int sup_elem_locT (struct parametros *p)//(EV_P_ ev_timer *w, int revents)// voi
     	pos->next->before=pos->before;
     }
 
-     free (pos);
+  printf("chego aqui \n"); //  free (pos);printf("chego aquitamén \n");
      // free(&pos->data);
      locT->len--;
      printf("saimos de suprimir elemento da loct1\n");
@@ -613,7 +613,7 @@ int sup_elem_lsp (int pos){
   if(actual->next == NULL)
 	  lsp->end = actual;
  // free (sup_elemento->data);
-  free (sup_elemento);
+ // free (sup_elemento);
   lsp->len--;
   return 0;
 }
@@ -648,7 +648,7 @@ int duplicate_control(void * data,List_locT * locT){
 	if(((actual->data.Sequence_number < lon_int ) &&(lon_int- actual->data.Sequence_number <=65536/2))||((actual->data.Sequence_number > lon_int)&&(-lon_int + actual->data.Sequence_number >65536/2)))
 	{	actual->data.Sequence_number=lon_int;		  }		  }
 	      actual = actual->next;
-	  }
+	  }//free(SN);
 	  return(i);}
 /**
 
