@@ -12,11 +12,11 @@
 //#include "udpev/udp_events.h"
 #include "netmanagement.h"
 
-itsnet_packet * TSB(void *data);
+itsnet_packet * TSB(void *data,List_lsp *lsp,List_lsp *rep);
 
-itsnet_packet * SHB(void *dato);
+itsnet_packet * SHB(void *dato,List_lsp *lsp,List_lsp *rep);
 
-itsnet_packet * GeoBroadcast(void *dato);
+itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep);
 itsnet_packet_f * TSB_f(void *data);
 
 itsnet_packet_f * SHB_f(void *dato);

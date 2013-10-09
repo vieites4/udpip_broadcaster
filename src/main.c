@@ -45,7 +45,7 @@
 	struct ev_loop * l_LPV;
 		ev_timer t_LPV;
 int SN_g;//sequence number
-List_lsp * lsp_bc_g;
+
 itsnet_node_id GN_ADDR;
 
 void *thr_h1(){
@@ -66,7 +66,8 @@ void *thr_h1(){
 int main(int argc, char **argv)
 {
 	List_locT * locT_g; //variable global
-pthread_t h1,h2;
+	List_lsp * lsp_bc_g;
+pthread_t h1,h3, h_locT,h_lsp;
  //pthread_create(&h1, NULL , slowprintf , (void *)hola)  o ultimo parámetro é o dos argumentos
 //pthread_create(&h2,NULL, thr_h2, NULL);
 	// 1) Runtime configuration is read from the CLI (POSIX.2).
@@ -79,9 +80,13 @@ pthread_t h1,h2;
 	//1.a Start-up
 	// address configuration
 	lsp_bc_g=init_lsp();
+	List_lsp *rep_bc_g=init_lsp();
 	locT_g=startup1();
+	LPV_update();
 	pthread_create(&h1,NULL, thr_h1, NULL);
+	pthread_create(&h_locT,NULL,thr_h2,NULL);
 
+	pthread_create(&h_lsp,NULL,thr_h4,NULL);
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
@@ -100,13 +105,14 @@ pthread_t h1,h2;
 	else	{
 
 		log_app_msg(">>> Opening UDP APP RX socket...\n");
-		app_events = init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g);//broadcast
-		log_app_msg(">>> UDP APP RX socket open!\n");
-		print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
+		 void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g);//broadcast
+		 pthread_create(&h3,NULL, thr_h3, argum);	//Beacon_send(arg);
+		 log_app_msg(">>> UDP APP RX socket open!\n");
+		//print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
 		log_app_msg(">>> Opening RAW NET RX socket...\n");
-		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g);
+		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,rep_bc_g);
 		log_app_msg(">>> raw NET RX socket open!\n");
-		print_udp_events(net_events, cfg->rx_port, cfg->app_tx_port);
+		//print_udp_events(net_events, cfg->rx_port, cfg->app_tx_port);
 
 
 		}
@@ -115,6 +121,9 @@ printf("next\n");
 
 //pthread_join(h3,NULL);
 	pthread_join(h1, NULL);
+	pthread_join(h_lsp, NULL);
+	pthread_join(h_locT, NULL);
+	pthread_join(h3, NULL);
 	//pthread_join(h2, NULL);
 
 	// 4) program finalization

@@ -23,10 +23,10 @@ ev_timer t_Loct;
 
 //struct ev_loop  *addr[10];
 unsigned short variables[16]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
-bool taken[16];
+bool taken[16];bool taken_rep[16];bool taken_lsp[16];
 //struct ev_loop * b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10;
 
-pthread_t h_locT;
+
 
 /*void *thr_h2(void * arg){
 	struct ev_loop *l_Loct;
@@ -45,18 +45,23 @@ variables[num]=1;
 	return NULL;
 }*/
 static tTimer *mpTimerList = NULL;
+static tTimer *mpTimerList_lsp = NULL;
 //Global variable for reference
-static unsigned short gTimer;
+static unsigned short gTimer,gTimer_lsp;
 #pragma inline SystemTickEvent
 int cont=0;
 
 void Timer2Function(){}
 
-static tTimer * FindTimer(unsigned short TimerId)
+static tTimer * FindTimer(unsigned short TimerId,int num)
 {
+	tTimer * list= NULL;
+
+
+	if (num==itsGnMaxPacketLifeTime){list= mpTimerList_lsp;}else{list=mpTimerList;}
 	tTimer *pTimer;
     // Move to the start of the list
-	pTimer = mpTimerList;
+	pTimer = list;
     // Check if list is empty
 	if(pTimer != NULL)
     {        // Move through the list until the timer id is found
@@ -66,12 +71,17 @@ static tTimer * FindTimer(unsigned short TimerId)
 	return (pTimer);
 }
 
-bool AddTimer(unsigned short TimerId)
-{	tTimer *pTimer;
+bool AddTimer(unsigned short TimerId, int num)
+
+{
+	tTimer * list= NULL;
+	if (num==itsGnMaxPacketLifeTime){list= mpTimerList_lsp;}else{list=mpTimerList;}
+
+	tTimer *pTimer;
 	tTimer *pNewTimer = NULL;
 	bool ReturnValue = false;
     // Look for the timer – if already exists
-	pTimer = FindTimer(TimerId);
+	pTimer = FindTimer(TimerId,num);
 	// Check if the timer was found
 	if((pTimer == NULL) || (pTimer->TimerId != TimerId))
     {		// Create a new timer
@@ -82,7 +92,7 @@ bool AddTimer(unsigned short TimerId)
         	// Check if the list is empty
         	if(pTimer == NULL)
             {   // Store the address of this timer as a first element in the list
-            	mpTimerList = pNewTimer;
+            	list = pNewTimer;
             }	else
             {        		// Add the new timer to the end of the list
             	pTimer = pNewTimer;            }        }
@@ -90,10 +100,11 @@ bool AddTimer(unsigned short TimerId)
     	pTimer = pNewTimer;    }
 	if(pTimer != NULL)
     {	// Set the timer interval
-    	pTimer->Period = itsGnLifetimeLocTE;
+    	pTimer->Period = num;
     	ReturnValue = true;    }
 	return ReturnValue;
 }
+
 void CheckTimerEvent()
 {	printf("5555555\n");
 	signal(SIGINT, CheckTimerEvent);
@@ -102,6 +113,35 @@ void CheckTimerEvent()
     // Read the global variable gTimer and reset the value
 	nTimer = gTimer;
 	gTimer = 0;
+    // Check for TimerId
+
+	if( nTimer != 0)
+    {   if(nTimer & TIMER_1)        {     	Timer2Function();       }
+    	if(nTimer & TIMER_2)        {     	Timer2Function();        }
+    	if(nTimer & TIMER_3)        {       Timer2Function();        }
+    	if(nTimer & TIMER_4)        {        	Timer2Function();        }
+    	if(nTimer & TIMER_5)    	{      	Timer2Function();        }
+    	if(nTimer & TIMER_6)    	{     	Timer2Function();        }
+    	if(nTimer & TIMER_7)    	{        	Timer2Function();        }
+    	if(nTimer & TIMER_8)    	{        	Timer2Function();        }
+    	if(nTimer & TIMER_9)    	{      	Timer2Function();        }
+        if(nTimer & TIMER_10)    	{     	Timer2Function();        }
+        if(nTimer & TIMER_11)       {        	Timer2Function();        }
+    	if(nTimer & TIMER_12)       {        	Timer2Function();        }
+    	if(nTimer & TIMER_13)    	{      	Timer2Function();        }
+    	if(nTimer & TIMER_14)    	{     	Timer2Function();        }
+    	if(nTimer & TIMER_15)  	    {        	Timer2Function();        }
+    	if(nTimer & TIMER_16)    	{        	Timer2Function();        }
+    }
+}
+void CheckTimerEvent_lsp()
+{	printf("6666666\n");
+	signal(SIGINT, CheckTimerEvent_lsp);
+	unsigned short nTimer;
+
+    // Read the global variable gTimer and reset the value
+	nTimer = gTimer_lsp;
+	gTimer_lsp = 0;
     // Check for TimerId
 
 	if( nTimer != 0)
@@ -148,6 +188,31 @@ void SystemTickEvent(void) //facer un fio que repita todo o tempo (bucle while(1
 	}
 }
 
+void SystemTickEvent_lsp(void) //facer un fio que repita todo o tempo (bucle while(1)) esta temporizacion, cada segundo, poñer un sleep(1) xusto antes desta funcion
+{
+	alarm(1);
+		signal(SIGALRM, SystemTickEvent_lsp);
+	tTimer *pTimer;
+	// Update the timers
+	pTimer = mpTimerList_lsp;
+	while(pTimer != NULL)
+    { 	if(pTimer->Period != 0)
+        {  	pTimer->Period--;
+      	if(pTimer->Period == 0)
+            { 		// Set the corresponding bit when the timer reaches zero
+            	gTimer_lsp = gTimer_lsp | pTimer->TimerId;
+            }        }
+    	// Move to the next timer in the list
+    	pTimer = pTimer->pNext;
+    }
+//	printf("ENTRA O SIGNAL\n");
+	cont++;
+	//if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
+	if (gTimer_lsp!=0){//raise(SIGINT);
+
+	}
+}
+
 void handler_tempo(int sig){
 
 	//printf("ENTRA O SIGNAL\n");
@@ -159,6 +224,14 @@ void thr_h2(void *arg){
 	while(1){
 	//	SystemTickEvent();
 		signal(SIGINT, CheckTimerEvent);
+	}
+}
+void thr_h4(void *arg){
+	alarm(1);
+	signal(SIGALRM,SystemTickEvent_lsp);
+	while(1){
+	//	SystemTickEvent();
+		signal(SIGINT, CheckTimerEvent_lsp);
 	}
 }
 
@@ -187,13 +260,12 @@ if (itsGnLocalAddrConfMethod==0){
 List_locT * locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
 //LPV= LPV_update(l_LPV,&t_LPV, revents );
 struct parametros * argumento;
+
 /**argumento = (struct parametros *) malloc (sizeof (struct parametros));
 
 	argumento->num=num;
 	argumento->locT=locT;
 	 argumento->pos=locT->end;**/ //(void *)argumento
-pthread_create(&h_locT,NULL,thr_h2,NULL);
-
 
 //ev_timer_again(*l_LPV,t_LPV);
 //ev_run(l_LPV,0);
@@ -203,7 +275,7 @@ return (locT);
 }
 static 	gps_data_t gpsdata;
 
-itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
+itsnet_position_vector * LPV_update(){
 	//itsnet_position_vector * LPV;
 	printf ("ENTRO NO DO LPV\n");
 	printf("e tamén saio \n");
@@ -366,9 +438,8 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	printf("teño que enviar unha Beacon\n");
 	char h_source[ETH_ALEN];
 	public_ev_arg_r * arg=(public_ev_arg_r *)w->data;
-	printf("porto %d \n",arg->socket_fd);
+	//printf("porto %d \n",arg->socket_fd);
 			get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-
 	//get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 	//tx_frame->buffer.frame_type=0xdc05;
@@ -384,6 +455,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	res= (version_nh *)malloc(1);
 	flags_t * flags=NULL;
 	flags= (flags_t *)malloc(1);
+	printf("AQUI CHEGO\n");
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	res->version=itsGnProtocolVersion;
 	res->nh=0;
@@ -391,6 +463,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	pkt->common_header.HT_HST.HT=1;
     pkt->common_header.HT_HST.HST=0;
 		memset(flags,0,1);
+		printf("AQUI CHEGO\n");
 	flags->itsStation=itsGnStationType;
 	memcpy(pkt->common_header.flags,flags,1);
 	memset(pkt->common_header.payload_lenght,0,1);
@@ -401,30 +474,22 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	tc->relevance=itsGnTrafficClassRelevance;
 	tc->reliability=itsGnTrafficClassReliability; //non caben esos valores nese espacio
 	tc->latency=itsGnTrafficClassLatency;
+	printf("AQUI CHEGO\n");
 	memset(pkt->common_header.traffic_class,tc,1);
 	//memcpy(portoO,arg->port,2);
 	//memcpy(portoD,arg->forwarding_port,2);
-	int num=1024;
-	char *num1[3];
-	sprintf(num1,"%04X",(unsigned int)arg->port);
-	char *num2[3];
-	sprintf(num2,"%04X",(unsigned int)arg->forwarding_port);
-	memcpy(pkt->payload.itsnet_beacon.payload.btp1,num1,4);
-	memcpy(pkt->payload.itsnet_beacon.payload.btp2,num2,4);
+	char *num1[3];char *num2[3];
+	sprintf(num1,"%04X",(unsigned int)arg->port);	sprintf(num2,"%04X",(unsigned int)arg->forwarding_port);
+	memcpy(pkt->payload.itsnet_beacon.payload.btp1,num1,4);	memcpy(pkt->payload.itsnet_beacon.payload.btp2,num2,4);
 memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
-printf("porto de saida das beacon %d \n",arg->forwarding_socket_fd);
 	// 2) broadcast application level UDP message to network level
 int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
-
 //print_hex_data(&tx_frame->buffer,tx_frame->buffer);printf(" %d \n",sizeof(itsnet_btp_wo_payload_t )+sizeof(itsnet_common_header)+14);
  //valor do PV
-	//crear unha Beacon. é SO A COMMONHEADER
-	//algo dunha request?!
-	//enviar cara LL a beacon con destino broadcast
 	//inicializar o timer para a transmission periodica de beacons Tbeacons
 	//recorda que hai que controlar sempre o Tbeacon!! //crear timer que fagan un evento ó terminar
 	printf("ENVIO UN PAQUETE fin\n");
-		int i=print_hex_data(&tx_frame->buffer,  sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
+//print_hex_data(&tx_frame->buffer,  sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
 
 //free(res); free(tc); free(flags); free(pkt);
 }
@@ -477,7 +542,7 @@ if (taken[num2]==false){num=variables[num2]; taken[num2]=true; a=1;}
 
 
 //pthread_create(&h1,NULL,thr_h2,(void *)argumento);
-AddTimer(num);
+AddTimer(num,itsGnLifetimeLocTE);
 printf("saio de add\n");
   return 0;
 }
@@ -570,6 +635,7 @@ bool exist_neighbours(List_locT * locT){
 
 List_lsp * init_lsp ()
 {
+
 	List_lsp * lsp;
 	lsp = (List_lsp *) malloc (sizeof (List_lsp));
 	lsp ->init = NULL;
@@ -587,35 +653,88 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
  new_element->data= data;
  new_element->next = NULL;
  if (lsp->init==NULL) {
-  	     printf( "Primeiro elemento\n");
-  	     lsp->init =  new_element;  } else {
-  		 printf( "Non é primeiro elemento\n");
-  		 lsp->end->next = new_element;}
-   lsp ->end = new_element;
-  lsp ->len++;
+	  new_element->before=lsp->init; new_element->next=lsp->end; lsp->init=new_element;  } else {
+			 //printf( "Non é primeiro elemento\n");
+		new_element->before=lsp->end;
+		lsp->end->next = new_element;}
+
+ lsp->end = new_element;
+
+ lsp ->len++;
+		  printf("AQUI en engadir ! %d \n",lsp->len);
+		//argumento->thread=h1;
+		int num2,a=0;
+		unsigned short num=0;
+		while(a==0){
+		num2=(num2 +1) % 16;
+		if (taken_lsp[num2]==false){num=variables[num2]; taken_lsp[num2]=true; a=1;}
+		}
+		AddTimer(num,itsGnMaxPacketLifeTime);
+  return 0;
+}
+
+int add_end_rep ( List_lsp * rep, itsnet_packet data){
+
+  Element_lsp *new_element;
+  new_element = (Element_lsp *) malloc (sizeof (Element_lsp));
+  if (new_element==NULL) printf( "No hay memoria disponible!\n");
+ new_element->data= data;
+ new_element->next = NULL;
+ if (rep->init==NULL) {
+	  new_element->before=rep->init; new_element->next=rep->end; rep->init=new_element;  } else {
+			 //printf( "Non é primeiro elemento\n");
+		new_element->before=rep->end;
+		rep->end->next = new_element;}
+
+ rep->end = new_element;
+
+ rep ->len++;
+		  printf("AQUI en engadir ! %d \n",rep->len);
+		//argumento->thread=h1;
+		int num2,a=0;
+		unsigned short num=0;
+		while(a==0){
+		num2=(num2 +1) % 16;
+		if (taken_rep[num2]==false){num=variables[num2]; taken_rep[num2]=true; a=1;}
+		}
+		AddTimer(num,itsGnMaxPacketLifeTime);
   return 0;
 }
 
 /* erase after a position */
-int sup_elem_lsp (int pos){
+int sup_elem_lsp (struct parametros_lsp *p){
 	 // if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
 	  //   return -1;
-  int i;
-  Element_lsp *actual;
-  Element_lsp *sup_elemento;
-  actual = lsp ->init;
 
-  for (i = 1; i < pos; ++i)
-    actual = actual->next;
+		  Element_lsp *pos=p->pos;
+	 // pthread_t h2=p->thread;
 
-  sup_elemento = actual->next;
-  actual->next = actual->next->next;
-  if(actual->next == NULL)
-	  lsp->end = actual;
- // free (sup_elemento->data);
- // free (sup_elemento);
-  lsp->len--;
-  return 0;
+	    List_lsp * lsp=p->lsp;
+	    printf("entro en cb\n");
+	   printf("AQUI en suprimir ! %d \n",lsp->len);
+	    printf("entro en cb\n");
+	    if(pos->before==NULL){
+	    	printf("eliminamos o primeiro \n");
+	    	lsp->init=lsp->init->next;
+	    	if(lsp->len==1){lsp->end=NULL;    	printf("eliminamos o unico \n");}else{lsp->init->before=NULL;}
+	    }else if (pos->next==NULL){    	printf("eliminamos o ultimo \n");
+	    lsp->end->before->next=NULL;
+	    lsp->end=lsp->end->before;
+	    }else{
+	    	printf("eliminamos outro \n");
+	    	pos->before->next=pos->next;
+	    	pos->next->before=pos->before;
+	    }
+
+	  printf("chego aqui \n"); //  free (pos);printf("chego aquitamén \n");
+	     // free(&pos->data);
+	  lsp->len--;
+	     printf("saimos de suprimir elemento da loct1\n");
+	  //   ev_timer_stop (EV_A_ w);
+	     variables[p->num]=0;
+	  //   pthread_join(h2, NULL);
+	  printf("saimos de suprimir elemento da loct1\n");
+	  return 0;
 }
 
 /* view List */

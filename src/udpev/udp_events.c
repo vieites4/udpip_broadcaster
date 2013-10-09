@@ -25,7 +25,6 @@
 /* new_udp_events */
 	struct ev_loop * l_Beacon;
 		ev_timer t_Beacon;
-		pthread_t h3;
 udp_events_t *new_udp_events()
 {
 	udp_events_t *s = NULL;
@@ -137,7 +136,7 @@ void *thr_h3(void *arg){
 /* init_net_udp_events */
 udp_events_t *init_net_raw_events
 				(	const int net_rx_port, const char* net_if_name,const char *app_fwd_addr, const int app_fwd_port,
-					const bool nec_mode,	const ev_cb_t callback, List_locT *locT)
+					const bool nec_mode,	const ev_cb_t callback, List_locT *locT,List_lsp *lsp,List_lsp *rep)
 {
 
 
@@ -156,6 +155,8 @@ udp_events_t *init_net_raw_events
 	arg->public_arg.print_forwarding_message = __verbose;
 	arg->cb_specfic	=callback;
 	arg->public_arg.locT=locT;
+	arg->public_arg.lsp=lsp;
+		arg->public_arg.rep=rep;
 
 	//arg->
 
@@ -165,10 +166,10 @@ udp_events_t *init_net_raw_events
 }
 
 /* init_app_udp_events */
-udp_events_t *init_app_udp_events
+void *init_app_udp_events
 				(	const int app_rx_port,in_addr_t addr,
 					const char* if_name, const int net_fwd_port,
-					const ev_cb_t callback, List_locT *locT)
+					const ev_cb_t callback, List_locT *locT,List_lsp *lsp,List_lsp *rep)
 {
 
 	//imos recibir unha request.
@@ -184,11 +185,12 @@ udp_events_t *init_app_udp_events
 	arg->public_arg.forwarding_port = net_fwd_port;
 	arg->public_arg.print_forwarding_message = __verbose;
 	arg->public_arg.locT=locT;
+	arg->public_arg.lsp=lsp;
+	arg->public_arg.rep=rep;
 	printf("socket %d \n",arg->public_arg.socket_fd);
 	public_ev_arg_r * argum= &arg->public_arg;
-	pthread_create(&h3,NULL, thr_h3, (void *) argum);
-	//Beacon_send(arg);
-	return(s);
+
+	return((void *)argum);
 
 }
 

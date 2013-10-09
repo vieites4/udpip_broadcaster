@@ -28,8 +28,8 @@ const unsigned char beacon[1]={0x01};
 const unsigned char any[1]={0x00};
 const unsigned char ls0[1]={0x06};
 const unsigned char ls1[1]={0x16};
-
-itsnet_packet * TSB(void *dato){
+const unsigned char ETH_ADDR_BR[ETH_ALEN]                    ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
+itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 
 //	Create common header
 	itsnet_packet * pkt = NULL;
@@ -68,16 +68,14 @@ printf("xa estou dentro de tsb \n");
 	pkt->payload.itsnet_tsb=tsb_h;
 	pkt->common_header=ch;
 
-//hoxe teño que deixar o paquete construido
-
 
 //NEIGHBOURS.
-//	if  (exist_neighbours()== false){
+//if  (exist_neighbours()== false){
 
 	itsnet_packet * pkt1 = NULL;
 	//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 		// *pkt1=NULL;
-	//int i =add_end_lsp(lsp_bc_g, pkt);
+	//int i =add_end_lsp(lsp, pkt);
 //return(pkt1);
 		//buffer in BC AND omit next executions
 
@@ -105,7 +103,7 @@ printf("xa estou dentro de tsb \n");
 return(pkt);
 }
 
-itsnet_packet * SHB(void *dato){
+itsnet_packet * SHB(void *dato, List_lsp *lsp, List_lsp *rep){
 
 
 	printf("SHB ");
@@ -139,7 +137,7 @@ itsnet_packet * SHB(void *dato){
 		itsnet_packet * pkt1 = NULL;
 		//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 			// *pkt1=NULL;
-		//int i =add_end_lsp(lsp_bc_g, pkt);
+		//int i =add_end_lsp(lsp, pkt);
 	//return(pkt1);
 			//buffer in BC AND omit next executions
 	//}
@@ -156,13 +154,15 @@ itsnet_packet * SHB(void *dato){
 	REP = (char *)malloc(4);
 	memcpy(REP,dato +8,4);
 	if(atoi(REP)==0){
+		//add_end_rep(rep_bc_g, pkt);
+
 			//GARDAR O PAQUETE
 			//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 			 }
 //	printf("saio de shb\n");
 	return(pkt);}
 
-itsnet_packet * GeoBroadcast(void *dato){
+itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 
 //	Create common header
 	itsnet_packet * pkt = NULL;
@@ -209,7 +209,7 @@ itsnet_packet * GeoBroadcast(void *dato){
 	itsnet_packet * pkt1 = NULL;
 	//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 		// *pkt1=NULL;
-	//int i =add_end_lsp(lsp_bc_g, pkt);
+	//int i =add_end_lsp(lsp, pkt);
 //return(pkt1);
 		//buffer in BC AND omit next executions
 	//}
@@ -294,7 +294,30 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 			//discard the packet
 				//break;
 		}
+if(arg->lsp->len>0){
+Element_lsp *pos=arg->lsp->init;
+//recorrer a lista e enviar todo
+while(pos!=NULL){
 
+	itsnet_packet * pkt1;
+		pkt1 = & pos->data;
+
+		char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
+				memcpy(Hop,pos->data.common_header.hop_limit,1);
+				printf("esta conversion\n");
+				int lon_int=sprint_hex_data(pos->data.common_header.hop_limit, 2);
+		sprintf(pkt1->common_header.hop_limit,"X02",lon_int-1);
+							pkt1->common_header.forwarder_position_vector=* LPV; //
+
+				char h_source[ETH_ALEN];
+						get_mac_address(arg->forwarding_socket_fd, "wlan0",(unsigned char *) h_source) ;
+				ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BR,h_source);
+				memcpy(tx_frame->buffer.data, data, sizeof(itsnet_packet) );
+						int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->socket_fd,&pkt1, arg->len);
+						pos=pos->next;
+}
+
+}
 	////flush pkt buffers
 	//if(SE LS_pending){
 	//flush the SE LS_pkt_buffer
@@ -305,10 +328,7 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	//flush the UC forwarding pkt buffer
 	//forward stored pkts //quere dicir que se envíen os pkts que quitamos mediante o flush??
 	//}
-	//if(BC_forwarding_pkt_buffer!= empty){
-	//flush the BC forwarding pkt buffer
-	//forward stored pkts //quere dicir que se envíen os pkts que quitamos mediante o flush??
-	//}
+
 
 	//	printf("saio de common header processing\n");
 }
@@ -338,6 +358,7 @@ void determine_nexthop(){
 
 itsnet_packet_f * TSB_f(void *dato){
 	//	Create common header
+
 		itsnet_packet_f * pkt = NULL;
 		pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	    printf("xa estou dentro de tsb_f \n");

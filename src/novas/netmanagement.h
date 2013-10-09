@@ -38,6 +38,7 @@
 #define TIMER_16	        (unsigned short)0x8000
 //#include "udpev/cb_udp_events.h"
 typedef struct List_locT List_locT;
+typedef struct List_lsp List_lsp;
 typedef struct msghdr msg_header_t;
 typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
 typedef struct gps_data_t gps_data_t;
@@ -64,6 +65,8 @@ typedef struct gps_data_t gps_data_t;
 
 	int __test_number;				/**< For testing, counts no tests. */
 	List_locT *locT;
+	List_lsp *lsp;
+	List_lsp *rep;
 };
 
 
@@ -114,10 +117,11 @@ struct ElementList_lsp
 {
 	itsnet_packet data;
   struct ElementList_lsp *next;
+  struct ElementList_lsp *before;
 };
 typedef struct ElementList_lsp Element_lsp;
 
-struct ListIdent_lsp
+struct List_lsp
 {
   Element_lsp *init;
   Element_lsp *end;
@@ -128,6 +132,12 @@ Element_locT * pos;
 unsigned short num;
 //pthread_t thread;
 List_locT * locT;
+};
+struct parametros_lsp{
+Element_lsp * pos;
+unsigned short num;
+//pthread_t thread;
+List_lsp * lsp;
 };
 typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
 typedef struct ieee80211_header
@@ -170,7 +180,6 @@ typedef struct ieee80211_frame
 
 } ieee80211_frame_t;
 
-typedef struct ListIdent_lsp List_lsp;
 
 bool exist_neighbours(List_locT * locT);
 
@@ -181,8 +190,9 @@ List_locT * init_locT ();
 void view_locT (List_locT * locT);
 int search_in_locT (itsnet_node * data, List_locT * locT);
 
-int sup_elem_lsp ( int pos);
+int sup_elem_lsp ( struct parametros_lsp *p);
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data); //hai que cambiar o itsnet_node
+int add_end_rep ( List_lsp *rep, itsnet_packet data); //hai que cambiar o itsnet_node
 List_lsp * init_lsp ();
 
 void view_lsp ();
@@ -190,7 +200,7 @@ void view_lsp ();
 List_locT * startup1();
 
 itsnet_position_vector * LPV_ini();
-itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
+itsnet_position_vector * LPV_update();//(EV_P_ ev_timer *w, int revents);
 void Beacon_send(EV_P_ ev_timer *w, int revents) ;//void Beacon_send(public_ev_arg_r *arg);
 int duplicate_control(void * data,List_locT * locT);
 
@@ -207,9 +217,14 @@ typedef struct Timer
 	struct Timer *pNext;
 }tTimer;
 
-bool AddTimer(unsigned short TimerId);
-static tTimer * FindTimer(unsigned short TimerId);
+bool AddTimer(unsigned short TimerId, int num);
+static tTimer * FindTimer(unsigned short TimerId, int num);
 void handler_tempo(int sig);
 void Timer2Function();
-
+void SystemTickEvent_lsp(void);
+void SystemTickEvent(void);
+void CheckTimerEvent_lsp();
+void CheckTimerEvent();
+void thr_h4(void *arg);
+void thr_h2(void *arg);
 #endif /* NETMANAGEMENT_H_ */

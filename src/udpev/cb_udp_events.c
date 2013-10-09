@@ -149,6 +149,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	if(memcmp(HT,tsb1,1)==0){
 		printf("entro en tsb\n");
 		//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
+		CommonHeader_processing(arg);
 		if(duplicate_control(datos,arg->locT)==1){
 			//discard packet
 			//omit next steps
@@ -158,36 +159,28 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		pkt = TSB_f(datos);
 		//memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet_f) );
 		int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
-		itsnet_packet * pkt1;
-		pkt1 =(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		memcpy(pkt1, arg->data,arg->len);
 
-		char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
-		memcpy(Hop,datos+2,1);
-		printf("esta conversion\n");
-		int lon_int=sprint_hex_data(Hop, 2);
-		printf("esta conversion\n");
-
-		if (lon_int==1){//descartamos o paquete e omitimos os seguintes pasos
-			}
-
-			sprintf(pkt1->common_header.hop_limit,"X02",lon_int-1);
-			pkt1->common_header.forwarder_position_vector=* LPV; //
-
-
-			int fwd_bytes2 = send_message(	(sockaddr_t *)arg->local_addr,arg->socket_fd,&pkt1, arg->len	);
 
 			printf("saio de tsb_f\n");
 		} else if(memcmp(HT,tsb0,1)==0){
 			//printf("entro en shb\n");
+			CommonHeader_processing(arg);
 			pkt = SHB_f(datos);
 			//printf("saio de shb_f\n");
 			int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			printf("entro en geobroadcast\n");
+			CommonHeader_processing(arg);
 			pkt = GeoBroadcast_f(datos);
+			int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 			printf("saio de geobroadcast_f\n");
 		}
+		else if(memcmp(HT,beacon,1)==0 ){
+					printf("entro en beacon\n");
+					CommonHeader_processing(arg);
+					//int fwd_bytes = send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
+					printf("saio de beacon\n");
+				}
 		// 2) in case the message comes from the localhost, it is discarded
 		//if ( blocked == true )
 		//{
@@ -211,6 +204,33 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		log_app_msg("}\n");
 	}**/
 	//free(&data);free(tipo);free(datos);free(pkt);free(HT);
+
+
+
+	if (memcmp(HT,tsb1,1)==0 ||(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
+
+		itsnet_packet * pkt1;
+			pkt1 =(itsnet_packet *)malloc(sizeof(itsnet_packet));
+			memcpy(pkt1, arg->data,arg->len);
+
+			char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
+				memcpy(Hop,datos+2,1);
+				printf("esta conversion\n");
+				int lon_int=sprint_hex_data(Hop, 2);
+				printf("esta conversion\n");
+
+				if (lon_int>1){//descartamos o paquete e omitimos os seguintes pasos
+					sprintf(pkt1->common_header.hop_limit,"X02",lon_int-1);
+					pkt1->common_header.forwarder_position_vector=* LPV; //
+
+		char h_source[ETH_ALEN];
+				get_mac_address(arg->forwarding_socket_fd, "wlan0",(unsigned char *) h_source) ;
+		ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BROADCAST,h_source);
+		memcpy(tx_frame->buffer.data, data, sizeof(itsnet_packet) );
+				int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->socket_fd,&pkt1, arg->len);
+
+				}
+			}
 
 	printf("fin de cb_forward_recvfrom\n");
 	}
@@ -242,42 +262,30 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 		char tipo[2]={0x07,0x07};
 		memcpy(tx_frame->buffer.header.type,tipo,2);
-		printf("RECIBO UN PAQUETE1\n");
 		char *datos= (char *)malloc(arg->len);
 		memcpy(datos,arg->data,arg->len);
 		//			print_hex_data(datos,20);
 		//			printf("\n");
-
-		//agora debo buscar o que pasa cando chega unha gn_data
-
 		char *HT=NULL;
 		HT = (char *)malloc(2);
 		memcpy(HT,arg->data,2);
 		itsnet_packet * pkt;
-		printf("RECIBO UN PAQUETE3\n");
 		pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		printf("RECIBO UN PAQUETE2\n");
 		if(memcmp(HT,tsb1,1)==0){
 				printf("entro en tsb1\n");
-			pkt = TSB(datos);
-
-
+			    pkt = TSB(datos,arg->lsp,arg->rep);
 			//printf("aqui chego1\n");
 		} else if(memcmp(HT,tsb0,1)==0){
 				printf("entro en tsb0\n");
-			pkt = SHB(datos);
+			    pkt = SHB(datos,arg->lsp,arg->rep);
 
 			//printf("aqui chego1\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 				printf("entro en geobroad\n");
-			pkt = GeoBroadcast(datos);
-
+			    pkt = GeoBroadcast(datos,arg->lsp,arg->rep);
 			//printf("aqui chego1\n");
-		}
-
-
-		if(memcmp(HT,geounicast,1)==0){}
-		if(memcmp(HT,geounicast,1)==0){}
+		}else if(memcmp(HT,geounicast,1)==0){}
+		else if(memcmp(HT,geounicast,1)==0){}else{}
 		// este é o punto onde teño que modificar os datos do buffer que envio.
 
 		//	memcpy(tx_frame->buffer.data,arg->data,arg->len);
@@ -288,6 +296,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		printf("porto de saida das forward %d \n",arg->forwarding_socket_fd);
 		log_app_msg(">>> BROADCAST(app:%d>net:%d), msg[%.2d] = {"			, arg->port, arg->forwarding_port, fwd_bytes);
 		log_app_msg("}\n");
+
+
+
 	//	printf("ENVIO UN PAQUETE\n");
 //	int i=print_hex_data(&tx_frame->buffer, arg->len);
 	//	printf("envio trama\n");
