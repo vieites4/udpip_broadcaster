@@ -159,7 +159,7 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port);
  * @result An initialized sockaddr_in structure.
  */
 sockaddr_in_t *init_sockaddr_in( const int port, in_addr_t addr);
-sockaddr_ll_t *init_sockaddr_ll( const char *address,const int port);
+sockaddr_ll_t *init_sockaddr_ll(const int port);
 
 /**
  * @brief Initializes a sockaddr_in structure for sending messages through

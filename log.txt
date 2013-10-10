@@ -46,3 +46,279 @@ aqui chego1
 hola
 hola1
 porto udp 1301
+>>> Reading configuration...
+go
+>>> Configuration read! Printing data...
+>>> Configuration = 
+{
+	.app_addr = (null)
+	.app_inet_addr = 00
+	.app_tx_port = 1302
+	.app_rx_port = 1301
+	.tx_port = 1203
+	.rx_port = 1203
+	.if_name = wlan0
+	.nec_mode = false
+	.__tx_test = false
+	.ladoapp = false
+	.__verbose = false
+}
+AUTOADDRESS CONFIGURATION
+AQUI en init ! 0 
+aqui chego1
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+>>> Opening UDP APP RX socket...
+hola
+hola1
+porto udp 1301
+>>> Reading configuration...
+go
+>>> Configuration read! Printing data...
+>>> Configuration = 
+{
+	.app_addr = (null)
+	.app_inet_addr = 00
+	.app_tx_port = 1302
+	.app_rx_port = 1301
+	.tx_port = 1203
+	.rx_port = 1203
+	.if_name = wlan0
+	.nec_mode = false
+	.__tx_test = false
+	.ladoapp = false
+	.__verbose = false
+}
+AUTOADDRESS CONFIGURATION
+AQUI en init ! 0 
+aqui chego1
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+>>> Opening UDP APP RX socket...
+hola
+hola1
+porto udp 1301
+>>> Reading configuration...
+go
+>>> Configuration read! Printing data...
+>>> Configuration = 
+{
+	.app_addr = (null)
+	.app_inet_addr = 00
+	.app_tx_port = 1302
+	.app_rx_port = 1301
+	.tx_port = 1203
+	.rx_port = 1203
+	.if_name = wlan0
+	.nec_mode = false
+	.__tx_test = false
+	.ladoapp = false
+	.__verbose = false
+}
+AUTOADDRESS CONFIGURATION
+AQUI en init ! 0 
+aqui chego1
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+>>> Opening UDP APP RX socket...
+hola
+hola1
+porto udp 1301
+fd 3
+
+socket 3 
+>>> UDP APP RX socket open!
+>>> Opening RAW NET RX socket...
+porto raw 1203
+esto faino
+fd 7
+>>> raw NET RX socket open!
+next
+entro no loop
+ENTRO AQUI!!
+teño que enviar unha Beacon
+AQUI CHEGO
+ 54 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+entro en beacon
+
+ aqui fago un malloc
+AQUI en engadir ! 1 
+saio de add
+saio de beacon 
+remata cb_forward_recvfrom 
+cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+ALARMA 11111111
+e tamén saio 
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ALARMA 11111111
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+5555555
+ALARMA 22222222222
+ALARMA 11111111
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+5555555
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 22222222222
+ALARMA 11111111
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+5555555
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+ALARMA 22222222222
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+5555555
+cb_broadcast_recvfrom
+entro en tsb0
+SHB cb_forward_recvfrom 
+xa estou dentro de shb_f 
+remata cb_forward_recvfrom 
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 11111111
+ALARMA 11111111
+ENTRO NO DO LPV
+e tamén saio 
+e tamén saio 
+ALARMA 1

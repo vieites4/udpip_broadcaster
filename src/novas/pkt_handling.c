@@ -28,7 +28,8 @@ const unsigned char beacon[1]={0x01};
 const unsigned char any[1]={0x00};
 const unsigned char ls0[1]={0x06};
 const unsigned char ls1[1]={0x16};
-const unsigned char ETH_ADDR_BR[ETH_ALEN]                    ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
+const unsigned char single[1]={0x01};
+extern const unsigned char ETH_ADDR_BROADCAST[6];
 itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 
 //	Create common header
@@ -235,7 +236,9 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 	{printf("é btp tipo a\n");
 	memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,dato + 34,2);
 	memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,dato + 32,2);
-	}else{char *info_dest=NULL;
+	}else{
+		printf("entrei aqui\n");
+		char *info_dest=NULL;
 		info_dest = (char *)malloc(2);
 		memset(info_dest,0,2);
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,dato + 34,2);
@@ -311,7 +314,7 @@ while(pos!=NULL){
 
 				char h_source[ETH_ALEN];
 						get_mac_address(arg->forwarding_socket_fd, "wlan0",(unsigned char *) h_source) ;
-				ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BR,h_source);
+				ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BROADCAST,h_source);
 				memcpy(tx_frame->buffer.data, data, sizeof(itsnet_packet) );
 						int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->socket_fd,&pkt1, arg->len);
 						pos=pos->next;
@@ -365,7 +368,7 @@ itsnet_packet_f * TSB_f(void *dato){
 		memcpy(pkt->common_header.btp,dato+7,1);
 		itsnet_position_vector * PV=NULL;//
 		PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
-	    memcpy(PV,dato +40,28);
+	    memcpy(PV,dato +8,28);
 	    pkt->common_header.pv=*PV;
 		memcpy(pkt->common_header.traffic_class,dato +6,1);
 
@@ -374,11 +377,11 @@ itsnet_packet_f * TSB_f(void *dato){
 		int lon_int=sprint_hex_data( LEN, 2);
 		memcpy(pkt->common_header.payload_lenght,LEN,2);
 		memcpy(pkt->common_header.flags,dato +3,1);
-		memcpy(pkt->common_header.hop_limit,dato+2,1);
-		memcpy(pkt->payload.itsnet_unicast.payload,dato+68,lon_int);
+		memcpy(pkt->common_header.hop_limit,dato+7,1);
+		memcpy(pkt->payload.itsnet_unicast.payload,dato+64,lon_int);
 		memcpy(pkt->common_header.pkt_type,dato,1); //non teño moi claro que realmente sexan estes os datos que se esperan no pkt type e subtype
 		memcpy(pkt->common_header.pkt_stype,dato+1,1);
-		printf(pkt->common_header.payload_lenght); // este para probar se realmente podemos saltarnos o paso anterior no que se garda o valor, neste caso eliminalo tamén nos tsb,shb e gbroadcast do outro lado.
+		 // este para probar se realmente podemos saltarnos o paso anterior no que se garda o valor, neste caso eliminalo tamén nos tsb,shb e gbroadcast do outro lado.
 		printf("saio de tsb_f \n");
 	return(pkt);}
 
@@ -398,13 +401,42 @@ itsnet_packet_f * SHB_f(void *dato){
 		int lon_int=sprint_hex_data( LEN, 2);
 		memcpy(pkt->common_header.payload_lenght,LEN,2);
 		memcpy(pkt->common_header.flags,dato +3,1);
-		memcpy(pkt->common_header.hop_limit,dato+2,1);
+		memcpy(pkt->common_header.hop_limit,dato+7,1);
 		memcpy(pkt->payload.itsnet_unicast.payload,dato+36,lon_int);
 		memcpy(pkt->common_header.pkt_type,dato,1); //non teño moi claro que realmente sexan estes os datos que se esperan no pkt type e subtype
 		memcpy(pkt->common_header.pkt_stype,dato+1,1);
-		printf(pkt->common_header.payload_lenght); // este para probar se realmente podemos saltarnos o paso anterior no que se garda o valor, neste caso eliminalo tamén nos tsb,shb e gbroadcast do outro lado.
+		// este para probar se realmente podemos saltarnos o paso anterior no que se garda o valor, neste caso eliminalo tamén nos tsb,shb e gbroadcast do outro lado.
 	return(pkt);
 }
 
-itsnet_packet_f * GeoBroadcast_f(void *dato){}
+itsnet_packet_f * GeoBroadcast_f(void *dato){
+
+	itsnet_packet_f * pkt = NULL;
+			pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
+		    printf("xa estou dentro de geo_f \n");
+			memcpy(pkt->common_header.btp,dato+7,1);
+			itsnet_position_vector * PV=NULL;//
+				PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+		    memcpy(PV,dato +8,28);
+		    pkt->common_header.pv=*PV;
+			memcpy(pkt->common_header.traffic_class,dato +6,1);
+			char LEN[2] ;
+			memcpy(LEN,dato +4,2);
+			int lon_int=sprint_hex_data( LEN, 2);
+
+			memcpy(pkt->common_header.payload_lenght,LEN,2);
+			memcpy(pkt->common_header.flags,dato +3,1);
+			memcpy(pkt->common_header.hop_limit,dato+7,1);
+			memcpy(pkt->payload.itsnet_geocast.angle,dato+80,2);
+			memcpy(pkt->payload.itsnet_geocast.distanceA,dato+76,2);
+			memcpy(pkt->payload.itsnet_geocast.distanceB,dato+78,2);
+			memcpy(pkt->payload.itsnet_geocast.payload,dato+84,lon_int);
+			memcpy(pkt->payload.itsnet_geocast.repetitionInterval,dato+8,4);
+			memcpy(pkt->payload.itsnet_geocast.lt,dato+38,4);
+			memcpy(pkt->payload.itsnet_geocast.reserved,dato+2,1);
+			memcpy(pkt->common_header.pkt_type,dato,1); //non teño moi claro que realmente sexan estes os datos que se esperan no pkt type e subtype
+			memcpy(pkt->common_header.pkt_stype,dato+1,1);
+			return(pkt);
+
+}
 

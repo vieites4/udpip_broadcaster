@@ -221,10 +221,8 @@ bool AddTimer(unsigned short TimerId, int num);
 static tTimer * FindTimer(unsigned short TimerId, int num);
 void handler_tempo(int sig);
 void Timer2Function();
-void SystemTickEvent_lsp(void);
 void SystemTickEvent(void);
 void CheckTimerEvent_lsp();
 void CheckTimerEvent();
-void thr_h4(void *arg);
 void thr_h2(void *arg);
 #endif /* NETMANAGEMENT_H_ */

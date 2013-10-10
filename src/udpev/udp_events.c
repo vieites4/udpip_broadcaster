@@ -23,8 +23,7 @@
 #include "udp_events.h"
 
 /* new_udp_events */
-	struct ev_loop * l_Beacon;
-		ev_timer t_Beacon;
+
 udp_events_t *new_udp_events()
 {
 	udp_events_t *s = NULL;
@@ -120,19 +119,7 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name, const ev_c
 	return(s);
 
 }
-void *thr_h3(void *arg){
 
-
-	 //ollo!! teño que reiniciar o temporizador cando se renove o LPV por outros medios!
-	t_Beacon.data=arg;
-	l_Beacon= EV_DEFAULT;
-
-	ev_timer_init(&t_Beacon,Beacon_send,0.,itsGnBeaconServiceRetransmitTimer); //
-
-	ev_timer_start(l_Beacon,&t_Beacon);
-//t_LPV.repeat=1.;
-	return NULL;
-}
 /* init_net_udp_events */
 udp_events_t *init_net_raw_events
 				(	const int net_rx_port, const char* net_if_name,const char *app_fwd_addr, const int app_fwd_port,
@@ -181,13 +168,12 @@ void *init_app_udp_events
 	arg->public_arg.local_addr = init_if_sockaddr_ll(if_name, net_fwd_port);
 
 	arg->public_arg.forwarding_socket_fd= open_broadcast_raw_socket(if_name, net_fwd_port);
-	arg->public_arg.forwarding_addr= init_sockaddr_ll(addr,net_fwd_port);
+	arg->public_arg.forwarding_addr= init_sockaddr_ll(net_fwd_port);
 	arg->public_arg.forwarding_port = net_fwd_port;
 	arg->public_arg.print_forwarding_message = __verbose;
 	arg->public_arg.locT=locT;
 	arg->public_arg.lsp=lsp;
 	arg->public_arg.rep=rep;
-	printf("socket %d \n",arg->public_arg.socket_fd);
 	public_ev_arg_r * argum= &arg->public_arg;
 
 	return((void *)argum);
@@ -309,7 +295,7 @@ ev_io_arg_t *init_ev_io_arg(const udp_events_t *m
 void cb_common
 	(struct ev_loop *loop, struct ev_io *watcher, int revents)
 {
-printf("cb_common\n");
+//printf("cb_common\n");
 	if ( EV_ERROR & revents )
 		{ log_sys_error("Invalid event"); return; }
 
@@ -317,7 +303,7 @@ printf("cb_common\n");
 	public_ev_arg_r *public_arg = &arg->public_arg;
 	public_arg->socket_fd = watcher->fd;
 //memcpy(public_arg->data,watcher->data,arg->public_arg.len);
-	printf("saio de cb_common\n");
+	//printf("saio de cb_common\n");
 	if ( arg->cb_specfic == NULL )
 	{
 		log_app_msg("cb_common (ev=%d,fd=%d): <cb_function> NULL!\n", revents, watcher->fd);
@@ -325,5 +311,5 @@ printf("cb_common\n");
 	}
 	arg->cb_specfic(public_arg);
 
-	printf("saio de cb_common\n");
+//	printf("saio de cb_common\n");
 }

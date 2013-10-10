@@ -86,7 +86,7 @@ pthread_t h1,h3, h_locT,h_lsp;
 	pthread_create(&h1,NULL, thr_h1, NULL);
 	pthread_create(&h_locT,NULL,thr_h2,NULL);
 
-	pthread_create(&h_lsp,NULL,thr_h4,NULL);
+	//pthread_create(&h_lsp,NULL,thr_h2,NULL);
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
@@ -121,7 +121,7 @@ printf("next\n");
 
 //pthread_join(h3,NULL);
 	pthread_join(h1, NULL);
-	pthread_join(h_lsp, NULL);
+//	pthread_join(h_lsp, NULL);
 	pthread_join(h_locT, NULL);
 	pthread_join(h3, NULL);
 	//pthread_join(h2, NULL);

@@ -253,7 +253,7 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 
 }
 
-sockaddr_ll_t *init_sockaddr_ll(const char *address, const int port)
+sockaddr_ll_t *init_sockaddr_ll( const int port)
 {
 
 
@@ -329,7 +329,7 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port)
     	handle_app_error("Could not get local interface, if_name = %s.\n"
     						, if_name);
     } }**/
-    s = init_sockaddr_ll(host, port);
+    s = init_sockaddr_ll( port);
 
 	return(s);
 
@@ -659,23 +659,24 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 	int sent_bytes = 0;
 
 //teño que engadir aqui a cabeceira
-
+	printf("entro no envio do enlace cara o enlace 13\n");
 
 	if ( ( sent_bytes = sendto(socket_fd, buffer, len
 								, 0, dest_addr, LEN__SOCKADDR_LL) ) < 0 ) // solo habería que cambiar esta liña
-	{
+	{printf("entro no envio do enlace cara o enlace error\n");
 		log_sys_error("cb_broadcast_sendto (fd=%d): <sendto> ERROR.\n"
 						, socket_fd);
 		getchar();
 		return(EX_ERR);
 	}
-
+	printf("entro no envio do enlace cara o enlace 11\n");
 	if ( sent_bytes < len )
 	{
 		log_app_msg("send_message: sent %d bytes, requested %d.\n"
 						, sent_bytes, len);
 		return(EX_ERR);
 	}
+	printf("entro no envio do enlace cara o enlace 12\n");
 
 
 

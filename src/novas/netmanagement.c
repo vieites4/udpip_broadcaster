@@ -2,7 +2,7 @@
 
 //2947 porto para gps, deixo correndo o sistema e
 #include "netmanagement.h"
-
+#include <sys/time.h>
 const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 //#include <gpsd_config.h>
 //#include <gpsdclient.h>
@@ -48,8 +48,8 @@ static tTimer *mpTimerList = NULL;
 static tTimer *mpTimerList_lsp = NULL;
 //Global variable for reference
 static unsigned short gTimer,gTimer_lsp;
-#pragma inline SystemTickEvent
-int cont=0;
+#pragma inline SystemTickEvent,SystemTickEvent_lsp
+int cont=0;int cont1=0;
 
 void Timer2Function(){}
 
@@ -136,7 +136,7 @@ void CheckTimerEvent()
 }
 void CheckTimerEvent_lsp()
 {	printf("6666666\n");
-	signal(SIGINT, CheckTimerEvent_lsp);
+	signal(SIGUSR1, CheckTimerEvent_lsp);
 	unsigned short nTimer;
 
     // Read the global variable gTimer and reset the value
@@ -164,9 +164,9 @@ void CheckTimerEvent_lsp()
     }
 }
 void SystemTickEvent(void) //facer un fio que repita todo o tempo (bucle while(1)) esta temporizacion, cada segundo, poñer un sleep(1) xusto antes desta funcion
-{
-	alarm(1);
+{alarm(1);
 		signal(SIGALRM, SystemTickEvent);
+		//printf("ALARMA 11111111\n");
 	tTimer *pTimer;
 	// Update the timers
 	pTimer = mpTimerList;
@@ -182,36 +182,32 @@ void SystemTickEvent(void) //facer un fio que repita todo o tempo (bucle while(1
     }
 //	printf("ENTRA O SIGNAL\n");
 	cont++;
-	//if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
+	if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
 	if (gTimer!=0){//raise(SIGINT);
+	}
+	tTimer *pTimer1;
+			// Update the timers
+			pTimer1 = mpTimerList_lsp;
+			while(pTimer1 != NULL)
+		    { 	if(pTimer1->Period != 0)
+		        {  	pTimer1->Period--;
+		      	if(pTimer1->Period == 0)
+		            { 		// Set the corresponding bit when the timer reaches zero
+		            	gTimer_lsp = gTimer_lsp | pTimer1->TimerId;
+		            }        }
+		    	// Move to the next timer in the list
+		    	pTimer1 = pTimer1->pNext;
+		    }
+		//	printf("ENTRA O SIGNAL\n");
+			cont1++;
+			if (cont1==5){cont1=0;raise(SIGUSR1);}//eliminaríase esto, que está como un exemplo
+			if (gTimer_lsp!=0){//raise(SIGINT);
+
 
 	}
 }
 
-void SystemTickEvent_lsp(void) //facer un fio que repita todo o tempo (bucle while(1)) esta temporizacion, cada segundo, poñer un sleep(1) xusto antes desta funcion
-{
-	alarm(1);
-		signal(SIGALRM, SystemTickEvent_lsp);
-	tTimer *pTimer;
-	// Update the timers
-	pTimer = mpTimerList_lsp;
-	while(pTimer != NULL)
-    { 	if(pTimer->Period != 0)
-        {  	pTimer->Period--;
-      	if(pTimer->Period == 0)
-            { 		// Set the corresponding bit when the timer reaches zero
-            	gTimer_lsp = gTimer_lsp | pTimer->TimerId;
-            }        }
-    	// Move to the next timer in the list
-    	pTimer = pTimer->pNext;
-    }
-//	printf("ENTRA O SIGNAL\n");
-	cont++;
-	//if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
-	if (gTimer_lsp!=0){//raise(SIGINT);
 
-	}
-}
 
 void handler_tempo(int sig){
 
@@ -224,16 +220,10 @@ void thr_h2(void *arg){
 	while(1){
 	//	SystemTickEvent();
 		signal(SIGINT, CheckTimerEvent);
+		signal(SIGUSR1, CheckTimerEvent_lsp);
 	}
 }
-void thr_h4(void *arg){
-	alarm(1);
-	signal(SIGALRM,SystemTickEvent_lsp);
-	while(1){
-	//	SystemTickEvent();
-		signal(SIGINT, CheckTimerEvent_lsp);
-	}
-}
+
 
 
 List_locT * startup1()
@@ -278,9 +268,7 @@ static 	gps_data_t gpsdata;
 itsnet_position_vector * LPV_update(){
 	//itsnet_position_vector * LPV;
 	printf ("ENTRO NO DO LPV\n");
-	printf("e tamén saio \n");
 	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
-	printf("e tamén saio \n");
 	printf("e tamén saio \n");
 	gps_open("localhost","2947",&gpsdata);
 	printf("e tamén saio \n");
@@ -289,7 +277,6 @@ itsnet_position_vector * LPV_update(){
 
 		}
 
-	printf("e tamén saio \n");
 
 	(void) gps_stream(&gpsdata, WATCH_ENABLE, NULL);//gpsdata.dev);
 	    /* Put this in a loop with a call to a high resolution sleep () in it. */
@@ -317,7 +304,6 @@ itsnet_position_vector * LPV_update(){
 	printf("AltAcc %f\n",gpsdata.fix.epv);
 	printf("mode %d \n",gpsdata.fix.mode);**/
 	LPV->node_id=GN_ADDR;
-	printf("e tamén saio \n");
 	LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
 	char str1[2] = {'\0'};	char str2[2] = {'\0'};	char str3[2] = {'\0'};	char str4[2] = {'\0'};	char str5[2] = {'\0'};	char str6[9] = {'\0'};	char str7[9] = {'\0'};
 	char str8[9] = {'\0'};	char str9[5] = {'\0'};	char str10[5] = {'\0'};
@@ -338,7 +324,6 @@ itsnet_position_vector * LPV_update(){
 	num2=strtol(str2,NULL,16);
 	num3=strtol(str3,NULL,16);
 	num4=strtol(str4,NULL,16);
-	printf("e tamén saio \n");
 	num5=strtol(str5,NULL,16);
 	num6=strtol(str6,NULL,16);
 	num7=strtol(str7,NULL,16);
@@ -356,7 +341,6 @@ itsnet_position_vector * LPV_update(){
     LPV->accuracy.speed_ac=num3;
     LPV->accuracy.head_ac=num4;
     LPV->accuracy.time_ac=num1;
-    printf("e tamén saio \n");
    /** printf(str2);printf("\n");
     printf(str3);printf("\n");
     printf(str4);printf("\n");
@@ -382,7 +366,6 @@ itsnet_position_vector * LPV_update(){
 	} } }    }
 	gps_close (&gpsdata);
 	//free(gpsdata);
-	printf("e tamén saio \n");
 
 	return(LPV);
 }
@@ -455,7 +438,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	res= (version_nh *)malloc(1);
 	flags_t * flags=NULL;
 	flags= (flags_t *)malloc(1);
-	printf("AQUI CHEGO\n");
+
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	res->version=itsGnProtocolVersion;
 	res->nh=0;
@@ -463,8 +446,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	pkt->common_header.HT_HST.HT=1;
     pkt->common_header.HT_HST.HST=0;
 		memset(flags,0,1);
-		printf("AQUI CHEGO\n");
-	flags->itsStation=itsGnStationType;
+		flags->itsStation=itsGnStationType;
 	memcpy(pkt->common_header.flags,flags,1);
 	memset(pkt->common_header.payload_lenght,0,1);
 //	pkt->common_header.txpower="0"
@@ -474,7 +456,6 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	tc->relevance=itsGnTrafficClassRelevance;
 	tc->reliability=itsGnTrafficClassReliability; //non caben esos valores nese espacio
 	tc->latency=itsGnTrafficClassLatency;
-	printf("AQUI CHEGO\n");
 	memset(pkt->common_header.traffic_class,tc,1);
 	//memcpy(portoO,arg->port,2);
 	//memcpy(portoD,arg->forwarding_port,2);
@@ -484,11 +465,11 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
 	// 2) broadcast application level UDP message to network level
 int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
-//print_hex_data(&tx_frame->buffer,tx_frame->buffer);printf(" %d \n",sizeof(itsnet_btp_wo_payload_t )+sizeof(itsnet_common_header)+14);
+//printf(" %d \n",sizeof(itsnet_btp_wo_payload_t )+sizeof(itsnet_common_header)+14);
  //valor do PV
 	//inicializar o timer para a transmission periodica de beacons Tbeacons
 	//recorda que hai que controlar sempre o Tbeacon!! //crear timer que fagan un evento ó terminar
-	printf("ENVIO UN PAQUETE fin\n");
+printf("beacon enviada\n");
 //print_hex_data(&tx_frame->buffer,  sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
 
 //free(res); free(tc); free(flags); free(pkt);
@@ -512,9 +493,6 @@ List_locT * init_locT ()
 int add_end_locT ( List_locT * locT, itsnet_node data){
 //	pthread_t h1;
 
-	printf("\n aqui fago un malloc\n");
-
-
   Element_locT *new_element;
  new_element = (Element_locT *) malloc (sizeof (Element_locT));
  if (new_element==NULL) printf( "No hay memoria disponible!\n");
@@ -531,7 +509,6 @@ new_element->before=locT->end;
  locT->end = new_element;
 
   locT ->len++;
-  printf("AQUI en engadir ! %d \n",locT->len);
 //argumento->thread=h1;
 int num2,a=0;
 unsigned short num=0;

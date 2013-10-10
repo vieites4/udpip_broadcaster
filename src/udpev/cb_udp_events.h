@@ -42,7 +42,7 @@
 
 // typedef void  (* public_ev_arg)(ev_cb_t *)  ;
 //typedef struct public_ev_arg public_ev_arg_t;
-
+void *thr_h3(void *arg);
 void cb_print_recvfrom(public_ev_arg_r *arg);
 
 /**

@@ -301,9 +301,9 @@ struct itsnet_geo_t
 {
 	 unsigned char repetitionInterval[4];
 	 unsigned char lt[4];
-	itsnet_radius distanceA;/** radius/height,latitude and longitude (geo-area destination)   */
-	itsnet_radius distanceB;/** radius/height,latitude and longitude (geo-area destination)   */
-	itsnet_radius angle; //orientation
+	 unsigned char distanceA[2];// radius/height,latitude and longitude (geo-area destination)   itsnet_radius
+	unsigned char distanceB[2];// radius/height,latitude and longitude (geo-area destination)   itsnet_radius
+	 unsigned char angle[2]; //orientation //itsnet_radius
 	  unsigned char reserved[1];
 	  short payload[ITSNET_DATA_SIZE];
 };
@@ -381,11 +381,17 @@ struct itsnet_geobroadcast_t
 	itsnet_sequencenumber sequencenumber;
 		unsigned char lt[1];
 		itsnet_position_vector source_position_vector;/** Source node position vector */
-		itsnet_latitude dest_latitude;
-			itsnet_longitude dest_longitude;
-	itsnet_radius distanceA;/** radius/height,latitude and longitude (geo-area destination)   */
-	itsnet_radius distanceB;/** radius/height,latitude and longitude (geo-area destination)   */
-	itsnet_radius angle; //orientation
+		//itsnet_latitude
+
+		unsigned char dest_latitude[4];
+			//itsnet_longitude
+			unsigned char dest_longitude[4];
+	//itsnet_radius
+	unsigned char distanceA[2];/** radius/height,latitude and longitude (geo-area destination)   */
+	//itsnet_radius
+	unsigned char distanceB[2];/** radius/height,latitude and longitude (geo-area destination)   */
+	//itsnet_radius
+	unsigned char angle[2]; //orientation
 	  unsigned char reserved[1];
 			itsnet_btp payload;
 };
