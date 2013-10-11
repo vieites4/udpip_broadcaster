@@ -42,8 +42,8 @@
 
 //List_buf * UCb, BCb;
 /* main */
-	struct ev_loop * l_LPV;
-		ev_timer t_LPV;
+struct ev_loop * l_LPV;
+ev_timer t_LPV;
 int SN_g;//sequence number
 
 itsnet_node_id GN_ADDR;
@@ -51,13 +51,13 @@ itsnet_node_id GN_ADDR;
 void *thr_h1(){
 
 
-	 //ollo!! teño que reiniciar o temporizador cando se renove o LPV por outros medios!
+	//ollo!! teño que reiniciar o temporizador cando se renove o LPV por outros medios!
 	l_LPV=EV_DEFAULT;
 
 	ev_timer_init(&t_LPV,LPV_update,0.,itsGnMinimunUpdateFrequencyLPV); //
 	ev_timer_start(l_LPV,&t_LPV);
 
-//t_LPV.repeat=1.;
+	//t_LPV.repeat=1.;
 	return NULL;
 }
 
@@ -67,9 +67,9 @@ int main(int argc, char **argv)
 {
 	List_locT * locT_g; //variable global
 	List_lsp * lsp_bc_g;
-pthread_t h1,h3, h_locT,h_lsp;
- //pthread_create(&h1, NULL , slowprintf , (void *)hola)  o ultimo parámetro é o dos argumentos
-//pthread_create(&h2,NULL, thr_h2, NULL);
+	pthread_t h1,h3, h_locT,h_lsp;
+	//pthread_create(&h1, NULL , slowprintf , (void *)hola)  o ultimo parámetro é o dos argumentos
+	//pthread_create(&h2,NULL, thr_h2, NULL);
 	// 1) Runtime configuration is read from the CLI (POSIX.2).
 	log_app_msg(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
@@ -105,23 +105,23 @@ pthread_t h1,h3, h_locT,h_lsp;
 	else	{
 
 		log_app_msg(">>> Opening UDP APP RX socket...\n");
-		 void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g);//broadcast
-		 pthread_create(&h3,NULL, thr_h3, argum);	//Beacon_send(arg);
-		 log_app_msg(">>> UDP APP RX socket open!\n");
+		void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g);//broadcast
+		pthread_create(&h3,NULL, thr_h3, argum);	//Beacon_send(arg);
+		log_app_msg(">>> UDP APP RX socket open!\n");
 		//print_udp_events(app_events, cfg->app_rx_port, cfg->tx_port);
 		log_app_msg(">>> Opening RAW NET RX socket...\n");
-		net_events = init_net_raw_events(cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,rep_bc_g);
+		net_events = init_net_raw_events(cfg->tx_port,cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,rep_bc_g);
 		log_app_msg(">>> raw NET RX socket open!\n");
 		//print_udp_events(net_events, cfg->rx_port, cfg->app_tx_port);
 
 
-		}
-printf("next\n");
+	}
+	printf("next\n");
 	ev_loop(net_events->loop, 0); //realmente é este o bucle infinito que vai sendo interrumpido por sinais ev_read que despertan o common_cb q desperta o broadcast ou o forwarding segundo chegue por un porto ou polo outro.
 
-//pthread_join(h3,NULL);
+	//pthread_join(h3,NULL);
 	pthread_join(h1, NULL);
-//	pthread_join(h_lsp, NULL);
+	//	pthread_join(h_lsp, NULL);
 	pthread_join(h_locT, NULL);
 	pthread_join(h3, NULL);
 	//pthread_join(h2, NULL);

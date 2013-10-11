@@ -31,44 +31,52 @@ const unsigned char ETH_ADDR_NULL[ETH_ALEN]   = { 0x00,0x00,0x00,0x00,0x00,0x00 
 
 
 int get_mac_address
-	(const int socket_fd, const char *if_name ,const unsigned char *mac)
+(const int socket_fd, const char *if_name ,const unsigned char *mac)
 {
-
+printf("entro en get mac\n");
 	int len_if_name = -1;
-//	printf("aqui1\n");
+	//	printf("aqui1\n");
 	if ( if_name == NULL )		{ return(EX_NULL_PARAM); }
-//if ( mac == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
+	//if ( mac == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
 
 	if ( socket_fd < 0 )		{ return(EX_WRONG_PARAM); }
 
 	len_if_name = strlen(if_name);
-
+	printf("entro en get mac1\n");
 	if ( len_if_name == 0 )		{ return(EX_EMPTY_PARAM); }
 	if ( len_if_name > IF_NAMESIZE )		{ return(EX_WRONG_PARAM); }
-
+	printf("entro en get mac2\n");
 	ifreq_t *ifr = new_ifreq();
+	//ifreq_t *ifr=NULL;
+	//ifr=(ifreq_t *)malloc(LEN__IFREQ) ;
+	printf("entro en get mac3\n");
+	ifreq_t ifr1=*ifr;
 	strncpy(ifr->ifr_name, if_name, len_if_name);
 	//printf("aqui1\n");
 	if ( ioctl(socket_fd, SIOCGIFHWADDR, ifr) < 0 )	{		log_sys_error("Could not get interface index");		return(EX_SYS);}
 
 	//printf("aqui2\n");
 	memcpy(mac, ifr->ifr_hwaddr.sa_data, ETH_ALEN);
+//free(ifr);ifr=NULL;
 	return(EX_OK);
 
 }
 
-
+int a;
 /* new_ifreq */
 ifreq_t *new_ifreq()
 {
 
 	ifreq_t *s = NULL;
-
+//	if (a>0){free(s); s=NULL;}
+	a=1;
+printf("en ifr\n");
 	if ( ( s = (ifreq_t *)malloc(LEN__IFREQ) ) == NULL )
-		{ handle_sys_error("new_ifreq: <malloc> returns NULL.\n"); }
+	{ handle_sys_error("new_ifreq: <malloc> returns NULL.\n"); }
+	printf("en ifr\n");
 	if ( memset(s, 0, LEN__IFREQ) == NULL )
-		{ handle_sys_error("new_ifreq: <memset> returns NULL.\n"); }
-
+	{ handle_sys_error("new_ifreq: <memset> returns NULL.\n"); }
+	printf("en ifr\n");
 	return(s);
 
 }
@@ -82,13 +90,13 @@ ifreq_t *init_ifreq(const char *if_name)
 	int ifr_name_len = sizeof(s->ifr_name);
 
 	if ( ( if_name_len = strlen(if_name) ) < 0 )
-		{ handle_sys_error("init_ifreq: <strlen> returns < 0.\n"); }
+	{ handle_sys_error("init_ifreq: <strlen> returns < 0.\n"); }
 	if ( if_name_len > ifr_name_len )
-		{ handle_app_error("init_ifreq: if_name's length bigger than ifr's " \
-							"buffer.\n"); }
+	{ handle_app_error("init_ifreq: if_name's length bigger than ifr's " \
+			"buffer.\n"); }
 
 	if ( strncpy(s->ifr_name, if_name, if_name_len) == NULL )
-		{ handle_sys_error("init_ifreq: <strncpy> returns NULL.\n"); }
+	{ handle_sys_error("init_ifreq: <strncpy> returns NULL.\n"); }
 
 	return(s);
 
@@ -101,9 +109,9 @@ sockaddr_t *new_sockaddr()
 	sockaddr_t *s = NULL;
 
 	if ( ( s = (sockaddr_t *)malloc(LEN__SOCKADDR) ) == NULL )
-		{ handle_sys_error("new_sockaddr: <malloc> returns NULL.\n"); }
+	{ handle_sys_error("new_sockaddr: <malloc> returns NULL.\n"); }
 	if ( memset(s, 0, LEN__SOCKADDR) == NULL )
-		{ handle_sys_error("new_sockaddr: <memset> returns NULL.\n"); }
+	{ handle_sys_error("new_sockaddr: <memset> returns NULL.\n"); }
 
 	return(s);
 
@@ -116,9 +124,9 @@ sockaddr_in_t *new_sockaddr_in()
 	sockaddr_in_t *s = NULL;
 
 	if ( ( s = (sockaddr_in_t *)malloc(LEN__SOCKADDR_IN) ) == NULL )
-		{ handle_sys_error("new_sockaddr_in: <malloc> returns NULL.\n"); }
+	{ handle_sys_error("new_sockaddr_in: <malloc> returns NULL.\n"); }
 	if ( memset(s, 0, LEN__SOCKADDR) == NULL )
-		{ handle_sys_error("new_sockaddr_in: <memset> returns NULL.\n"); }
+	{ handle_sys_error("new_sockaddr_in: <memset> returns NULL.\n"); }
 
 	return(s);
 
@@ -144,9 +152,9 @@ iovec_t *new_iovec()
 	iovec_t *s = NULL;
 
 	if ( ( s = (iovec_t *)malloc(LEN__IOVEC) ) == NULL )
-		{ handle_sys_error("new_iovec: <malloc> returns NULL.\n"); }
+	{ handle_sys_error("new_iovec: <malloc> returns NULL.\n"); }
 	if ( memset(s, 0, LEN__IOVEC) == NULL )
-		{ handle_sys_error("new_iovec: <memset> returns NULL.\n"); }
+	{ handle_sys_error("new_iovec: <memset> returns NULL.\n"); }
 
 	return(s);
 
@@ -159,14 +167,14 @@ msg_header_t *new_msg_header()
 	msg_header_t *s = NULL;
 
 	if ( ( s = (msg_header_t *)malloc(LEN__MSG_HEADER) ) == NULL )
-		{ handle_sys_error("new_msg_header: <malloc> returns NULL.\n"); }
+	{ handle_sys_error("new_msg_header: <malloc> returns NULL.\n"); }
 	if ( memset(s, 0, LEN__MSG_HEADER) == NULL )
-		{ handle_sys_error("new_msg_header: <memset> returns NULL.\n"); }
+	{ handle_sys_error("new_msg_header: <memset> returns NULL.\n"); }
 
 	if ( ( s->msg_control = malloc(CONTROL_BUFFER_LEN) ) == NULL )
-		{ handle_sys_error("init_msg_header: <malloc> returns NULL.\n"); }
+	{ handle_sys_error("init_msg_header: <malloc> returns NULL.\n"); }
 	if ( memset(s->msg_control, 0, CONTROL_BUFFER_LEN) == NULL )
-		{ handle_sys_error("init_msg_header: <memset> returns NULL.\n"); }
+	{ handle_sys_error("init_msg_header: <memset> returns NULL.\n"); }
 	s->msg_controllen = CONTROL_BUFFER_LEN;
 
 	s->msg_flags = 0;
@@ -204,7 +212,6 @@ sockaddr_in_t *init_sockaddr_in(const int port,in_addr_t addr)
 	s->sin_family = AF_INET;
 	s->sin_port = (in_port_t)htons(port);
 	s->sin_addr.s_addr = addr;//htonl(INADDR_BROADCAST);
-
 	return(s);
 }
 
@@ -219,7 +226,7 @@ sockaddr_ll_t *init_broadcast_sockaddr_ll(const int port)
 	s->sll_ifindex = if_nametoindex("wlan0");
 
 	memcpy(s->sll_addr,ETH_ADDR_BROADCAST , ETH_ALEN);
-s->sll_protocol=htons(0x0707);
+	s->sll_protocol=htons(0x0707);
 	return(s);
 
 }
@@ -267,7 +274,7 @@ sockaddr_ll_t *init_sockaddr_ll( const int port)
 	//s->sll_protocol=htons(port);
 	s->sll_protocol =  htons(0x0707);//engadido//htons(ETH_P_ALL);	//
 	//memset(s->sll_addr,address,ETH_ALEN);
-//	if ( ( s->sll_addr.s_addr = inet_addr(address) ) < 0 )
+	//	if ( ( s->sll_addr.s_addr = inet_addr(address) ) < 0 )
 	//	{ handle_sys_error("init_sockaddr_in: " \
 
 	//					"<inet_addr> returns error.\n"); }
@@ -285,11 +292,11 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port)
 {
 
 	sockaddr_ll_t *s = NULL;
-	struct ifaddrs *ifaddr, *ifa;
-    int i;
-    char host[NI_MAXHOST];
-    bool if_found = false;
-    /**
+	//struct ifaddrs *ifaddr, *ifa;
+	//int i;
+	//char host[NI_MAXHOST];
+	//bool if_found = false;
+	/**
     if ( getifaddrs(&ifaddr) < 0 )
     {
     	handle_sys_error("init_if_sockaddr_ll: " \
@@ -329,7 +336,7 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port)
     	handle_app_error("Could not get local interface, if_name = %s.\n"
     						, if_name);
     } }**/
-    s = init_sockaddr_ll( port);
+	s = init_sockaddr_ll( port);
 
 	return(s);
 
@@ -343,49 +350,49 @@ sockaddr_in_t *init_if_sockaddr_in(const char *if_name, const int port)
 
 	sockaddr_in_t *s = NULL;
 	struct ifaddrs *ifaddr, *ifa;
-    int i;
-    char host[NI_MAXHOST];
-    bool if_found = false;
+	int i;
+	//char host[NI_MAXHOST];
+	in_addr_t host; // ollo cambiei esto polo de arriba
+	bool if_found = false;
 
-    if ( getifaddrs(&ifaddr) < 0 )
-    {
-    	handle_sys_error("init_if_sockaddr_in: " \
-    						"<getifaddrs> returned error. Error: ");
-    }
+	if ( getifaddrs(&ifaddr) < 0 )
+	{
+		handle_sys_error("init_if_sockaddr_in: " \
+				"<getifaddrs> returned error. Error: ");
+	}
 
-    for ( ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next )
-    {
+	for ( ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next )
+	{
 
-        if ( ifa->ifa_addr == NULL ) { continue; }
+		if ( ifa->ifa_addr == NULL ) { continue; }
 
-        i = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in)
-        					, host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+		i = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),(char *) host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
 
-        if ( 	( strcmp(ifa->ifa_name,if_name) == 0 ) &&
-        		( ifa->ifa_addr->sa_family == AF_INET )		)
-        {
+		if ( 	( strcmp(ifa->ifa_name,if_name) == 0 ) &&
+				( ifa->ifa_addr->sa_family == AF_INET )		)
+		{
 
-            if ( i != 0 )
-            {
-                handle_app_error("init_if_sockaddr_in: " \
-                					"<getnameinfo> failed: %s\n"
-                						, gai_strerror(i));
-            }
+			if ( i != 0 )
+			{
+				handle_app_error("init_if_sockaddr_in: " \
+						"<getnameinfo> failed: %s\n"
+						, gai_strerror(i));
+			}
 
-            s = init_sockaddr_in(host, port);
-            if_found = true;
+			s = init_sockaddr_in( port,host);
+			if_found = true;
 
-        }
+		}
 
-    }
+	}
 
-    freeifaddrs(ifaddr);
+	freeifaddrs(ifaddr);
 
-    if ( if_found == false )
-    {
-    	handle_app_error("Could not get local interface, if_name = %s.\n"
-    						, if_name);
-    }
+	if ( if_found == false )
+	{
+		handle_app_error("Could not get local interface, if_name = %s.\n"
+				, if_name);
+	}
 
 	return(s);
 
@@ -400,19 +407,19 @@ int open_receiver_udp_socket(const int port)
 
 	// 1) socket creation
 	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
-		{ handle_sys_error("open_receiver_udp_socket: " \
-							"<socket> returns error. Description"); }
+	{ handle_sys_error("open_receiver_udp_socket: " \
+			"<socket> returns error. Description"); }
 
 	// 2) local address for binding
 	sockaddr_in_t* addr = init_any_sockaddr_in(port);
 	if ( bind(fd, (sockaddr_t *)addr, LEN__SOCKADDR_IN) < 0 )
-		{ handle_sys_error("open_receiver_udp_socket: " \
-							"<bind> returns error. Description"); }
+	{ handle_sys_error("open_receiver_udp_socket: " \
+			"<bind> returns error. Description"); }
 
 	// 3) for analyzing received message's headers
 	if ( set_msghdrs_socket(fd) < 0 )
-		{ handle_app_error("open_receiver_udp_socket: " \
-							"<set_msghdrs_socket> returns error.\n"); }
+	{ handle_app_error("open_receiver_udp_socket: " \
+			"<set_msghdrs_socket> returns error.\n"); }
 	return(fd);
 
 }
@@ -425,13 +432,13 @@ int open_receiver_raw_socket(const int port)
 	int fd = -1;
 
 	// 1) socket creation
-//	sockaddr_ll_t *s= init_sockaddr_ll((const char *) NULL, port);
-printf("porto raw %d\n",port);
+	//	sockaddr_ll_t *s= init_sockaddr_ll((const char *) NULL, port);
+	printf("porto raw %d\n",port);
 
 
 	if ( ( fd = socket(PF_PACKET, SOCK_RAW,port ) ) < 0 )// lsap é port
-		{ handle_sys_error("open_receiver_RAW_socket: " \
-							"<socket> returns error. Description"); }
+	{ handle_sys_error("open_receiver_RAW_socket: " \
+			"<socket> returns error. Description"); }
 
 	// 2) local address for binding
 	sockaddr_ll_t* addr = init_any_sockaddr_ll(port);
@@ -441,10 +448,10 @@ printf("porto raw %d\n",port);
 	if ( bind(	fd,	(sockaddr_t *)addr, LEN__SOCKADDR_LL)< 0 )	{ handle_sys_error("Binding socket"); }
 
 	// 3) for analyzing received message's headers
-     if ( set_msghdrs_socket_raw(fd) < 0 ) //PROBABLEMENTE BORRE ESTO
+	if ( set_msghdrs_socket_raw(fd) < 0 ) //PROBABLEMENTE BORRE ESTO
 		//
-      { handle_app_error("open_receiver_RAW_socket: " \
-							"<set_msghdrs_socket> returns error.\n"); }
+	{ handle_app_error("open_receiver_RAW_socket: " \
+			"<set_msghdrs_socket> returns error.\n"); }
 
 	return(fd);
 
@@ -458,8 +465,8 @@ int open_transmitter_udp_socket(const int port, in_addr_t addr) //non está comp
 
 	// 1) socket creation
 	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
-		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
-/**
+	{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
+	/**
 //	sockaddr_in_t server;
 	//	 memset(&server, 0, sizeof server);
 	//	    server.sin_family = AF_INET; // Use IPv4
@@ -484,7 +491,7 @@ int open_transmitter_raw_socket(const int port) //non está completo, non?
 
 	// 1) socket creation
 	if ( ( fd = socket(AF_PACKET, SOCK_RAW, port) ) < 0 )
-		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
+	{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 
 
@@ -502,20 +509,20 @@ int open_broadcast_udp_socket(const char *iface, const int port)
 
 	// 1) socket creation
 	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
-		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
+	{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 	// 2) set broadcast socket options
 	if ( set_broadcast_socket(fd) < 0 )
 	{
 		handle_app_error("open_broadcast_udp_socket: " \
-							"<set_broadcast_socket> returns error.\n");
+				"<set_broadcast_socket> returns error.\n");
 	}
 
 	// 3) broadcast socket must be bound to a specific network interface
 	if ( set_bindtodevice_socket(iface, fd) < 0 )
 	{
 		handle_app_error("open_broadcast_udp_socket: " \
-							"<set_bindtodevice_socket> returns error.\n");
+				"<set_bindtodevice_socket> returns error.\n");
 	}
 
 	return(fd);
@@ -530,20 +537,20 @@ int open_broadcast_raw_socket(const char *iface, const int port) ///cambiar esto
 
 	// 1) socket creation
 	if ( ( fd = socket(AF_PACKET, SOCK_RAW, port) ) < 0 )
-		{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
+	{ handle_sys_error("open_udp_socket: <socket> returns error.\n"); }
 
 	// 2) set broadcast socket options
-if ( set_broadcast_socket(fd) < 0 )
+	if ( set_broadcast_socket(fd) < 0 )
 	{
 		handle_app_error("open_broadcast_udp_socket: " \
-							"<set_broadcast_socket> returns error.\n");
+				"<set_broadcast_socket> returns error.\n");
 	}
 
 	// 3) broadcast socket must be bound to a specific network interface
 	if ( set_bindtodevice_socket(iface, fd) < 0 )
 	{
 		handle_app_error("open_broadcast_udp_socket: " \
-							"<set_bindtodevice_socket> returns error.\n");
+				"<set_bindtodevice_socket> returns error.\n");
 	}
 
 	return(fd);
@@ -559,8 +566,8 @@ int set_broadcast_socket(const int socket_fd)
 
 	if ( setsockopt(socket_fd, SOL_SOCKET, SO_BROADCAST, &bcast, sizeof(int))
 			< 0 )
-		{ handle_sys_error("set_broadcast_socket: " \
-							"<setsockopt> returns error."); }
+	{ handle_sys_error("set_broadcast_socket: " \
+			"<setsockopt> returns error."); }
 
 	return(EX_OK);
 
@@ -574,8 +581,8 @@ int set_bindtodevice_socket(const char *if_name, const int socket_fd)
 
 	if ( setsockopt(socket_fd, SOL_SOCKET, SO_BINDTODEVICE, ifr, LEN__IFREQ)
 			< 0 )
-		{ handle_sys_error("set_bindtodevice_socket: " \
-							"<setsockopt> returns error"); }
+	{ handle_sys_error("set_bindtodevice_socket: " \
+			"<setsockopt> returns error"); }
 
 	return(EX_OK);
 
@@ -590,7 +597,7 @@ int set_msghdrs_socket(const int socket_fd)
 	if ( setsockopt(socket_fd, IPPROTO_IP, IP_PKTINFO, &ifr, LEN__IFREQ)
 			< 0 )
 	{ handle_sys_error("set_generate_headers: " \
-						"<setsockopt> returns error"); }
+			"<setsockopt> returns error"); }
 
 	return(EX_OK);
 
@@ -600,10 +607,10 @@ int set_msghdrs_socket(const int socket_fd)
 int set_msghdrs_socket_raw(const int socket_fd)
 {
 
-	ifreq_t *ifr = new_ifreq();
+	//ifreq_t *ifr = new_ifreq();
 
 	//if ( setsockopt(socket_fd, IPPROTO_IP, IP_PKTINFO, &ifr, LEN__IFREQ)			< 0 )	{ handle_sys_error("set_generate_headers: " \
-						"<setsockopt> returns error"); }
+	"<setsockopt> returns error"); }
 
 	return(EX_OK);
 
@@ -612,16 +619,16 @@ int set_msghdrs_socket_raw(const int socket_fd)
 }
 
 ieee80211_frame_t *new_ieee80211_frame()
-	{
+{
 
-		ieee80211_frame_t *buffer = NULL;
-		buffer = (ieee80211_frame_t *)malloc(LEN__IEEE80211_FRAME);
-		memset(buffer, 0, LEN__IEEE80211_FRAME);
-		return(buffer);
+	ieee80211_frame_t *buffer = NULL;
+	buffer = (ieee80211_frame_t *)malloc(LEN__IEEE80211_FRAME);
+	memset(buffer, 0, LEN__IEEE80211_FRAME);
+	return(buffer);
 
-	}
+}
 int set_ll_frame
-	(ll_frame_t *frame, const int frame_type, const int frame_len)
+(ll_frame_t *frame, const int frame_type, const int frame_len)
 {
 
 	frame->frame_type = frame_type;
@@ -643,7 +650,7 @@ ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char 
 	ieee80211_frame_t *f = new_ieee80211_frame();
 
 	if ( set_ll_frame(&f->info, TYPE_IEEE_80211, ETH_FRAME_LEN) < 0 )
-		{ log_app_msg("Could not set info adequately!\n"); }
+	{ log_app_msg("Could not set info adequately!\n"); }
 	//f->buffer.header.h_proto = htons(ETH_P_ALL);//ll_sap;//cambio
 	memcpy(f->buffer.header.dest_address, h_dest, ETH_ALEN);
 	memcpy(f->buffer.header.src_address,h_source , ETH_ALEN);//h_source
@@ -653,30 +660,30 @@ ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char 
 }
 /* send_message */
 int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
-					const void *buffer, const int len	)
+		const void *buffer, const int len	)
 {
 
 	int sent_bytes = 0;
 
-//teño que engadir aqui a cabeceira
-	printf("entro no envio do enlace cara o enlace 13\n");
+	//teño que engadir aqui a cabeceira
+	printf("entro no envio 13\n");
 
 	if ( ( sent_bytes = sendto(socket_fd, buffer, len
-								, 0, dest_addr, LEN__SOCKADDR_LL) ) < 0 ) // solo habería que cambiar esta liña
+			, 0, dest_addr, LEN__SOCKADDR_LL) ) < 0 ) // solo habería que cambiar esta liña
 	{printf("entro no envio do enlace cara o enlace error\n");
-		log_sys_error("cb_broadcast_sendto (fd=%d): <sendto> ERROR.\n"
-						, socket_fd);
-		getchar();
-		return(EX_ERR);
+	log_sys_error("cb_broadcast_sendto (fd=%d): <sendto> ERROR.\n"
+			, socket_fd);
+	getchar();
+	return(EX_ERR);
 	}
-	printf("entro no envio do enlace cara o enlace 11\n");
+	printf("entro no envio 11\n");
 	if ( sent_bytes < len )
 	{
 		log_app_msg("send_message: sent %d bytes, requested %d.\n"
-						, sent_bytes, len);
+				, sent_bytes, len);
 		return(EX_ERR);
 	}
-	printf("entro no envio do enlace cara o enlace 12\n");
+	printf("entro no envio  12\n");
 
 
 
@@ -691,7 +698,7 @@ int recv_message(const int socket_fd, void *data)
 	int rx_bytes = 0;
 
 	if ( ( rx_bytes = recvfrom(socket_fd, data, UDP_BUFFER_LEN, 0, NULL, NULL) ) < 0 )
-	//if ( ( rx_bytes = recvmsg(socket_fd, data, 0) ) < 0 )
+		//if ( ( rx_bytes = recvmsg(socket_fd, data, 0) ) < 0 )
 		//if((rx_bytes= recvfrom(socket_fd, msg,IEEE_80211_FRAME_LEN, 0,NULL,NULL))<0)
 	{
 		log_sys_error("recv_message: wrong <recvfrom> call. ");
@@ -719,9 +726,9 @@ int recv_msg(	const int socket_fd, msg_header_t *msg, const in_addr_t block_ip, 
 	in_addr_t src_addr = get_source_address(msg);
 
 	if ( block_ip == src_addr ) //este é o sistema de bloqueo de richi
-		{ *blocked = true; }
+	{ *blocked = true; }
 	else
-		{ *blocked = false; }
+	{ *blocked = false; }
 
 	return(rx_bytes);
 
@@ -738,17 +745,17 @@ in_addr_t get_source_address(msg_header_t *msg)
 			struct cmsghdr *cmsg = CMSG_FIRSTHDR(msg);
 			cmsg != NULL;
 			cmsg = CMSG_NXTHDR(msg, cmsg)
-		)
+	)
 	{
 
 		// ignore the control headers that don't match what we want
-	    if (	( cmsg->cmsg_level 	!= IPPROTO_IP ) 	||
-	    		( cmsg->cmsg_type 	!= IP_PKTINFO ) )
-	    	{ continue; }
+		if (	( cmsg->cmsg_level 	!= IPPROTO_IP ) 	||
+				( cmsg->cmsg_type 	!= IP_PKTINFO ) )
+		{ continue; }
 
-	    //struct in_pktinfo *pi = CMSG_DATA(cmsg);
-	    src = (sockaddr_in_t *)msg->msg_name;
-	    break;
+		//struct in_pktinfo *pi = CMSG_DATA(cmsg);
+		src = (sockaddr_in_t *)msg->msg_name;
+		break;
 
 	}
 
@@ -766,8 +773,8 @@ int print_hex_data(const char *buffer, const int len)
 	for ( int i = 0; i < len; i++ )
 	{
 		//if ( ( i != 0 ) && ( ( i % BYTES_PER_LINE ) == 0 ) )
-			//{// log_app_msg("\n\t\t\t"); } //liñas novas e tabs
-	//	log_app_msg("%02X", 0xFF & ( int)buffer[i]); // o 0xff é necesario
+		//{// log_app_msg("\n\t\t\t"); } //liñas novas e tabs
+		//	log_app_msg("%02X", 0xFF & ( int)buffer[i]); // o 0xff é necesario
 		log_app_msg("%02X", 0xFF & ( int)buffer[i]); // o 0xff é necesario
 		if ( i < last_byte ) { log_app_msg(":"); }
 	}
@@ -782,15 +789,15 @@ int sprint_hex_data(const char *buffer, const int len)
 
 	char res[len];
 	int num;
-	int last_byte = len - 1;
+	//int last_byte = len - 1;
 
 	for ( int i = 0; i < len; i++ )
 	{char hex[3] = {'\0'};
-		int go=0xFF & ( int)buffer[i];
-		sprintf (hex, "%02X",go);
-		//printf(hex);printf("\n");
-		if (i==0){strcpy(res,hex);}else{strcat(res, hex);}	}
-//	printf("%d\n",sizeof(res));
+	int go=0xFF & ( int)buffer[i];
+	sprintf (hex, "%02X",go);
+	//printf(hex);printf("\n");
+	if (i==0){strcpy(res,hex);}else{strcat(res, hex);}	}
+	//	printf("%d\n",sizeof(res));
 	num=strtol(res, NULL,16);
 	return(num);
 
@@ -807,11 +814,11 @@ void print_eth_address(const unsigned char *eth_address)
 {
 
 	printf("%02X:%02X:%02X:%02X:%02X:%02X",
-  			(unsigned char) eth_address[0],
-  			(unsigned char) eth_address[1],
-  			(unsigned char) eth_address[2],
-  			(unsigned char) eth_address[3],
-  			(unsigned char) eth_address[4],
-  			(unsigned char) eth_address[5]);
+			(unsigned char) eth_address[0],
+			(unsigned char) eth_address[1],
+			(unsigned char) eth_address[2],
+			(unsigned char) eth_address[3],
+			(unsigned char) eth_address[4],
+			(unsigned char) eth_address[5]);
 
 }

@@ -41,6 +41,7 @@ typedef struct List_locT List_locT;
 typedef struct List_lsp List_lsp;
 typedef struct msghdr msg_header_t;
 typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
+typedef struct sockaddr_ll sockaddr_ll_t;
 typedef struct gps_data_t gps_data_t;
  struct public_ev_arg
 {
@@ -49,11 +50,13 @@ typedef struct gps_data_t gps_data_t;
 	int port;						/**< Port to be used. */
 
 	int forwarding_socket_fd;		/**< Socket for message forwarding. */
+	int net_socket_fd;
 	int forwarding_port;			/**< Port for message forwarding. */
-
+	int net_port;
 	sockaddr_in_t *forwarding_addr;	/**< Forwarding address. */
+	sockaddr_ll_t *forwarding_addr_ll;	/**< Forwarding address. */
 	sockaddr_in_t *local_addr;		/**< Local address (NOT localhost) */
-
+	sockaddr_ll_t *local_addr_ll;		/**< Local address (NOT localhost) */
 	bool print_forwarding_message;	/**< Flag that enables verbose. */
 
 	void *data;						/**< Buffer for frames reception. */

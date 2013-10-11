@@ -292,5 +292,5 @@ ieee80211_frame_t *new_ieee80211_frame();
 
 ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char *h_dest, const unsigned char *h_source	);
 
-int get_mac_address	(const int socket_fd, const char *if_name,const unsigned char *mac);
+int get_mac_address	(const int socket_fd, const char *if_name, const unsigned char *mac);
 #endif /* UDP_SOCKET_H_ */

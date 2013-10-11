@@ -57,14 +57,10 @@
 
 struct itsnet_protocol_info
 {
-unsigned char itsnet_version:
-	4; /** Protocol Version */
-unsigned char itsnet_next_header:
-	4; /**  next header (ie. security or transport header) */
-unsigned char itsnet_header_type:
-	4;
-unsigned char itsnet_header_subtype:
-	4;
+unsigned char itsnet_version:	4; /** Protocol Version */
+unsigned char itsnet_next_header:	4; /**  next header (ie. security or transport header) */
+unsigned char itsnet_header_type:	4;
+unsigned char itsnet_header_subtype:	4;
 
 };
 typedef struct itsnet_protocol_info itsnet_protocol_info;
