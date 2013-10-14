@@ -267,11 +267,11 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 
 			//	printf("entro no envio do enlace cara o enlace 9\n");
-			//	int fwd_bytes = send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer, arg->len);
-				/**
+				int fwd_bytes = send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer, arg->len);
+
 				printf("envio cara enlace realizado \n");
 				ev_timer_again (l_Beacon,&t_Beacon);
-
+				/**
 			}
 			else{ printf("non había mais hop\n"); free(pkt);pkt=NULL;}
 			free(pkt1);pkt1=NULL;printf("aqui chega\n");//free(pkt1);printf("aqui chega\n");pkt1=NULL;**/

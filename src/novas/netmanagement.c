@@ -23,7 +23,7 @@ ev_timer t_Loct;
 
 //struct ev_loop  *addr[10];
 unsigned short variables[16]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
-bool taken[16];bool taken_rep[16];bool taken_lsp[16];
+bool taken_rep[16],taken_lsp[16], taken[16]={false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
 //struct ev_loop * b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10;
 
 
@@ -327,14 +327,12 @@ printf("sain despois do gps_open\n");
 					if(gpsdata.fix.longitude<0){sprintf(str7, "%08X",(signed int) ceil(gpsdata.fix.longitude * -10000000));}else{sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.longitude * 10000000));}
 					long double num0=fmod(((long double)gpsdata.fix.time*1000),4294967296);
 					//double num00=num0(4294967296);
-
-					printf("tst %Le\n",num0);
-					printf("\n");
+					//printf("tst %Le\n",num0);
+				//	printf("\n");
 					double num00= (double) num0;
-					printf("%f %d %d\n",num00, (unsigned int) num00, (unsigned int) num00-1);
-
+					//printf("%f %d %d\n",num00, (unsigned int) num00, (unsigned int) num00-1);
 					sprintf(str8, "%08X",(uint32_t)  num00);
-					printf(str8);printf("\n");
+				//	printf(str8);printf("\n");
 					if(gpsdata.fix.altitude<0){sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude*-1));}else {sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude));}
 					sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
 					int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
@@ -345,13 +343,13 @@ printf("sain despois do gps_open\n");
 					num5=strtol(str5,NULL,16);
 					num6=strtol(str6,NULL,16);
 					num7=strtol(str7,NULL,16);
-					num8=strtol(str8,NULL,16);
+					//num8=strtol(str8,NULL,16);
 					num9=strtol(str9,NULL,16);
 					num10=strtol(str10,NULL,16);
 					if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
 					if(gpsdata.fix.longitude<0){LPV->longitude=0xffff-num7;}else{LPV->longitude=num7;}
 					if(gpsdata.fix.altitude<0){LPV->altitude=0xffff-num9;}else{LPV->altitude=num9;}
-					LPV->time_stamp=(uint32_t) num00;// recibe Unix time in seconds with fractional part  e quere miliseconds
+					LPV->time_stamp=num00;// recibe Unix time in seconds with fractional part  e quere miliseconds
 					//LPV->altitude=num9; //metros en ambos casos
 					LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
 					LPV->accuracy.alt_ac=num5;
@@ -510,7 +508,6 @@ List_locT * init_locT ()
 /*add at list end  */
 int add_end_locT ( List_locT * locT, itsnet_node data){
 	//	pthread_t h1;
-
 	Element_locT *new_element=NULL;
 	new_element = (Element_locT *) malloc (sizeof (Element_locT));
 	if (new_element==NULL) printf( "No hay memoria disponible!\n");
@@ -520,7 +517,6 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 
 	if (locT->init==NULL) {
 		new_element->before=locT->init; new_element->next=locT->end; locT->init=new_element;  } else {
-			//printf( "Non é primeiro elemento\n");
 			new_element->before=locT->end;
 			locT->end->next = new_element;}
 
@@ -530,15 +526,14 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 	//argumento->thread=h1;
 	int num2,a=0;
 	unsigned short num=0;
-	while(a==0){
-		num2=(num2 +1) % 16;
+
+	while(a==0 && num2<16){
+		num2=num2 +1;
 		if (taken[num2]==false){num=variables[num2]; taken[num2]=true; a=1;}
+
 	}
-
-
 	//pthread_create(&h1,NULL,thr_h2,(void *)argumento);
 	AddTimer(num,itsGnLifetimeLocTE);
-	printf("saio de add\n");
 	return 0;
 }
 
