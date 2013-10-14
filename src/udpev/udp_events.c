@@ -97,7 +97,7 @@ udp_events_t *init_tx_raw_events
 udp_events_t *init_rx_udp_events(const int port, const char* if_name
 		, const ev_cb_t callback)
 {
-	printf("hola1\n");
+
 	udp_events_t *s = new_udp_events();
 	s->socket_fd = open_receiver_udp_socket(port);
 	if ( init_watcher(s, callback, EV_READ, port, if_name,(in_addr_t) NULL) < 0 )
@@ -145,7 +145,7 @@ udp_events_t *init_net_raw_events
 	arg->public_arg.locT=locT;
 	arg->public_arg.lsp=lsp;
 	arg->public_arg.rep=rep;
-	arg->public_arg.net_port=net_tx_port;printf("porto tx %d porto rx %d // socket vello %d socket novo %d\n",net_tx_port,net_rx_port,arg->public_arg.forwarding_socket_fd,arg->public_arg.net_socket_fd);
+	arg->public_arg.net_port=net_tx_port;//printf("porto tx %d porto rx %d // socket vello %d socket novo %d\n",net_tx_port,net_rx_port,arg->public_arg.forwarding_socket_fd,arg->public_arg.net_socket_fd);
 
 	//arg->
 
@@ -162,7 +162,7 @@ void *init_app_udp_events
 {
 
 	//imos recibir unha request.
-	printf("hola\n");
+	//printf("hola\n");
 	udp_events_t *s = init_rx_udp_events(app_rx_port, if_name, callback);
 
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
@@ -231,11 +231,11 @@ int init_watcher(udp_events_t *m
 	com_cb = (ev_cb_t)&cb_common;
 
 	ev_io_init(	m->watcher, com_cb,	m->socket_fd, EV_READ	);
-	printf("fd %d\n",m->socket_fd);
+	//printf("fd %d\n",m->socket_fd);
 	//ev_io_arg_t *arg = (ev_io_arg_t *)m->watcher;
 	//	printf("!!!!!!!!!!CANDO AS RECIBO!!!!!!!!!!! \n");
 	//		print_hex_data(&arg->public_arg.data, arg->public_arg.len);
-	printf("\n");
+	//printf("\n");
 	ev_io_start(m->loop, m->watcher);
 	return(EX_OK);
 
@@ -257,7 +257,7 @@ int init_watcher_raw(udp_events_t *m
 	com_cb = (ev_cb_t)&cb_common;
 
 	ev_io_init(	m->watcher, com_cb,	m->socket_fd, EV_READ	);
-	printf("fd %d\n",m->socket_fd);
+//	printf("fd %d\n",m->socket_fd);
 
 	ev_io_start(m->loop, m->watcher);
 	return(EX_OK);

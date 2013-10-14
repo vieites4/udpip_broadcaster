@@ -42,14 +42,14 @@ printf("entro en get mac\n");
 	if ( socket_fd < 0 )		{ return(EX_WRONG_PARAM); }
 
 	len_if_name = strlen(if_name);
-	printf("entro en get mac1\n");
+//	printf("entro en get mac1\n");
 	if ( len_if_name == 0 )		{ return(EX_EMPTY_PARAM); }
 	if ( len_if_name > IF_NAMESIZE )		{ return(EX_WRONG_PARAM); }
-	printf("entro en get mac2\n");
+	//printf("entro en get mac2\n");
 	ifreq_t *ifr = new_ifreq();
 	//ifreq_t *ifr=NULL;
 	//ifr=(ifreq_t *)malloc(LEN__IFREQ) ;
-	printf("entro en get mac3\n");
+	//printf("entro en get mac3\n");
 	ifreq_t ifr1=*ifr;
 	strncpy(ifr->ifr_name, if_name, len_if_name);
 	//printf("aqui1\n");
@@ -70,13 +70,13 @@ ifreq_t *new_ifreq()
 	ifreq_t *s = NULL;
 //	if (a>0){free(s); s=NULL;}
 	a=1;
-printf("en ifr\n");
+//printf("en ifr\n");
 	if ( ( s = (ifreq_t *)malloc(LEN__IFREQ) ) == NULL )
 	{ handle_sys_error("new_ifreq: <malloc> returns NULL.\n"); }
-	printf("en ifr\n");
+	//printf("en ifr\n");
 	if ( memset(s, 0, LEN__IFREQ) == NULL )
 	{ handle_sys_error("new_ifreq: <memset> returns NULL.\n"); }
-	printf("en ifr\n");
+//	printf("en ifr\n");
 	return(s);
 
 }
@@ -255,7 +255,7 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 	s->sll_halen = ETH_ALEN;
 	s->sll_protocol = htons(ETH_P_ALL); // se poño htons entra todo.//htons(0x0707);//
 	//s->sll_protocol =  htons(0x0707);//engadido//htons(ETH_P_ALL);	//
-	printf("esto faino\n");
+	//printf("esto faino\n");
 	return(s);
 
 }
@@ -403,7 +403,7 @@ int open_receiver_udp_socket(const int port)
 {
 
 	int fd = -1;
-	printf("porto udp %d\n",port);
+	//printf("porto udp %d\n",port);
 
 	// 1) socket creation
 	if ( ( fd = socket(AF_INET, SOCK_DGRAM, 0) ) < 0 )
@@ -433,7 +433,7 @@ int open_receiver_raw_socket(const int port)
 
 	// 1) socket creation
 	//	sockaddr_ll_t *s= init_sockaddr_ll((const char *) NULL, port);
-	printf("porto raw %d\n",port);
+//	printf("porto raw %d\n",port);
 
 
 	if ( ( fd = socket(PF_PACKET, SOCK_RAW,port ) ) < 0 )// lsap é port
@@ -676,14 +676,14 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 	getchar();
 	return(EX_ERR);
 	}
-	printf("entro no envio 11\n");
+//	printf("entro no envio 11\n");
 	if ( sent_bytes < len )
 	{
 		log_app_msg("send_message: sent %d bytes, requested %d.\n"
 				, sent_bytes, len);
 		return(EX_ERR);
 	}
-	printf("entro no envio  12\n");
+	//printf("entro no envio  12\n");
 
 
 

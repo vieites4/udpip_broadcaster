@@ -166,8 +166,10 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		char HT[2];
 		memcpy(HT,arg->data +15,1);
 		itsnet_packet_f * pkt=NULL;
+		char HL[1];
+			memcpy(HL,arg->data +2,1);
 	//	pkt =(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
-		if(memcmp(HT,tsb1,1)==0){
+		if(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0)){
 			printf("entro en tsb \n");
 			//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
 			CommonHeader_processing(arg);
@@ -235,7 +237,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 		printf("porto do primeiro envio %d e do segundo %d\n", arg->forwarding_port, arg->port);
 
-		if (memcmp(HT,tsb1,1)==0 ||(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
+		if ((memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0)) ||(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
 			printf("entro no envio do enlace cara o enlace \n");
 			itsnet_packet * pkt1=NULL;
 			pkt1 =(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -244,38 +246,38 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
 			memcpy(Hop,datos+7,1);
 			int lon_int=sprint_hex_data(&Hop, 1);
-			printf("entro no envio do enlace cara o enlace \n");
+			//printf("entro no envio do enlace cara o enlace \n");
 			if (lon_int>1){//descartamos o paquete e omitimos os seguintes pasos
 				sprintf(pkt1->common_header.hop_limit,"X02",lon_int-1);
 				pkt1->common_header.forwarder_position_vector=* LPV; //
-				printf("entro no envio do enlace cara o enlace 5\n");
+			//	printf("entro no envio do enlace cara o enlace 5\n");
 				char* h_source[ETH_ALEN];
 				get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source) ;
-				printf("entro no envio do enlace cara o enlace 6\n");
+			//	printf("entro no envio do enlace cara o enlace 6\n");
 
-				ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source);
-				printf("entro no envio do enlace cara o enlace 7\n");
+					ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source);
+			//	printf("entro no envio do enlace cara o enlace 7\n");
 				memcpy(tx_frame->buffer.data,(char *)data , sizeof(itsnet_packet) ); //(char *) pkt1
-				printf("entro no envio do enlace cara o enlace 88\n");
+			//	printf("entro no envio do enlace cara o enlace 88\n");
 				//sockaddr_ll_t *dir=(sockaddr_ll_t *)malloc(sizeof(sockaddr_ll_t));
 				free(pkt);pkt=NULL;//free(data);free(datos);free(HT);
-				char *mau= NULL;
+					char *mau= NULL;
 
-				printf("entro no envio do enlace cara o enlace 8\n");
+			//	printf("entro no envio do enlace cara o enlace 8\n");
 				sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 
-				printf("entro no envio do enlace cara o enlace 9\n");
+			//	printf("entro no envio do enlace cara o enlace 9\n");
 			//	int fwd_bytes = send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer, arg->len);
-
+				/**
 				printf("envio cara enlace realizado \n");
 				ev_timer_again (l_Beacon,&t_Beacon);
 
 			}
 			else{ printf("non había mais hop\n"); free(pkt);pkt=NULL;}
-			printf("aqui chega\n");//free(pkt1);printf("aqui chega\n");pkt1=NULL;
+			free(pkt1);pkt1=NULL;printf("aqui chega\n");//free(pkt1);printf("aqui chega\n");pkt1=NULL;**/
 		}
 		printf("remata cb_forward_recvfrom \n");
-	}
+	}}
 }
 
 /* cb_broadcast_recvfrom */
@@ -302,7 +304,7 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	//tx_frame->buffer.frame_type=0xdc05;
 	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 	char tipo[2]={0x07,0x07};
-	printf("chega aqui\n");
+//	printf("chega aqui\n");
 	memcpy(tx_frame->buffer.header.type,tipo,2);
 	char datos[arg->len];
 	memcpy(datos,arg->data,arg->len);
@@ -313,7 +315,7 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	itsnet_packet * pkt=NULL;
 	pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	char HL[1];
-	printf("chega aqui\n");
+	//printf("chega aqui\n");
 	memcpy(HL,arg->data +2,1);
 
 	if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
@@ -350,7 +352,7 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 
 
 	 }
-		free(pkt);pkt=NULL; printf("paso11\n");
+		free(pkt);pkt=NULL; //printf("paso11\n");
 	//printf("porto de saida das forward %d \n",arg->forwarding_socket_fd);
 	//log_app_msg(">>> BROADCAST(app:%d>net:%d), msg[%.2d] = {"			, arg->port, arg->forwarding_port, fwd_bytes);
 	//log_app_msg("}\n");
@@ -358,7 +360,7 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 
 
 		printf("ENVIO UN PAQUETE\n");
-	int i=print_hex_data(&tx_frame->buffer, arg->len);
+	//int i=print_hex_data(&tx_frame->buffer, arg->len);
 	//printf("envio trama\n");
 
 	//	if ( arg->print_forwarding_message == true )

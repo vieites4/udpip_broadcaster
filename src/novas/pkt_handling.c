@@ -248,19 +248,19 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	memcpy(dato,arg->data,arg->len);
 	//printf("entro en common header processing\n");
 	itsnet_position_vector * PV=NULL;//
-	printf("entro en ch_processing\n");
+//	printf("entro en ch_processing\n");
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy( PV,dato +8,28);
-	printf("entro en ch_processing\n");
+	//printf("entro en ch_processing\n");
 
 	flags_t * FLAG=NULL;//
 	FLAG= (flags_t *)malloc(sizeof(flags_t));
 	memcpy( FLAG,dato +3,1);
 
-	printf("entro en ch_processing1\n");
+//	printf("entro en ch_processing1\n");
 	itsnet_node * data=NULL;//
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
-	printf("entro en ch_processing\n");
+	//printf("entro en ch_processing\n");
 	data->IS_NEIGHBOUR=true;
 	data->pos_vector= * PV;
 	itsnet_time_stamp tst=data->pos_vector.time_stamp;
@@ -274,7 +274,7 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	memcpy(HT1,dato,2);
 	char SN[2];
 	memcpy(SN,arg->data+36,2);
-	printf("entro en ch_processing\n");
+	//printf("entro en ch_processing\n");
 	int lon_int=sprint_hex_data( SN, 2);
 
 	if ((memcmp(HT1,tsb1,1)==0)||(memcmp(HT1,geobroad2,1)==0)||(memcmp(HT1,geobroad1,1)==0)||(memcmp(HT1,geobroad0,1)==0))
@@ -292,7 +292,7 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	if (num1==0 || num2==0){
 		//discard the packet
 		//break;
-	}printf("entro en ch_processing\n");
+	}//printf("entro en ch_processing\n");
 
 
 	if(arg->lsp->len>0){
@@ -305,7 +305,7 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 
 			char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
 			memcpy(Hop,pos->data.common_header.hop_limit,1);
-			printf("esta conversion\n");
+		//	printf("esta conversion\n");
 			int lon_int=sprint_hex_data(pos->data.common_header.hop_limit, 2);
 			sprintf(pkt1->common_header.hop_limit,"X02",lon_int-1);
 			pkt1->common_header.forwarder_position_vector=* LPV; //

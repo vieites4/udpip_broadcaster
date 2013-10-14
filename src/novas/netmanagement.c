@@ -282,7 +282,6 @@ itsnet_position_vector * LPV_update(){
 printf("sain despois do gps_open\n");
 		return(LPV);
 	}
-	printf("error?\n");
 	if (&gpsdata == NULL) {
 		printf("Could not connect to gpsd!\n");
 
@@ -326,8 +325,16 @@ printf("sain despois do gps_open\n");
 					if(gpsdata.fix.epv==0){memcpy(str5,"0",1);}else {sprintf(str5, "%01X",(int) ceil(log2(gpsdata.fix.epv)));}
 					if(gpsdata.fix.latitude<0){sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.latitude * -10000000));}else{sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.latitude * 10000000));}
 					if(gpsdata.fix.longitude<0){sprintf(str7, "%08X",(signed int) ceil(gpsdata.fix.longitude * -10000000));}else{sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.longitude * 10000000));}
-					int num0=(int)gpsdata.fix.time *1000;
-					sprintf(str8, "%08X",(int) ceil(num0%(4294967296)));
+					long double num0=fmod(((long double)gpsdata.fix.time*1000),4294967296);
+					//double num00=num0(4294967296);
+
+					printf("tst %Le\n",num0);
+					printf("\n");
+					double num00= (double) num0;
+					printf("%f %d %d\n",num00, (unsigned int) num00, (unsigned int) num00-1);
+
+					sprintf(str8, "%08X",(uint32_t)  num00);
+					printf(str8);printf("\n");
 					if(gpsdata.fix.altitude<0){sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude*-1));}else {sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude));}
 					sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
 					int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
@@ -344,7 +351,7 @@ printf("sain despois do gps_open\n");
 					if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
 					if(gpsdata.fix.longitude<0){LPV->longitude=0xffff-num7;}else{LPV->longitude=num7;}
 					if(gpsdata.fix.altitude<0){LPV->altitude=0xffff-num9;}else{LPV->altitude=num9;}
-					LPV->time_stamp=num8;// recibe Unix time in seconds with fractional part  e quere miliseconds
+					LPV->time_stamp=(uint32_t) num00;// recibe Unix time in seconds with fractional part  e quere miliseconds
 					//LPV->altitude=num9; //metros en ambos casos
 					LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
 					LPV->accuracy.alt_ac=num5;
