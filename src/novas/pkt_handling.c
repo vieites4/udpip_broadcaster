@@ -24,6 +24,9 @@ const unsigned char ls0[1]={0x06};
 const unsigned char ls1[1]={0x16};
 const unsigned char single[1]={0x01};
 extern const unsigned char ETH_ADDR_BROADCAST[6];
+extern struct ev_loop * l_Beacon;
+
+extern ev_timer t_Beacon;
 itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 
 	//	Create common header
@@ -286,6 +289,7 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BROADCAST,h_source);
 			memcpy(tx_frame->buffer.data, data, sizeof(itsnet_packet) );
 			int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->socket_fd,&pkt1, arg->len);
+			ev_timer_again (l_Beacon,&t_Beacon);
 			pos=pos->next;
 		}
 		free(data);data=NULL;

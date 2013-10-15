@@ -127,31 +127,42 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		if (memcmp(HT,tsb0,1)==0 ||(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
 			printf("entro no envio do enlace cara o enlace \n");
 
-			char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
+			unsigned char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
 			memcpy(Hop,datos+7,1);
 			int lon_int=sprint_hex_data(&Hop, 1);
 			if (lon_int>0){//descartamos o paquete e omitimos os seguintes pasos //ESTO TEÑO QUE CAMBIALO POR >1
 				printf("o meu hop limit é maior que un\n");
 				itsnet_packet * pkt1=NULL;
-				pkt1 =(itsnet_packet *)malloc(sizeof(itsnet_packet));
-				memcpy(pkt1, data,arg->len);
-				sprintf(pkt1->common_header.hop_limit,"X02",lon_int-1);
-				pkt1->common_header.forwarder_position_vector=* LPV; //
-				char* h_source[ETH_ALEN];
-				get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source) ;
-				ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source);
-				if ((memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
-					itsnet_geobroadcast_t *payload=(itsnet_geobroadcast_t *)data;
-					pkt1->payload.itsnet_geobroadcast=*payload;
-				}else if (memcmp(HT,tsb0,1)==0){
+				pkt1 =(itsnet_packet *)malloc(arg->len -14);
 
-					itsnet_tsb_t *payload=(itsnet_tsb_t *)data;
-					pkt1->payload.itsnet_tsb=*payload;
+				memcpy(pkt1, data +14 ,arg->len -14);
+				strings_an *number;
+				number=(strings_an *)lon_int -1;
+				memcpy(pkt1->common_header.hop_limit,&number,1);
+				//print_hex_data(pkt1->common_header.hop_limit,1);printf("\n");
+				pkt1->common_header.forwarder_position_vector=* LPV; //
+				printf("ENVIO UN PAQUETE\n");	print_hex_data(pkt1, arg->len);printf("\n");
+				char h_source[ETH_ALEN];
+				get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source) ;
+			ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source);
+			/**	ieee80211_header_t *tx_frame1 = new_ieee80211_frame();
+					memcpy(tx_frame1->buffer.header.dest_address, h_dest, ETH_ALEN);
+					memcpy(tx_frame1->buffer.header.src_address,h_source , ETH_ALEN);
+							**/
+			//	memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
+			if ((memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
+				memcpy(tx_frame1->buffer.data,  pkt1, sizeof(itsnet_geobroadcast_t) );
+				}else if (memcmp(HT,tsb0,1)==0){
+					memcpy(tx_frame1->buffer.data, pkt1, sizeof(itsnet_tsb_t) );
+
 				}else {}
-				free(pkt);pkt=NULL;//free(data);free(datos);free(HT);
-				char *mau= NULL;
+					free(pkt);pkt=NULL;//free(data);free(datos);free(HT);
+				char tipo[2]={0x07,0x07};
+				memcpy(tx_frame1->buffer.header.type,tipo,2);
 				sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 				int fwd_bytes = send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, arg->len);
+
+
 				ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;
 			}
 			printf("remata cb_forward_recvfrom \n");

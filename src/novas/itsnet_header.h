@@ -183,6 +183,13 @@ typedef struct itsnet_position_vector itsnet_position_vector;
 //};
 //typedef struct itsnet_position_vector itsnet_position_vector;
 
+struct strings_an
+{
+	char number: 8;
+
+};
+typedef struct strings_an strings_an;
+
 struct itsnet_common_header
 {
 	unsigned char version_nh[1]; //itsnet_protocol_info
@@ -191,7 +198,7 @@ struct itsnet_common_header
 	unsigned char flags [1];
 	unsigned char payload_lenght[2];
 	unsigned char traffic_class [1];
-	unsigned char hop_limit[1];
+    unsigned char hop_limit[1];
 	itsnet_position_vector forwarder_position_vector;/** The Position Vector of the last forwarder (node from which the packet comes)*/ //penso que vou ter que redefinilo porque o espacio que lle da é un cuarto do necesario
 };
 
