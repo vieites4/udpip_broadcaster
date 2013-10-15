@@ -20,9 +20,10 @@
 #define itsGnLocationServiceRetransmitTimer 1000
 #define itsGnLocationServicePacketBufferSize 1024
 #define itsGnBeaconServiceRetransmitTimer 3 //3000 ms
-#define itsGnBeaconServiceMaxJitter itsGnMaxPacketLifetime/4
+
 #define itsGnDefaultHopLimit 10
 #define itsGnMaxPacketLifeTime 600
+#define itsGnBeaconServiceMaxJitter itsGnMaxPacketLifeTime/4
 #define itsGnMinPacketRepetitionInterval 100
 #define itsGnGeoUnicastForwardingAlgorithm 0//unspecified 0, greedy 1, cbf 2
 #define itsGnGeoBroadcastForwardingAlgorithm 0 //1 simple

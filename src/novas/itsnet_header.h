@@ -95,7 +95,8 @@ typedef uint8_t  itsnet_channel;
 
 struct itsnet_node_id
 {
-	uint8_t id[NODE_ID_LEN];
+	uint8_t id[2];
+	char mac[6];
 };
 
 typedef struct itsnet_node_id itsnet_node_id;
