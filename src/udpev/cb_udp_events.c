@@ -110,7 +110,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			printf("entro en geobroadcast \n");
 			CommonHeader_processing(arg);
 			pkt = GeoBroadcast_f(datos);
-			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
+			int y =geo_limit(HT,pkt);
+			if (y>=0){
+				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);}
 			printf("saio de geobroadcast_f \n");
 		}
 		else if(memcmp(HT,beacon,1)==0 ){

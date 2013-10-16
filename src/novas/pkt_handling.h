@@ -27,6 +27,6 @@ void CommonHeader_processing(public_ev_arg_r *arg);
 void determine_nexthop();
 void GeoUnicast();
 
-
+int geo_limit(void *HT,itsnet_packet_f *dato);
 
 #endif /* PKT_HANDLING_H_ */

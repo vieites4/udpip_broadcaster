@@ -93,7 +93,7 @@ itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 
 itsnet_packet * SHB(void *dato, List_lsp *lsp, List_lsp *rep){
 
-    printf("SHB ");
+	printf("SHB ");
 	//	Create common header
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -195,7 +195,7 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 
 	//REPETITION INTERVAL
 	char REP[4];
-		memcpy(REP,dato +8,4);
+	memcpy(REP,dato +8,4);
 	if(atoi(REP)==0){
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
@@ -242,8 +242,8 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 
 	itsnet_node * data=NULL;//
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
-memcpy(data->mac_id.address,dato+10,6);
-//data->node_id
+	memcpy(data->mac_id.address,dato+10,6);
+	//data->node_id
 	data->IS_NEIGHBOUR=true;
 	data->pos_vector= * PV;
 	itsnet_time_stamp tst=data->pos_vector.time_stamp;
@@ -408,7 +408,31 @@ itsnet_packet_f * GeoBroadcast_f(void *dato){
 	memcpy(pkt->payload.itsnet_geocast.reserved,dato+2,1);
 	memcpy(pkt->common_header.pkt_type,dato,1);
 	memcpy(pkt->common_header.pkt_stype,dato+1,1);
+
 	return(pkt);
+
+}
+int geo_limit(void *HT,itsnet_packet_f *pkt)
+{
+		int x,y,r,total,a,b;
+	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
+	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
+	if(memcmp(geobroad0,HT,1)==0){
+		printf("circular \n");
+		r=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
+		total= 1- (x/r)^2 - (y/r)^2;}else
+			if(memcmp(geobroad1,HT,1)==0){
+				a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
+				b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
+				total= fmin(1- (x/a)^2 ,1- (y/b)^2);
+				printf("rectangular \n");} else
+					if(memcmp(geobroad2,HT,1)==0){
+						a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
+						b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
+						total= 1- (x/a)^2 - (y/b)^2;
+						printf("eliptica \n");}
+
+	return(total);
 
 }
 
