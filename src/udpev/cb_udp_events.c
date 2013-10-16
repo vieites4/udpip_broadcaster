@@ -66,16 +66,17 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	arg->len = 0;
 	// 1) read UDP message from network level
 	char data[ITSNET_DATA_SIZE];
+
 	if ( ( arg->len = recv_message(arg->socket_fd,data))<0)//(arg->socket_fd, arg->data, NULL, &blocked) ) < 0 )//arg->local_addr->sin_addr.s_addr
 	{log_app_msg("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
 
 
 	if (memcmp((void *)tipoX,data+12,2)==0){
-
+		printf("cb_forward_recvfrom1 \n");
 		printf("RECIBO UN PAQUETE\n");
 		print_hex_data(data, arg->len);printf("\n");
 		memcpy(arg->data,data,arg->len);
-		printf("cb_forward_recvfrom \n");
+
 		char tipo[2];
 		memcpy(tipo,arg->data + 12 ,2);
 		char datos[arg->len];
@@ -117,8 +118,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			printf("entro en beacon\n");
 			CommonHeader_processing(arg);
 			printf("saio de beacon \n");
-			free(pkt);pkt=NULL;
-		}else{}
+
+		}else{}free(pkt);pkt=NULL;
 		// 2) in case the message comes from the localhost, it is discarded
 		//if ( blocked == true )
 		//{
@@ -130,35 +131,38 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			unsigned char Hop[1] ; //colle perfectamente os valores sen facer a reserva de memoria
 			memcpy(Hop,datos+7,1);
 			int lon_int=sprint_hex_data(&Hop, 1);
+
+
+
 			if (lon_int>0){//descartamos o paquete e omitimos os seguintes pasos //ESTO TEÑO QUE CAMBIALO POR >1
 				printf("o meu hop limit é maior que un\n");
 				itsnet_packet * pkt1=NULL;
-				pkt1 =(itsnet_packet *)malloc(arg->len -14);
+				pkt1 =(itsnet_packet *)malloc(arg->len);
 
-				memcpy(pkt1, data +14 ,arg->len -14);
+				memcpy(pkt1, data +14 ,arg->len );
 				strings_an *number;
 				number=(strings_an *)lon_int -1;
 				memcpy(pkt1->common_header.hop_limit,&number,1);
+
 				//print_hex_data(pkt1->common_header.hop_limit,1);printf("\n");
 				pkt1->common_header.forwarder_position_vector=* LPV; //
+
 				printf("ENVIO UN PAQUETE\n");	print_hex_data(pkt1, arg->len);printf("\n");
+
 				char h_source[ETH_ALEN];
 				get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source) ;
-			ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source);
-			/**	ieee80211_header_t *tx_frame1 = new_ieee80211_frame();
-					memcpy(tx_frame1->buffer.header.dest_address, h_dest, ETH_ALEN);
-					memcpy(tx_frame1->buffer.header.src_address,h_source , ETH_ALEN);
-							**/
-			//	memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
-			if ((memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
-				memcpy(tx_frame1->buffer.data,  pkt1, sizeof(itsnet_geobroadcast_t) );
-				}else if (memcmp(HT,tsb0,1)==0){
-					memcpy(tx_frame1->buffer.data, pkt1, sizeof(itsnet_tsb_t) );
 
-				}else {}
-					free(pkt);pkt=NULL;//free(data);free(datos);free(HT);
+				ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source);
 				char tipo[2]={0x07,0x07};
 				memcpy(tx_frame1->buffer.header.type,tipo,2);
+				if ((memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
+					memcpy(tx_frame1->buffer.data,(char *)  pkt1, arg->len );
+				}else if (memcmp(HT,tsb0,1)==0){
+					memcpy(tx_frame1->buffer.data,(char *) pkt1, arg->len );
+
+				}else {}
+
+				//free(data);free(datos);free(HT);
 				sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 				int fwd_bytes = send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, arg->len);
 

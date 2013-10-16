@@ -231,10 +231,9 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	memcpy(dato,arg->data,arg->len);
 	//printf("entro en common header processing\n");
 	itsnet_position_vector * PV=NULL;//
-
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy( PV,dato +8,28);
-	//printf("entro en ch_processing\n");
+	printf(dato);printf("\n");
 
 	flags_t * FLAG=NULL;//
 	FLAG= (flags_t *)malloc(sizeof(flags_t));
@@ -243,7 +242,8 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 
 	itsnet_node * data=NULL;//
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
-
+memcpy(data->mac_id.address,dato+10,6);
+//data->node_id
 	data->IS_NEIGHBOUR=true;
 	data->pos_vector= * PV;
 	itsnet_time_stamp tst=data->pos_vector.time_stamp;
@@ -287,8 +287,8 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 			char h_source[ETH_ALEN];
 			get_mac_address(arg->forwarding_socket_fd, "wlan0",(unsigned char *) h_source) ;
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BROADCAST,h_source);
-			memcpy(tx_frame->buffer.data, data, sizeof(itsnet_packet) );
-			int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->socket_fd,&pkt1, arg->len);
+			memcpy(&tx_frame->buffer, pkt1,strlen(pkt1) );
+			int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->socket_fd,&pkt1, strlen(pkt1));
 			ev_timer_again (l_Beacon,&t_Beacon);
 			pos=pos->next;
 		}

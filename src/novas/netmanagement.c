@@ -463,7 +463,7 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 	while (actual != NULL){
 		//printf ("%p - %s\n", actual, actual->data);
 		if (strcmp(actual->data.mac_id.address,data->mac_id.address)==0){
-			i=1;
+			i=1;printf("Xa a teño!!\n");
 			if(((actual->data.pos_vector.time_stamp < data->pos_vector.time_stamp ) &&(data->pos_vector.time_stamp - actual->data.pos_vector.time_stamp <=4294967296/2))||((actual->data.pos_vector.time_stamp > data->pos_vector.time_stamp)&&(-data->pos_vector.time_stamp + actual->data.pos_vector.time_stamp >4294967296/2)))
 			{
 				actual->data.pos_vector=data->pos_vector;

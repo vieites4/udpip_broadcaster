@@ -32,15 +32,17 @@ const unsigned char ETH_ADDR_NULL[ETH_ALEN]   = { 0x00,0x00,0x00,0x00,0x00,0x00 
 int get_mac_address
 (const int socket_fd, const char *if_name ,const unsigned char *mac)
 {
-	printf("entro en get mac\n");
 	int len_if_name = -1;
 	if ( if_name == NULL )		{ return(EX_NULL_PARAM); }
 	//if ( mac == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
 	if ( socket_fd < 0 )		{ return(EX_WRONG_PARAM); }
+
 	len_if_name = strlen(if_name);
+
 	if ( len_if_name == 0 )		{ return(EX_EMPTY_PARAM); }
 	if ( len_if_name > IF_NAMESIZE )		{ return(EX_WRONG_PARAM); }
 	ifreq_t *ifr = new_ifreq();
+
 	ifreq_t ifr1=*ifr;
 	strncpy(ifr->ifr_name, if_name, len_if_name);
 	if ( ioctl(socket_fd, SIOCGIFHWADDR, ifr) < 0 )	{		log_sys_error("Could not get interface index");		return(EX_SYS);}
@@ -56,7 +58,7 @@ ifreq_t *new_ifreq()
 {
 	ifreq_t *s = NULL;
 	//	if (a>0){free(s); s=NULL;}	a=1;
-	if ( ( s = (ifreq_t *)malloc(LEN__IFREQ) ) == NULL )	{ handle_sys_error("new_ifreq: <malloc> returns NULL.\n"); }
+	if ( ( s = (ifreq_t *)malloc(LEN__IFREQ ) ) == NULL )	{ handle_sys_error("new_ifreq: <malloc> returns NULL.\n"); }
 	if ( memset(s, 0, LEN__IFREQ) == NULL )	{ handle_sys_error("new_ifreq: <memset> returns NULL.\n"); }
 	return(s);
 
