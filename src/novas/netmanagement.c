@@ -384,7 +384,8 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 	char *num1[3];char *num2[3];
 	sprintf(num1,"%04X",(unsigned int)arg->port);	sprintf(num2,"%04X",(unsigned int)arg->forwarding_port);
 	memcpy(pkt->payload.itsnet_beacon.payload.btp1,num1,4);	memcpy(pkt->payload.itsnet_beacon.payload.btp2,num2,4);
-	memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet) );
+	memcpy(tx_frame->buffer.data, (char *) pkt,sizeof(itsnet_common_header)+sizeof(itsnet_beacon_t) );
+	//printf("%d %d\n",sizeof(itsnet_common_header)+sizeof(itsnet_beacon_t),IEEE_80211_BLEN);
 	// 2) broadcast application level UDP message to network level
 	int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
 	printf("beacon enviada\n");
@@ -431,8 +432,7 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 	unsigned short num=0;
 	while(a==0 && num2<16){
 		num2=num2 +1;
-		if (taken[num2]==false){num=variables[num2]; taken[num2]=true;mac_list[num2]=locT->end; a=1;}
-printf("%d é o num\n",num);
+		if (taken[num2]==false){num=variables[num2]; taken[num2]=true;mac_list[num2]=locT->end; a=1;printf("%d é o num\n",num);}
 	}
 	AddTimer(num,itsGnLifetimeLocTE);
 	return 0;
@@ -496,6 +496,19 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 				actual->data.IS_NEIGHBOUR=true;
 			}	}
 		actual = actual->next;
+	}
+	int a=0;
+
+	if(i==1){
+		while ((i<17) &&(a==0))
+		{
+
+			print_hex_data(mac_list[i]->data.mac_id.address,6);printf("\n");
+			print_hex_data(data->mac_id.address,6);printf("\n");
+			if(memcmp(data->mac_id.address,mac_list[i]->data.mac_id.address,6)==0) {a=1;}
+			i++;
+		}
+
 	}
 	return(i);
 }

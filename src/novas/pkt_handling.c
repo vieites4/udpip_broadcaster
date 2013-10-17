@@ -25,6 +25,7 @@ const unsigned char ls1[1]={0x16};
 const unsigned char single[1]={0x01};
 extern const unsigned char ETH_ADDR_BROADCAST[6];
 extern struct ev_loop * l_Beacon;
+extern unsigned short variables[16];
 
 extern ev_timer t_Beacon;
 itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
@@ -249,8 +250,8 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	free(FLAG);FLAG=NULL;
 
 	//data.tqe;
-	char HT1[2];
-	memcpy(HT1,dato+14,2);
+	char HT1[1];
+	memcpy(HT1,dato+14,1);
 	char SN[2];
 
 	memcpy(SN,arg->data+36,2);
@@ -259,7 +260,10 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	{data->Sequence_number=lon_int;}else{data->Sequence_number=0;
 	}
 	data->LS_PENDING=false;
-	if (search_in_locT(data,arg->locT)==0){add_end_locT (  arg->locT,*data);}
+	printf("funciona1\n");
+	int val=search_in_locT(data,arg->locT);
+	if(val==0){add_end_locT (  arg->locT,*data);}else{AddTimer(variables[val],itsGnLifetimeLocTE);}
+	printf("funciona2\n");
 	int num=strtol(HT1,NULL,16);
 	int num1=0x0f00*num;
 	int num2=0x00f0*num;
@@ -267,8 +271,6 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 		//discard the packet
 		//break;
 	}
-
-
 	if(arg->lsp->len>0){
 		Element_lsp *pos=arg->lsp->init;
 		//recorrer a lista e enviar todo
@@ -389,6 +391,7 @@ itsnet_packet_f * GeoBroadcast_f(void *dato){
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,dato +8,28);
 	pkt->common_header.pv=*PV;
+	print_hex_data(pkt->common_header.pv,28);printf("\n");
 	memcpy(pkt->common_header.traffic_class,dato +6,1);
 	char LEN[2] ;
 	memcpy(LEN,dato +4,2);
@@ -413,22 +416,26 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 {
 		int x,y,r,total,a,b;
 	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
+	printf("num %d %d \n",pkt->common_header.pv.latitude , LPV->latitude);
 	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
 	if(memcmp(geobroad0,HT,1)==0){
 		printf("circular \n");
 		r=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
-		total= 1- (x/r)^2 - (y/r)^2;}else
+		printf("aqui %d %d %d\n",y,x,r);
+		total= 1- pow((x/r),2) - pow((y/r),2);
+		printf("aqui\n");
+	}else
 			if(memcmp(geobroad1,HT,1)==0){
 				a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
 				b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
-				total= fmin(1- (x/a)^2 ,1- (y/b)^2);
+				total= fmin(1- pow((x/a),2) ,1- pow((y/b),2));
 				printf("rectangular \n");} else
 					if(memcmp(geobroad2,HT,1)==0){
 						a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
 						b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
-						total= 1- (x/a)^2 - (y/b)^2;
+						total= 1- pow((x/a),2) - pow((y/b),2);
 						printf("eliptica \n");}
-
+	printf("aqui\n");
 	return(total);
 
 }
