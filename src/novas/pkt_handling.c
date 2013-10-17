@@ -390,7 +390,7 @@ itsnet_packet_f * GeoBroadcast_f(void *dato){
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,dato +8,28);
-	pkt->common_header.pv=*PV;
+	pkt->common_header.pv=*PV; //o problema está aqui!!
 	print_hex_data(pkt->common_header.pv,28);printf("\n");
 	memcpy(pkt->common_header.traffic_class,dato +6,1);
 	char LEN[2] ;
