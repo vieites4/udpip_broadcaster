@@ -11,6 +11,8 @@ extern itsnet_node_id GN_ADDR;
 itsnet_position_vector * LPV;
 ev_timer t_Loct;
 unsigned short variables[16]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
+Element_locT * mac_list[16];
+List_locT *locT_general;
 bool taken_rep[16],taken_lsp[16], taken[16]={false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
 /*void *thr_h2(void * arg){
 	struct ev_loop *l_Loct;
@@ -28,8 +30,8 @@ variables[num]=1;
 		printf("entro aqui\n");
 	return NULL;
 }*/
-static tTimer *mpTimerList = NULL;
-static tTimer *mpTimerList_lsp = NULL;
+tTimer *mpTimerList;
+tTimer *mpTimerList_lsp;
 //Global variable for reference
 static unsigned short gTimer,gTimer_lsp;
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
@@ -49,7 +51,9 @@ static tTimer * FindTimer(unsigned short TimerId,int num)
 	{        // Move through the list until the timer id is found
 		while((pTimer->pNext != NULL) && (pTimer->TimerId != TimerId))
 		{            // Timer ids - not match, Move onto the next timer
+			if (pTimer->TimerId != TimerId)printf("COINCIDENCIA!!!\n");
 			pTimer = pTimer->pNext;        }    }
+
 	return (pTimer);
 }
 
@@ -87,7 +91,7 @@ bool AddTimer(unsigned short TimerId, int num)
 	return ReturnValue;
 }
 
-void CheckTimerEvent()
+void CheckTimerEvent(EV_P_ ev_timer *w, int revents)
 {	printf("5555555\n");
 signal(SIGINT, CheckTimerEvent);
 unsigned short nTimer;
@@ -95,24 +99,25 @@ unsigned short nTimer;
 nTimer = gTimer;
 gTimer = 0;
 // Check for TimerId
-
+struct parametros *p;
+//p->
 if( nTimer != 0)
-{   if(nTimer & TIMER_1)        {     	Timer2Function();       }
-if(nTimer & TIMER_2)        {     	Timer2Function();        }
-if(nTimer & TIMER_3)        {       Timer2Function();        }
-if(nTimer & TIMER_4)        {        	Timer2Function();        }
-if(nTimer & TIMER_5)    	{      	Timer2Function();        }
-if(nTimer & TIMER_6)    	{     	Timer2Function();        }
-if(nTimer & TIMER_7)    	{        	Timer2Function();        }
-if(nTimer & TIMER_8)    	{        	Timer2Function();        }
-if(nTimer & TIMER_9)    	{      	Timer2Function();        }
-if(nTimer & TIMER_10)    	{     	Timer2Function();        }
-if(nTimer & TIMER_11)       {        	Timer2Function();        }
-if(nTimer & TIMER_12)       {        	Timer2Function();        }
-if(nTimer & TIMER_13)    	{      	Timer2Function();        }
-if(nTimer & TIMER_14)    	{     	Timer2Function();        }
-if(nTimer & TIMER_15)  	    {        	Timer2Function();        }
-if(nTimer & TIMER_16)    	{        	Timer2Function();        }
+{ printf("CHEGA A ENTRAR AQUI!!\n");if(nTimer & TIMER_1)       {	p->num=1;	p->locT=locT_general;    p->pos=mac_list[1];	sup_elem_locT(p);    }
+if(nTimer & TIMER_2)        {  	p->num=2;	p->locT=locT_general;    p->pos=mac_list[2];	sup_elem_locT(p);    }
+if(nTimer & TIMER_3)        {  	p->num=3;	p->locT=locT_general;    p->pos=mac_list[3];	sup_elem_locT(p);    }
+if(nTimer & TIMER_4)        {  	p->num=4;	p->locT=locT_general;    p->pos=mac_list[4];	sup_elem_locT(p);    }
+if(nTimer & TIMER_5)    	{  	p->num=5;	p->locT=locT_general;    p->pos=mac_list[5];	sup_elem_locT(p);    }
+if(nTimer & TIMER_6)    	{  	p->num=6;	p->locT=locT_general;    p->pos=mac_list[6];	sup_elem_locT(p);    }
+if(nTimer & TIMER_7)    	{  	p->num=7;	p->locT=locT_general;    p->pos=mac_list[7];	sup_elem_locT(p);    }
+if(nTimer & TIMER_8)    	{  	p->num=8;	p->locT=locT_general;    p->pos=mac_list[8];	sup_elem_locT(p);    }
+if(nTimer & TIMER_9)    	{  	p->num=9;	p->locT=locT_general;    p->pos=mac_list[9];	sup_elem_locT(p);    }
+if(nTimer & TIMER_10)    	{  	p->num=10;	p->locT=locT_general;    p->pos=mac_list[10];	sup_elem_locT(p);    }
+if(nTimer & TIMER_11)       {   p->num=11;	p->locT=locT_general;    p->pos=mac_list[11];	sup_elem_locT(p);    }
+if(nTimer & TIMER_12)       {   p->num=12;	p->locT=locT_general;    p->pos=mac_list[12];	sup_elem_locT(p);    }
+if(nTimer & TIMER_13)    	{   p->num=13;	p->locT=locT_general;    p->pos=mac_list[13];	sup_elem_locT(p);    }
+if(nTimer & TIMER_14)    	{ 	p->num=14;	p->locT=locT_general;    p->pos=mac_list[14];	sup_elem_locT(p);    }
+if(nTimer & TIMER_15)  	    {   p->num=15;	p->locT=locT_general;    p->pos=mac_list[15];	sup_elem_locT(p);    }
+if(nTimer & TIMER_16)    	{   p->num=16;	p->locT=locT_general;    p->pos=mac_list[16];	sup_elem_locT(p);    }
 }
 }
 void CheckTimerEvent_lsp()
@@ -150,10 +155,8 @@ tTimer *pTimer;
 // Update the timers
 pTimer = mpTimerList;
 while(pTimer != NULL)
-{ 	if(pTimer->Period != 0)
-{  	pTimer->Period--;
-if(pTimer->Period == 0)
-{ 		// Set the corresponding bit when the timer reaches zero
+{ 	if(pTimer->Period != 0){  	pTimer->Period--;printf("%d timer %d\n",pTimer->TimerId,pTimer->Period);
+if(pTimer->Period == 0){ 		// Set the corresponding bit when the timer reaches zero
 	gTimer = gTimer | pTimer->TimerId;
 }        }
 // Move to the next timer in the list
@@ -161,8 +164,8 @@ pTimer = pTimer->pNext;
 }
 //	printf("ENTRA O SIGNAL\n");
 cont++;
-if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
-if (gTimer!=0){//raise(SIGINT);
+//if (cont==5){cont=0;raise(SIGINT);}//eliminaríase esto, que está como un exemplo
+if (gTimer!=0){printf("8888888888888888888888888888888888\n");raise(SIGINT);
 }
 tTimer *pTimer1;
 // Update the timers
@@ -216,17 +219,19 @@ List_locT * startup1()
 	}else{
 		printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 	}
-	List_locT * locT = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
+	//List_locT *
+	locT_general = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
 	//LPV= LPV_update(l_LPV,&t_LPV, revents );
 	struct parametros * argumento;
 	/**argumento = (struct parametros *) malloc (sizeof (struct parametros));
 	argumento->num=num;
 	argumento->locT=locT;
 	 argumento->pos=locT->end;**/ //(void *)argumento
-
+	mpTimerList= init_locT_timer ();
+	mpTimerList_lsp= init_locT_timer ();
 	//ev_timer_again(*l_LPV,t_LPV);
 	//ev_run(l_LPV,0);
-	return (locT);
+	return (locT_general);
 }
 int a;
 
@@ -387,14 +392,24 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
 }
 List_locT * init_locT ()
 {
-	List_locT * locT=NULL;
-	locT = (List_locT *) malloc (sizeof (List_locT));
-	locT->init = NULL;
-	locT->end = NULL;
-	locT ->len = 0;
-	printf("AQUI en init ! %d \n",locT->len);
+	List_locT * locTi=NULL;
+	locTi = (List_locT *) malloc (sizeof (List_locT));
+	locTi->init = NULL;
+	locTi->end = NULL;
+	locTi ->len = 0;
+	printf("AQUI en init ! %d \n",locTi->len);
 
-	return(locT);
+	return(locTi);
+}
+
+tTimer * init_locT_timer ()
+{
+	tTimer * list=NULL;
+	list = (tTimer *) malloc (sizeof (tTimer));
+	list->Period=0;
+	list->TimerId=0;
+	list->pNext= NULL;
+	return(list);
 }
 
 /*add at list end  */
@@ -412,12 +427,12 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 
 	locT->end = new_element;
 	locT ->len++;
-	int num2,a=0;
+	int num2=0;a=0;
 	unsigned short num=0;
 	while(a==0 && num2<16){
 		num2=num2 +1;
-		if (taken[num2]==false){num=variables[num2]; taken[num2]=true; a=1;}
-
+		if (taken[num2]==false){num=variables[num2]; taken[num2]=true;mac_list[num2]=locT->end; a=1;}
+printf("%d é o num\n",num);
 	}
 	AddTimer(num,itsGnLifetimeLocTE);
 	return 0;
@@ -429,23 +444,34 @@ int sup_elem_locT (struct parametros *p)//(EV_P_ ev_timer *w, int revents)// voi
 	// if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
 	//   return -1;
 	int i;
-	Element_locT *pos=p->pos;
+	//struct mac_addr *pos=p->pos;
+	Element_locT *position=p->pos;
 	List_locT * locT=p->locT;
+	//Element_locT *actual,*position;
+	//	actual = locT->init;
+	/**while (actual != NULL){
+			if (memcmp(actual->data.mac_id.address,pos.address,6)==0){
+				position=actual;
+				}
+			actual = actual->next;
+		}**/
+
 	printf("AQUI en suprimir ! %d \n",locT->len);
-	if(pos->before==NULL){
+	if(position->before==NULL){
 		printf("eliminamos o primeiro \n");
 		locT->init=locT->init->next;
 		if(locT->len==1){locT->end=NULL;    	printf("eliminamos o unico \n");}else{locT->init->before=NULL;}
-	}else if (pos->next==NULL){    	printf("eliminamos o ultimo \n");
+	}else if (position->next==NULL){    	printf("eliminamos o ultimo \n");
 	locT->end->before->next=NULL;
 	locT->end=locT->end->before;
 	}else{
 		printf("eliminamos outro \n");
-		pos->before->next=pos->next;
-		pos->next->before=pos->before;
+		position->before->next=position->next;
+		position->next->before=position->before;
 	}
 	locT->len--;
-	variables[p->num]=0;
+	taken[p->num]=0;
+	mac_list[p->num]=NULL;
 	return 0;
 }
 
@@ -453,7 +479,7 @@ int sup_elem_locT (struct parametros *p)//(EV_P_ ev_timer *w, int revents)// voi
 void view_locT (List_locT * locT){
 	Element_locT *actual;
 	actual = locT->init;
-	while (actual != NULL){	actual = actual->next;}
+	while (actual != NULL){	print_hex_data(actual->data.mac_id.address,6);printf("\n");actual = actual->next;}
 }
 
 int search_in_locT (itsnet_node * data, List_locT * locT){
@@ -461,9 +487,8 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 	actual = locT->init;
 	int i=0;
 	while (actual != NULL){
-		//printf ("%p - %s\n", actual, actual->data);
-		if (strcmp(actual->data.mac_id.address,data->mac_id.address)==0){
-			i=1;printf("Xa a teño!!\n");
+		if (memcmp(actual->data.mac_id.address,data->mac_id.address,6)==0){
+			i=1;
 			if(((actual->data.pos_vector.time_stamp < data->pos_vector.time_stamp ) &&(data->pos_vector.time_stamp - actual->data.pos_vector.time_stamp <=4294967296/2))||((actual->data.pos_vector.time_stamp > data->pos_vector.time_stamp)&&(-data->pos_vector.time_stamp + actual->data.pos_vector.time_stamp >4294967296/2)))
 			{
 				actual->data.pos_vector=data->pos_vector;
@@ -564,7 +589,7 @@ int sup_elem_lsp (struct parametros_lsp *p){
 		pos->next->before=pos->before;
 	}
 	lsp->len--;
-	variables[p->num]=0;
+	taken_lsp[p->num]=0;
 	printf("saimos de suprimir elemento da loct1\n");
 	return 0;
 }
@@ -573,7 +598,7 @@ int sup_elem_lsp (struct parametros_lsp *p){
 void view_lsp(){
 	Element_lsp *actual;
 	actual = lsp->init;
-	while (actual != NULL){		actual = actual->next;	}
+	while (actual != NULL){		print_hex_data(actual->data.payload,12);printf("\n");actual = actual->next;	}
 }
 
 int duplicate_control(void * data,List_locT * locT){

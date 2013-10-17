@@ -82,7 +82,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		char datos[arg->len];
 		memcpy(datos,arg->data +14,arg->len -14);
 		//CommonHeader_processing(arg);
-		char HT[2];
+		char HT[1];
 		memcpy(HT,arg->data +15,1);
 		itsnet_packet_f * pkt=NULL;
 		char HL[1];
@@ -99,19 +99,22 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			// update de PV(SO)
 			pkt = TSB_f(datos);
 			//memcpy(tx_frame->buffer.data, (char *) pkt, sizeof(itsnet_packet_f) );
+			//if(exist_neighbours(arg->locT) )
 			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 			printf("saio de tsb_f \n");
 		} else if(memcmp(HT,tsb0,1)==0){
 			//printf("entro en shb\n");
 			CommonHeader_processing(arg);
 			pkt = SHB_f(datos);
-			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
+			//if(exist_neighbours(arg->locT) )
+				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			printf("entro en geobroadcast \n");
 			CommonHeader_processing(arg);
 			pkt = GeoBroadcast_f(datos);
 			int y =geo_limit(HT,pkt);
 			if (y>=0){
+				//if(exist_neighbours(arg->locT) )
 				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);}
 			printf("saio de geobroadcast_f \n");
 		}
@@ -136,7 +139,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 
 
-			if (lon_int>0){//descartamos o paquete e omitimos os seguintes pasos //ESTO TEÑO QUE CAMBIALO POR >1
+			if (lon_int>1){//descartamos o paquete e omitimos os seguintes pasos //ESTO TEÑO QUE CAMBIALO POR >1
 				printf("o meu hop limit é maior que un\n");
 				itsnet_packet * pkt1=NULL;
 				pkt1 =(itsnet_packet *)malloc(arg->len);
@@ -197,8 +200,8 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	memcpy(tx_frame->buffer.header.type,tipo,2);
 	char datos[arg->len];
 	memcpy(datos,arg->data,arg->len);
-	char HT[2];
-	memcpy(HT,arg->data,2);
+	char HT[1];
+	memcpy(HT,arg->data,1);
 	itsnet_packet * pkt=NULL;
 	pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	char HL[1];
@@ -223,6 +226,7 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	}
 	free(pkt);pkt=NULL; //	printf("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
 	printf("saio ben do cb_broadcast_recvfrom\n");
+	view_locT(arg->locT);
 	//return();
 }
 

@@ -80,7 +80,7 @@ int main(int argc, char **argv)
 	int revents;
 	LPV_update(l_LPV, &t_LPV, revents);
 	pthread_create(&h1,NULL, thr_h1, (void *)h_source);
-	pthread_create(&h_locT,NULL,thr_h2,NULL);
+	pthread_create(&h_locT,NULL,thr_h2,(void *)locT_g);
 	ev_loop(net_events->loop, 0);
 	pthread_join(h1, NULL);
 	pthread_join(h_locT, NULL);

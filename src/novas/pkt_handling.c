@@ -227,36 +227,32 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	////this is the first thing we must do after reception of a GN pkt.
 
 	char dato[arg->len];
-
 	memcpy(dato,arg->data,arg->len);
-	//printf("entro en common header processing\n");
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
-	memcpy( PV,dato +8,28);
-	printf(dato);printf("\n");
-
+	memcpy( PV,dato +8+14,28);
+	//print_hex_data(dato+8+14,28);printf("\n");
 	flags_t * FLAG=NULL;//
 	FLAG= (flags_t *)malloc(sizeof(flags_t));
-	memcpy( FLAG,dato +3,1);
-
-
+	memcpy( FLAG,dato +3+14,1);
 	itsnet_node * data=NULL;//
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
-	memcpy(data->mac_id.address,dato+10,6);
-	//data->node_id
-	data->IS_NEIGHBOUR=true;
+
+	memcpy(data->mac_id.address,dato+6,6);
+
+		data->IS_NEIGHBOUR=true;
 	data->pos_vector= * PV;
 	itsnet_time_stamp tst=data->pos_vector.time_stamp;
-	//data->mac_id=arg->local_addr->sin_addr.s_addr; // teño que buscar esta dirección!
-	//data->pos_vector=PV->node_id;
 	free(PV);PV=NULL;
 	data->expires.tv_sec= itsGnLifetimeLocTE;
 	data->tstation=FLAG->itsStation;
 	free(FLAG);FLAG=NULL;
+
 	//data.tqe;
 	char HT1[2];
-	memcpy(HT1,dato,2);
+	memcpy(HT1,dato+14,2);
 	char SN[2];
+
 	memcpy(SN,arg->data+36,2);
 	int lon_int=sprint_hex_data( SN, 2);
 	if ((memcmp(HT1,tsb1,1)==0)||(memcmp(HT1,geobroad2,1)==0)||(memcmp(HT1,geobroad1,1)==0)||(memcmp(HT1,geobroad0,1)==0))
@@ -271,6 +267,7 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 		//discard the packet
 		//break;
 	}
+
 
 	if(arg->lsp->len>0){
 		Element_lsp *pos=arg->lsp->init;

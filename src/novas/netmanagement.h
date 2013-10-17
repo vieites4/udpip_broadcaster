@@ -130,8 +130,9 @@ struct List_lsp
   int len;
 } ;
 struct parametros{
-Element_locT * pos;
-unsigned short num;
+//struct mac_addr pos;
+Element_locT *pos;
+	unsigned short num;
 //pthread_t thread;
 List_locT * locT;
 };
@@ -218,13 +219,13 @@ typedef struct Timer
 	int Period;
 	struct Timer *pNext;
 }tTimer;
-
+tTimer * init_locT_timer ();
 bool AddTimer(unsigned short TimerId, int num);
 static tTimer * FindTimer(unsigned short TimerId, int num);
 void handler_tempo(int sig);
 void Timer2Function();
 void SystemTickEvent(void);
 void CheckTimerEvent_lsp();
-void CheckTimerEvent();
+void CheckTimerEvent(EV_P_ ev_timer *w, int revents);
 void thr_h2(void *arg);
 #endif /* NETMANAGEMENT_H_ */
