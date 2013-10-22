@@ -10,10 +10,10 @@ List_lsp * lsp;
 extern itsnet_node_id GN_ADDR;
 itsnet_position_vector * LPV;
 ev_timer t_Loct;
-unsigned short variables[16]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
-Element_locT * mac_list[16];
+unsigned short variables[17]={0x00,0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
+mac_addr *mac_list[16];
 List_locT *locT_general;
-bool taken_rep[16],taken_lsp[16], taken[16]={false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+bool taken_rep[17],taken_lsp[17], taken[17]={false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
 /*void *thr_h2(void * arg){
 	struct ev_loop *l_Loct;
 
@@ -21,7 +21,7 @@ bool taken_rep[16],taken_lsp[16], taken[16]={false,false,false,false,false,false
 t_Loct.data=(void *)&arg;
 struct parametros *p;
   p=(struct parametros *) arg;
-int num=p->num;
+int num=p.num;
 //*addr[num]=l_Loct;
 variables[num]=1;
 		ev_timer_init(&t_Loct,sup_elem_locT,8.0,0.0); //itsGnLifetimeLocTE
@@ -30,8 +30,8 @@ variables[num]=1;
 		printf("entro aqui\n");
 	return NULL;
 }*/
-tTimer *mpTimerList;
-tTimer *mpTimerList_lsp;
+List_timer *mpTimerList;
+List_timer *mpTimerList_lsp;
 //Global variable for reference
 static unsigned short gTimer,gTimer_lsp;
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
@@ -41,53 +41,61 @@ void Timer2Function(){}
 
 static tTimer * FindTimer(unsigned short TimerId,int num)
 {
-	tTimer * list= NULL;
+	List_timer * list= NULL;
 	if (num==itsGnMaxPacketLifeTime){list= mpTimerList_lsp;}else{list=mpTimerList;}
-	tTimer *pTimer;
+	tTimer *pTimer=list->init;
+	tTimer *pTimerC=NULL;
 	// Move to the start of the list
-	pTimer = list;
+	//pTimer = list;
 	// Check if list is empty
+	printf("FINDTIMER %d\n",TimerId);
 	if(pTimer != NULL)
 	{        // Move through the list until the timer id is found
-		while((pTimer->pNext != NULL) && (pTimer->TimerId != TimerId))
+		while((pTimer!= NULL) )
 		{            // Timer ids - not match, Move onto the next timer
-			if (pTimer->TimerId != TimerId)printf("COINCIDENCIA!!!\n");
+					if (pTimer->TimerId == TimerId){printf("COINCIDENCIA!!!\n");pTimerC=pTimer;}
 			pTimer = pTimer->pNext;        }    }
-
-	return (pTimer);
+printf("pero saio\n");
+	return (pTimerC);
 }
+
+
+
+
 
 bool AddTimer(unsigned short TimerId, int num)
 
 {
-	tTimer * list= NULL;
+	List_timer * list= NULL;
 	if (num==itsGnMaxPacketLifeTime){list= mpTimerList_lsp;}else{list=mpTimerList;}
 
 	tTimer *pTimer;
-	tTimer *pNewTimer = NULL;
+	tTimer *new_element = NULL;
 	bool ReturnValue = false;
 	// Look for the timer – if already exists
 	pTimer = FindTimer(TimerId,num);
 	// Check if the timer was found
-	if((pTimer == NULL) || (pTimer->TimerId != TimerId))
-	{		// Create a new timer
-		pNewTimer = malloc(sizeof(tTimer));
-		if(pNewTimer != NULL)
-		{     	pNewTimer->TimerId = TimerId;
-		pNewTimer->pNext = NULL;
-		// Check if the list is empty
-		if(pTimer == NULL)
-		{   // Store the address of this timer as a first element in the list
-			list = pNewTimer;
-		}	else
-		{        		// Add the new timer to the end of the list
-			pTimer = pNewTimer;            }        }
-		// Select the new timer
-		pTimer = pNewTimer;    }
+	if((pTimer == NULL) )
+		{
+		new_element = (tTimer *) malloc(sizeof(tTimer));
+		new_element->TimerId = TimerId;
+		new_element->pNext = NULL;
+		new_element->Period = num;
+	if(list->init==NULL){new_element->before=list->init; new_element->pNext=list->end; list->init=new_element;  }
+	else {
+		//printf( "Non é primeiro elemento\n");
+		new_element->before=list->end;
+		list->end->pNext = new_element;}
+list->end = new_element;
+list ->len++;
+	// Check if the list is empty
+		}
 	if(pTimer != NULL)
 	{	// Set the timer interval
-		pTimer->Period = num;
+		pTimer->Period = num;printf("(pTimer != NULL) \n");
 		ReturnValue = true;    }
+
+	if (num==itsGnMaxPacketLifeTime){mpTimerList_lsp=list;}else{mpTimerList=list;}
 	return ReturnValue;
 }
 
@@ -99,25 +107,28 @@ unsigned short nTimer;
 nTimer = gTimer;
 gTimer = 0;
 // Check for TimerId
-struct parametros *p;
+int num;
+mac_addr * pos;
+pos=(mac_addr *)malloc(6);
 //p->
 if( nTimer != 0)
-{ printf("CHEGA A ENTRAR AQUI!!\n");if(nTimer & TIMER_1)       {	p->num=1;	p->locT=locT_general;    p->pos=mac_list[1];	sup_elem_locT(p);    }
-if(nTimer & TIMER_2)        {  	p->num=2;	p->locT=locT_general;    p->pos=mac_list[2];	sup_elem_locT(p);    }
-if(nTimer & TIMER_3)        {  	p->num=3;	p->locT=locT_general;    p->pos=mac_list[3];	sup_elem_locT(p);    }
-if(nTimer & TIMER_4)        {  	p->num=4;	p->locT=locT_general;    p->pos=mac_list[4];	sup_elem_locT(p);    }
-if(nTimer & TIMER_5)    	{  	p->num=5;	p->locT=locT_general;    p->pos=mac_list[5];	sup_elem_locT(p);    }
-if(nTimer & TIMER_6)    	{  	p->num=6;	p->locT=locT_general;    p->pos=mac_list[6];	sup_elem_locT(p);    }
-if(nTimer & TIMER_7)    	{  	p->num=7;	p->locT=locT_general;    p->pos=mac_list[7];	sup_elem_locT(p);    }
-if(nTimer & TIMER_8)    	{  	p->num=8;	p->locT=locT_general;    p->pos=mac_list[8];	sup_elem_locT(p);    }
-if(nTimer & TIMER_9)    	{  	p->num=9;	p->locT=locT_general;    p->pos=mac_list[9];	sup_elem_locT(p);    }
-if(nTimer & TIMER_10)    	{  	p->num=10;	p->locT=locT_general;    p->pos=mac_list[10];	sup_elem_locT(p);    }
-if(nTimer & TIMER_11)       {   p->num=11;	p->locT=locT_general;    p->pos=mac_list[11];	sup_elem_locT(p);    }
-if(nTimer & TIMER_12)       {   p->num=12;	p->locT=locT_general;    p->pos=mac_list[12];	sup_elem_locT(p);    }
-if(nTimer & TIMER_13)    	{   p->num=13;	p->locT=locT_general;    p->pos=mac_list[13];	sup_elem_locT(p);    }
-if(nTimer & TIMER_14)    	{ 	p->num=14;	p->locT=locT_general;    p->pos=mac_list[14];	sup_elem_locT(p);    }
-if(nTimer & TIMER_15)  	    {   p->num=15;	p->locT=locT_general;    p->pos=mac_list[15];	sup_elem_locT(p);    }
-if(nTimer & TIMER_16)    	{   p->num=16;	p->locT=locT_general;    p->pos=mac_list[16];	sup_elem_locT(p);    }
+
+{ if((nTimer & TIMER_1)!=0)    {	 pos=mac_list[1];	sup_elem_locT(1,pos,locT_general);    }
+if((nTimer & TIMER_2)!=0)         { pos=mac_list[2];	sup_elem_locT(2,pos,locT_general);    }
+if((nTimer & TIMER_3)!=0)          {  pos=mac_list[3];	sup_elem_locT(3,pos,locT_general);    }
+if((nTimer & TIMER_4)!=0)         {   pos=mac_list[4];	sup_elem_locT(4,pos,locT_general);    }
+if((nTimer & TIMER_5)!=0)     	{ 	  pos=mac_list[5];	sup_elem_locT(5,pos,locT_general);    }
+if((nTimer & TIMER_6)!=0)     	{	   pos=mac_list[6];sup_elem_locT(6,pos,locT_general);    }
+if((nTimer & TIMER_7)!=0)     	{ 	 pos=mac_list[7];	sup_elem_locT(7,pos,locT_general);    }
+if((nTimer & TIMER_8)!=0)     	{ 	 pos=mac_list[8];	sup_elem_locT(8,pos,locT_general);    }
+if((nTimer & TIMER_9)!=0)     	{  		 pos=mac_list[9];	sup_elem_locT(9,pos,locT_general);    }
+if((nTimer & TIMER_10)!=0)      	{	pos=mac_list[10];	sup_elem_locT(10,pos,locT_general);    }
+if((nTimer & TIMER_11)!=0)         { 	pos=mac_list[11];sup_elem_locT(11,pos,locT_general);    }
+if((nTimer & TIMER_12)!=0)         {	pos=mac_list[12];	sup_elem_locT(12,pos,locT_general);    }
+if((nTimer & TIMER_13)!=0)     	{  	  pos=mac_list[13];	sup_elem_locT(13,pos,locT_general);    }
+if((nTimer & TIMER_14)!=0)    	{	  pos=mac_list[14];	sup_elem_locT(14,pos,locT_general);    }
+if((nTimer & TIMER_15)!=0)    	    { 	pos=mac_list[15];	sup_elem_locT(15,pos,locT_general);    }
+if((nTimer & TIMER_16)!=0)      	{	pos=mac_list[16];	sup_elem_locT(16,pos,locT_general);    }
 }
 }
 void CheckTimerEvent_lsp()
@@ -153,9 +164,9 @@ void SystemTickEvent(void) //facer un fio que repita todo o tempo (bucle while(1
 signal(SIGALRM, SystemTickEvent);
 tTimer *pTimer;
 // Update the timers
-pTimer = mpTimerList;
+pTimer = mpTimerList->init;
 while(pTimer != NULL)
-{ 	if(pTimer->Period != 0){  	pTimer->Period--;printf("%d timer %d\n",pTimer->TimerId,pTimer->Period);
+{ 	if(pTimer->Period != 0){pTimer->Period--;printf("%d timer %d\n",pTimer->TimerId,pTimer->Period);
 if(pTimer->Period == 0){ 		// Set the corresponding bit when the timer reaches zero
 	gTimer = gTimer | pTimer->TimerId;
 }        }
@@ -403,14 +414,14 @@ List_locT * init_locT ()
 	return(locTi);
 }
 
-tTimer * init_locT_timer ()
+List_timer * init_locT_timer ()
 {
 	tTimer * list=NULL;
-	list = (tTimer *) malloc (sizeof (tTimer));
+	list = (List_timer *) malloc (sizeof (List_timer));
 	list->Period=0;
 	list->TimerId=0;
 	list->pNext= NULL;
-	return(list);
+		return(list);
 }
 
 /*add at list end  */
@@ -420,58 +431,89 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 	if (new_element==NULL) printf( "No hay memoria disponible!\n");
 	new_element->data= data;
 	new_element->next = NULL;
+	new_element->before = NULL;
 	if (locT->init==NULL) {
-		new_element->before=locT->init; new_element->next=locT->end; locT->init=new_element;
+		//new_element->before=locT->init;
+		locT->init=new_element; //new_element->next=locT->end;
 	} else {
 		new_element->before=locT->end;
-		locT->end->next = new_element;}
-
+		locT->end->next = new_element;	}
 	locT->end = new_element;
+
 	locT ->len++;
 	int num2=0;a=0;
 	unsigned short num=0;
 	while(a==0 && num2<16){
 		num2=num2 +1;
-		if (taken[num2]==false){num=variables[num2]; taken[num2]=true;mac_list[num2]=locT->end; a=1;printf("%d é o num\n",num);}
+		if (taken[num2]==false){num=variables[num2];printf("num2 %d num %d\n",num2,num); taken[num2]=true;mac_list[num2]=&(locT->end->data.mac_id); a=1;}
+
 	}
 	AddTimer(num,itsGnLifetimeLocTE);
+	locT_general=locT;
 	return 0;
 }
 
-/* erase after a position */
-int sup_elem_locT (struct parametros *p)//(EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
-{
-	// if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
-	//   return -1;
-	int i;
-	//struct mac_addr *pos=p->pos;
-	Element_locT *position=p->pos;
-	List_locT * locT=p->locT;
-	//Element_locT *actual,*position;
-	//	actual = locT->init;
-	/**while (actual != NULL){
-			if (memcmp(actual->data.mac_id.address,pos.address,6)==0){
-				position=actual;
-				}
-			actual = actual->next;
-		}**/
 
-	printf("AQUI en suprimir ! %d \n",locT->len);
+
+int sup_timer (unsigned short TimerId)//(EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
+{printf("aqui non entra!\n");
+
+        tTimer * position=NULL;
+
+        printf("aqui non entra!\n");
+        position = FindTimer(TimerId,itsGnLifetimeLocTE);
+        if (position==NULL){printf("nulll\n");}
+    if(position->before==NULL){
+        printf("eliminamos o primeiro \n");
+        mpTimerList->init=mpTimerList->init->pNext;
+        if(mpTimerList->len==1){mpTimerList->end=NULL;        printf("eliminamos o unico \n");}else{mpTimerList->init->before=NULL;}
+    }else if (position->pNext==NULL){        printf("eliminamos o ultimo \n");
+    mpTimerList->end->before->pNext=NULL;
+    mpTimerList->end=mpTimerList->end->before;
+    }else{
+        printf("eliminamos outro \n");
+        position->before->pNext=position->pNext;
+        position->pNext->before=position->before;
+    }
+    mpTimerList->len--;
+//    mac_list[p.num]=0;
+    return 0;
+}
+/* erase after a position */
+int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)//(EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
+{
+
+int i;
+
+	Element_locT * position=locT_general->init;
+		print_hex_data(pos->address,6);printf("\n");
+	int in=1;
+		itsnet_node *data;
+		data=(itsnet_node *)malloc(sizeof(itsnet_node));
+		data->mac_id=*pos;
+		printf("search empezado\n");
+		int a=search_in_locT(data,locT_general);
+		printf("search empezado %d\n",a);
+		free(data);data=NULL;
+		while (in<a){position = position->next;in++;print_hex_data(position->data.mac_id.address,6);printf("\n");}
+		printf("busco position %d\n",a);if (position==NULL) printf("son null\n");
+		print_hex_data(position->data.mac_id.address,6);printf("\n");
 	if(position->before==NULL){
 		printf("eliminamos o primeiro \n");
-		locT->init=locT->init->next;
-		if(locT->len==1){locT->end=NULL;    	printf("eliminamos o unico \n");}else{locT->init->before=NULL;}
+		locT_general->init=locT_general->init->next;
+		if(locT_general->len==1){locT_general->end=NULL;    	printf("eliminamos o unico \n");}else{locT_general->init->before=NULL;}
 	}else if (position->next==NULL){    	printf("eliminamos o ultimo \n");
-	locT->end->before->next=NULL;
-	locT->end=locT->end->before;
+	locT_general->end->before->next=NULL;
+	locT_general->end=locT_general->end->before;
 	}else{
 		printf("eliminamos outro \n");
 		position->before->next=position->next;
 		position->next->before=position->before;
 	}
-	locT->len--;
-	taken[p->num]=0;
-	mac_list[p->num]=NULL;
+	//locT_general=locT;
+	sup_timer(variables[num]);
+	locT_general->len--;
+	taken[num]=0;
 	return 0;
 }
 
@@ -503,10 +545,10 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 		while ((i<17) &&(a==0))
 		{
 
-			print_hex_data(mac_list[i]->data.mac_id.address,6);printf("\n");
-			print_hex_data(data->mac_id.address,6);printf("\n");
-			if(memcmp(data->mac_id.address,mac_list[i]->data.mac_id.address,6)==0) {a=1;}
-			i++;
+		//	print_hex_data(mac_list[i]->data.mac_id.address,6);printf("\n");
+			//print_hex_data(data->mac_id.address,6);printf("\n");
+			if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}
+			if (a==0) i++;
 		}
 
 	}
@@ -583,11 +625,11 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 }
 
 /* erase after a position */
-int sup_elem_lsp (struct parametros_lsp *p){
+int sup_elem_lsp (struct parametros_lsp p){
 	// if (locT->len <= 1 || pos < 1 || pos >= locT ->len)
 	//   return -1;
-	Element_lsp *pos=p->pos;
-	List_lsp * lsp=p->lsp;
+	Element_lsp *pos=p.pos;
+	List_lsp * lsp=p.lsp;
 	printf("AQUI en suprimir ! %d \n",lsp->len);
 	if(pos->before==NULL){
 		printf("eliminamos o primeiro \n");
@@ -602,7 +644,7 @@ int sup_elem_lsp (struct parametros_lsp *p){
 		pos->next->before=pos->before;
 	}
 	lsp->len--;
-	taken_lsp[p->num]=0;
+	taken_lsp[p.num]=0;
 	printf("saimos de suprimir elemento da loct1\n");
 	return 0;
 }
@@ -612,6 +654,11 @@ void view_lsp(){
 	Element_lsp *actual;
 	actual = lsp->init;
 	while (actual != NULL){		print_hex_data(actual->data.payload,12);printf("\n");actual = actual->next;	}
+}
+void view_timers(){
+	tTimer *actual;
+	actual = mpTimerList->init;
+	while (actual != NULL){		printf("timerid %d \n",actual->TimerId);actual = actual->pNext;	}
 }
 
 int duplicate_control(void * data,List_locT * locT){

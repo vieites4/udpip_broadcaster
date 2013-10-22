@@ -131,10 +131,11 @@ struct List_lsp
 } ;
 struct parametros{
 //struct mac_addr pos;
-Element_locT *pos;
+struct mac_addr pos;
 	unsigned short num;
 //pthread_t thread;
 List_locT * locT;
+
 };
 struct parametros_lsp{
 Element_lsp * pos;
@@ -186,14 +187,14 @@ typedef struct ieee80211_frame
 
 bool exist_neighbours(List_locT * locT);
 
-int sup_elem_locT (struct parametros *p);//EV_P_ ev_timer *w, int revents);//void * arg);//EV_P_ ev_timer *w,
+int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);//EV_P_ ev_timer *w, int revents);//void * arg);//EV_P_ ev_timer *w,
 int add_end_locT ( List_locT * locT, itsnet_node data);
 
 List_locT * init_locT ();
 void view_locT (List_locT * locT);
 int search_in_locT (itsnet_node * data, List_locT * locT);
 
-int sup_elem_lsp ( struct parametros_lsp *p);
+int sup_elem_lsp ( struct parametros_lsp p);
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data); //hai que cambiar o itsnet_node
 int add_end_rep ( List_lsp *rep, itsnet_packet data); //hai que cambiar o itsnet_node
 List_lsp * init_lsp ();
@@ -218,8 +219,17 @@ typedef struct Timer
 	unsigned short TimerId;
 	int Period;
 	struct Timer *pNext;
+	struct Timer * before;
 }tTimer;
-tTimer * init_locT_timer ();
+struct List_timer
+{
+  tTimer *init;
+  tTimer *end;
+  int len;
+};
+typedef struct List_timer List_timer;
+int sup_timer (unsigned short TimerId);
+List_timer * init_locT_timer ();
 bool AddTimer(unsigned short TimerId, int num);
 static tTimer * FindTimer(unsigned short TimerId, int num);
 void handler_tempo(int sig);

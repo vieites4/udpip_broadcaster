@@ -260,10 +260,10 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	{data->Sequence_number=lon_int;}else{data->Sequence_number=0;
 	}
 	data->LS_PENDING=false;
-	printf("funciona1\n");
+	//printf("funciona1\n");
 	int val=search_in_locT(data,arg->locT);
 	if(val==0){add_end_locT (  arg->locT,*data);}else{AddTimer(variables[val],itsGnLifetimeLocTE);}
-	printf("funciona2\n");
+	//printf("funciona2\n");
 	int num=strtol(HT1,NULL,16);
 	int num1=0x0f00*num;
 	int num2=0x00f0*num;
@@ -391,7 +391,7 @@ itsnet_packet_f * GeoBroadcast_f(void *dato){
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,dato +8,28);
 	pkt->common_header.pv=*PV; //o problema está aqui!!
-	print_hex_data(pkt->common_header.pv,28);printf("\n");
+	//print_hex_data(pkt->common_header.pv,28);printf("\n");
 	memcpy(pkt->common_header.traffic_class,dato +6,1);
 	char LEN[2] ;
 	memcpy(LEN,dato +4,2);
@@ -416,14 +416,14 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 {
 		int x,y,r,total,a,b;
 	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
-	printf("num %d %d \n",pkt->common_header.pv.latitude , LPV->latitude);
+//	printf("num %d %d \n",pkt->common_header.pv.latitude , LPV->latitude);
 	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
 	if(memcmp(geobroad0,HT,1)==0){
 		printf("circular \n");
 		r=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
-		printf("aqui %d %d %d\n",y,x,r);
+		//printf("aqui %d %d %d\n",y,x,r);
 		total= 1- pow((x/r),2) - pow((y/r),2);
-		printf("aqui\n");
+		//printf("aqui\n");
 	}else
 			if(memcmp(geobroad1,HT,1)==0){
 				a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
@@ -435,7 +435,7 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 						b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
 						total= 1- pow((x/a),2) - pow((y/b),2);
 						printf("eliptica \n");}
-	printf("aqui\n");
+	//printf("aqui\n");
 	return(total);
 
 }
