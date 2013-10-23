@@ -36,7 +36,7 @@ struct ev_loop * l_LPV;
 ev_timer t_LPV;
 int SN_g;//sequence number
 itsnet_node_id GN_ADDR;
-
+List_lsp * lsp_bc_g;
 void *thr_h1(void * arg){
 
 	t_LPV.data=arg;
@@ -53,7 +53,7 @@ void *thr_h1(void * arg){
 int main(int argc, char **argv)
 {
 	List_locT * locT_g;
-	List_lsp * lsp_bc_g;
+
 	pthread_t h1,h3, h_locT,h_lsp;
 	log_app_msg(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);

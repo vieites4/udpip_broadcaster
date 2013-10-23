@@ -4,7 +4,6 @@
  *  Created on: 04/09/2013
  *      Author: pc
  */
-
 #ifndef NETMANAGEMENT_H_
 #define NETMANAGEMENT_H_
 #include <stddef.h>
@@ -13,12 +12,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <list.h>
-#include "/home/pc/Descargas/gpsd-3.9/gps.h"
-#include "/home/pc/Descargas/gpsd-3.9/gpsdclient.h"
+#include "../gps.h"
+#include "../gpsdclient.h"
 #include <ev.h>
 #include "itsnet_header.h"
 #include "../udpev/define.h"
-
 #define TIMER_1	            (unsigned short)0x0001
 #define TIMER_2	            (unsigned short)0x0002
 #define TIMER_3	            (unsigned short)0x0004
@@ -35,19 +33,17 @@
 #define TIMER_14	        (unsigned short)0x2000
 #define TIMER_15	        (unsigned short)0x4000
 #define TIMER_16	        (unsigned short)0x8000
-//#include "udpev/cb_udp_events.h"
 typedef struct List_locT List_locT;
 typedef struct List_lsp List_lsp;
 typedef struct msghdr msg_header_t;
 typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
 typedef struct sockaddr_ll sockaddr_ll_t;
 typedef struct gps_data_t gps_data_t;
- struct public_ev_arg
+struct public_ev_arg
 {
 
 	int socket_fd;					/**< Socket file descriptor. */
 	int port;						/**< Port to be used. */
-
 	int forwarding_socket_fd;		/**< Socket for message forwarding. */
 	int net_socket_fd;
 	int forwarding_port;			/**< Port for message forwarding. */
@@ -57,14 +53,10 @@ typedef struct gps_data_t gps_data_t;
 	sockaddr_in_t *local_addr;		/**< Local address (NOT localhost) */
 	sockaddr_ll_t *local_addr_ll;		/**< Local address (NOT localhost) */
 	bool print_forwarding_message;	/**< Flag that enables verbose. */
-
 	void *data;						/**< Buffer for frames reception. */
 	int len;						/**< Data length within the buffer. */
-
 	msg_header_t *msg_header;		/**< Buffer for msg_header reception. */
-
 	bool nec_mode;					/**< Flag that indicates NEC mode. */
-
 	int __test_number;				/**< For testing, counts no tests. */
 	List_locT *locT;
 	List_lsp *lsp;
@@ -92,127 +84,85 @@ struct itsnet_node_
 	int Sequence_number;
 	struct tq_elem tqe;                    /** Timer queue entry */
 	struct timespec expires;       		/** expire time for message 	*/
-
 	//struct list_head list;   			/** list head 			*/
 };
 typedef struct itsnet_node_ itsnet_node;
 
 struct ElementList_locT
-{
-  itsnet_node data;
-  struct ElementList_locT *next;
-  struct ElementList_locT *before;
-};
+{	itsnet_node data;
+	struct ElementList_locT *next;
+	struct ElementList_locT *before;};
 
 typedef struct ElementList_locT Element_locT;
 
 struct List_locT
-{
-  Element_locT *init;
-  Element_locT *end;
-  int len;
-};
-
-
+{	Element_locT *init;
+	Element_locT *end;
+	int len;};
 
 struct ElementList_lsp
-{
-	itsnet_packet data;
-  struct ElementList_lsp *next;
-  struct ElementList_lsp *before;
-};
+{	itsnet_packet data;
+	struct ElementList_lsp *next;
+	struct ElementList_lsp *before;};
 typedef struct ElementList_lsp Element_lsp;
 
 struct List_lsp
-{
-  Element_lsp *init;
-  Element_lsp *end;
-  int len;
-} ;
-struct parametros{
-//struct mac_addr pos;
-struct mac_addr pos;
-	unsigned short num;
-//pthread_t thread;
-List_locT * locT;
-
-};
+{	Element_lsp *init;
+	Element_lsp *end;
+	int len;} ;
+/**
 struct parametros_lsp{
-Element_lsp * pos;
-unsigned short num;
-//pthread_t thread;
-List_lsp * lsp;
-};
+	Element_lsp * pos;
+	unsigned short num;
+	List_lsp * lsp;
+};**/
 typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
 typedef struct ieee80211_header
-{
-
-	unsigned char dest_address[ETH_ALEN]; //é importante a orde na que coloco os compoñentes do struct
+{	unsigned char dest_address[ETH_ALEN]; //é importante a orde na que coloco os compoñentes do struct
 	unsigned char src_address[ETH_ALEN];	/*!< Source MAC address. */
-    unsigned char type[2];
-
-//	unsigned char recheo[28];
+	unsigned char type[2];
+	//	unsigned char recheo[28];
 } ieee80211_header_t ;
 typedef struct ieee80211_frame_buffer
 {
-
 	ieee80211_header_t header;	/*!< IEEE 802.11 header. */
 	//int frame_type;				/*!< Type of the frame. */
-		//int frame_len;
+	//int frame_len;
 	//	unsigned char recheo[4];
 
 	//ll_frame_t info;
 #define IEEE_80211_BLEN 		2312	/*!< IEEE 802.11 body length (B). */
 	char data[IEEE_80211_BLEN];	/*!< Data body of the IEEE 802.11 frame. */
-
 } ieee80211_buffer_t;
 typedef struct ll_frame
-{
-
-	int frame_type;				/*!< Type of the frame. */
+{	int frame_type;				/*!< Type of the frame. */
 	int frame_len;				/*!< Length of the total bytes read. */
-//unsigned char recheo[26];
+	//unsigned char recheo[26];
 	struct timeval timestamp;	/*!< Frame creation timestamp (usecs). */
-
 } ll_frame_t;
 
 typedef struct ieee80211_frame
-{
-
-	ll_frame_t info;			/*!< Info relative to frame management. */
+{	ll_frame_t info;			/*!< Info relative to frame management. */
 	ieee80211_buffer_t buffer;	/*!< Buffer with frame contents. */
-
 } ieee80211_frame_t;
 
-
 bool exist_neighbours(List_locT * locT);
-
 int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);//EV_P_ ev_timer *w, int revents);//void * arg);//EV_P_ ev_timer *w,
 int add_end_locT ( List_locT * locT, itsnet_node data);
-
 List_locT * init_locT ();
 void view_locT (List_locT * locT);
 int search_in_locT (itsnet_node * data, List_locT * locT);
-
-int sup_elem_lsp ( struct parametros_lsp p);
+int sup_elem_lsp (int num);
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data); //hai que cambiar o itsnet_node
 int add_end_rep ( List_lsp *rep, itsnet_packet data); //hai que cambiar o itsnet_node
 List_lsp * init_lsp ();
-
 void view_lsp ();
-
 List_locT * startup1();
-
 itsnet_position_vector * LPV_ini();
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
 void Beacon_send(EV_P_ ev_timer *w, int revents) ;//void Beacon_send(public_ev_arg_r *arg);
 int duplicate_control(void * data,List_locT * locT);
-
-//void *thr_h2(void * arg);
 void LS(int option);
-
-
-
 /* Timer record for each timer */
 typedef struct Timer
 {
@@ -223,9 +173,9 @@ typedef struct Timer
 }tTimer;
 struct List_timer
 {
-  tTimer *init;
-  tTimer *end;
-  int len;
+	tTimer *init;
+	tTimer *end;
+	int len;
 };
 typedef struct List_timer List_timer;
 int sup_timer (unsigned short TimerId);
