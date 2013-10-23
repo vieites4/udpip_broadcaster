@@ -23,7 +23,7 @@ itsnet_packet_f * SHB_f(void *dato);
 
 itsnet_packet_f * GeoBroadcast_f(void *dato);
 void GeoAnycast();
-void CommonHeader_processing(public_ev_arg_r *arg);
+int CommonHeader_processing(public_ev_arg_r *arg);
 void determine_nexthop();
 void GeoUnicast();
 

@@ -26,7 +26,8 @@ const unsigned char single[1]={0x01};
 extern const unsigned char ETH_ADDR_BROADCAST[6];
 extern struct ev_loop * l_Beacon;
 extern unsigned short variables[16];
-
+extern List_locT *locT_general;
+extern List_lsp * lsp_bc_g;
 extern ev_timer t_Beacon;
 itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 
@@ -62,17 +63,13 @@ itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 	pkt->payload.itsnet_tsb=tsb_h;
 	pkt->common_header=ch;
 	//NEIGHBOURS.
-	//if  (exist_neighbours()== false){
-
+	if  (locT_general->len== 0){
 	itsnet_packet * pkt1 = NULL;
-	//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	// *pkt1=NULL;
-	//int i =add_end_lsp(lsp, pkt);
-	//return(pkt1);
-	//buffer in BC AND omit next executions
-
-	//}
-
+	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		int i =add_end_lsp(lsp, *pkt);
+	return(pkt1);
+		//buffer in BC AND omit next executions
+}
 	if (memcmp(dato +7,tipoa,1)==0)
 	{		memcpy(pkt->payload.itsnet_tsb.payload.btp1,dato + 18,2);
 	memcpy(pkt->payload.itsnet_tsb.payload.btp2,dato + 16,2);
@@ -115,17 +112,15 @@ itsnet_packet * SHB(void *dato, List_lsp *lsp, List_lsp *rep){
 	memcpy(shb_h.payload.payload,dato +20,lon_int);
 	pkt->common_header=ch;
 	pkt->payload.itsnet_shb=shb_h;
-
 	//NEIGHBOURS.
-	//	if  (exist_neighbours()== false){
-
+	if  (locT_general->len== 0){
 	itsnet_packet * pkt1 = NULL;
-	//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	// *pkt1=NULL;
-	//int i =add_end_lsp(lsp, pkt);
-	//return(pkt1);
+	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+	pkt1=NULL;
+	int i =add_end_lsp(lsp, *pkt);
+	return(pkt1);
 	//buffer in BC AND omit next executions
-	//}
+	}
 	if (memcmp(dato +7,tipoa,1)==0)
 	{memcpy(pkt->payload.itsnet_shb.payload.btp1,dato + 18,2);
 	memcpy(pkt->payload.itsnet_shb.payload.btp2,dato + 16,2);
@@ -184,15 +179,15 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 	pkt->payload.itsnet_geobroadcast=gbc_h;
 	pkt->common_header=ch;
 	//NEIGHBOURS.
-	//	if  (exist_neighbours()== false){
+	if  (locT_general->len== 0){
 
 	itsnet_packet * pkt1 = NULL;
-	//	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	// *pkt1=NULL;
-	//int i =add_end_lsp(lsp, pkt);
-	//return(pkt1);
+	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+	pkt1=NULL;
+	int i =add_end_lsp(lsp, *pkt);
+	return(pkt1);
 	//buffer in BC AND omit next executions
-	//}
+	}
 
 	//REPETITION INTERVAL
 	char REP[4];
@@ -223,10 +218,8 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 
 void GeoUnicast(){}
 void GeoAnycast(){}
-void CommonHeader_processing(public_ev_arg_r *arg){
-
+int CommonHeader_processing(public_ev_arg_r *arg){
 	////this is the first thing we must do after reception of a GN pkt.
-
 	char dato[arg->len];
 	memcpy(dato,arg->data,arg->len);
 	itsnet_position_vector * PV=NULL;//
@@ -238,63 +231,69 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	memcpy( FLAG,dato +3+14,1);
 	itsnet_node * data=NULL;//
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
-
 	memcpy(data->mac_id.address,dato+6,6);
-
-		data->IS_NEIGHBOUR=true;
+	data->IS_NEIGHBOUR=true;
 	data->pos_vector= * PV;
 	itsnet_time_stamp tst=data->pos_vector.time_stamp;
 	free(PV);PV=NULL;
 	data->expires.tv_sec= itsGnLifetimeLocTE;
 	data->tstation=FLAG->itsStation;
 	free(FLAG);FLAG=NULL;
-
 	//data.tqe;
 	char HT1[1];
 	memcpy(HT1,dato+14,1);
 	char SN[2];
-
 	memcpy(SN,arg->data+36,2);
 	int lon_int=sprint_hex_data( SN, 2);
 	if ((memcmp(HT1,tsb1,1)==0)||(memcmp(HT1,geobroad2,1)==0)||(memcmp(HT1,geobroad1,1)==0)||(memcmp(HT1,geobroad0,1)==0))
 	{data->Sequence_number=lon_int;}else{data->Sequence_number=0;
 	}
 	data->LS_PENDING=false;
-	//printf("funciona1\n");
 	int val=search_in_locT(data,arg->locT);
 	if(val==0){add_end_locT (  arg->locT,*data);}else{AddTimer(variables[val],itsGnLifetimeLocTE);}
-	//printf("funciona2\n");
 	int num=strtol(HT1,NULL,16);
+
 	int num1=0x0f00*num;
 	int num2=0x00f0*num;
 	if (num1==0 || num2==0){
 		//discard the packet
-		//break;
+	//	return(1);
 	}
-	if(arg->lsp->len>0){
-		Element_lsp *pos=arg->lsp->init;
-		//recorrer a lista e enviar todo
+	if(lsp_bc_g->len>0){
+		Element_lsp *pos=lsp_bc_g->init;
 		while(pos!=NULL){
-			itsnet_packet * pkt1;
-			pkt1 = & pos->data;
+			//itsnet_packet * pkt1;
+			//pkt1 = & pos->data;
 			char Hop[1] ;
+			printf("sigo na proba\n");
 			memcpy(Hop,pos->data.common_header.hop_limit,1);
-			int lon_int=sprint_hex_data(pos->data.common_header.hop_limit, 2);
-			sprintf(pkt1->common_header.hop_limit,"X02",lon_int-1);
-			pkt1->common_header.forwarder_position_vector=* LPV; //
-
+			print_hex_data(pos->data.common_header.hop_limit,1);printf(" sigo na proba\n");
+			int lon_int=sprint_hex_data(pos->data.common_header.hop_limit, 1);
+			int size=sprint_hex_data(pos->data.common_header.payload_lenght, 2);
+			printf("sigo na proba %d\n",lon_int);
+			char zero[1]={0x00};
+			if (lon_int==1)memcpy(pos->data.common_header.hop_limit,zero,1); else sprintf(pos->data.common_header.hop_limit,"X02",lon_int-1);
+			pos->data.common_header.forwarder_position_vector=* LPV; //
 			char h_source[ETH_ALEN];
-			get_mac_address(arg->forwarding_socket_fd, "wlan0",(unsigned char *) h_source) ;
-			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BROADCAST,h_source);
-			memcpy(&tx_frame->buffer, pkt1,strlen(pkt1) );
-			int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->socket_fd,&pkt1, strlen(pkt1));
+			//get_mac_address(arg->forwarding_socket_fd, "wlan0",(unsigned char *) h_source) ;
+			//ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BROADCAST,h_source);
+			//memcpy(&tx_frame->buffer, pkt1,strlen(pkt1) );
+			sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
+			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&pos->data,sizeof(itsnet_common_header)+ size);
+			printf("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
 			ev_timer_again (l_Beacon,&t_Beacon);
 			pos=pos->next;
+			sup_elem_lsp(num);
+
 		}
 		free(data);data=NULL;
 	}
 	////flush pkt buffers
-	//if(SE LS_pending){
+
+
+
+
+
 	//flush the SE LS_pkt_buffer
 	//forward the stored pkts
 	//SE LS_pending=FALSE
@@ -304,7 +303,7 @@ void CommonHeader_processing(public_ev_arg_r *arg){
 	//forward stored pkts //quere dicir que se envíen os pkts que quitamos mediante o flush??
 	//}
 
-
+return(0);
 	//	printf("saio de common header processing\n");
 }
 
