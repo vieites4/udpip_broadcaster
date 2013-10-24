@@ -94,7 +94,13 @@ struct ElementList_locT
 	struct ElementList_locT *before;};
 
 typedef struct ElementList_locT Element_locT;
+struct LT
+{unsigned char base:2;
+unsigned char multiple:6;
 
+
+};
+typedef struct LT LT_s;
 struct List_locT
 {	Element_locT *init;
 	Element_locT *end;
@@ -109,6 +115,7 @@ typedef struct ElementList_lsp Element_lsp;
 struct List_lsp
 {	Element_lsp *init;
 	Element_lsp *end;
+	int size;
 	int len;} ;
 /**
 struct parametros_lsp{
@@ -150,7 +157,7 @@ bool exist_neighbours(List_locT * locT);
 int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);//EV_P_ ev_timer *w, int revents);//void * arg);//EV_P_ ev_timer *w,
 int add_end_locT ( List_locT * locT, itsnet_node data);
 List_locT * init_locT ();
-void view_locT (List_locT * locT);
+void view_locT ();
 int search_in_locT (itsnet_node * data, List_locT * locT);
 int sup_elem_lsp (int num);
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data); //hai que cambiar o itsnet_node
@@ -178,9 +185,9 @@ struct List_timer
 	int len;
 };
 typedef struct List_timer List_timer;
-int sup_timer (unsigned short TimerId);
+int sup_timer (unsigned short TimerId, int type);
 List_timer * init_locT_timer ();
-bool AddTimer(unsigned short TimerId, int num);
+bool AddTimer(unsigned short TimerId, int num, int type);
 static tTimer * FindTimer(unsigned short TimerId, int num);
 void handler_tempo(int sig);
 void Timer2Function();

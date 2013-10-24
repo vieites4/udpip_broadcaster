@@ -70,7 +70,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	if (memcmp((void *)tipoX,data+12,2)==0){
 		printf("cb_forward_recvfrom1 \n");
 		printf("RECIBO UN PAQUETE\n");
-		print_hex_data(data, arg->len);printf("\n");
+	//	print_hex_data(data, arg->len);printf("\n");
 		memcpy(arg->data,data,arg->len);
 
 		char tipo[2];
@@ -101,6 +101,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			printf("entro en geobroadcast \n");
 			error =CommonHeader_processing(arg);
+			printf("entro en geobroadcast! \n");
 			if (error==0 && duplicate_control(datos,arg->locT)==0){
 			pkt = GeoBroadcast_f(datos);
 			int y =geo_limit(HT,pkt);
@@ -213,8 +214,9 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 	}
 	free(pkt);pkt=NULL; //	printf("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
 	printf("saio ben do cb_broadcast_recvfrom\n");
-	view_locT(arg->locT);printf("pinto lista \n");
-	view_timers();printf("pinto lista timers \n");
+	view_locT();printf("pinto lista loct \n");
+	view_lsp();printf("pinto lista lsp\n");
+	//view_timers();printf("pinto lista timers lsp \n");
 	//return();
 }
 

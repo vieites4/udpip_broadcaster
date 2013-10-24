@@ -34,7 +34,7 @@
 /* main */
 struct ev_loop * l_LPV;
 ev_timer t_LPV;
-int SN_g;//sequence number
+int SN_g=1;//sequence number
 itsnet_node_id GN_ADDR;
 List_lsp * lsp_bc_g;
 void *thr_h1(void * arg){
