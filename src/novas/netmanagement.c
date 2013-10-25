@@ -141,7 +141,7 @@ pTimer = pTimer->pNext;
 if (gTimer!=0){raise(SIGINT);}
 tTimer *pTimer1;
 // Update the timers
-pTimer1 = mpTimerList_lsp;
+pTimer1 = mpTimerList_lsp->init;
 int count=0;
 while(pTimer1 != NULL)
 { 	if(pTimer1->Period != 0)
