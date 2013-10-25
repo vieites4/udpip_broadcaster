@@ -188,7 +188,7 @@ typedef struct List_timer List_timer;
 int sup_timer (unsigned short TimerId, int type);
 List_timer * init_locT_timer ();
 bool AddTimer(unsigned short TimerId, int num, int type);
-static tTimer * FindTimer(unsigned short TimerId, int num);
+tTimer * FindTimer(unsigned short TimerId, int num);
 void handler_tempo(int sig);
 void Timer2Function();
 void SystemTickEvent(void);

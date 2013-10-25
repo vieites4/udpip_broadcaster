@@ -34,7 +34,7 @@ static int gTimer_lsp[1000];
 
 void Timer2Function(){}
 
-static tTimer * FindTimer(unsigned short TimerId,int num)
+tTimer * FindTimer(unsigned short TimerId,int num)
 {
 	List_timer * list= NULL;
 	if (num==2){list= mpTimerList_lsp;printf("ENTREI NA OPCION mpTimerList_lsp\n");}else{list=mpTimerList;}
@@ -89,7 +89,7 @@ bool AddTimer(unsigned short TimerId, int num, int type)
 }
 
 void CheckTimerEvent(EV_P_ ev_timer *w, int revents)
-{signal(SIGINT, CheckTimerEvent);
+{signal(SIGUSR2, CheckTimerEvent);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 nTimer = gTimer;gTimer = 0;
@@ -138,7 +138,7 @@ if(pTimer->Period == 0){ 		// Set the corresponding bit when the timer reaches z
 // Move to the next timer in the list
 pTimer = pTimer->pNext;
 }
-if (gTimer!=0){raise(SIGINT);}
+if (gTimer!=0){raise(SIGUSR2);}
 tTimer *pTimer1;
 // Update the timers
 pTimer1 = mpTimerList_lsp->init;
@@ -163,7 +163,7 @@ void thr_h2(void *arg){
 	alarm(1);
 	signal(SIGALRM,SystemTickEvent);
 	while(1){
-		signal(SIGINT, CheckTimerEvent);
+		signal(SIGUSR2, CheckTimerEvent);
 		signal(SIGUSR1, CheckTimerEvent_lsp);	}}
 
 List_locT * startup1()

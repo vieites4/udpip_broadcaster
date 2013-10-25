@@ -64,20 +64,20 @@ itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 	pkt->common_header=ch;
 	//NEIGHBOURS.
 	if  (locT_general->len== 0){
-	itsnet_packet * pkt1 = NULL;
-	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
+		itsnet_packet * pkt1 = NULL;
+		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
 
-	//delete old buffered elements if we need more size to add a new one.
-	while (val>itsGnBcForwardingPacketBufferSize){
-		sup_elem_lsp(0);
-		val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
-printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
-	}
+		//delete old buffered elements if we need more size to add a new one.
+		while (val>itsGnBcForwardingPacketBufferSize){
+			sup_elem_lsp(0);
+			val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
+			printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
+		}
 		int i =add_end_lsp(lsp_bc_g, *pkt);
-	return(pkt1);
+		return(pkt1);
 		//buffer in BC AND omit next executions
-}
+	}
 	if (memcmp(dato +7,tipoa,1)==0)
 	{		memcpy(pkt->payload.itsnet_tsb.payload.btp1,dato + 18,2);
 	memcpy(pkt->payload.itsnet_tsb.payload.btp2,dato + 16,2);
@@ -122,18 +122,18 @@ itsnet_packet * SHB(void *dato, List_lsp *lsp, List_lsp *rep){
 	pkt->payload.itsnet_shb=shb_h;
 	//NEIGHBOURS.
 	if  (locT_general->len== 0){
-	itsnet_packet * pkt1 = NULL;
-	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	pkt1=NULL;int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
-	//delete old buffered elements if we need more size to add a new one.
-	while (val>itsGnBcForwardingPacketBufferSize){
+		itsnet_packet * pkt1 = NULL;
+		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		pkt1=NULL;int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
+		//delete old buffered elements if we need more size to add a new one.
+		while (val>itsGnBcForwardingPacketBufferSize){
 			sup_elem_lsp(0);
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
-	printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
+			printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
-	int i =add_end_lsp(lsp, *pkt);
-	return(pkt1);
-	//buffer in BC AND omit next executions
+		int i =add_end_lsp(lsp, *pkt);
+		return(pkt1);
+		//buffer in BC AND omit next executions
 	}
 	if (memcmp(dato +7,tipoa,1)==0)
 	{memcpy(pkt->payload.itsnet_shb.payload.btp1,dato + 18,2);
@@ -195,18 +195,18 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 	//NEIGHBOURS.
 	if  (locT_general->len== 0){
 
-	itsnet_packet * pkt1 = NULL;
-	pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	pkt1=NULL;int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
-	//delete old buffered elements if we need more size to add a new one.
-	while (val>itsGnBcForwardingPacketBufferSize){
+		itsnet_packet * pkt1 = NULL;
+		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		pkt1=NULL;int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
+		//delete old buffered elements if we need more size to add a new one.
+		while (val>itsGnBcForwardingPacketBufferSize){
 			sup_elem_lsp(0);
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
-	printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
+			printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
-	int i =add_end_lsp(lsp, *pkt);
-	return(pkt1);
-	//buffer in BC AND omit next executions
+		int i =add_end_lsp(lsp, *pkt);
+		return(pkt1);
+		//buffer in BC AND omit next executions
 	}
 
 	//REPETITION INTERVAL
@@ -226,8 +226,8 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 
 	if (memcmp(dato +7,tipoa,1)==0)
 	{//printf("é btp tipo a\n");
-	memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,dato + 34,2);
-	memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,dato + 32,2);
+		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,dato + 34,2);
+		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,dato + 32,2);
 	}else{
 		char info_dest[2];
 		memset(info_dest,0,2);
@@ -287,7 +287,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	int num2=0x00f0*num;
 	if (num1==0 || num2==0){
 		//discard the packet
-	//	return(1);
+		//	return(1);
 	}	printf("no common header\n");
 	if(arg->lsp->len>0){
 
@@ -296,13 +296,39 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			printf("no common header\n");
 			//itsnet_packet * pkt1;
 			//pkt1 = & pos->data;
-			char Hop[1] ;
+			char Hop[1] ;tTimer * temp;
 			memcpy(Hop,pos->data.common_header.hop_limit,1);
 			int lon_int=sprint_hex_data(pos->data.common_header.hop_limit, 1);
 			int size=sprint_hex_data(pos->data.common_header.payload_lenght, 2);
 			char zero[1]={0x00};
 			if (lon_int==1)memcpy(pos->data.common_header.hop_limit,zero,1); else sprintf(pos->data.common_header.hop_limit,"X02",lon_int-1);
 			pos->data.common_header.forwarder_position_vector=* LPV; //
+			char HT[1];int sn;int base=0;int mult=0;LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};	int num3=0;int num4=0;
+			memcpy(HT,&pos->data.common_header.HT_HST,1);
+			if(memcmp(HT,tsb1,1)==0){
+				sn = pos->data.payload.itsnet_tsb.sequencenumber;
+				temp=FindTimer(sn,2);
+				if (temp->Period>6401){base=3; mult=(int) ceil(temp->Period/100); } else if (temp->Period>64) {base=2; mult=(int) ceil(temp->Period/10);}else {base=1; mult=temp->Period;}
+				sprintf(str2, "%04X",mult);
+				sprintf(str1, "%01X",base);
+				num4=strtol(str2,NULL,16);
+				num3=strtol(str1,NULL,16);
+				lt->base=num3;lt->multiple=num4;
+				memcpy(pos->data.payload.itsnet_tsb.lt,(void *)lt,1);
+
+			}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(pos->data.common_header.HT_HST.HT,geobroad1,1)==0 ||memcmp(pos->data.common_header.HT_HST.HT,geobroad2,1)==0){
+				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;
+				temp=FindTimer(sn,2);
+				if (temp->Period>640){base=3; mult=(int) ceil(temp->Period/100); } else if (temp->Period>64) {base=2; mult= (int) ceil(temp->Period/10);}else {base=1; mult=temp->Period;}
+				printf("no de abaixo %d %d \n",base, mult);
+				sprintf(str2, "%04X",mult);
+				sprintf(str1, "%01X",base);
+				num4=strtol(str2,NULL,16);printf("%d\n", num4);
+				num3=strtol(str1,NULL,16);printf("%d\n", num3);
+				lt->base=num3;lt->multiple=num4;
+				memcpy(pos->data.payload.itsnet_geobroadcast.lt,(void *)lt,1);
+
+			}free(lt);lt=NULL;
 			char h_source[ETH_ALEN];
 			//get_mac_address(arg->forwarding_socket_fd, "wlan0",(unsigned char *) h_source) ;
 			//ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->port, ETH_ADDR_BROADCAST,h_source);
@@ -311,16 +337,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&pos->data,sizeof(itsnet_common_header)+ size);
 			printf("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
 			ev_timer_again (l_Beacon,&t_Beacon);
-			char HT[1];int sn;
-			printf("despois do again\n");
-				memcpy(HT,&pos->data.common_header.HT_HST,1);
-				printf("despois do memcpy\n");
-				if(memcmp(HT,tsb1,1)==0){
-					printf("entro en 1\n");
-					sn = pos->data.payload.itsnet_tsb.sequencenumber;
-				}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(pos->data.common_header.HT_HST.HT,geobroad1,1)==0 ||memcmp(pos->data.common_header.HT_HST.HT,geobroad2,1)==0){
-					printf("entro en 2\n");sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;}
-				printf("despois da asignacion do sn\n");
+
 			sup_elem_lsp(sn);
 			printf("despois do sup_elem_lsp\n");
 			pos=pos->next;
@@ -338,7 +355,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	//forward stored pkts //quere dicir que se envíen os pkts que quitamos mediante o flush??
 	//}
 
-return(0);
+	return(0);
 	//	printf("saio de common header processing\n");
 }
 
@@ -448,9 +465,9 @@ itsnet_packet_f * GeoBroadcast_f(void *dato){
 }
 int geo_limit(void *HT,itsnet_packet_f *pkt)
 {
-		int x,y,r,total,a,b;
+	int x,y,r,total,a,b;
 	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
-//	printf("num %d %d \n",pkt->common_header.pv.latitude , LPV->latitude);
+	//	printf("num %d %d \n",pkt->common_header.pv.latitude , LPV->latitude);
 	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
 	if(memcmp(geobroad0,HT,1)==0){
 		printf("circular \n");
@@ -459,16 +476,16 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 		total= 1- pow((x/r),2) - pow((y/r),2);
 		//printf("aqui\n");
 	}else
-			if(memcmp(geobroad1,HT,1)==0){
-				a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
-				b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
-				total= fmin(1- pow((x/a),2) ,1- pow((y/b),2));
-				printf("rectangular \n");} else
-					if(memcmp(geobroad2,HT,1)==0){
-						a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
-						b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
-						total= 1- pow((x/a),2) - pow((y/b),2);
-						printf("eliptica \n");}
+		if(memcmp(geobroad1,HT,1)==0){
+			a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
+			b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
+			total= fmin(1- pow((x/a),2) ,1- pow((y/b),2));
+			printf("rectangular \n");} else
+				if(memcmp(geobroad2,HT,1)==0){
+					a=sprint_hex_data(pkt->payload.itsnet_geocast.distanceA, 2);
+					b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
+					total= 1- pow((x/a),2) - pow((y/b),2);
+					printf("eliptica \n");}
 	//printf("aqui\n");
 	return(total);
 
