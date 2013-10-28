@@ -71,15 +71,17 @@ typedef struct ifreq ifreq_t;				/**< Type for ifreq. */
 typedef struct sockaddr_ll sockaddr_ll_t;
 #define LEN__SOCKADDR_LL sizeof(sockaddr_ll_t)
 /**
+ * @fn new_ifreq
  * @brief Allocates memory for an ifreq structure.
  * @return A pointer to the newly allocated block of memory.
  */
 ifreq_t *new_ifreq();
 
 /**
- * @brief Allocates memory for an ifreq structure and initializes it with the
+ * \fn init_ifreq
+ * \brief Allocates memory for an ifreq structure and initializes it with the
  * 			given interface name.
- * @return A pointer to the initialized ifreq structure.
+ * \return A pointer to the initialized ifreq structure.
  */
 ifreq_t *init_ifreq(const char *if_name);
 
@@ -87,6 +89,7 @@ ifreq_t *init_ifreq(const char *if_name);
 #define LEN__SOCKADDR sizeof(sockaddr_t)
 
 /**
+ * @fn new_sockaddr
  * @brief Allocates memory for an sockaddr structure.
  * @return A pointer to the newly allocated block of memory.
  */
@@ -96,6 +99,7 @@ sockaddr_t *new_sockaddr();
 #define LEN__SOCKADDR_IN sizeof(sockaddr_in_t)
 #define LEN__SOCKADDR_LL sizeof(sockaddr_ll_t)
 /**
+ * @fn new_sockaddr_in
  * @brief Allocates memory for an sockaddr_in structure.
  * @return A pointer to the newly allocated block of memory.
  */
@@ -106,6 +110,7 @@ typedef struct iovec iovec_t;
 #define LEN__IOVEC sizeof(iovec_t)
 
 /**
+ * @fn new_iovec
  * @brief Allocates memory for an iovec structure.
  * @return A pointer to the newly allocated block of memory.
  */
@@ -117,12 +122,14 @@ iovec_t *new_iovec();
 #define CONTROL_BUFFER_LEN 0x100	/**< Length of the control buffer. */
 
 /**
+ * @fn msg_header_t
  * @brief Allocates memory for an msg_header structure.
  * @return A pointer to the newly allocated block of memory.
  */
 msg_header_t *new_msg_header();
 
 /**
+ * @fn init_msg_header
  * @brief Initializes a message header structure that uses the given buffer
  * 			for package reception/transmission.
  * @param buffer Buffer where to store received/transmitted bytes.
@@ -132,6 +139,7 @@ msg_header_t *new_msg_header();
 msg_header_t *init_msg_header(void* buffer, const int buffer_len);
 
 /**
+ * @fn init_broadcast_sockaddr_in
  * @brief Initializes a sockaddr_in structure for broadcasting messages in
  * 			the given port.
  * @param port The port to use for broadcasting.
@@ -140,6 +148,7 @@ msg_header_t *init_msg_header(void* buffer, const int buffer_len);
 sockaddr_in_t *init_broadcast_sockaddr_in(const int port);
 sockaddr_ll_t *init_broadcast_sockaddr_ll(const int port);
 /**
+ * @fn init_any_sockaddr_in
  * @brief Initializes a sockaddr_in structure for receiving messages from
  * 			any source address, which were sent to the given port.
  * @param port The port where the messages were sent to.
@@ -149,6 +158,7 @@ sockaddr_in_t *init_any_sockaddr_in(const int port);
 sockaddr_ll_t *init_any_sockaddr_ll(const int port);
 
 /**
+ * @fn init_sockaddr_in
  * @brief Initializes a sockaddr_in structure for sending messages to the
  * 			given source address and port.
  * @param address The address where the messages will be sent to.
@@ -159,6 +169,7 @@ sockaddr_in_t *init_sockaddr_in( const int port, in_addr_t addr);
 sockaddr_ll_t *init_sockaddr_ll(const int port);
 
 /**
+ * @fn init_if_sockaddr_in
  * @brief Initializes a sockaddr_in structure for sending messages through
  * 			the given interface and port.
  * @param if_name The interface through which UDP messages will be sent to.
@@ -172,6 +183,7 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port);
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 /**
+ * @fn set_broadcast_socket
  * @brief Sets socket options for permitting this socket to send broadcast
  * 			messages.
  * @param socket_fd File descriptor of the socket.
@@ -180,6 +192,7 @@ sockaddr_ll_t *init_if_sockaddr_ll(const char *if_name, const int port);
 int set_broadcast_socket(const int socket_fd);
 
 /**
+ * @fn set_bindtodevice_socket
  * @brief Sets socket options for binding this socket to the given interface.
  * @param iface Interface where the socket is expected to be bound.
  * @param socket_fd File descriptor of the socket.
@@ -189,6 +202,7 @@ int set_bindtodevice_socket(const char *if_name, const int socket_fd);
 int set_msghdrs_socket(const int socket_fd);
 int set_msghdrs_socket_raw(const int socket_fd);
 /**
+ * @fn open_receiver_udp_socket
  * @brief Creates and binds an UDP socket that uses the given port.
  * @param port The UDP port to be used by this socket.
  * @return File descriptor of the opened UDP socket.
@@ -197,6 +211,7 @@ int open_receiver_udp_socket(const int port);
 int open_receiver_raw_socket(const int port);
 
 /**
+ * @fn open_transmitter_udp_socket
  * @brief Creates and DOES NOT BIND an UDP socket that uses the given port.
  * @param port The UDP port to be used by this socket.
  * @return File descriptor of the opened UDP socket.
@@ -204,6 +219,7 @@ int open_receiver_raw_socket(const int port);
 int open_transmitter_udp_socket(const int port, in_addr_t addr);
 int open_transmitter_raw_socket(const int port);
 /**
+ * @fn open_broadcast_udp_socket
  * @brief Creates and binds an UDP socket that uses the given port with
  * 			broadcasting privileges.
  * @param iface Interface where the socket is expected to be bound.
@@ -219,6 +235,7 @@ int open_broadcast_raw_socket(const char *if_name, const int port);
 #define UDP_BUFFER_LEN 5000 	/**< Size of the RX/TX buffers. */
 
 /**
+ * @fn recv_message
  * @brief Sends a message to the given destination address.
  * @param dest_addr The destination address where the message will be sent to.
  * @param socket_fd File descriptor of the socket to be used.
@@ -229,6 +246,7 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 					const void *buffer, const int len	);
 
 /**
+ * @fn recv_message
  * @brief Receives a message from the given socket..
  * @param socket_fd File descriptor of the socket to be used.
  * @param data Buffer for storing the message.
@@ -239,6 +257,7 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 int recv_message(const int socket_fd, void *data);
 
 /**
+ * @fn recv_msg
  * @brief Receives an UDP message from the given socket and marks whether
  * 			the message should be blocked or not because its source address
  * 			matches that of the given block_ip address.
@@ -255,6 +274,7 @@ int recv_msg(	const int socket_fd, msg_header_t *msg,
 				const in_addr_t block_ip, bool *blocked	);
 
 /**
+ * @fn get_source_address
  * Gets the source address of the given message, by iterating along all
  * headers included in the message structure.
  *
@@ -271,6 +291,7 @@ in_addr_t get_source_address(msg_header_t *msg);
 #define BYTES_PER_LINE 5000	/**< Number of bytes per line to be printed. */
 
 /**
+ * @fn print_hex_data
  * @brief Prints hexadecimal data.
  * @param hexadecimal data as an array.
  * @param data length in bytes
@@ -278,6 +299,7 @@ in_addr_t get_source_address(msg_header_t *msg);
 int print_hex_data(const char *buffer, const int len);
 
 /**
+ * @fn sprint_hex_data
  * @brief convert in integer hexadecimal data .
  * @param hexadecimal data as an array.
  * @param data length in bytes
@@ -287,6 +309,7 @@ int set_ll_frame
 	(ll_frame_t *frame, const int frame_type, const int frame_len);
 
 /**
+ * @fn init_ieee80211_frame
  * @brief initialization of ieee80211 frame .
  * @param socket where we will sent the frame
  * @param mac address destination (broadcast?)
@@ -296,6 +319,7 @@ ieee80211_frame_t *new_ieee80211_frame();
 
 ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char *h_dest, const unsigned char *h_source	);
 /**
+ * @fn get_mac_address
  * @brief obtain our home mac address .
  * @param socket number
  * @param interface name for this socket

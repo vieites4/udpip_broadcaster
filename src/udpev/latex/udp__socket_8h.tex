@@ -1,0 +1,320 @@
+\hypertarget{udp__socket_8h}{\section{udp\-\_\-socket.\-h \-File \-Reference}
+\label{udp__socket_8h}\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}}
+}
+{\ttfamily \#include $<$stdbool.\-h$>$}\*
+{\ttfamily \#include $<$stdlib.\-h$>$}\*
+{\ttfamily \#include $<$string.\-h$>$}\*
+{\ttfamily \#include $<$ifaddrs.\-h$>$}\*
+{\ttfamily \#include $<$netdb.\-h$>$}\*
+{\ttfamily \#include $<$sys/ioctl.\-h$>$}\*
+{\ttfamily \#include $<$sys/socket.\-h$>$}\*
+{\ttfamily \#include $<$net/if.\-h$>$}\*
+{\ttfamily \#include $<$netinet/in.\-h$>$}\*
+{\ttfamily \#include $<$arpa/inet.\-h$>$}\*
+{\ttfamily \#include \char`\"{}../logger.\-h\char`\"{}}\*
+{\ttfamily \#include \char`\"{}../execution\-\_\-codes.\-h\char`\"{}}\*
+{\ttfamily \#include $<$stdio.\-h$>$}\*
+{\ttfamily \#include $<$unistd.\-h$>$}\*
+{\ttfamily \#include $<$linux/if\-\_\-packet.\-h$>$}\*
+{\ttfamily \#include $<$net/ethernet.\-h$>$}\*
+{\ttfamily \#include $<$sys/types.\-h$>$}\*
+{\ttfamily \#include $<$sys/mman.\-h$>$}\*
+{\ttfamily \#include $<$ev.\-h$>$}\*
+{\ttfamily \#include \char`\"{}../novas/netmanagement.\-h\char`\"{}}\*
+\subsection*{\-Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structieee80211__header__frame__control}{ieee80211\-\_\-header\-\_\-frame\-\_\-control}
+\end{DoxyCompactItemize}
+\subsection*{\-Defines}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{udp__socket_8h_a9cc80a9ee6fcd446317b635b0f20574a}{\#define {\bfseries \-L\-E\-N\-\_\-\-\_\-\-I\-E\-E\-E80211\-\_\-\-F\-R\-A\-M\-E}~sizeof(ieee80211\-\_\-frame\-\_\-t)}\label{udp__socket_8h_a9cc80a9ee6fcd446317b635b0f20574a}
+
+\item 
+\#define \hyperlink{udp__socket_8h_a845d3d864381808f6eb9d31089ea04f5}{\-I\-E\-E\-E\-\_\-80211\-\_\-\-H\-L\-E\-N}~30
+\item 
+\#define \hyperlink{udp__socket_8h_a6a08e98b9797a6843d7517b8fedb4f88}{\-T\-Y\-P\-E\-\_\-\-I\-E\-E\-E\-\_\-80211}~2
+\item 
+\hypertarget{udp__socket_8h_afe0e683e5ac1784ecceff00c5197abec}{\#define {\bfseries typo}~\mbox{[}2\mbox{]} =                          \{0x08,0x00\}}\label{udp__socket_8h_afe0e683e5ac1784ecceff00c5197abec}
+
+\item 
+\hypertarget{udp__socket_8h_a66308f882c7854582f2619bf0ce9c0a4}{\#define {\bfseries \-L\-E\-N\-\_\-\-\_\-\-I\-F\-R\-E\-Q}~sizeof(\hyperlink{udp__socket_8h_ad72127ece01418e9b6deb0a5f90a6ed2}{ifreq\-\_\-t})}\label{udp__socket_8h_a66308f882c7854582f2619bf0ce9c0a4}
+
+\item 
+\hypertarget{udp__socket_8h_ad2fb62aab5b5fab4f83f1535bf45a70f}{\#define {\bfseries \-L\-E\-N\-\_\-\-\_\-\-S\-O\-C\-K\-A\-D\-D\-R\-\_\-\-L\-L}~sizeof(sockaddr\-\_\-ll\-\_\-t)}\label{udp__socket_8h_ad2fb62aab5b5fab4f83f1535bf45a70f}
+
+\item 
+\hypertarget{udp__socket_8h_a8183adc30e3aa5bf8d811755a9bd1c14}{\#define {\bfseries \-L\-E\-N\-\_\-\-\_\-\-S\-O\-C\-K\-A\-D\-D\-R}~sizeof(sockaddr\-\_\-t)}\label{udp__socket_8h_a8183adc30e3aa5bf8d811755a9bd1c14}
+
+\item 
+\hypertarget{udp__socket_8h_ab78e88a715f920e673ff564e20694974}{\#define {\bfseries \-L\-E\-N\-\_\-\-\_\-\-S\-O\-C\-K\-A\-D\-D\-R\-\_\-\-I\-N}~sizeof(sockaddr\-\_\-in\-\_\-t)}\label{udp__socket_8h_ab78e88a715f920e673ff564e20694974}
+
+\item 
+\hypertarget{udp__socket_8h_ad2fb62aab5b5fab4f83f1535bf45a70f}{\#define {\bfseries \-L\-E\-N\-\_\-\-\_\-\-S\-O\-C\-K\-A\-D\-D\-R\-\_\-\-L\-L}~sizeof(sockaddr\-\_\-ll\-\_\-t)}\label{udp__socket_8h_ad2fb62aab5b5fab4f83f1535bf45a70f}
+
+\item 
+\hypertarget{udp__socket_8h_ab694bb553af47553eecd6910bef6ae17}{\#define {\bfseries \-L\-E\-N\-\_\-\-\_\-\-I\-O\-V\-E\-C}~sizeof(iovec\-\_\-t)}\label{udp__socket_8h_ab694bb553af47553eecd6910bef6ae17}
+
+\item 
+\hypertarget{udp__socket_8h_a3fdaf4dfa754ae5990daa3454fdfc604}{\#define {\bfseries \-L\-E\-N\-\_\-\-\_\-\-M\-S\-G\-\_\-\-H\-E\-A\-D\-E\-R}~sizeof(msg\-\_\-header\-\_\-t)}\label{udp__socket_8h_a3fdaf4dfa754ae5990daa3454fdfc604}
+
+\item 
+\#define \hyperlink{udp__socket_8h_a1f40c4e9ef601e12ddf1d6037b65a301}{\-C\-O\-N\-T\-R\-O\-L\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}~0x100
+\item 
+\#define \hyperlink{udp__socket_8h_a8895713e3ec75378440fd43509f2acd5}{\-U\-D\-P\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}~5000
+\item 
+\#define \hyperlink{udp__socket_8h_aba6226c3e69f3896f4c1749d4b21c157}{\-B\-Y\-T\-E\-S\-\_\-\-P\-E\-R\-\_\-\-L\-I\-N\-E}~5000
+\end{DoxyCompactItemize}
+\subsection*{\-Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{udp__socket_8h_a2d78ee620625bbf011acfdf81374dd6e}{typedef struct \*
+\hyperlink{structieee80211__header__frame__control}{ieee80211\-\_\-header\-\_\-frame\-\_\-control} {\bfseries ieee80211\-\_\-header\-\_\-frame\-\_\-control\-\_\-t}}\label{udp__socket_8h_a2d78ee620625bbf011acfdf81374dd6e}
+
+\item 
+typedef struct ifreq \hyperlink{udp__socket_8h_ad72127ece01418e9b6deb0a5f90a6ed2}{ifreq\-\_\-t}
+\item 
+\hypertarget{udp__socket_8h_aef8f5278bd9478e4a39413e522a406ae}{typedef struct sockaddr\-\_\-ll {\bfseries sockaddr\-\_\-ll\-\_\-t}}\label{udp__socket_8h_aef8f5278bd9478e4a39413e522a406ae}
+
+\item 
+\hypertarget{udp__socket_8h_ac4f3d546116bbd236315cb2b144ed128}{typedef struct iovec {\bfseries iovec\-\_\-t}}\label{udp__socket_8h_ac4f3d546116bbd236315cb2b144ed128}
+
+\end{DoxyCompactItemize}
+\subsection*{\-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{udp__socket_8h_ad72127ece01418e9b6deb0a5f90a6ed2}{ifreq\-\_\-t} $\ast$ \hyperlink{udp__socket_8h_af3c171646de5c3f7df9a01d418dd0d18}{new\-\_\-ifreq} ()
+\begin{DoxyCompactList}\small\item\em \-Allocates memory for an ifreq structure. \end{DoxyCompactList}\item 
+\hypertarget{udp__socket_8h_a272aa0a46dbf5ab5245e5f1f302d027c}{\hyperlink{udp__socket_8h_ad72127ece01418e9b6deb0a5f90a6ed2}{ifreq\-\_\-t} $\ast$ {\bfseries init\-\_\-ifreq} (const char $\ast$if\-\_\-name)}\label{udp__socket_8h_a272aa0a46dbf5ab5245e5f1f302d027c}
+
+\item 
+sockaddr\-\_\-t $\ast$ \hyperlink{udp__socket_8h_a18081c9e19b5230ca63f1f1fee6c89ec}{new\-\_\-sockaddr} ()
+\begin{DoxyCompactList}\small\item\em \-Allocates memory for an sockaddr structure. \end{DoxyCompactList}\item 
+sockaddr\-\_\-in\-\_\-t $\ast$ \hyperlink{udp__socket_8h_a95cef8a3185b3a39af27ef94e695dfce}{new\-\_\-sockaddr\-\_\-in} ()
+\begin{DoxyCompactList}\small\item\em \-Allocates memory for an sockaddr\-\_\-in structure. \end{DoxyCompactList}\item 
+\hypertarget{udp__socket_8h_acfac14260c14812a4d221adf3009c897}{sockaddr\-\_\-ll\-\_\-t $\ast$ {\bfseries new\-\_\-sockaddr\-\_\-ll} ()}\label{udp__socket_8h_acfac14260c14812a4d221adf3009c897}
+
+\item 
+iovec\-\_\-t $\ast$ \hyperlink{udp__socket_8h_ab0f67b499fa45ae60d52de9abedf386c}{new\-\_\-iovec} ()
+\begin{DoxyCompactList}\small\item\em \-Allocates memory for an iovec structure. \end{DoxyCompactList}\item 
+\hypertarget{udp__socket_8h_a9f48cffe94dffc0d203e20a3e3e9b09b}{msg\-\_\-header\-\_\-t $\ast$ {\bfseries new\-\_\-msg\-\_\-header} ()}\label{udp__socket_8h_a9f48cffe94dffc0d203e20a3e3e9b09b}
+
+\item 
+\hypertarget{udp__socket_8h_a65cecb401dce7f510a3f6b4d790e42e8}{msg\-\_\-header\-\_\-t $\ast$ {\bfseries init\-\_\-msg\-\_\-header} (void $\ast$buffer, const int buffer\-\_\-len)}\label{udp__socket_8h_a65cecb401dce7f510a3f6b4d790e42e8}
+
+\item 
+\hypertarget{udp__socket_8h_abddb90b08d856fd7d0f86b998e1e14d9}{sockaddr\-\_\-in\-\_\-t $\ast$ {\bfseries init\-\_\-broadcast\-\_\-sockaddr\-\_\-in} (const int port)}\label{udp__socket_8h_abddb90b08d856fd7d0f86b998e1e14d9}
+
+\item 
+\hypertarget{udp__socket_8h_a82093194731e8e82915e27d7f6d6f71b}{sockaddr\-\_\-ll\-\_\-t $\ast$ {\bfseries init\-\_\-broadcast\-\_\-sockaddr\-\_\-ll} (const int port)}\label{udp__socket_8h_a82093194731e8e82915e27d7f6d6f71b}
+
+\item 
+\hypertarget{udp__socket_8h_aa9bb469407417c3d173149cd827d8168}{sockaddr\-\_\-in\-\_\-t $\ast$ {\bfseries init\-\_\-any\-\_\-sockaddr\-\_\-in} (const int port)}\label{udp__socket_8h_aa9bb469407417c3d173149cd827d8168}
+
+\item 
+\hypertarget{udp__socket_8h_a5bee858e6d530c8bfdca13c83721f0d7}{sockaddr\-\_\-ll\-\_\-t $\ast$ {\bfseries init\-\_\-any\-\_\-sockaddr\-\_\-ll} (const int port)}\label{udp__socket_8h_a5bee858e6d530c8bfdca13c83721f0d7}
+
+\item 
+\hypertarget{udp__socket_8h_ab7e64f5e89e30238151e25482fff300c}{sockaddr\-\_\-in\-\_\-t $\ast$ {\bfseries init\-\_\-sockaddr\-\_\-in} (const int port, in\-\_\-addr\-\_\-t addr)}\label{udp__socket_8h_ab7e64f5e89e30238151e25482fff300c}
+
+\item 
+\hypertarget{udp__socket_8h_aabbd0739a4067b53f90ee5f06417e52d}{sockaddr\-\_\-ll\-\_\-t $\ast$ {\bfseries init\-\_\-sockaddr\-\_\-ll} (const int port)}\label{udp__socket_8h_aabbd0739a4067b53f90ee5f06417e52d}
+
+\item 
+\hypertarget{udp__socket_8h_ad0b3ca5d61f31fa150e411c88594edbb}{sockaddr\-\_\-in\-\_\-t $\ast$ {\bfseries init\-\_\-if\-\_\-sockaddr\-\_\-in} (const char $\ast$if\-\_\-name, const int port)}\label{udp__socket_8h_ad0b3ca5d61f31fa150e411c88594edbb}
+
+\item 
+sockaddr\-\_\-ll\-\_\-t $\ast$ \hyperlink{udp__socket_8h_a62c24bbea57a8e06093d74be3b93788d}{init\-\_\-if\-\_\-sockaddr\-\_\-ll} (const char $\ast$if\-\_\-name, const int port)
+\item 
+\hypertarget{udp__socket_8h_a1bfd1657ed2224a2eb42a4d20cdddfc3}{int {\bfseries set\-\_\-broadcast\-\_\-socket} (const int socket\-\_\-fd)}\label{udp__socket_8h_a1bfd1657ed2224a2eb42a4d20cdddfc3}
+
+\item 
+\hypertarget{udp__socket_8h_a338a67438e239fd2c2745483666494db}{int {\bfseries set\-\_\-bindtodevice\-\_\-socket} (const char $\ast$if\-\_\-name, const int socket\-\_\-fd)}\label{udp__socket_8h_a338a67438e239fd2c2745483666494db}
+
+\item 
+\hypertarget{udp__socket_8h_a71086e99e13445fec898bb670a543387}{int {\bfseries set\-\_\-msghdrs\-\_\-socket} (const int socket\-\_\-fd)}\label{udp__socket_8h_a71086e99e13445fec898bb670a543387}
+
+\item 
+\hypertarget{udp__socket_8h_a29db1eb0c682864c254315b361f7e7ab}{int {\bfseries set\-\_\-msghdrs\-\_\-socket\-\_\-raw} (const int socket\-\_\-fd)}\label{udp__socket_8h_a29db1eb0c682864c254315b361f7e7ab}
+
+\item 
+\hypertarget{udp__socket_8h_a3fcd940fa6a9d229e69027e55427fe02}{int {\bfseries open\-\_\-receiver\-\_\-udp\-\_\-socket} (const int port)}\label{udp__socket_8h_a3fcd940fa6a9d229e69027e55427fe02}
+
+\item 
+\hypertarget{udp__socket_8h_add66c63cc7f6751c0794ef011dcdd864}{int {\bfseries open\-\_\-receiver\-\_\-raw\-\_\-socket} (const int port)}\label{udp__socket_8h_add66c63cc7f6751c0794ef011dcdd864}
+
+\item 
+int \hyperlink{udp__socket_8h_ace8be6118b75a2d077688d9c44fc74aa}{open\-\_\-transmitter\-\_\-udp\-\_\-socket} (const int port, in\-\_\-addr\-\_\-t addr)
+\item 
+\hypertarget{udp__socket_8h_a2bd1893436a8e04329704e1f9a41403b}{int {\bfseries open\-\_\-transmitter\-\_\-raw\-\_\-socket} (const int port)}\label{udp__socket_8h_a2bd1893436a8e04329704e1f9a41403b}
+
+\item 
+\hypertarget{udp__socket_8h_a153ba0e24914338262a02d5d489d6626}{int {\bfseries open\-\_\-broadcast\-\_\-udp\-\_\-socket} (const char $\ast$if\-\_\-name, const int port)}\label{udp__socket_8h_a153ba0e24914338262a02d5d489d6626}
+
+\item 
+\hypertarget{udp__socket_8h_ab4a0ce5a689805acd60c5785bf452d95}{int {\bfseries open\-\_\-broadcast\-\_\-raw\-\_\-socket} (const char $\ast$if\-\_\-name, const int port)}\label{udp__socket_8h_ab4a0ce5a689805acd60c5785bf452d95}
+
+\item 
+\hypertarget{udp__socket_8h_a54a009c19e8f7d69a2600e5fdbc9dbb0}{int {\bfseries send\-\_\-message} (const sockaddr\-\_\-t $\ast$dest\-\_\-addr, const int socket\-\_\-fd, const void $\ast$buffer, const int len)}\label{udp__socket_8h_a54a009c19e8f7d69a2600e5fdbc9dbb0}
+
+\item 
+\hypertarget{udp__socket_8h_a0ad5adf26feb4550a485d4b0202c44ba}{int {\bfseries recv\-\_\-message} (const int socket\-\_\-fd, void $\ast$data)}\label{udp__socket_8h_a0ad5adf26feb4550a485d4b0202c44ba}
+
+\item 
+\hypertarget{udp__socket_8h_ab1987d4af2bf7637a2dcc7ea3352293c}{int {\bfseries recv\-\_\-msg} (const int socket\-\_\-fd, msg\-\_\-header\-\_\-t $\ast$msg, const in\-\_\-addr\-\_\-t block\-\_\-ip, bool $\ast$blocked)}\label{udp__socket_8h_ab1987d4af2bf7637a2dcc7ea3352293c}
+
+\item 
+\hypertarget{udp__socket_8h_a466b1944e645d84408bf3775fbb7d2f0}{in\-\_\-addr\-\_\-t {\bfseries get\-\_\-source\-\_\-address} (msg\-\_\-header\-\_\-t $\ast$msg)}\label{udp__socket_8h_a466b1944e645d84408bf3775fbb7d2f0}
+
+\item 
+\hypertarget{udp__socket_8h_a24011a03caa14c7c0365e85f61d18a72}{int {\bfseries print\-\_\-hex\-\_\-data} (const char $\ast$buffer, const int len)}\label{udp__socket_8h_a24011a03caa14c7c0365e85f61d18a72}
+
+\item 
+\hypertarget{udp__socket_8h_a1d403aadc98931359c5de0eb734249eb}{int {\bfseries sprint\-\_\-hex\-\_\-data} (const char $\ast$buffer, const int len)}\label{udp__socket_8h_a1d403aadc98931359c5de0eb734249eb}
+
+\item 
+\hypertarget{udp__socket_8h_ad45f09920626834fe33f818a1bca9784}{int {\bfseries set\-\_\-ll\-\_\-frame} (ll\-\_\-frame\-\_\-t $\ast$frame, const int frame\-\_\-type, const int frame\-\_\-len)}\label{udp__socket_8h_ad45f09920626834fe33f818a1bca9784}
+
+\item 
+\hypertarget{udp__socket_8h_a66d339c5b5cada1b74ce32a2e7d2db37}{ieee80211\-\_\-frame\-\_\-t $\ast$ {\bfseries new\-\_\-ieee80211\-\_\-frame} ()}\label{udp__socket_8h_a66d339c5b5cada1b74ce32a2e7d2db37}
+
+\item 
+\hypertarget{udp__socket_8h_a6f4f8c2d43c49cbde9a4d6ff30b89990}{ieee80211\-\_\-frame\-\_\-t $\ast$ {\bfseries init\-\_\-ieee80211\-\_\-frame} (const int ll\-\_\-sap, const unsigned char $\ast$h\-\_\-dest, const unsigned char $\ast$h\-\_\-source)}\label{udp__socket_8h_a6f4f8c2d43c49cbde9a4d6ff30b89990}
+
+\item 
+\hypertarget{udp__socket_8h_a31d17964fbc6b29c8de6af6b16d51d5a}{int {\bfseries get\-\_\-mac\-\_\-address} (const int socket\-\_\-fd, const char $\ast$if\-\_\-name, const unsigned char $\ast$mac)}\label{udp__socket_8h_a31d17964fbc6b29c8de6af6b16d51d5a}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\begin{DoxyAuthor}{\-Author}
+\-Ricardo \-Tubío (rtpardavila\mbox{[}at\mbox{]}gmail.\-com) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{\-Version}
+0.\-1
+\end{DoxyVersion}
+\hypertarget{udp__socket_8h_LICENSE}{}\subsection{\-L\-I\-C\-E\-N\-S\-E}\label{udp__socket_8h_LICENSE}
+\-This file is part of udpip-\/broadcaster. udpip-\/broadcaster is free software\-: you can redistribute it and/or modify it under the terms of the \-G\-N\-U \-General \-Public \-License as published by the \-Free \-Software \-Foundation, either version 3 of the \-License, or (at your option) any later version.
+
+udpip-\/broadcaster is distributed in the hope that it will be useful, but \-W\-I\-T\-H\-O\-U\-T \-A\-N\-Y \-W\-A\-R\-R\-A\-N\-T\-Y; without even the implied warranty of \-M\-E\-R\-C\-H\-A\-N\-T\-A\-B\-I\-L\-I\-T\-Y or \-F\-I\-T\-N\-E\-S\-S \-F\-O\-R \-A \-P\-A\-R\-T\-I\-C\-U\-L\-A\-R \-P\-U\-R\-P\-O\-S\-E. \-See the \-G\-N\-U \-General \-Public \-License for more details.
+
+\-You should have received a copy of the \-G\-N\-U \-General \-Public \-License along with udpip-\/broadcaster. \-If not, see $<$\href{http://www.gnu.org/licenses/}{\tt http\-://www.\-gnu.\-org/licenses/}$>$. 
+
+\subsection{\-Define \-Documentation}
+\hypertarget{udp__socket_8h_aba6226c3e69f3896f4c1749d4b21c157}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!\-B\-Y\-T\-E\-S\-\_\-\-P\-E\-R\-\_\-\-L\-I\-N\-E@{\-B\-Y\-T\-E\-S\-\_\-\-P\-E\-R\-\_\-\-L\-I\-N\-E}}
+\index{\-B\-Y\-T\-E\-S\-\_\-\-P\-E\-R\-\_\-\-L\-I\-N\-E@{\-B\-Y\-T\-E\-S\-\_\-\-P\-E\-R\-\_\-\-L\-I\-N\-E}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{\-B\-Y\-T\-E\-S\-\_\-\-P\-E\-R\-\_\-\-L\-I\-N\-E}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf \-B\-Y\-T\-E\-S\-\_\-\-P\-E\-R\-\_\-\-L\-I\-N\-E}~5000}}\label{udp__socket_8h_aba6226c3e69f3896f4c1749d4b21c157}
+\-Number of bytes per line to be printed. \hypertarget{udp__socket_8h_a1f40c4e9ef601e12ddf1d6037b65a301}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!\-C\-O\-N\-T\-R\-O\-L\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N@{\-C\-O\-N\-T\-R\-O\-L\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}}
+\index{\-C\-O\-N\-T\-R\-O\-L\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N@{\-C\-O\-N\-T\-R\-O\-L\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{\-C\-O\-N\-T\-R\-O\-L\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf \-C\-O\-N\-T\-R\-O\-L\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}~0x100}}\label{udp__socket_8h_a1f40c4e9ef601e12ddf1d6037b65a301}
+\-Length of the control buffer. \hypertarget{udp__socket_8h_a845d3d864381808f6eb9d31089ea04f5}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!\-I\-E\-E\-E\-\_\-80211\-\_\-\-H\-L\-E\-N@{\-I\-E\-E\-E\-\_\-80211\-\_\-\-H\-L\-E\-N}}
+\index{\-I\-E\-E\-E\-\_\-80211\-\_\-\-H\-L\-E\-N@{\-I\-E\-E\-E\-\_\-80211\-\_\-\-H\-L\-E\-N}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{\-I\-E\-E\-E\-\_\-80211\-\_\-\-H\-L\-E\-N}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf \-I\-E\-E\-E\-\_\-80211\-\_\-\-H\-L\-E\-N}~30}}\label{udp__socket_8h_a845d3d864381808f6eb9d31089ea04f5}
+\-I\-E\-E\-E 802.\-11 header length (\-B). \hypertarget{udp__socket_8h_a6a08e98b9797a6843d7517b8fedb4f88}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!\-T\-Y\-P\-E\-\_\-\-I\-E\-E\-E\-\_\-80211@{\-T\-Y\-P\-E\-\_\-\-I\-E\-E\-E\-\_\-80211}}
+\index{\-T\-Y\-P\-E\-\_\-\-I\-E\-E\-E\-\_\-80211@{\-T\-Y\-P\-E\-\_\-\-I\-E\-E\-E\-\_\-80211}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{\-T\-Y\-P\-E\-\_\-\-I\-E\-E\-E\-\_\-80211}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf \-T\-Y\-P\-E\-\_\-\-I\-E\-E\-E\-\_\-80211}~2}}\label{udp__socket_8h_a6a08e98b9797a6843d7517b8fedb4f88}
+\-Buffer with an \-I\-E\-E\-E 802.\-11 frame. \hypertarget{udp__socket_8h_a8895713e3ec75378440fd43509f2acd5}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!\-U\-D\-P\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N@{\-U\-D\-P\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}}
+\index{\-U\-D\-P\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N@{\-U\-D\-P\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{\-U\-D\-P\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf \-U\-D\-P\-\_\-\-B\-U\-F\-F\-E\-R\-\_\-\-L\-E\-N}~5000}}\label{udp__socket_8h_a8895713e3ec75378440fd43509f2acd5}
+\-Size of the \-R\-X/\-T\-X buffers. 
+
+\subsection{\-Typedef \-Documentation}
+\hypertarget{udp__socket_8h_ad72127ece01418e9b6deb0a5f90a6ed2}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!ifreq\-\_\-t@{ifreq\-\_\-t}}
+\index{ifreq\-\_\-t@{ifreq\-\_\-t}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{ifreq\-\_\-t}]{\setlength{\rightskip}{0pt plus 5cm}typedef struct ifreq {\bf ifreq\-\_\-t}}}\label{udp__socket_8h_ad72127ece01418e9b6deb0a5f90a6ed2}
+\-Type for ifreq. 
+
+\subsection{\-Function \-Documentation}
+\hypertarget{udp__socket_8h_a62c24bbea57a8e06093d74be3b93788d}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!init\-\_\-if\-\_\-sockaddr\-\_\-ll@{init\-\_\-if\-\_\-sockaddr\-\_\-ll}}
+\index{init\-\_\-if\-\_\-sockaddr\-\_\-ll@{init\-\_\-if\-\_\-sockaddr\-\_\-ll}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{init\-\_\-if\-\_\-sockaddr\-\_\-ll}]{\setlength{\rightskip}{0pt plus 5cm}sockaddr\-\_\-ll\-\_\-t$\ast$ {\bf init\-\_\-if\-\_\-sockaddr\-\_\-ll} (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{if\-\_\-name, }
+\item[{const int}]{port}
+\end{DoxyParamCaption}
+)}}\label{udp__socket_8h_a62c24bbea57a8e06093d74be3b93788d}
+if ( getifaddrs(\&ifaddr) $<$ 0 ) \{ handle\-\_\-sys\-\_\-error(\char`\"{}init\-\_\-if\-\_\-sockaddr\-\_\-ll\-: \char`\"{} $\backslash$ \char`\"{}$<$getifaddrs$>$ returned error. Error\-: \char`\"{}); \}
+
+for ( ifa = ifaddr; ifa != \-N\-U\-L\-L; ifa = ifa-\/$>$ifa\-\_\-next ) \{
+
+if ( ifa-\/$>$ifa\-\_\-addr == \-N\-U\-L\-L ) \{ continue; \}
+
+i = getnameinfo(ifa-\/$>$ifa\-\_\-addr, sizeof(struct sockaddr\-\_\-ll) , host, \-N\-I\-\_\-\-M\-A\-X\-H\-O\-S\-T, \-N\-U\-L\-L, 0, \-N\-I\-\_\-\-N\-U\-M\-E\-R\-I\-C\-H\-O\-S\-T);
+
+if ( ( strcmp(ifa-\/$>$ifa\-\_\-name,if\-\_\-name) == 0 ) \&\& ( ifa-\/$>$ifa\-\_\-addr-\/$>$sa\-\_\-family == \-A\-F\-\_\-\-P\-A\-C\-K\-E\-T ) ) \{
+
+if ( i != 0 ) \{ handle\-\_\-app\-\_\-error(\char`\"{}init\-\_\-if\-\_\-sockaddr\-\_\-in\-: \char`\"{} $\backslash$ \char`\"{}$<$getnameinfo$>$ failed\-: \%s$\backslash$n\char`\"{} , gai\-\_\-strerror(i)); \}
+
+if\-\_\-found = true; \}
+
+freeifaddrs(ifaddr);
+
+if ( if\-\_\-found == false ) \{ handle\-\_\-app\-\_\-error(\char`\"{}\-Could not get local interface, if\-\_\-name = \%s.$\backslash$n\char`\"{} , if\-\_\-name); \} \} \hypertarget{udp__socket_8h_af3c171646de5c3f7df9a01d418dd0d18}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!new\-\_\-ifreq@{new\-\_\-ifreq}}
+\index{new\-\_\-ifreq@{new\-\_\-ifreq}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{new\-\_\-ifreq}]{\setlength{\rightskip}{0pt plus 5cm}{\bf ifreq\-\_\-t}$\ast$ {\bf new\-\_\-ifreq} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{udp__socket_8h_af3c171646de5c3f7df9a01d418dd0d18}
+
+
+\-Allocates memory for an ifreq structure. 
+
+\begin{DoxyReturn}{\-Returns}
+\-A pointer to the newly allocated block of memory. 
+\end{DoxyReturn}
+\hypertarget{udp__socket_8h_ab0f67b499fa45ae60d52de9abedf386c}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!new\-\_\-iovec@{new\-\_\-iovec}}
+\index{new\-\_\-iovec@{new\-\_\-iovec}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{new\-\_\-iovec}]{\setlength{\rightskip}{0pt plus 5cm}iovec\-\_\-t$\ast$ {\bf new\-\_\-iovec} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{udp__socket_8h_ab0f67b499fa45ae60d52de9abedf386c}
+
+
+\-Allocates memory for an iovec structure. 
+
+\begin{DoxyReturn}{\-Returns}
+\-A pointer to the newly allocated block of memory. 
+\end{DoxyReturn}
+\hypertarget{udp__socket_8h_a18081c9e19b5230ca63f1f1fee6c89ec}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!new\-\_\-sockaddr@{new\-\_\-sockaddr}}
+\index{new\-\_\-sockaddr@{new\-\_\-sockaddr}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{new\-\_\-sockaddr}]{\setlength{\rightskip}{0pt plus 5cm}sockaddr\-\_\-t$\ast$ {\bf new\-\_\-sockaddr} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{udp__socket_8h_a18081c9e19b5230ca63f1f1fee6c89ec}
+
+
+\-Allocates memory for an sockaddr structure. 
+
+\begin{DoxyReturn}{\-Returns}
+\-A pointer to the newly allocated block of memory. 
+\end{DoxyReturn}
+\hypertarget{udp__socket_8h_a95cef8a3185b3a39af27ef94e695dfce}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!new\-\_\-sockaddr\-\_\-in@{new\-\_\-sockaddr\-\_\-in}}
+\index{new\-\_\-sockaddr\-\_\-in@{new\-\_\-sockaddr\-\_\-in}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{new\-\_\-sockaddr\-\_\-in}]{\setlength{\rightskip}{0pt plus 5cm}sockaddr\-\_\-in\-\_\-t$\ast$ {\bf new\-\_\-sockaddr\-\_\-in} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{udp__socket_8h_a95cef8a3185b3a39af27ef94e695dfce}
+
+
+\-Allocates memory for an sockaddr\-\_\-in structure. 
+
+\begin{DoxyReturn}{\-Returns}
+\-A pointer to the newly allocated block of memory. 
+\end{DoxyReturn}
+\hypertarget{udp__socket_8h_ace8be6118b75a2d077688d9c44fc74aa}{\index{udp\-\_\-socket.\-h@{udp\-\_\-socket.\-h}!open\-\_\-transmitter\-\_\-udp\-\_\-socket@{open\-\_\-transmitter\-\_\-udp\-\_\-socket}}
+\index{open\-\_\-transmitter\-\_\-udp\-\_\-socket@{open\-\_\-transmitter\-\_\-udp\-\_\-socket}!udp_socket.h@{udp\-\_\-socket.\-h}}
+\subsubsection[{open\-\_\-transmitter\-\_\-udp\-\_\-socket}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf open\-\_\-transmitter\-\_\-udp\-\_\-socket} (
+\begin{DoxyParamCaption}
+\item[{const int}]{port, }
+\item[{in\-\_\-addr\-\_\-t}]{addr}
+\end{DoxyParamCaption}
+)}}\label{udp__socket_8h_ace8be6118b75a2d077688d9c44fc74aa}
+sockaddr\-\_\-in\-\_\-t server; memset(\&server, 0, sizeof server); server.\-sin\-\_\-family = \-A\-F\-\_\-\-I\-N\-E\-T; // \-Use \-I\-Pv4 server.\-sin\-\_\-addr.\-s\-\_\-addr = addr; // \-My \-I\-P server.\-sin\-\_\-port = port; // \-Server \-Port
+
+\-Bind socket if ((bind(fd, (struct sockaddr $\ast$) \&server, sizeof(server))) == -\/1) \{ close(fd); perror(\char`\"{}\-Can't bind\char`\"{}); \} 

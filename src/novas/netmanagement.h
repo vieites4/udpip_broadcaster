@@ -15,7 +15,7 @@
 #include "../gps.h"
 #include "../gpsdclient.h"
 #include <ev.h>
-#include "itsnet_header.h"erase
+#include "itsnet_header.h"
 #include "../udpev/define.h"
 #define TIMER_1	            (unsigned short)0x0001
 #define TIMER_2	            (unsigned short)0x0002
@@ -163,6 +163,7 @@ typedef struct ieee80211_frame
 	ieee80211_buffer_t buffer;	/*!< Buffer with frame contents. */
 } ieee80211_frame_t;
 /**
+ * @fn sup_elem_locT
  * @brief This function erase an element of loct list.
  * @param num, we use this to know what element of timer list related with loct list we have to erase
  * @param mac of the element we want to erase
@@ -170,6 +171,7 @@ typedef struct ieee80211_frame
   */
 int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);
 /**
+ * @fn search_in_locT
  * @brief This function search an element of loct list.
  * @param data, we use this information to make the search
  * @param list where we look for the element
@@ -178,43 +180,51 @@ int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);
 int search_in_locT (itsnet_node * data, List_locT * locT);
 
 /**
+ * @fn sup_elem_lsp
  * @brief This function erase last element of lsp list.
  * @param num, not necessary
   */
 int sup_elem_lsp (int num);
 /**
+ * @fn add_end_locT
  * @brief This function add an element of loct list.
  * @param list where we put the new element
  * @param data is the information of the new element
   */
 int add_end_locT ( List_locT * locT, itsnet_node data);
 /**
+ * @fn add_end_lsp
  * @brief This function add an element of lsp list.
  * @param list where we put the new element
  * @param data is the information of the new element
   */
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data);
 /**
+ * @fn add_end_rep
  * @brief This function add an element of rep list.
  * @param list where we put the new element
  * @param data is the information of the new element
   */
 int add_end_rep ( List_lsp *rep, itsnet_packet data);
 /**
+ * @fn view_lsp
  * @brief This function permits view lsp list of TimeId.
  */
 void view_lsp ();
 /**
+ * @fn view_locT
  * @brief This function permits view loct list of mac.
  */
 void view_locT ();
 List_locT * startup1();
 /**
+ * @fn LPV_update
  * @brief LPV_update This function is the Callback when LPV timer breaks! use gps information to create
  * new LPV.
   */
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
 /**
+ * @fn Beacon_send
  * @brief Beacon_send This function is the Callback when Beacon timer breaks! we need to send a beacon to
  * announce our mac to the other hosts,so as they can annotate it on their loct.
   */
@@ -222,6 +232,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
 void Beacon_send(EV_P_ ev_timer *w, int revents) ;
 int duplicate_control(void * data,List_locT * locT);
 /**
+ * @fn LS
  * @brief LS hasn't been implemented yet
   */
 void LS(int option);
@@ -250,6 +261,7 @@ struct List_timer
 };
 typedef struct List_timer List_timer;
 /**
+ * @fn sup_timer
  * @brief This function erase an element of lsp or loct timer list.
  * @param TimerId is the name of timer, sn in case of lsp or number unsigned short in loct case
  * @param type tell us if the element is lsp (2) or loct (1)
@@ -257,23 +269,27 @@ typedef struct List_timer List_timer;
   */
 int sup_timer (unsigned short TimerId, int type);
 /**
+ * @fn init_lsp
  * @brief This function create a new list of lsp, it's the list where we maintain frames we
  *  didn't send because there aren't neighbours.
  * @return the list pointer
   */
 List_lsp * init_lsp ();
 /**
+ * @fn init_locT
  * @brief This function create a new list of loct, it's the list where we maintain macs we receive
  * @return the list pointer
   */
 List_locT * init_locT ();
 itsnet_position_vector * LPV_ini();
 /**
+ * @fn init_timer_list
  * @brief This function create a new list of timers.
  * @return the list pointer
   */
 List_timer * init_timer_list ();
 /**
+ * @fn AddTimer
  * @brief This function create a new element in the list of timers.
  * @param TimerId is the name of timer, sn in case of lsp or number unsigned short in loct case
  * @param time tell us lifetime of element we will timer
@@ -282,6 +298,7 @@ List_timer * init_timer_list ();
   */
 bool AddTimer(unsigned short TimerId, int time, int type);
 /**
+ * @fn FindTimer
  * @brief This function find a timer of an element of lsp or loct to know if it exist and update
  * it or create a new timer in case it don't exist.
  * @param TimerId is the name of timer, sn in case of lsp or number unsigned short in loct case
@@ -290,6 +307,7 @@ bool AddTimer(unsigned short TimerId, int time, int type);
   */
 tTimer * FindTimer(unsigned short TimerId, int type);
 /**
+ * @fn SystemTickEvent
  * @brief When a second passed this function is called by alarm signal to
  * substract 1 to timers of elements of loct and lsp. If one of them arrive to zero a SIGUSR2
  * or SIGUSR1 is rised to call another function (CheckTimerEvent_lsp or CheckTimerEvent)
@@ -297,6 +315,7 @@ tTimer * FindTimer(unsigned short TimerId, int type);
  */
 void SystemTickEvent(void);
 /**
+ * @fn CheckTimerEvent_lsp
  * @brief When one of the elements of lsp finishes its timer a signal SIGUSR2 is rised and
  * this function is called to call sup_elem_t_lsp,
  * to erase the timer of the element we erase.
@@ -304,12 +323,14 @@ void SystemTickEvent(void);
  */
 void CheckTimerEvent_lsp();
 /**
+ * @fn CheckTimerEvent_lsp
  * @brief When one of the elements of loct finishes its timer a signal SIGUSR1 is rised and
  * this function is called to call sup_elem_loct
  */
 
 void CheckTimerEvent(EV_P_ ev_timer *w, int revents);
 /**
+ * @fn thr_h2
  * @brief This is the thread we use to timer lifetime of locT elements and lsp elements.
  * @param public_arg Public arguments for this callback function.
 

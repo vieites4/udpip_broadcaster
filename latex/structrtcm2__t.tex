@@ -1,0 +1,111 @@
+\hypertarget{structrtcm2__t}{\section{rtcm2\-\_\-t \-Struct \-Reference}
+\label{structrtcm2__t}\index{rtcm2\-\_\-t@{rtcm2\-\_\-t}}
+}
+\subsection*{\-Public \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structrtcm2__t_a882d9e5c073d2fcf68f3c789c83a1747}{unsigned {\bfseries type}}\label{structrtcm2__t_a882d9e5c073d2fcf68f3c789c83a1747}
+
+\item 
+\hypertarget{structrtcm2__t_a682e3d75f902a5c2a544522bce3eaf89}{unsigned {\bfseries length}}\label{structrtcm2__t_a682e3d75f902a5c2a544522bce3eaf89}
+
+\item 
+\hypertarget{structrtcm2__t_a0d6ac46d3ccde56278d3cc8c41100b0d}{double {\bfseries zcount}}\label{structrtcm2__t_a0d6ac46d3ccde56278d3cc8c41100b0d}
+
+\item 
+\hypertarget{structrtcm2__t_ac4940e89cc616800263a8acaa54af3ca}{unsigned {\bfseries refstaid}}\label{structrtcm2__t_ac4940e89cc616800263a8acaa54af3ca}
+
+\item 
+\hypertarget{structrtcm2__t_adfba38c6a6046c39b8601a67fb24337b}{unsigned {\bfseries seqnum}}\label{structrtcm2__t_adfba38c6a6046c39b8601a67fb24337b}
+
+\item 
+\hypertarget{structrtcm2__t_a657511a3a9cebab99ee90b204e21b6c5}{unsigned {\bfseries stathlth}}\label{structrtcm2__t_a657511a3a9cebab99ee90b204e21b6c5}
+
+\item 
+\hypertarget{structrtcm2__t_a941092d45813c175eb3c9cae25758db2}{\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>unsigned int {\bfseries nentries}\\
+\>\>struct {\bfseries gps\_rangesat\_t} \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>unsigned {\bfseries udre}\\
+\>\>\>unsigned {\bfseries iod}\\
+\>\>\>double {\bfseries prc}\\
+\>\>\>double {\bfseries rrc}\\
+\>\>\} {\bfseries sat} \mbox{[}MAXCORRECTIONS\mbox{]}\\
+\>\} {\bfseries gps\_ranges}\\
+\>struct \{\\
+\>\>bool {\bfseries valid}\\
+\>\>double {\bfseries x}\\
+\>\>double {\bfseries y}\\
+\>\>double {\bfseries z}\\
+\>\} {\bfseries ecef}\\
+\>struct \{\\
+\>\>bool {\bfseries valid}\\
+\>\>int {\bfseries system}\\
+\>\>int {\bfseries sense}\\
+\>\>char {\bfseries datum} \mbox{[}6\mbox{]}\\
+\>\>double {\bfseries dx}\\
+\>\>double {\bfseries dy}\\
+\>\>double {\bfseries dz}\\
+\>\} {\bfseries reference}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries nentries}\\
+\>\>struct {\bfseries consat\_t} \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>bool {\bfseries iodl}\\
+\>\>\>unsigned int {\bfseries health}\\
+\>\>\>int {\bfseries snr}\\
+\>\>\>bool {\bfseries health\_en}\\
+\>\>\>bool {\bfseries new\_data}\\
+\>\>\>bool {\bfseries los\_warning}\\
+\>\>\>unsigned int {\bfseries tou}\\
+\>\>\} {\bfseries sat} \mbox{[}MAXHEALTH\mbox{]}\\
+\>\} {\bfseries conhealth}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries nentries}\\
+\>\>struct {\bfseries station\_t} \{\\
+\>\>\>double {\bfseries latitude}\\
+\>\>\>double {\bfseries longitude}\\
+\>\>\>unsigned int {\bfseries range}\\
+\>\>\>double {\bfseries frequency}\\
+\>\>\>unsigned int {\bfseries health}\\
+\>\>\>unsigned int {\bfseries station\_id}\\
+\>\>\>unsigned int {\bfseries bitrate}\\
+\>\>\} {\bfseries station} \mbox{[}MAXSTATIONS\mbox{]}\\
+\>\} {\bfseries almanac}\\
+\>struct \{\\
+\>\>bool {\bfseries status}\\
+\>\>bool {\bfseries rangeflag}\\
+\>\>double {\bfseries lat}\\
+\>\>double {\bfseries lon}\\
+\>\>unsigned int {\bfseries range}\\
+\>\} {\bfseries xmitter}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries week}\\
+\>\>unsigned int {\bfseries hour}\\
+\>\>unsigned int {\bfseries leapsecs}\\
+\>\} {\bfseries gpstime}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries nentries}\\
+\>\>struct {\bfseries glonass\_rangesat\_t} \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>unsigned {\bfseries udre}\\
+\>\>\>unsigned {\bfseries tod}\\
+\>\>\>bool {\bfseries change}\\
+\>\>\>double {\bfseries prc}\\
+\>\>\>double {\bfseries rrc}\\
+\>\>\} {\bfseries sat} \mbox{[}MAXCORRECTIONS\mbox{]}\\
+\>\} {\bfseries glonass\_ranges}\\
+\>char {\bfseries message} \mbox{[}(RTCM2\_WORDS\_MAX-\/2)$\ast$sizeof(isgps30bits\_t)\mbox{]}\\
+\>isgps30bits\_t {\bfseries words} \mbox{[}RTCM2\_WORDS\_MAX-\/2\mbox{]}\\
+\}; }\label{structrtcm2__t_a941092d45813c175eb3c9cae25758db2}
+\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\-The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+gps.\-h\end{DoxyCompactItemize}

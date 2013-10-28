@@ -1,0 +1,605 @@
+\hypertarget{structais__t}{\section{ais\-\_\-t \-Struct \-Reference}
+\label{structais__t}\index{ais\-\_\-t@{ais\-\_\-t}}
+}
+\subsection*{\-Public \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structais__t_ac7bbde4320573902e3f499c28134e6b4}{unsigned int {\bfseries type}}\label{structais__t_ac7bbde4320573902e3f499c28134e6b4}
+
+\item 
+\hypertarget{structais__t_af8f1bc36a5362101810783e1de0ef994}{unsigned int {\bfseries repeat}}\label{structais__t_af8f1bc36a5362101810783e1de0ef994}
+
+\item 
+\hypertarget{structais__t_a1adf1d694a1c5fa3c6b086768a30452a}{unsigned int {\bfseries mmsi}}\label{structais__t_a1adf1d694a1c5fa3c6b086768a30452a}
+
+\item 
+\hypertarget{structais__t_a7d5d40d56aaf6f9fba3f4b87946ab51a}{\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>unsigned int {\bfseries status}\\
+\>\>signed {\bfseries turn}\\
+\>\>unsigned int {\bfseries speed}\\
+\>\>bool {\bfseries accuracy}\\
+\>\>int {\bfseries lon}\\
+\>\>int {\bfseries lat}\\
+\>\>unsigned int {\bfseries course}\\
+\>\>unsigned int {\bfseries heading}\\
+\>\>unsigned int {\bfseries second}\\
+\>\>unsigned int {\bfseries maneuver}\\
+\>\>bool {\bfseries raim}\\
+\>\>unsigned int {\bfseries radio}\\
+\>\} {\bfseries type1}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries year}\\
+\>\>unsigned int {\bfseries month}\\
+\>\>unsigned int {\bfseries day}\\
+\>\>unsigned int {\bfseries hour}\\
+\>\>unsigned int {\bfseries minute}\\
+\>\>unsigned int {\bfseries second}\\
+\>\>bool {\bfseries accuracy}\\
+\>\>int {\bfseries lon}\\
+\>\>int {\bfseries lat}\\
+\>\>unsigned int {\bfseries epfd}\\
+\>\>bool {\bfseries raim}\\
+\>\>unsigned int {\bfseries radio}\\
+\>\} {\bfseries type4}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries ais\_version}\\
+\>\>unsigned int {\bfseries imo}\\
+\>\>char {\bfseries callsign} \mbox{[}7+1\mbox{]}\\
+\>\>char {\bfseries shipname} \mbox{[}AIS\_SHIPNAME\_MAXLEN+1\mbox{]}\\
+\>\>unsigned int {\bfseries shiptype}\\
+\>\>unsigned int {\bfseries to\_bow}\\
+\>\>unsigned int {\bfseries to\_stern}\\
+\>\>unsigned int {\bfseries to\_port}\\
+\>\>unsigned int {\bfseries to\_starboard}\\
+\>\>unsigned int {\bfseries epfd}\\
+\>\>unsigned int {\bfseries month}\\
+\>\>unsigned int {\bfseries day}\\
+\>\>unsigned int {\bfseries hour}\\
+\>\>unsigned int {\bfseries minute}\\
+\>\>unsigned int {\bfseries draught}\\
+\>\>char {\bfseries destination} \mbox{[}20+1\mbox{]}\\
+\>\>unsigned int {\bfseries dte}\\
+\>\} {\bfseries type5}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries seqno}\\
+\>\>unsigned int {\bfseries dest\_mmsi}\\
+\>\>bool {\bfseries retransmit}\\
+\>\>unsigned int {\bfseries dac}\\
+\>\>unsigned int {\bfseries fid}\\
+\>\>size\_t {\bfseries bitcount}\\
+\hypertarget{structais__t_1_1@34_1_1@39_a2b3f42c4a663c1cf4bb37668a34c3c97}{\>\>union \{\\
+\>\>\>char {\bfseries bitdata} \mbox{[}(AIS\_TYPE6\_BINARY\_MAX+7)/8\mbox{]}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries ana\_int}\\
+\>\>\>\>unsigned int {\bfseries ana\_ext1}\\
+\>\>\>\>unsigned int {\bfseries ana\_ext2}\\
+\>\>\>\>unsigned int {\bfseries racon}\\
+\>\>\>\>unsigned int {\bfseries light}\\
+\>\>\>\>bool {\bfseries alarm}\\
+\>\>\>\>unsigned int {\bfseries stat\_ext}\\
+\>\>\>\>bool {\bfseries off\_pos}\\
+\>\>\>\} {\bfseries dac235fid10}\\
+\>\>\>struct \{\\
+\>\>\>\>char {\bfseries lastport} \mbox{[}5+1\mbox{]}\\
+\>\>\>\>unsigned int {\bfseries lmonth}\\
+\>\>\>\>unsigned int {\bfseries lday}\\
+\>\>\>\>unsigned int {\bfseries lhour}\\
+\>\>\>\>unsigned int {\bfseries lminute}\\
+\>\>\>\>char {\bfseries nextport} \mbox{[}5+1\mbox{]}\\
+\>\>\>\>unsigned int {\bfseries nmonth}\\
+\>\>\>\>unsigned int {\bfseries nday}\\
+\>\>\>\>unsigned int {\bfseries nhour}\\
+\>\>\>\>unsigned int {\bfseries nminute}\\
+\>\>\>\>char {\bfseries dangerous} \mbox{[}20+1\mbox{]}\\
+\>\>\>\>char {\bfseries imdcat} \mbox{[}4+1\mbox{]}\\
+\>\>\>\>unsigned int {\bfseries unid}\\
+\>\>\>\>unsigned int {\bfseries amount}\\
+\>\>\>\>unsigned int {\bfseries unit}\\
+\>\>\>\} {\bfseries dac1fid12}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries airdraught}\\
+\>\>\>\} {\bfseries dac1fid15}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned {\bfseries persons}\\
+\>\>\>\} {\bfseries dac1fid16}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries linkage}\\
+\>\>\>\>unsigned int {\bfseries month}\\
+\>\>\>\>unsigned int {\bfseries day}\\
+\>\>\>\>unsigned int {\bfseries hour}\\
+\>\>\>\>unsigned int {\bfseries minute}\\
+\>\>\>\>char {\bfseries portname} \mbox{[}20+1\mbox{]}\\
+\>\>\>\>char {\bfseries destination} \mbox{[}5+1\mbox{]}\\
+\>\>\>\>signed int {\bfseries lon}\\
+\>\>\>\>signed int {\bfseries lat}\\
+\>\>\>\} {\bfseries dac1fid18}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries linkage}\\
+\>\>\>\>unsigned int {\bfseries berth\_length}\\
+\>\>\>\>unsigned int {\bfseries berth\_depth}\\
+\>\>\>\>unsigned int {\bfseries position}\\
+\>\>\>\>unsigned int {\bfseries month}\\
+\>\>\>\>unsigned int {\bfseries day}\\
+\>\>\>\>unsigned int {\bfseries hour}\\
+\>\>\>\>unsigned int {\bfseries minute}\\
+\>\>\>\>unsigned int {\bfseries availability}\\
+\>\>\>\>unsigned int {\bfseries agent}\\
+\>\>\>\>unsigned int {\bfseries fuel}\\
+\>\>\>\>unsigned int {\bfseries chandler}\\
+\>\>\>\>unsigned int {\bfseries stevedore}\\
+\>\>\>\>unsigned int {\bfseries electrical}\\
+\>\>\>\>unsigned int {\bfseries water}\\
+\>\>\>\>unsigned int {\bfseries customs}\\
+\>\>\>\>unsigned int {\bfseries cartage}\\
+\>\>\>\>unsigned int {\bfseries crane}\\
+\>\>\>\>unsigned int {\bfseries lift}\\
+\>\>\>\>unsigned int {\bfseries medical}\\
+\>\>\>\>unsigned int {\bfseries navrepair}\\
+\>\>\>\>unsigned int {\bfseries provisions}\\
+\>\>\>\>unsigned int {\bfseries shiprepair}\\
+\>\>\>\>unsigned int {\bfseries surveyor}\\
+\>\>\>\>unsigned int {\bfseries steam}\\
+\>\>\>\>unsigned int {\bfseries tugs}\\
+\>\>\>\>unsigned int {\bfseries solidwaste}\\
+\>\>\>\>unsigned int {\bfseries liquidwaste}\\
+\>\>\>\>unsigned int {\bfseries hazardouswaste}\\
+\>\>\>\>unsigned int {\bfseries ballast}\\
+\>\>\>\>unsigned int {\bfseries additional}\\
+\>\>\>\>unsigned int {\bfseries regional1}\\
+\>\>\>\>unsigned int {\bfseries regional2}\\
+\>\>\>\>unsigned int {\bfseries future1}\\
+\>\>\>\>unsigned int {\bfseries future2}\\
+\>\>\>\>char {\bfseries berth\_name} \mbox{[}20+1\mbox{]}\\
+\>\>\>\>signed int {\bfseries berth\_lon}\\
+\>\>\>\>signed int {\bfseries berth\_lat}\\
+\>\>\>\} {\bfseries dac1fid20}\\
+\>\>\>struct \{\\
+\>\>\>\>bool {\bfseries wmo}\\
+\hypertarget{structais__t_1_1@34_1_1@39_1_1@59_1_1@67_ab274330a2157ecf053f7216534d525ae}{\>\>\>\>union \{\\
+\>\>\>\>\>struct \{\\
+\>\>\>\>\>\>char {\bfseries location} \mbox{[}20+1\mbox{]}\\
+\>\>\>\>\>\>signed int {\bfseries lon}\\
+\>\>\>\>\>\>signed int {\bfseries lat}\\
+\>\>\>\>\>\>unsigned int {\bfseries day}\\
+\>\>\>\>\>\>unsigned int {\bfseries hour}\\
+\>\>\>\>\>\>unsigned int {\bfseries minute}\\
+\>\>\>\>\>\>bool {\bfseries vislimit}\\
+\>\>\>\>\>\>unsigned int {\bfseries visibility}\\
+\>\>\>\>\>\>unsigned {\bfseries humidity}\\
+\>\>\>\>\>\>unsigned int {\bfseries wspeed}\\
+\>\>\>\>\>\>unsigned int {\bfseries wgust}\\
+\>\>\>\>\>\>unsigned int {\bfseries wdir}\\
+\>\>\>\>\>\>unsigned int {\bfseries pressure}\\
+\>\>\>\>\>\>unsigned int {\bfseries pressuretend}\\
+\>\>\>\>\>\>int {\bfseries airtemp}\\
+\>\>\>\>\>\>unsigned int {\bfseries watertemp}\\
+\>\>\>\>\>\>unsigned int {\bfseries waveperiod}\\
+\>\>\>\>\>\>unsigned int {\bfseries wavedir}\\
+\>\>\>\>\>\>unsigned int {\bfseries swellheight}\\
+\>\>\>\>\>\>unsigned int {\bfseries swellperiod}\\
+\>\>\>\>\>\>unsigned int {\bfseries swelldir}\\
+\>\>\>\>\>\} {\bfseries nonwmo\_obs}\\
+\>\>\>\>\>struct \{\\
+\>\>\>\>\>\>signed int {\bfseries lon}\\
+\>\>\>\>\>\>signed int {\bfseries lat}\\
+\>\>\>\>\>\>unsigned int {\bfseries month}\\
+\>\>\>\>\>\>unsigned int {\bfseries day}\\
+\>\>\>\>\>\>unsigned int {\bfseries hour}\\
+\>\>\>\>\>\>unsigned int {\bfseries minute}\\
+\>\>\>\>\>\>unsigned int {\bfseries course}\\
+\>\>\>\>\>\>unsigned int {\bfseries speed}\\
+\>\>\>\>\>\>unsigned int {\bfseries heading}\\
+\>\>\>\>\>\>unsigned int {\bfseries pressure}\\
+\>\>\>\>\>\>unsigned int {\bfseries pdelta}\\
+\>\>\>\>\>\>unsigned int {\bfseries ptend}\\
+\>\>\>\>\>\>unsigned int {\bfseries twinddir}\\
+\>\>\>\>\>\>unsigned int {\bfseries twindspeed}\\
+\>\>\>\>\>\>unsigned int {\bfseries rwinddir}\\
+\>\>\>\>\>\>unsigned int {\bfseries rwindspeed}\\
+\>\>\>\>\>\>unsigned int {\bfseries mgustspeed}\\
+\>\>\>\>\>\>unsigned int {\bfseries mgustdir}\\
+\>\>\>\>\>\>unsigned int {\bfseries airtemp}\\
+\>\>\>\>\>\>unsigned {\bfseries humidity}\\
+\>\>\>\>\>\} {\bfseries wmo\_obs}\\
+\>\>\>\>\} }\label{structais__t_1_1@34_1_1@39_1_1@59_1_1@67_ab274330a2157ecf053f7216534d525ae}
+\\
+\>\>\>\} {\bfseries dac1fid21}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries unit}\\
+\>\>\>\>unsigned int {\bfseries amount}\\
+\>\>\>\>int {\bfseries ncargos}\\
+\>\>\>\>struct {\bfseries cargo\_t} \{\\
+\>\>\>\>\>unsigned int {\bfseries code}\\
+\>\>\>\>\>unsigned int {\bfseries subtype}\\
+\>\>\>\>\} {\bfseries cargos} \mbox{[}28\mbox{]}\\
+\>\>\>\} {\bfseries dac1fid25}\\
+\>\>\>struct \hyperlink{structroute__info}{route\_info} {\bfseries dac1fid28}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries linkage}\\
+\>\>\>\>char {\bfseries text} \mbox{[}AIS\_DAC1FID30\_TEXT\_MAX\mbox{]}\\
+\>\>\>\} {\bfseries dac1fid30}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries type}\\
+\>\>\>\>unsigned int {\bfseries repeat}\\
+\>\>\>\>unsigned int {\bfseries mmsi}\\
+\>\>\>\>unsigned int {\bfseries seqno}\\
+\>\>\>\>unsigned int {\bfseries dest\_mmsi}\\
+\>\>\>\>signed int {\bfseries retransmit}\\
+\>\>\>\>unsigned int {\bfseries dac}\\
+\>\>\>\>unsigned int {\bfseries fid}\\
+\>\>\>\>unsigned int {\bfseries month}\\
+\>\>\>\>unsigned int {\bfseries day}\\
+\>\>\>\>signed int {\bfseries ntidals}\\
+\>\>\>\>struct {\bfseries tidal\_t} \{\\
+\>\>\>\>\>signed int {\bfseries lon}\\
+\>\>\>\>\>signed int {\bfseries lat}\\
+\>\>\>\>\>unsigned int {\bfseries from\_hour}\\
+\>\>\>\>\>unsigned int {\bfseries from\_min}\\
+\>\>\>\>\>unsigned int {\bfseries to\_hour}\\
+\>\>\>\>\>unsigned int {\bfseries to\_min}\\
+\>\>\>\>\>unsigned int {\bfseries cdir}\\
+\>\>\>\>\>unsigned int {\bfseries cspeed}\\
+\>\>\>\>\} {\bfseries tidals} \mbox{[}3\mbox{]}\\
+\>\>\>\} {\bfseries dac1fid32}\\
+\>\>\} }\label{structais__t_1_1@34_1_1@39_a2b3f42c4a663c1cf4bb37668a34c3c97}
+\\
+\>\} {\bfseries type6}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries mmsi1}\\
+\>\>unsigned int {\bfseries mmsi2}\\
+\>\>unsigned int {\bfseries mmsi3}\\
+\>\>unsigned int {\bfseries mmsi4}\\
+\>\} {\bfseries type7}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries dac}\\
+\>\>unsigned int {\bfseries fid}\\
+\>\>size\_t {\bfseries bitcount}\\
+\hypertarget{structais__t_1_1@34_1_1@41_a95a8a21e0e94ba959b16eefdc959ab89}{\>\>union \{\\
+\>\>\>char {\bfseries bitdata} \mbox{[}(AIS\_TYPE8\_BINARY\_MAX+7)/8\mbox{]}\\
+\>\>\>struct \{\\
+\>\>\>\>int {\bfseries lon}\\
+\>\>\>\>int {\bfseries lat}\\
+\>\>\>\>unsigned int {\bfseries day}\\
+\>\>\>\>unsigned int {\bfseries hour}\\
+\>\>\>\>unsigned int {\bfseries minute}\\
+\>\>\>\>unsigned int {\bfseries wspeed}\\
+\>\>\>\>unsigned int {\bfseries wgust}\\
+\>\>\>\>unsigned int {\bfseries wdir}\\
+\>\>\>\>unsigned int {\bfseries wgustdir}\\
+\>\>\>\>unsigned int {\bfseries airtemp}\\
+\>\>\>\>unsigned int {\bfseries humidity}\\
+\>\>\>\>unsigned int {\bfseries dewpoint}\\
+\>\>\>\>unsigned int {\bfseries pressure}\\
+\>\>\>\>unsigned int {\bfseries pressuretend}\\
+\>\>\>\>unsigned int {\bfseries visibility}\\
+\>\>\>\>int {\bfseries waterlevel}\\
+\>\>\>\>unsigned int {\bfseries leveltrend}\\
+\>\>\>\>unsigned int {\bfseries cspeed}\\
+\>\>\>\>unsigned int {\bfseries cdir}\\
+\>\>\>\>unsigned int {\bfseries cspeed2}\\
+\>\>\>\>unsigned int {\bfseries cdir2}\\
+\>\>\>\>unsigned int {\bfseries cdepth2}\\
+\>\>\>\>unsigned int {\bfseries cspeed3}\\
+\>\>\>\>unsigned int {\bfseries cdir3}\\
+\>\>\>\>unsigned int {\bfseries cdepth3}\\
+\>\>\>\>unsigned int {\bfseries waveheight}\\
+\>\>\>\>unsigned int {\bfseries waveperiod}\\
+\>\>\>\>unsigned int {\bfseries wavedir}\\
+\>\>\>\>unsigned int {\bfseries swellheight}\\
+\>\>\>\>unsigned int {\bfseries swellperiod}\\
+\>\>\>\>unsigned int {\bfseries swelldir}\\
+\>\>\>\>unsigned int {\bfseries seastate}\\
+\>\>\>\>unsigned int {\bfseries watertemp}\\
+\>\>\>\>unsigned int {\bfseries preciptype}\\
+\>\>\>\>unsigned int {\bfseries salinity}\\
+\>\>\>\>unsigned int {\bfseries ice}\\
+\>\>\>\} {\bfseries dac1fid11}\\
+\>\>\>struct \{\\
+\>\>\>\>char {\bfseries reason} \mbox{[}20+1\mbox{]}\\
+\>\>\>\>char {\bfseries closefrom} \mbox{[}20+1\mbox{]}\\
+\>\>\>\>char {\bfseries closeto} \mbox{[}20+1\mbox{]}\\
+\>\>\>\>unsigned int {\bfseries radius}\\
+\>\>\>\>unsigned int {\bfseries extunit}\\
+\>\>\>\>unsigned int {\bfseries fday}\\
+\>\>\>\>unsigned int {\bfseries fmonth}\\
+\>\>\>\>unsigned int {\bfseries fhour}\\
+\>\>\>\>unsigned int {\bfseries fminute}\\
+\>\>\>\>unsigned int {\bfseries tday}\\
+\>\>\>\>unsigned int {\bfseries tmonth}\\
+\>\>\>\>unsigned int {\bfseries thour}\\
+\>\>\>\>unsigned int {\bfseries tminute}\\
+\>\>\>\} {\bfseries dac1fid13}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries airdraught}\\
+\>\>\>\} {\bfseries dac1fid15}\\
+\>\>\>struct \{\\
+\>\>\>\>signed int {\bfseries ntargets}\\
+\>\>\>\>struct {\bfseries target\_t} \{\\
+\>\>\>\>\>unsigned int {\bfseries idtype}\\
+\>\>\>\>\>union {\bfseries target\_id} \{\\
+\>\>\>\>\>\>unsigned int {\bfseries mmsi}\\
+\>\>\>\>\>\>unsigned int {\bfseries imo}\\
+\>\>\>\>\>\>char {\bfseries callsign} \mbox{[}DAC1FID17\_ID\_LENGTH+1\mbox{]}\\
+\>\>\>\>\>\>char {\bfseries other} \mbox{[}DAC1FID17\_ID\_LENGTH+1\mbox{]}\\
+\>\>\>\>\>\} {\bfseries id}\\
+\>\>\>\>\>signed int {\bfseries lat}\\
+\>\>\>\>\>signed int {\bfseries lon}\\
+\>\>\>\>\>unsigned int {\bfseries course}\\
+\>\>\>\>\>unsigned int {\bfseries second}\\
+\>\>\>\>\>unsigned int {\bfseries speed}\\
+\>\>\>\>\} {\bfseries targets} \mbox{[}4\mbox{]}\\
+\>\>\>\} {\bfseries dac1fid17}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries linkage}\\
+\>\>\>\>char {\bfseries station} \mbox{[}20+1\mbox{]}\\
+\>\>\>\>signed int {\bfseries lon}\\
+\>\>\>\>signed int {\bfseries lat}\\
+\>\>\>\>unsigned int {\bfseries status}\\
+\>\>\>\>unsigned int {\bfseries signal}\\
+\>\>\>\>unsigned int {\bfseries hour}\\
+\>\>\>\>unsigned int {\bfseries minute}\\
+\>\>\>\>unsigned int {\bfseries nextsignal}\\
+\>\>\>\} {\bfseries dac1fid19}\\
+\>\>\>struct \hyperlink{structroute__info}{route\_info} {\bfseries dac1fid27}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries linkage}\\
+\>\>\>\>char {\bfseries text} \mbox{[}AIS\_DAC1FID29\_TEXT\_MAX\mbox{]}\\
+\>\>\>\} {\bfseries dac1fid29}\\
+\>\>\>struct \{\\
+\>\>\>\>bool {\bfseries accuracy}\\
+\>\>\>\>int {\bfseries lon}\\
+\>\>\>\>int {\bfseries lat}\\
+\>\>\>\>unsigned int {\bfseries day}\\
+\>\>\>\>unsigned int {\bfseries hour}\\
+\>\>\>\>unsigned int {\bfseries minute}\\
+\>\>\>\>unsigned int {\bfseries wspeed}\\
+\>\>\>\>unsigned int {\bfseries wgust}\\
+\>\>\>\>unsigned int {\bfseries wdir}\\
+\>\>\>\>unsigned int {\bfseries wgustdir}\\
+\>\>\>\>int {\bfseries airtemp}\\
+\>\>\>\>unsigned int {\bfseries humidity}\\
+\>\>\>\>int {\bfseries dewpoint}\\
+\>\>\>\>unsigned int {\bfseries pressure}\\
+\>\>\>\>unsigned int {\bfseries pressuretend}\\
+\>\>\>\>bool {\bfseries visgreater}\\
+\>\>\>\>unsigned int {\bfseries visibility}\\
+\>\>\>\>int {\bfseries waterlevel}\\
+\>\>\>\>unsigned int {\bfseries leveltrend}\\
+\>\>\>\>unsigned int {\bfseries cspeed}\\
+\>\>\>\>unsigned int {\bfseries cdir}\\
+\>\>\>\>unsigned int {\bfseries cspeed2}\\
+\>\>\>\>unsigned int {\bfseries cdir2}\\
+\>\>\>\>unsigned int {\bfseries cdepth2}\\
+\>\>\>\>unsigned int {\bfseries cspeed3}\\
+\>\>\>\>unsigned int {\bfseries cdir3}\\
+\>\>\>\>unsigned int {\bfseries cdepth3}\\
+\>\>\>\>unsigned int {\bfseries waveheight}\\
+\>\>\>\>unsigned int {\bfseries waveperiod}\\
+\>\>\>\>unsigned int {\bfseries wavedir}\\
+\>\>\>\>unsigned int {\bfseries swellheight}\\
+\>\>\>\>unsigned int {\bfseries swellperiod}\\
+\>\>\>\>unsigned int {\bfseries swelldir}\\
+\>\>\>\>unsigned int {\bfseries seastate}\\
+\>\>\>\>int {\bfseries watertemp}\\
+\>\>\>\>unsigned int {\bfseries preciptype}\\
+\>\>\>\>unsigned int {\bfseries salinity}\\
+\>\>\>\>unsigned int {\bfseries ice}\\
+\>\>\>\} {\bfseries dac1fid31}\\
+\>\>\} }\label{structais__t_1_1@34_1_1@41_a95a8a21e0e94ba959b16eefdc959ab89}
+\\
+\>\} {\bfseries type8}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries alt}\\
+\>\>unsigned int {\bfseries speed}\\
+\>\>bool {\bfseries accuracy}\\
+\>\>int {\bfseries lon}\\
+\>\>int {\bfseries lat}\\
+\>\>unsigned int {\bfseries course}\\
+\>\>unsigned int {\bfseries second}\\
+\>\>unsigned int {\bfseries regional}\\
+\>\>unsigned int {\bfseries dte}\\
+\>\>bool {\bfseries assigned}\\
+\>\>bool {\bfseries raim}\\
+\>\>unsigned int {\bfseries radio}\\
+\>\} {\bfseries type9}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries dest\_mmsi}\\
+\>\} {\bfseries type10}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries seqno}\\
+\>\>unsigned int {\bfseries dest\_mmsi}\\
+\>\>bool {\bfseries retransmit}\\
+\>\>char {\bfseries text} \mbox{[}AIS\_TYPE12\_TEXT\_MAX\mbox{]}\\
+\>\} {\bfseries type12}\\
+\>struct \{\\
+\>\>char {\bfseries text} \mbox{[}AIS\_TYPE14\_TEXT\_MAX\mbox{]}\\
+\>\} {\bfseries type14}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries mmsi1}\\
+\>\>unsigned int {\bfseries type1\_1}\\
+\>\>unsigned int {\bfseries offset1\_1}\\
+\>\>unsigned int {\bfseries type1\_2}\\
+\>\>unsigned int {\bfseries offset1\_2}\\
+\>\>unsigned int {\bfseries mmsi2}\\
+\>\>unsigned int {\bfseries type2\_1}\\
+\>\>unsigned int {\bfseries offset2\_1}\\
+\>\} {\bfseries type15}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries mmsi1}\\
+\>\>unsigned int {\bfseries offset1}\\
+\>\>unsigned int {\bfseries increment1}\\
+\>\>unsigned int {\bfseries mmsi2}\\
+\>\>unsigned int {\bfseries offset2}\\
+\>\>unsigned int {\bfseries increment2}\\
+\>\} {\bfseries type16}\\
+\>struct \{\\
+\>\>int {\bfseries lon}\\
+\>\>int {\bfseries lat}\\
+\>\>size\_t {\bfseries bitcount}\\
+\>\>char {\bfseries bitdata} \mbox{[}(AIS\_TYPE17\_BINARY\_MAX+7)/8\mbox{]}\\
+\>\} {\bfseries type17}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries reserved}\\
+\>\>unsigned int {\bfseries speed}\\
+\>\>bool {\bfseries accuracy}\\
+\>\>int {\bfseries lon}\\
+\>\>int {\bfseries lat}\\
+\>\>unsigned int {\bfseries course}\\
+\>\>unsigned int {\bfseries heading}\\
+\>\>unsigned int {\bfseries second}\\
+\>\>unsigned int {\bfseries regional}\\
+\>\>bool {\bfseries cs}\\
+\>\>bool {\bfseries display}\\
+\>\>bool {\bfseries dsc}\\
+\>\>bool {\bfseries band}\\
+\>\>bool {\bfseries msg22}\\
+\>\>bool {\bfseries assigned}\\
+\>\>bool {\bfseries raim}\\
+\>\>unsigned int {\bfseries radio}\\
+\>\} {\bfseries type18}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries reserved}\\
+\>\>unsigned int {\bfseries speed}\\
+\>\>bool {\bfseries accuracy}\\
+\>\>int {\bfseries lon}\\
+\>\>int {\bfseries lat}\\
+\>\>unsigned int {\bfseries course}\\
+\>\>unsigned int {\bfseries heading}\\
+\>\>unsigned int {\bfseries second}\\
+\>\>unsigned int {\bfseries regional}\\
+\>\>char {\bfseries shipname} \mbox{[}AIS\_SHIPNAME\_MAXLEN+1\mbox{]}\\
+\>\>unsigned int {\bfseries shiptype}\\
+\>\>unsigned int {\bfseries to\_bow}\\
+\>\>unsigned int {\bfseries to\_stern}\\
+\>\>unsigned int {\bfseries to\_port}\\
+\>\>unsigned int {\bfseries to\_starboard}\\
+\>\>unsigned int {\bfseries epfd}\\
+\>\>bool {\bfseries raim}\\
+\>\>unsigned int {\bfseries dte}\\
+\>\>bool {\bfseries assigned}\\
+\>\} {\bfseries type19}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries offset1}\\
+\>\>unsigned int {\bfseries number1}\\
+\>\>unsigned int {\bfseries timeout1}\\
+\>\>unsigned int {\bfseries increment1}\\
+\>\>unsigned int {\bfseries offset2}\\
+\>\>unsigned int {\bfseries number2}\\
+\>\>unsigned int {\bfseries timeout2}\\
+\>\>unsigned int {\bfseries increment2}\\
+\>\>unsigned int {\bfseries offset3}\\
+\>\>unsigned int {\bfseries number3}\\
+\>\>unsigned int {\bfseries timeout3}\\
+\>\>unsigned int {\bfseries increment3}\\
+\>\>unsigned int {\bfseries offset4}\\
+\>\>unsigned int {\bfseries number4}\\
+\>\>unsigned int {\bfseries timeout4}\\
+\>\>unsigned int {\bfseries increment4}\\
+\>\} {\bfseries type20}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries aid\_type}\\
+\>\>char {\bfseries name} \mbox{[}35\mbox{]}\\
+\>\>bool {\bfseries accuracy}\\
+\>\>int {\bfseries lon}\\
+\>\>int {\bfseries lat}\\
+\>\>unsigned int {\bfseries to\_bow}\\
+\>\>unsigned int {\bfseries to\_stern}\\
+\>\>unsigned int {\bfseries to\_port}\\
+\>\>unsigned int {\bfseries to\_starboard}\\
+\>\>unsigned int {\bfseries epfd}\\
+\>\>unsigned int {\bfseries second}\\
+\>\>bool {\bfseries off\_position}\\
+\>\>unsigned int {\bfseries regional}\\
+\>\>bool {\bfseries raim}\\
+\>\>bool {\bfseries virtual\_aid}\\
+\>\>bool {\bfseries assigned}\\
+\>\} {\bfseries type21}\\
+\>struct \{\\
+\>\>unsigned int {\bfseries channel\_a}\\
+\>\>unsigned int {\bfseries channel\_b}\\
+\>\>unsigned int {\bfseries txrx}\\
+\>\>bool {\bfseries power}\\
+\hypertarget{structais__t_1_1@34_1_1@53_ad503cc232d98fa63e28b71babf4d45b2}{\>\>union \{\\
+\>\>\>struct \{\\
+\>\>\>\>int {\bfseries ne\_lon}\\
+\>\>\>\>int {\bfseries ne\_lat}\\
+\>\>\>\>int {\bfseries sw\_lon}\\
+\>\>\>\>int {\bfseries sw\_lat}\\
+\>\>\>\} {\bfseries area}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries dest1}\\
+\>\>\>\>unsigned int {\bfseries dest2}\\
+\>\>\>\} {\bfseries mmsi}\\
+\>\>\} }\label{structais__t_1_1@34_1_1@53_ad503cc232d98fa63e28b71babf4d45b2}
+\\
+\>\>bool {\bfseries addressed}\\
+\>\>bool {\bfseries band\_a}\\
+\>\>bool {\bfseries band\_b}\\
+\>\>unsigned int {\bfseries zonesize}\\
+\>\} {\bfseries type22}\\
+\>struct \{\\
+\>\>int {\bfseries ne\_lon}\\
+\>\>int {\bfseries ne\_lat}\\
+\>\>int {\bfseries sw\_lon}\\
+\>\>int {\bfseries sw\_lat}\\
+\>\>unsigned int {\bfseries stationtype}\\
+\>\>unsigned int {\bfseries shiptype}\\
+\>\>unsigned int {\bfseries txrx}\\
+\>\>unsigned int {\bfseries interval}\\
+\>\>unsigned int {\bfseries quiet}\\
+\>\} {\bfseries type23}\\
+\>struct \{\\
+\>\>char {\bfseries shipname} \mbox{[}AIS\_SHIPNAME\_MAXLEN+1\mbox{]}\\
+\>\>unsigned int {\bfseries shiptype}\\
+\>\>char {\bfseries vendorid} \mbox{[}8\mbox{]}\\
+\>\>char {\bfseries callsign} \mbox{[}8\mbox{]}\\
+\hypertarget{structais__t_1_1@34_1_1@55_a4ce385773b4e5cf96a12c7b1cb7a229b}{\>\>union \{\\
+\>\>\>unsigned int {\bfseries mothership\_mmsi}\\
+\>\>\>struct \{\\
+\>\>\>\>unsigned int {\bfseries to\_bow}\\
+\>\>\>\>unsigned int {\bfseries to\_stern}\\
+\>\>\>\>unsigned int {\bfseries to\_port}\\
+\>\>\>\>unsigned int {\bfseries to\_starboard}\\
+\>\>\>\} {\bfseries dim}\\
+\>\>\} }\label{structais__t_1_1@34_1_1@55_a4ce385773b4e5cf96a12c7b1cb7a229b}
+\\
+\>\} {\bfseries type24}\\
+\>struct \{\\
+\>\>bool {\bfseries addressed}\\
+\>\>bool {\bfseries structured}\\
+\>\>unsigned int {\bfseries dest\_mmsi}\\
+\>\>unsigned int {\bfseries app\_id}\\
+\>\>size\_t {\bfseries bitcount}\\
+\>\>char {\bfseries bitdata} \mbox{[}(AIS\_TYPE25\_BINARY\_MAX+7)/8\mbox{]}\\
+\>\} {\bfseries type25}\\
+\>struct \{\\
+\>\>bool {\bfseries addressed}\\
+\>\>bool {\bfseries structured}\\
+\>\>unsigned int {\bfseries dest\_mmsi}\\
+\>\>unsigned int {\bfseries app\_id}\\
+\>\>size\_t {\bfseries bitcount}\\
+\>\>char {\bfseries bitdata} \mbox{[}(AIS\_TYPE26\_BINARY\_MAX+7)/8\mbox{]}\\
+\>\>unsigned int {\bfseries radio}\\
+\>\} {\bfseries type26}\\
+\>struct \{\\
+\>\>bool {\bfseries accuracy}\\
+\>\>bool {\bfseries raim}\\
+\>\>unsigned int {\bfseries status}\\
+\>\>int {\bfseries lon}\\
+\>\>int {\bfseries lat}\\
+\>\>unsigned int {\bfseries speed}\\
+\>\>unsigned int {\bfseries course}\\
+\>\>bool {\bfseries gnss}\\
+\>\} {\bfseries type27}\\
+\}; }\label{structais__t_a7d5d40d56aaf6f9fba3f4b87946ab51a}
+\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\-The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+gps.\-h\end{DoxyCompactItemize}

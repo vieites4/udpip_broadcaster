@@ -201,7 +201,6 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 		pkt = GeoBroadcast(datos,arg->lsp,arg->rep);
 	}else if(memcmp(HT,geounicast,1)==0){}
 	else if(memcmp(HT,geounicast,1)==0){}else{}
-printf("AQUI!\n");
 	// 2) broadcast application level UDP message to network level
 	if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0))|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 

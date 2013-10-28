@@ -244,7 +244,6 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy( PV,dato +8+14,28);
-	//print_hex_data(dato+8+14,28);printf("\n");
 	flags_t * FLAG=NULL;//
 	FLAG= (flags_t *)malloc(sizeof(flags_t));
 	memcpy( FLAG,dato +3+14,1);
@@ -259,7 +258,6 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	data->tstation=FLAG->itsStation;
 	free(FLAG);FLAG=NULL;
 
-	//data.tqe;
 	char HT1[1];
 	memcpy(HT1,dato+14,1);
 	char HL[1];
@@ -422,8 +420,7 @@ itsnet_packet_f * SHB_f(void *dato){
 	memcpy(pkt->payload.itsnet_unicast.payload,dato+36,lon_int);
 	memcpy(pkt->common_header.pkt_type,dato,1);
 	memcpy(pkt->common_header.pkt_stype,dato+1,1);
-	// este para probar se realmente podemos saltarnos o paso anterior no que se garda o valor, neste caso eliminalo tamén nos tsb,shb e gbroadcast do outro lado.
-	return(pkt);
+		return(pkt);
 }
 
 itsnet_packet_f * GeoBroadcast_f(void *dato){
@@ -435,7 +432,7 @@ itsnet_packet_f * GeoBroadcast_f(void *dato){
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,dato +8,28);
-	pkt->common_header.pv=*PV; //o problema está aqui!!
+	pkt->common_header.pv=*PV;
 	//print_hex_data(pkt->common_header.pv,28);printf("\n");
 	memcpy(pkt->common_header.traffic_class,dato +6,1);
 	char LEN[2] ;

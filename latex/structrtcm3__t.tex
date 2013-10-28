@@ -1,0 +1,240 @@
+\hypertarget{structrtcm3__t}{\section{rtcm3\-\_\-t \-Struct \-Reference}
+\label{structrtcm3__t}\index{rtcm3\-\_\-t@{rtcm3\-\_\-t}}
+}
+\subsection*{\-Public \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structrtcm3__t_a9c0492c16cbc2ac385f01659be324ead}{unsigned {\bfseries type}}\label{structrtcm3__t_a9c0492c16cbc2ac385f01659be324ead}
+
+\item 
+\hypertarget{structrtcm3__t_abdafba865624fb1e1dfb8eddba32ca16}{unsigned {\bfseries length}}\label{structrtcm3__t_abdafba865624fb1e1dfb8eddba32ca16}
+
+\item 
+\hypertarget{structrtcm3__t_ad086cb78d90a8d0459b8ea61c72dc993}{\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>struct \hyperlink{structrtcm3__rtk__hdr}{rtcm3\_rtk\_hdr} {\bfseries header}\\
+\>\>struct {\bfseries rtcm3\_1001\_t} \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>struct \hyperlink{structrtcm3__basic__rtk}{rtcm3\_basic\_rtk} {\bfseries L1}\\
+\>\>\} {\bfseries rtk\_data} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1001}\\
+\>struct {\bfseries rtcm3\_1002\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__rtk__hdr}{rtcm3\_rtk\_hdr} {\bfseries header}\\
+\>\>struct \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>struct \hyperlink{structrtcm3__extended__rtk}{rtcm3\_extended\_rtk} {\bfseries L1}\\
+\>\>\} {\bfseries rtk\_data} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1002}\\
+\>struct {\bfseries rtcm3\_1003\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__rtk__hdr}{rtcm3\_rtk\_hdr} {\bfseries header}\\
+\>\>struct \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>struct \hyperlink{structrtcm3__basic__rtk}{rtcm3\_basic\_rtk} {\bfseries L1}\\
+\>\>\>struct \hyperlink{structrtcm3__basic__rtk}{rtcm3\_basic\_rtk} {\bfseries L2}\\
+\>\>\} {\bfseries rtk\_data} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1003}\\
+\>struct {\bfseries rtcm3\_1004\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__rtk__hdr}{rtcm3\_rtk\_hdr} {\bfseries header}\\
+\>\>struct \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>struct \hyperlink{structrtcm3__extended__rtk}{rtcm3\_extended\_rtk} {\bfseries L1}\\
+\>\>\>struct \hyperlink{structrtcm3__extended__rtk}{rtcm3\_extended\_rtk} {\bfseries L2}\\
+\>\>\} {\bfseries rtk\_data} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1004}\\
+\>struct {\bfseries rtcm3\_1005\_t} \{\\
+\>\>unsigned int {\bfseries station\_id}\\
+\>\>int {\bfseries system}\\
+\>\>bool {\bfseries reference\_station}\\
+\>\>bool {\bfseries single\_receiver}\\
+\>\>double {\bfseries ecef\_x}\\
+\>\>double {\bfseries ecef\_y}\\
+\>\>double {\bfseries ecef\_z}\\
+\>\} {\bfseries rtcm3\_1005}\\
+\>struct {\bfseries rtcm3\_1006\_t} \{\\
+\>\>unsigned int {\bfseries station\_id}\\
+\>\>int {\bfseries system}\\
+\>\>bool {\bfseries reference\_station}\\
+\>\>bool {\bfseries single\_receiver}\\
+\>\>double {\bfseries ecef\_x}\\
+\>\>double {\bfseries ecef\_y}\\
+\>\>double {\bfseries ecef\_z}\\
+\>\>double {\bfseries height}\\
+\>\} {\bfseries rtcm3\_1006}\\
+\>struct {\bfseries rtcm3\_1007\_t} \{\\
+\>\>unsigned int {\bfseries station\_id}\\
+\>\>char {\bfseries descriptor} \mbox{[}RTCM3\_MAX\_DESCRIPTOR+1\mbox{]}\\
+\>\>unsigned char {\bfseries setup\_id}\\
+\>\} {\bfseries rtcm3\_1007}\\
+\>struct {\bfseries rtcm3\_1008\_t} \{\\
+\>\>unsigned int {\bfseries station\_id}\\
+\>\>char {\bfseries descriptor} \mbox{[}RTCM3\_MAX\_DESCRIPTOR+1\mbox{]}\\
+\>\>unsigned char {\bfseries setup\_id}\\
+\>\>char {\bfseries serial} \mbox{[}RTCM3\_MAX\_DESCRIPTOR+1\mbox{]}\\
+\>\} {\bfseries rtcm3\_1008}\\
+\>struct {\bfseries rtcm3\_1009\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__rtk__hdr}{rtcm3\_rtk\_hdr} {\bfseries header}\\
+\>\>struct \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>struct \hyperlink{structrtcm3__basic__rtk}{rtcm3\_basic\_rtk} {\bfseries L1}\\
+\>\>\} {\bfseries rtk\_data} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1009}\\
+\>struct {\bfseries rtcm3\_1010\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__rtk__hdr}{rtcm3\_rtk\_hdr} {\bfseries header}\\
+\>\>struct \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>struct \hyperlink{structrtcm3__extended__rtk}{rtcm3\_extended\_rtk} {\bfseries L1}\\
+\>\>\} {\bfseries rtk\_data} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1010}\\
+\>struct {\bfseries rtcm3\_1011\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__rtk__hdr}{rtcm3\_rtk\_hdr} {\bfseries header}\\
+\>\>struct \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>struct \hyperlink{structrtcm3__extended__rtk}{rtcm3\_extended\_rtk} {\bfseries L1}\\
+\>\>\>struct \hyperlink{structrtcm3__extended__rtk}{rtcm3\_extended\_rtk} {\bfseries L2}\\
+\>\>\} {\bfseries rtk\_data} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1011}\\
+\>struct {\bfseries rtcm3\_1012\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__rtk__hdr}{rtcm3\_rtk\_hdr} {\bfseries header}\\
+\>\>struct \{\\
+\>\>\>unsigned {\bfseries ident}\\
+\>\>\>struct \hyperlink{structrtcm3__extended__rtk}{rtcm3\_extended\_rtk} {\bfseries L1}\\
+\>\>\>struct \hyperlink{structrtcm3__extended__rtk}{rtcm3\_extended\_rtk} {\bfseries L2}\\
+\>\>\} {\bfseries rtk\_data} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1012}\\
+\>struct {\bfseries rtcm3\_1013\_t} \{\\
+\>\>unsigned int {\bfseries station\_id}\\
+\>\>unsigned short {\bfseries mjd}\\
+\>\>unsigned int {\bfseries sod}\\
+\>\>unsigned char {\bfseries leapsecs}\\
+\>\>unsigned char {\bfseries ncount}\\
+\>\>struct \{\\
+\>\>\>unsigned short {\bfseries id}\\
+\>\>\>bool {\bfseries sync}\\
+\>\>\>unsigned short {\bfseries interval}\\
+\>\>\} {\bfseries announcements} \mbox{[}RTCM3\_MAX\_ANNOUNCEMENTS\mbox{]}\\
+\>\} {\bfseries rtcm3\_1013}\\
+\>struct {\bfseries rtcm3\_1014\_t} \{\\
+\>\>unsigned int {\bfseries network\_id}\\
+\>\>unsigned int {\bfseries subnetwork\_id}\\
+\>\>unsigned char {\bfseries stationcount}\\
+\>\>unsigned int {\bfseries master\_id}\\
+\>\>unsigned int {\bfseries aux\_id}\\
+\>\>double {\bfseries d\_lat}\\
+\>\>double {\bfseries d\_lon}\\
+\>\>double {\bfseries d\_alt}\\
+\>\} {\bfseries rtcm3\_1014}\\
+\>struct {\bfseries rtcm3\_1015\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__network__rtk__header}{rtcm3\_network\_rtk\_header} {\bfseries header}\\
+\>\>struct \hyperlink{structrtcm3__correction__diff}{rtcm3\_correction\_diff} {\bfseries corrections} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1015}\\
+\>struct {\bfseries rtcm3\_1016\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__network__rtk__header}{rtcm3\_network\_rtk\_header} {\bfseries header}\\
+\>\>struct \hyperlink{structrtcm3__correction__diff}{rtcm3\_correction\_diff} {\bfseries corrections} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1016}\\
+\>struct {\bfseries rtcm3\_1017\_t} \{\\
+\>\>struct \hyperlink{structrtcm3__network__rtk__header}{rtcm3\_network\_rtk\_header} {\bfseries header}\\
+\>\>struct \hyperlink{structrtcm3__correction__diff}{rtcm3\_correction\_diff} {\bfseries corrections} \mbox{[}RTCM3\_MAX\_SATELLITES\mbox{]}\\
+\>\} {\bfseries rtcm3\_1017}\\
+\>struct {\bfseries rtcm3\_1019\_t} \{\\
+enum \{ {\bfseries reserved\_code}, 
+{\bfseries p}, 
+{\bfseries ca}, 
+{\bfseries l2c}
+ \}\\
+\>\>unsigned int {\bfseries ident}\\
+\>\>unsigned int {\bfseries week}\\
+\>\>unsigned char {\bfseries sv\_accuracy}\\
+\>\>enum rtcm3\_t:: \\
+\{ ... \} ::rtcm3\_1019\_t {\bfseries code}\\
+\>\>double {\bfseries idot}\\
+\>\>unsigned char {\bfseries iode}\\
+\>\>unsigned int {\bfseries t\_sub\_oc}\\
+\>\>signed int {\bfseries a\_sub\_f2}\\
+\>\>signed int {\bfseries a\_sub\_f1}\\
+\>\>signed int {\bfseries a\_sub\_f0}\\
+\>\>unsigned int {\bfseries iodc}\\
+\>\>signed int {\bfseries C\_sub\_rs}\\
+\>\>signed int {\bfseries delta\_sub\_n}\\
+\>\>signed int {\bfseries M\_sub\_0}\\
+\>\>signed int {\bfseries C\_sub\_uc}\\
+\>\>unsigned int {\bfseries e}\\
+\>\>signed int {\bfseries C\_sub\_us}\\
+\>\>unsigned int {\bfseries sqrt\_sub\_A}\\
+\>\>unsigned int {\bfseries t\_sub\_oe}\\
+\>\>signed int {\bfseries C\_sub\_ic}\\
+\>\>signed int {\bfseries OMEGA\_sub\_0}\\
+\>\>signed int {\bfseries C\_sub\_is}\\
+\>\>signed int {\bfseries i\_sub\_0}\\
+\>\>signed int {\bfseries C\_sub\_rc}\\
+\>\>signed int {\bfseries argument\_of\_perigee}\\
+\>\>signed int {\bfseries omegadot}\\
+\>\>signed int {\bfseries t\_sub\_GD}\\
+\>\>unsigned char {\bfseries sv\_health}\\
+\>\>bool {\bfseries p\_data}\\
+\>\>bool {\bfseries fit\_interval}\\
+\>\} {\bfseries rtcm3\_1019}\\
+\>struct {\bfseries rtcm3\_1020\_t} \{\\
+\>\>unsigned int {\bfseries ident}\\
+\>\>unsigned short {\bfseries channel}\\
+\>\>bool {\bfseries C\_sub\_n}\\
+\>\>bool {\bfseries health\_avAilability\_indicator}\\
+\>\>unsigned char {\bfseries P1}\\
+\>\>unsigned short {\bfseries t\_sub\_k}\\
+\>\>bool {\bfseries msb\_of\_B\_sub\_n}\\
+\>\>bool {\bfseries P2}\\
+\>\>bool {\bfseries t\_sub\_b}\\
+\>\>signed int {\bfseries x\_sub\_n\_t\_of\_t\_sub\_b\_prime}\\
+\>\>signed int {\bfseries x\_sub\_n\_t\_of\_t\_sub\_b}\\
+\>\>signed int {\bfseries x\_sub\_n\_t\_of\_t\_sub\_b\_prime\_prime}\\
+\>\>signed int {\bfseries y\_sub\_n\_t\_of\_t\_sub\_b\_prime}\\
+\>\>signed int {\bfseries y\_sub\_n\_t\_of\_t\_sub\_b}\\
+\>\>signed int {\bfseries y\_sub\_n\_t\_of\_t\_sub\_b\_prime\_prime}\\
+\>\>signed int {\bfseries z\_sub\_n\_t\_of\_t\_sub\_b\_prime}\\
+\>\>signed int {\bfseries z\_sub\_n\_t\_of\_t\_sub\_b}\\
+\>\>signed int {\bfseries z\_sub\_n\_t\_of\_t\_sub\_b\_prime\_prime}\\
+\>\>bool {\bfseries P3}\\
+\>\>signed int {\bfseries gamma\_sub\_n\_of\_t\_sub\_b}\\
+\>\>unsigned char {\bfseries MP}\\
+\>\>bool {\bfseries Ml\_n}\\
+\>\>signed int {\bfseries tau\_n\_of\_t\_sub\_b}\\
+\>\>signed int {\bfseries M\_delta\_tau\_sub\_n}\\
+\>\>unsigned int {\bfseries E\_sub\_n}\\
+\>\>bool {\bfseries MP4}\\
+\>\>unsigned char {\bfseries MF\_sub\_T}\\
+\>\>unsigned char {\bfseries MN\_sub\_T}\\
+\>\>unsigned char {\bfseries MM}\\
+\>\>bool {\bfseries additioinal\_data\_availability}\\
+\>\>unsigned int {\bfseries N\_sup\_A}\\
+\>\>unsigned int {\bfseries tau\_sub\_c}\\
+\>\>unsigned int {\bfseries M\_N\_sub\_4}\\
+\>\>signed int {\bfseries M\_tau\_sub\_GPS}\\
+\>\>bool {\bfseries M\_l\_sub\_n}\\
+\>\} {\bfseries rtcm3\_1020}\\
+\>struct {\bfseries rtcm3\_1029\_t} \{\\
+\>\>unsigned int {\bfseries station\_id}\\
+\>\>unsigned short {\bfseries mjd}\\
+\>\>unsigned int {\bfseries sod}\\
+\>\>size\_t {\bfseries len}\\
+\>\>size\_t {\bfseries unicode\_units}\\
+\>\>unsigned char {\bfseries text} \mbox{[}128\mbox{]}\\
+\>\} {\bfseries rtcm3\_1029}\\
+\>struct {\bfseries rtcm3\_1033\_t} \{\\
+\>\>unsigned int {\bfseries station\_id}\\
+\>\>char {\bfseries descriptor} \mbox{[}RTCM3\_MAX\_DESCRIPTOR+1\mbox{]}\\
+\>\>unsigned char {\bfseries setup\_id}\\
+\>\>char {\bfseries serial} \mbox{[}RTCM3\_MAX\_DESCRIPTOR+1\mbox{]}\\
+\>\>char {\bfseries receiver} \mbox{[}RTCM3\_MAX\_DESCRIPTOR+1\mbox{]}\\
+\>\>char {\bfseries firmware} \mbox{[}RTCM3\_MAX\_DESCRIPTOR+1\mbox{]}\\
+\>\} {\bfseries rtcm3\_1033}\\
+\>char {\bfseries data} \mbox{[}1024\mbox{]}\\
+\} {\bfseries rtcmtypes}}\label{structrtcm3__t_ad086cb78d90a8d0459b8ea61c72dc993}
+\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\-The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+gps.\-h\end{DoxyCompactItemize}

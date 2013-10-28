@@ -1,0 +1,92 @@
+\hypertarget{udp__events_8c}{\section{udp\-\_\-events.\-c \-File \-Reference}
+\label{udp__events_8c}\index{udp\-\_\-events.\-c@{udp\-\_\-events.\-c}}
+}
+{\ttfamily \#include \char`\"{}udp\-\_\-events.\-h\char`\"{}}\*
+\subsection*{\-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$ \hyperlink{udp__events_8c_a96f4d9fe5a26fb4cf4e62a9385da5cf2}{new\-\_\-udp\-\_\-events} ()
+\begin{DoxyCompactList}\small\item\em \-Creates a new structure for handling events with this manager. \end{DoxyCompactList}\item 
+\hypertarget{udp__events_8c_a5e82efead8fa7297e8c91383a6e25af6}{\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$ {\bfseries init\-\_\-tx\-\_\-udp\-\_\-events} (const char $\ast$if\-\_\-name, const int port, in\-\_\-addr\-\_\-t addr, const ev\-\_\-cb\-\_\-t callback, const bool broadcast)}\label{udp__events_8c_a5e82efead8fa7297e8c91383a6e25af6}
+
+\item 
+\hypertarget{udp__events_8c_a8b195c66261f3ed030fe1236eefde174}{\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$ {\bfseries init\-\_\-tx\-\_\-raw\-\_\-events} (const char $\ast$if\-\_\-name, const int port, const ev\-\_\-cb\-\_\-t callback, const bool broadcast)}\label{udp__events_8c_a8b195c66261f3ed030fe1236eefde174}
+
+\item 
+\hypertarget{udp__events_8c_a2d23788ea47ddd16b2dfde4b20d74a68}{\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$ {\bfseries init\-\_\-rx\-\_\-udp\-\_\-events} (const int port, const char $\ast$if\-\_\-name, const ev\-\_\-cb\-\_\-t callback)}\label{udp__events_8c_a2d23788ea47ddd16b2dfde4b20d74a68}
+
+\item 
+\hypertarget{udp__events_8c_a4dc92f5587d74eeec0b71ac82d02cc79}{\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$ {\bfseries init\-\_\-rx\-\_\-raw\-\_\-events} (const int port, const char $\ast$if\-\_\-name, const ev\-\_\-cb\-\_\-t callback)}\label{udp__events_8c_a4dc92f5587d74eeec0b71ac82d02cc79}
+
+\item 
+\hypertarget{udp__events_8c_a0e0d681e573052d9a2857c01f8e77e0d}{\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$ {\bfseries init\-\_\-net\-\_\-raw\-\_\-events} (const int net\-\_\-tx\-\_\-port, const int net\-\_\-rx\-\_\-port, const char $\ast$net\-\_\-if\-\_\-name, const char $\ast$app\-\_\-fwd\-\_\-addr, const int app\-\_\-fwd\-\_\-port, const bool nec\-\_\-mode, const ev\-\_\-cb\-\_\-t callback, \-List\-\_\-loc\-T $\ast$loc\-T, \-List\-\_\-lsp $\ast$lsp, \-List\-\_\-lsp $\ast$rep)}\label{udp__events_8c_a0e0d681e573052d9a2857c01f8e77e0d}
+
+\item 
+\hypertarget{udp__events_8c_a1d80bfdbf3afb5ea291ad256afa779d6}{void $\ast$ {\bfseries init\-\_\-app\-\_\-udp\-\_\-events} (const int app\-\_\-rx\-\_\-port, in\-\_\-addr\-\_\-t addr, const char $\ast$if\-\_\-name, const int net\-\_\-fwd\-\_\-port, const ev\-\_\-cb\-\_\-t callback, \-List\-\_\-loc\-T $\ast$loc\-T, \-List\-\_\-lsp $\ast$lsp, \-List\-\_\-lsp $\ast$rep)}\label{udp__events_8c_a1d80bfdbf3afb5ea291ad256afa779d6}
+
+\item 
+\hypertarget{udp__events_8c_aeb02efa53b878c8490cdf42cd0cde390}{void {\bfseries free\-\_\-udp\-\_\-events} (\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$m)}\label{udp__events_8c_aeb02efa53b878c8490cdf42cd0cde390}
+
+\item 
+\hypertarget{udp__events_8c_aa1beea4a55a5e542b0b20e9accf5dca4}{void {\bfseries print\-\_\-udp\-\_\-events} (const \hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$m, const int rx\-\_\-port, const int fwd\-\_\-port)}\label{udp__events_8c_aa1beea4a55a5e542b0b20e9accf5dca4}
+
+\item 
+\hyperlink{structev__io__arg}{ev\-\_\-io\-\_\-arg\-\_\-t} $\ast$ \hyperlink{udp__events_8c_a5692ecc279f49a086733e71aae3cb0f9}{new\-\_\-ev\-\_\-io\-\_\-arg} ()
+\begin{DoxyCompactList}\small\item\em \-Allocates memory for an \hyperlink{structev__io__arg}{ev\-\_\-io\-\_\-arg} structure. \end{DoxyCompactList}\item 
+\hypertarget{udp__events_8c_a1237f11f270dd3bc479cc9298ad7ad4c}{int {\bfseries init\-\_\-watcher} (\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$m, const ev\-\_\-cb\-\_\-t callback, const int events, const int port, const char $\ast$if\-\_\-name, in\-\_\-addr\-\_\-t addr)}\label{udp__events_8c_a1237f11f270dd3bc479cc9298ad7ad4c}
+
+\item 
+\hypertarget{udp__events_8c_a9036410246b99c798f7ca7ed1c386e66}{int {\bfseries init\-\_\-watcher\-\_\-raw} (\hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$m, const ev\-\_\-cb\-\_\-t callback, const int events, const int port, const char $\ast$if\-\_\-name, in\-\_\-addr\-\_\-t addr)}\label{udp__events_8c_a9036410246b99c798f7ca7ed1c386e66}
+
+\item 
+\hypertarget{udp__events_8c_aaf25d88498acaa5940e97165e4f20d48}{\hyperlink{structev__io__arg}{ev\-\_\-io\-\_\-arg\-\_\-t} $\ast$ {\bfseries init\-\_\-ev\-\_\-io\-\_\-arg} (const \hyperlink{structudp__events}{udp\-\_\-events\-\_\-t} $\ast$m, const ev\-\_\-cb\-\_\-t callback, const int port, const char $\ast$if\-\_\-name)}\label{udp__events_8c_aaf25d88498acaa5940e97165e4f20d48}
+
+\item 
+\hypertarget{udp__events_8c_a6371191e40b5b43a91f67532c03bb1e9}{void {\bfseries cb\-\_\-common} (struct ev\-\_\-loop $\ast$loop, struct ev\-\_\-io $\ast$watcher, int revents)}\label{udp__events_8c_a6371191e40b5b43a91f67532c03bb1e9}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\begin{DoxyAuthor}{\-Author}
+\-Ricardo \-Tubío (rtpardavila\mbox{[}at\mbox{]}gmail.\-com) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{\-Version}
+0.\-1
+\end{DoxyVersion}
+\hypertarget{udp__socket_8h_LICENSE}{}\subsection{\-L\-I\-C\-E\-N\-S\-E}\label{udp__socket_8h_LICENSE}
+\-This file is part of udpip-\/broadcaster. udpip-\/broadcaster is free software\-: you can redistribute it and/or modify it under the terms of the \-G\-N\-U \-General \-Public \-License as published by the \-Free \-Software \-Foundation, either version 3 of the \-License, or (at your option) any later version.
+
+udpip-\/broadcaster is distributed in the hope that it will be useful, but \-W\-I\-T\-H\-O\-U\-T \-A\-N\-Y \-W\-A\-R\-R\-A\-N\-T\-Y; without even the implied warranty of \-M\-E\-R\-C\-H\-A\-N\-T\-A\-B\-I\-L\-I\-T\-Y or \-F\-I\-T\-N\-E\-S\-S \-F\-O\-R \-A \-P\-A\-R\-T\-I\-C\-U\-L\-A\-R \-P\-U\-R\-P\-O\-S\-E. \-See the \-G\-N\-U \-General \-Public \-License for more details.
+
+\-You should have received a copy of the \-G\-N\-U \-General \-Public \-License along with udpip-\/broadcaster. \-If not, see $<$\href{http://www.gnu.org/licenses/}{\tt http\-://www.\-gnu.\-org/licenses/}$>$. 
+
+\subsection{\-Function \-Documentation}
+\hypertarget{udp__events_8c_a5692ecc279f49a086733e71aae3cb0f9}{\index{udp\-\_\-events.\-c@{udp\-\_\-events.\-c}!new\-\_\-ev\-\_\-io\-\_\-arg@{new\-\_\-ev\-\_\-io\-\_\-arg}}
+\index{new\-\_\-ev\-\_\-io\-\_\-arg@{new\-\_\-ev\-\_\-io\-\_\-arg}!udp_events.c@{udp\-\_\-events.\-c}}
+\subsubsection[{new\-\_\-ev\-\_\-io\-\_\-arg}]{\setlength{\rightskip}{0pt plus 5cm}{\bf new\-\_\-ev\-\_\-io\-\_\-arg} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{udp__events_8c_a5692ecc279f49a086733e71aae3cb0f9}
+
+
+\-Allocates memory for an \hyperlink{structev__io__arg}{ev\-\_\-io\-\_\-arg} structure. 
+
+\begin{DoxyReturn}{\-Returns}
+\-A pointer to the newly allocated block of memory. 
+\end{DoxyReturn}
+\hypertarget{udp__events_8c_a96f4d9fe5a26fb4cf4e62a9385da5cf2}{\index{udp\-\_\-events.\-c@{udp\-\_\-events.\-c}!new\-\_\-udp\-\_\-events@{new\-\_\-udp\-\_\-events}}
+\index{new\-\_\-udp\-\_\-events@{new\-\_\-udp\-\_\-events}!udp_events.c@{udp\-\_\-events.\-c}}
+\subsubsection[{new\-\_\-udp\-\_\-events}]{\setlength{\rightskip}{0pt plus 5cm}{\bf new\-\_\-udp\-\_\-events} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{udp__events_8c_a96f4d9fe5a26fb4cf4e62a9385da5cf2}
+
+
+\-Creates a new structure for handling events with this manager. 
+
+\begin{DoxyReturn}{\-Returns}
+\-The structure that holds the current state of the manager. 
+\end{DoxyReturn}

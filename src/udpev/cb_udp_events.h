@@ -32,6 +32,7 @@
 // LIBEV CALLBACK FUNCTIONS
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 /**
+ * @fn cb_print_recvfrom
  * @brief Callback function that reads the given socket which has just been
  * 			put available for reading.
  * @param public_arg Public arguments for this callback function.
@@ -40,6 +41,7 @@
 void cb_print_recvfrom(public_ev_arg_r *arg);
 
 /**
+ * @fn cb_forward_recvfrom
  * @brief Callback function that takes information arrived from link layer.
  * It will be sent to the upper layer and in some cases also resent to link layer
  *  in broadcast mode.
@@ -48,12 +50,14 @@ void cb_print_recvfrom(public_ev_arg_r *arg);
 void cb_forward_recvfrom(public_ev_arg_r *arg);
 
 /**
+ * @fn cb_broadcast_recvfrom
  * @brief Callback function that forwards an UDP message that was received from upper layer.
  *  The forwarded message is sent through broadcast to link layer.
  * @param public_arg Public arguments for this callback function.
  */
 void cb_broadcast_recvfrom(public_ev_arg_r *arg);
 /**
+ * @fn thr_h3
  * @brief Thread we use to timer Beacon send. Beacon is how we announce our mac.
  * If we sent another frame the timer will be updated
  * @param public_arg Public arguments for this callback function.

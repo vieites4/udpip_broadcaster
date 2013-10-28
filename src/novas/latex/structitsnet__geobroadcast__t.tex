@@ -1,0 +1,57 @@
+\hypertarget{structitsnet__geobroadcast__t}{\section{itsnet\-\_\-geobroadcast\-\_\-t \-Struct \-Reference}
+\label{structitsnet__geobroadcast__t}\index{itsnet\-\_\-geobroadcast\-\_\-t@{itsnet\-\_\-geobroadcast\-\_\-t}}
+}
+
+
+{\ttfamily \#include $<$itsnet\-\_\-header.\-h$>$}
+
+\subsection*{\-Public \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structitsnet__geobroadcast__t_abf77717572cc0153ef15879021cbe873}{itsnet\-\_\-sequencenumber {\bfseries sequencenumber}}\label{structitsnet__geobroadcast__t_abf77717572cc0153ef15879021cbe873}
+
+\item 
+\hypertarget{structitsnet__geobroadcast__t_a209ace7e78e5217d1370ce616e4ee43b}{unsigned char {\bfseries lt} \mbox{[}1\mbox{]}}\label{structitsnet__geobroadcast__t_a209ace7e78e5217d1370ce616e4ee43b}
+
+\item 
+\hypertarget{structitsnet__geobroadcast__t_a56eb796ffe3f3a90ffba5ae7209952b5}{\hyperlink{structitsnet__position__vector}{itsnet\-\_\-position\-\_\-vector} {\bfseries source\-\_\-position\-\_\-vector}}\label{structitsnet__geobroadcast__t_a56eb796ffe3f3a90ffba5ae7209952b5}
+
+\item 
+unsigned char \hyperlink{structitsnet__geobroadcast__t_a12f315d101954aa288cfc80d5724e822}{dest\-\_\-latitude} \mbox{[}4\mbox{]}
+\item 
+\hypertarget{structitsnet__geobroadcast__t_a9e3cf6d6dc74ce5142a5326ad2072862}{unsigned char {\bfseries dest\-\_\-longitude} \mbox{[}4\mbox{]}}\label{structitsnet__geobroadcast__t_a9e3cf6d6dc74ce5142a5326ad2072862}
+
+\item 
+\hypertarget{structitsnet__geobroadcast__t_aae53bc7fa6e340dfb3bff18999b9e83e}{unsigned char {\bfseries distance\-A} \mbox{[}2\mbox{]}}\label{structitsnet__geobroadcast__t_aae53bc7fa6e340dfb3bff18999b9e83e}
+
+\item 
+unsigned char \hyperlink{structitsnet__geobroadcast__t_a6671b5efdf17e4669fa67097f0745bbc}{distance\-B} \mbox{[}2\mbox{]}
+\item 
+unsigned char \hyperlink{structitsnet__geobroadcast__t_ad01fb56d9a376337c02d140df82877c4}{angle} \mbox{[}2\mbox{]}
+\item 
+\hypertarget{structitsnet__geobroadcast__t_a73b341ec71f0076b0f42362fd7012c76}{unsigned char {\bfseries reserved} \mbox{[}1\mbox{]}}\label{structitsnet__geobroadcast__t_a73b341ec71f0076b0f42362fd7012c76}
+
+\item 
+\hypertarget{structitsnet__geobroadcast__t_a83aff395a7907a1e8bb7200e62802321}{\hyperlink{structitsnet__btp}{itsnet\-\_\-btp} {\bfseries payload}}\label{structitsnet__geobroadcast__t_a83aff395a7907a1e8bb7200e62802321}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-The structure describes itsnet\-\_\-geobroadcast packet 
+
+\subsection{\-Member \-Data \-Documentation}
+\hypertarget{structitsnet__geobroadcast__t_ad01fb56d9a376337c02d140df82877c4}{\index{itsnet\-\_\-geobroadcast\-\_\-t@{itsnet\-\_\-geobroadcast\-\_\-t}!angle@{angle}}
+\index{angle@{angle}!itsnet_geobroadcast_t@{itsnet\-\_\-geobroadcast\-\_\-t}}
+\subsubsection[{angle}]{\setlength{\rightskip}{0pt plus 5cm}unsigned char {\bf itsnet\-\_\-geobroadcast\-\_\-t\-::angle}\mbox{[}2\mbox{]}}}\label{structitsnet__geobroadcast__t_ad01fb56d9a376337c02d140df82877c4}
+radius/height,latitude and longitude (geo-\/area destination) \hypertarget{structitsnet__geobroadcast__t_a12f315d101954aa288cfc80d5724e822}{\index{itsnet\-\_\-geobroadcast\-\_\-t@{itsnet\-\_\-geobroadcast\-\_\-t}!dest\-\_\-latitude@{dest\-\_\-latitude}}
+\index{dest\-\_\-latitude@{dest\-\_\-latitude}!itsnet_geobroadcast_t@{itsnet\-\_\-geobroadcast\-\_\-t}}
+\subsubsection[{dest\-\_\-latitude}]{\setlength{\rightskip}{0pt plus 5cm}unsigned char {\bf itsnet\-\_\-geobroadcast\-\_\-t\-::dest\-\_\-latitude}\mbox{[}4\mbox{]}}}\label{structitsnet__geobroadcast__t_a12f315d101954aa288cfc80d5724e822}
+\-Source node position vector \hypertarget{structitsnet__geobroadcast__t_a6671b5efdf17e4669fa67097f0745bbc}{\index{itsnet\-\_\-geobroadcast\-\_\-t@{itsnet\-\_\-geobroadcast\-\_\-t}!distance\-B@{distance\-B}}
+\index{distance\-B@{distance\-B}!itsnet_geobroadcast_t@{itsnet\-\_\-geobroadcast\-\_\-t}}
+\subsubsection[{distance\-B}]{\setlength{\rightskip}{0pt plus 5cm}unsigned char {\bf itsnet\-\_\-geobroadcast\-\_\-t\-::distance\-B}\mbox{[}2\mbox{]}}}\label{structitsnet__geobroadcast__t_a6671b5efdf17e4669fa67097f0745bbc}
+radius/height,latitude and longitude (geo-\/area destination) 
+
+\-The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+itsnet\-\_\-header.\-h\end{DoxyCompactItemize}
