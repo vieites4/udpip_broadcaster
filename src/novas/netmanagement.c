@@ -437,7 +437,6 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)//(EV_P_ ev_timer *w, i
 	return 0;
 }
 
-
 int sup_elem_t_lsp (int num)//(EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
 {
 	Element_lsp * position=lsp_bc_g->init;
@@ -463,14 +462,9 @@ int sup_elem_t_lsp (int num)//(EV_P_ ev_timer *w, int revents)// void * arg){//E
 		position->next->before=position->before;	}
 	sup_timer(num,2);
 	lsp_bc_g->len--;
-
 	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
 	return 0;
 }
-
-
-
-
 
 /* view List */
 void view_locT (){
@@ -540,24 +534,23 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 	lsp->size=lsp->size+sizeof(itsnet_common_header)+sprint_hex_data(data.common_header.payload_lenght,2);
 	printf("AQUI en engadir en lsp! %d \n",lsp->len);
 	int sn;	LT_s *temp;
-	char HT[1];
+	char HT[1];	char HL[1];
+	memcpy(HL,&data.common_header.hop_limit,1);
+	int lon_int=sprint_hex_data( HL, 1);
 	memcpy(HT,&data.common_header.HT_HST,1);
-	if(memcmp(HT,tsb1,1)==0){
+	print_hex_data(HT,1);print_hex_data(tsb0,1);
+	if((memcmp(HT,tsb0,1)==0) && (lon_int>1)){
 		temp = (LT_s *) data.payload.itsnet_tsb.lt;
 		sn = data.payload.itsnet_tsb.sequencenumber;
-	}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(data.common_header.HT_HST.HT,geobroad1,1)==0 ||memcmp(data.common_header.HT_HST.HT,geobroad2,1)==0){
+	}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 		sn = data.payload.itsnet_geobroadcast.sequencenumber;
-		temp = (LT_s *) data.payload.itsnet_tsb.lt;}
-	int str2=temp->multiple;	int str1=temp->base;int num0;
-	if (str1==0){num0=50;}else if(str1==1){num0=100;}else if(str1==2){num0=1000;}else num0=10000;
-	int lt=num0*str2 /100; //lt in seconds
-	printf("SEQUENCE NUMBER! %d\n",sn);
-
-	/**while(a==0&& num2<16){
-		num2=(num2 +1);
-		if (taken_lsp[num2]==false){num=variables[num2]; taken_lsp[num2]=true;	a=1;}//mac_list[num2]=&(locT->end->data.mac_id)
-	}printf("saio do bucle\n");**/
-	AddTimer(sn,lt,2);
+		temp = (LT_s *) data.payload.itsnet_tsb.lt;}else{}
+	if((memcmp(HT,tsb0,1)==0 && lon_int>1)||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
+		int str2=temp->multiple;	int str1=temp->base;int num0;
+		if (str1==0){num0=50;}else if(str1==1){num0=100;}else if(str1==2){num0=1000;}else num0=10000;
+		int lt=num0*str2 /100; //lt in seconds
+		printf("SEQUENCE NUMBER! %d\n",sn);
+		AddTimer(sn,lt,2);}
 	lsp_bc_g=lsp;
 	return 0;
 }
@@ -597,23 +590,18 @@ int sup_elem_lsp (int num){
 	}
 	lsp_bc_g->len--;
 	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
-
 	char HT[1];int sn;
 	memcpy(HT,&pos->data.common_header.HT_HST,1);
-	if(memcmp(HT,tsb1,1)==0 || memcmp(HT,geobroad0,1)==0 ||memcmp(pos->data.common_header.HT_HST.HT,geobroad1,1)==0 ||memcmp(pos->data.common_header.HT_HST.HT,geobroad2,1)==0){a=1;}
+	if(memcmp(HT,tsb1,1)==0 || memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){a=1;}
 	if (a==1){sup_timer(num,2);}
-
 	printf("saimos de suprimir elemento da lsp\n");
 	return 0;
 }
-
 /* view List */
-
 void view_timers(){
 	tTimer *actual;
 	actual = mpTimerList->init;
 	while (actual != NULL){		printf("timerid %d \n",actual->TimerId);actual = actual->pNext;	}
-
 	printf("pinto lista timers loct \n");
 	actual = mpTimerList_lsp->init;
 	while (actual != NULL){		printf("timerid %d \n",actual->TimerId);actual = actual->pNext;	}
@@ -632,7 +620,6 @@ int duplicate_control(void * data,List_locT * locT){
 	int lon_int=sprint_hex_data( SN, 2);
 	while (actual != NULL){
 		if (actual->data.node_id.id==dato->id){
-
 			if(((actual->data.Sequence_number < lon_int ) &&(lon_int- actual->data.Sequence_number <=65536/2))||((actual->data.Sequence_number > lon_int)&&(-lon_int + actual->data.Sequence_number >65536/2)))
 			{	actual->data.Sequence_number=lon_int;	i=0	; printf("**************************DUPLICADO*************************** \n"); }		  }
 		actual = actual->next;

@@ -83,6 +83,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		itsnet_packet_f * pkt=NULL;
 		char HL[1];
 		memcpy(HL,arg->data +2,1);
+		print_hex_data(single,1); print_hex_data(HL,1); printf("\n");
 		if(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0)){
 			printf("entro en tsb \n");
 			//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
@@ -200,9 +201,9 @@ void cb_broadcast_recvfrom(public_ev_arg_r *arg)
 		pkt = GeoBroadcast(datos,arg->lsp,arg->rep);
 	}else if(memcmp(HT,geounicast,1)==0){}
 	else if(memcmp(HT,geounicast,1)==0){}else{}
-
+printf("AQUI!\n");
 	// 2) broadcast application level UDP message to network level
-	if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
+	if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0))|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 
 
 		if (pkt!=NULL){
