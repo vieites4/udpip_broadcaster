@@ -1,6 +1,6 @@
 /**
  * @file main.h
- * @author Ricardo Tubío (rtpardavila[at]gmail.com)
+ * @author Ángela Souto Vieites (vieites4[at]gmail.com)
  * @version 0.1
  *
  * @section LICENSE
@@ -52,9 +52,13 @@
 
 /*!< Flag for activating the verbose mode. */
 extern bool __verbose;
+
+/**
+ * @brief This function is for thread of LPV timer, it is updated taking gps data
+ */
+
 void *thr_h1();
-void print_version();
-void print_help();
+
 
 #endif /* MAIN_H_ */
 

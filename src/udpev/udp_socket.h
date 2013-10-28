@@ -66,9 +66,6 @@ typedef struct ieee80211_header_frame_control
 
 
 
-
-
-
 typedef struct ifreq ifreq_t;				/**< Type for ifreq. */
 #define LEN__IFREQ sizeof(ifreq_t)
 typedef struct sockaddr_ll sockaddr_ll_t;
@@ -274,23 +271,35 @@ in_addr_t get_source_address(msg_header_t *msg);
 #define BYTES_PER_LINE 5000	/**< Number of bytes per line to be printed. */
 
 /**
- * @brief Prints the data field of the given IEEE 802.3 frame.
- * @param buffer The IEEE 802.3 frame whose data is to be printed.
- * @return EX_OK if everything was correct; otherwise < 0.
+ * @brief Prints hexadecimal data.
+ * @param hexadecimal data as an array.
+ * @param data length in bytes
  */
 int print_hex_data(const char *buffer, const int len);
 
 /**
- * @brief Prints the given Ethernet address.
- * @param eth_address Ethernet address as an array.
+ * @brief convert in integer hexadecimal data .
+ * @param hexadecimal data as an array.
+ * @param data length in bytes
  */
 int sprint_hex_data(const char *buffer, const int len);
-void print_eth_address(const unsigned char *eth_address);
 int set_ll_frame
 	(ll_frame_t *frame, const int frame_type, const int frame_len);
+
+/**
+ * @brief initialization of ieee80211 frame .
+ * @param socket where we will sent the frame
+ * @param mac address destination (broadcast?)
+ * @param mac address source
+ */
 ieee80211_frame_t *new_ieee80211_frame();
 
 ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char *h_dest, const unsigned char *h_source	);
-
+/**
+ * @brief obtain our home mac address .
+ * @param socket number
+ * @param interface name for this socket
+ * @param place where the mac address is returned
+ */
 int get_mac_address	(const int socket_fd, const char *if_name, const unsigned char *mac);
 #endif /* UDP_SOCKET_H_ */

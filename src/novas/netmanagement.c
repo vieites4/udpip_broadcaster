@@ -32,7 +32,6 @@ static unsigned short gTimer;
 static int gTimer_lsp[1000];
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
 
-void Timer2Function(){}
 
 tTimer * FindTimer(unsigned short TimerId,int num)
 {
@@ -183,8 +182,8 @@ List_locT * startup1()
 		printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 	}
 	locT_general = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
-	mpTimerList= init_locT_timer ();
-	mpTimerList_lsp= init_locT_timer ();
+	mpTimerList= init_timer_list ();
+	mpTimerList_lsp= init_timer_list ();
 	return (locT_general);}
 int a;
 
@@ -340,7 +339,7 @@ List_locT * init_locT ()
 	return(locTi);
 }
 
-List_timer * init_locT_timer ()
+List_timer * init_timer_list ()
 {
 	tTimer * list=NULL;
 	list = (List_timer *) malloc (sizeof (List_timer));
@@ -498,14 +497,6 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 		{			if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}
 		if (a==0) i++;		}	}
 	return(i);
-}
-
-bool exist_neighbours(List_locT * locT){
-	Element_locT *actual;
-	actual = locT->init;
-	while (actual != NULL){
-		if (actual->data.IS_NEIGHBOUR){return(true);}else{ actual = actual->next;}	}
-	return(false);
 }
 
 List_lsp * init_lsp ()

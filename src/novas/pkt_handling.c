@@ -47,6 +47,7 @@ itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 	memcpy(ch.payload_lenght,dato +4,2);
 	memcpy(ch.version_nh,dato +7,1);
 	ch.forwarder_position_vector=* LPV;
+
 	//create extended header
 	char TS[4];
 	memcpy(TS,dato +12,4);
@@ -97,6 +98,7 @@ itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 }
 
 itsnet_packet * SHB(void *dato, List_lsp *lsp, List_lsp *rep){
+
 	printf("SHB ");
 	//	Create common header
 	itsnet_packet * pkt = NULL;
@@ -128,6 +130,7 @@ itsnet_packet * SHB(void *dato, List_lsp *lsp, List_lsp *rep){
 			printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 			sup_elem_lsp(0);
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
+
 		}
 		int i =add_end_lsp(lsp, *pkt);
 		return(pkt1);
@@ -150,7 +153,9 @@ itsnet_packet * SHB(void *dato, List_lsp *lsp, List_lsp *rep){
 	}
 	//	printf("saio de shb\n");
 	return(pkt);}
+
 itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
+
 	//	Create common header
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -190,6 +195,7 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 	pkt->common_header=ch;
 	//NEIGHBOURS.
 	if  (locT_general->len== 0){
+
 		itsnet_packet * pkt1 = NULL;
 		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 		pkt1=NULL;int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
@@ -201,7 +207,9 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 		}
 		int i =add_end_lsp(lsp, *pkt);
 		return(pkt1);
-		//buffer in BC AND omit next executions	}
+		//buffer in BC AND omit next executions
+	}
+
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,dato +8,4);
@@ -250,6 +258,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	data->expires.tv_sec= itsGnLifetimeLocTE;
 	data->tstation=FLAG->itsStation;
 	free(FLAG);FLAG=NULL;
+
 	//data.tqe;
 	char HT1[1];
 	memcpy(HT1,dato+14,1);
@@ -369,6 +378,7 @@ void determine_nexthop(){
 
 itsnet_packet_f * TSB_f(void *dato){
 	//	Create common header
+
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	printf("xa estou dentro de tsb_f \n");
@@ -378,6 +388,7 @@ itsnet_packet_f * TSB_f(void *dato){
 	memcpy(PV,dato +8,28);
 	pkt->common_header.pv=*PV;
 	memcpy(pkt->common_header.traffic_class,dato +6,1);
+
 	char LEN[2] ;
 	memcpy(LEN,dato +4,2);
 	int lon_int=sprint_hex_data( LEN, 2);
@@ -469,6 +480,8 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 					b=sprint_hex_data(pkt->payload.itsnet_geocast.distanceB, 2);
 					total= 1- pow((x/a),2) - pow((y/b),2);
 					printf("eliptica \n");}
+	//printf("aqui\n");
 	return(total);
+
 }
 

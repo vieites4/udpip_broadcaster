@@ -1,12 +1,12 @@
 /**
  * @file main.c
- * @author Ricardo Tubío (rtpardavila[at]gmail.com)
+ * @author Ángela Souto Vieites (vieites4[at]gmail.com)
  * @version 0.1
  *
  * @section LICENSE
  *
- *  Created on: May 6, 2013
- *      Author: Ricardo Tubío (rtpardavila[at]gmail.com)
+ *  Created on: August 19, 2013
+ *      Author: Ángela Souto Vieites (vieites4[at]gmail.com)
  * This file is part of udpip-broadcaster.
  * udpip-broadcaster is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,6 @@
  */
 #include "main.h"
 #include <pthread.h>
-
-/************************************************** Application definitions */
-
-//static const char* __x_app_name = "udpip-broadcaster";
-//static const char* __x_app_version = "0.1";
-
-/******************************************************* INTERNAL FUNCTIONS */
-
 /* main */
 struct ev_loop * l_LPV;
 ev_timer t_LPV;
@@ -40,15 +32,11 @@ List_lsp * lsp_bc_g;
 void *thr_h1(void * arg){
 
 	t_LPV.data=arg;
-	//ollo!! teño que reiniciar o temporizador cando se renove o LPV por outros medios!
 	l_LPV=EV_DEFAULT;
-
 	ev_timer_init(&t_LPV,LPV_update,0.,itsGnMinimunUpdateFrequencyLPV); //
 	ev_timer_start(l_LPV,&t_LPV);
 	return NULL;
 }
-
-
 
 int main(int argc, char **argv)
 {

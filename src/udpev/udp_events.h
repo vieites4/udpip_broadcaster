@@ -26,11 +26,8 @@
 #include <errno.h>
 #include <ev.h>
 #include <unistd.h>
-//#include "cb_udp_events.h"
 #include "../configuration.h"
-//#include "../execution_codes.h"
 #include "../novas/netmanagement.h"
-
 #include "udp_socket.h"
 #include "cb_udp_events.h"
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

@@ -389,7 +389,7 @@ int open_transmitter_udp_socket(const int port, in_addr_t addr) //non está comp
 }
 
 
-int open_transmitter_raw_socket(const int port) //non está completo, non?
+int open_transmitter_raw_socket(const int port)
 {
 
 	int fd = -1;
@@ -639,13 +639,3 @@ int sprint_hex_data(const char *buffer, const int len)
 	return(num);
 
 }
-
-/* print_eth_address */
-void print_eth_address(const unsigned char *eth_address)
-{	printf("%02X:%02X:%02X:%02X:%02X:%02X",
-		(unsigned char) eth_address[0],
-		(unsigned char) eth_address[1],
-		(unsigned char) eth_address[2],
-		(unsigned char) eth_address[3],
-		(unsigned char) eth_address[4],
-		(unsigned char) eth_address[5]);}

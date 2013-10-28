@@ -28,8 +28,6 @@
 #include "udp_events.h"
 #include "define.h"
 
-//#include "novas/itsnet_header.h"
-
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // LIBEV CALLBACK FUNCTIONS
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -39,25 +37,28 @@
  * @param public_arg Public arguments for this callback function.
  *
  */
-
-// typedef void  (* public_ev_arg)(ev_cb_t *)  ;
-//typedef struct public_ev_arg public_ev_arg_t;
-void *thr_h3(void *arg);
 void cb_print_recvfrom(public_ev_arg_r *arg);
 
 /**
- * @brief Callback function that writes the given socket which has just been
- * 			put available for writing. Messages are sent in broadcast mode.
+ * @brief Callback function that takes information arrived from link layer.
+ * It will be sent to the upper layer and in some cases also resent to link layer
+ *  in broadcast mode.
  * @param public_arg Public arguments for this callback function.
  */
 void cb_forward_recvfrom(public_ev_arg_r *arg);
 
 /**
- * @brief Callback function that forwards an UDP message that it receives to
- * 			a given forwarding socket. The forwarded message is sent through
- * 			broadcast.
+ * @brief Callback function that forwards an UDP message that was received from upper layer.
+ *  The forwarded message is sent through broadcast to link layer.
  * @param public_arg Public arguments for this callback function.
  */
 void cb_broadcast_recvfrom(public_ev_arg_r *arg);
+/**
+ * @brief Thread we use to timer Beacon send. Beacon is how we announce our mac.
+ * If we sent another frame the timer will be updated
+ * @param public_arg Public arguments for this callback function.
+ */
+
+void *thr_h3(void *arg);
 
 #endif /* CB_UDP_EVENTS_H_ */

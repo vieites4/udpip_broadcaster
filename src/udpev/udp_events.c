@@ -104,7 +104,7 @@ udp_events_t *init_net_raw_events
 {	udp_events_t *s = init_rx_raw_events(net_rx_port, net_if_name, callback);
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
 	arg->public_arg.local_addr= init_if_sockaddr_in(net_if_name, net_rx_port);
-	arg->public_arg.forwarding_socket_fd= open_broadcast_udp_socket(net_if_name,app_fwd_port); //aqui debería ser o transmitter non o broadcast
+	arg->public_arg.forwarding_socket_fd= open_broadcast_udp_socket(net_if_name,app_fwd_port);
 	arg->public_arg.net_socket_fd= open_broadcast_raw_socket(net_if_name, net_tx_port);
 	arg->public_arg.forwarding_port =  app_fwd_port;
 	arg->public_arg.forwarding_addr = init_sockaddr_in( app_fwd_port,app_fwd_addr);

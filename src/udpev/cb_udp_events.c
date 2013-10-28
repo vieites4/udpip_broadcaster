@@ -44,7 +44,7 @@ struct ev_loop * l_Beacon;
 
 ev_timer t_Beacon;
 void *thr_h3(void *arg){
-	//ollo!! teño que reiniciar o temporizador cando se renove o LPV por outros medios!
+
 	t_Beacon.data=arg;
 	l_Beacon= EV_DEFAULT;
 	int num=itsGnBeaconServiceMaxJitter+1;

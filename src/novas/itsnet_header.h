@@ -1,38 +1,3 @@
-/***************************************************************************
- *                              CarGeo6 Project                            *
- *         C2CNet layer implementation conforming with GeoNet D2.2         *
- *                                                                         *
- *                      Copyright(C)2010 ESPRIT-INRIA                      *
- *                                                                         *
- *                                                                         *
- *   Authors:                                                              *
- *   Hichem BARGAOUI <barghich@gmail.com>                                  *
- *   Anouar CHEMEK <anouar.chemek@gmail.com>                               *
- *                                                                         *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
-
-/**
- * @file itsnet_header.h
- * itsnet header code.
- * @author Hichem BARGAOUI
- * @author Anouar CHEMEK
- */
-
 #ifndef ITSNET_HEADER_H
 #define ITSNET_HEADER_H 1
 
@@ -40,8 +5,6 @@
 
 //const uint8_t itsGnLocalGnAddr[8] = {0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 #define ITSNET_DATA_SIZE 1500
-
-
 #define ITSNET_LS_REQUEST        0
 #define ITSNET_LS_REPLY          1
 #define ITSNET_GEOBCAST_CIRCLE   0
@@ -68,9 +31,7 @@ typedef struct itsnet_protocol_info itsnet_protocol_info;
 typedef uint16_t itsnet_payload_lenght; /** total lenght of the datagram in octet (data + header) */
 typedef uint8_t itsnet_hop_limit; /** time to leave, max number of hops */
 typedef uint32_t itsnet_time_stamp;   /** time stamp at which the position was acquired*/
-
 /*typedef char itsnet_node_id[8];*/   /** identifier of the ITS station (not yet defined)*/
-
 typedef int32_t itsnet_latitude;  /** latitude of the ITS station */
 typedef int32_t itsnet_longitude;  /** longitude of the ITS station*/
 typedef uint16_t itsnet_sequencenumber;
@@ -165,23 +126,6 @@ struct itsnet_position_vector
 	itsnet_accuracy accuracy;
 };
 typedef struct itsnet_position_vector itsnet_position_vector;
-/**
- *common header for all its net packets
- */
-
-//struct itsnet_position_vector
-//{
-//	itsnet_node_id node_id;
-//	unsigned char time_stamp:	4;   /** UTC time in seconds, when the GPS data was calculated,NOT the time this message was generated */
-//	unsigned char  latitude:	4;  /** the latitude of the global position in 1/8 microdegree */
-//	unsigned char  longitude:	4;  /** the longitude of the global position in 1/8 microdegree*/
-//	unsigned char speed:	2;  /** current speed in 0.01 meters per second*/
-//	unsigned char heading:	2;  /** current curse in 0.005493247 degrees*/
-//	unsigned char altitude:	2;    /** the altitude (meter over mean sea level)*/
-	//uint8_t altitude[2];
-////	itsnet_accuracy accuracy;
-//};
-//typedef struct itsnet_position_vector itsnet_position_vector;
 
 struct strings_an
 {
@@ -203,7 +147,6 @@ struct itsnet_common_header
 };
 
 typedef struct itsnet_common_header itsnet_common_header;
-
 
 struct itsnet_common
 {
@@ -233,15 +176,6 @@ enum itsnet_packet_id
 	itsnet_geobroadcast_id,/** value of packet Geo-broadcast */
 	itsnet_tsb_id,/** value of packet Topologically-scoped broadcast */
 	itsnet_ls_id/** value of packet Location service */
-};
-
-/**
-* value of event types
-*/
-enum event_type
-{
-	itsnet_new_neighbor=1, /** new neighbor is added */
-	itsnet_other_event
 };
 
 /**
@@ -294,12 +228,8 @@ struct itsnet_btp_wo_payload
 {
 	char btp1 [2];
 	char btp2[2];
-
 };
-
 typedef struct itsnet_btp_wo_payload itsnet_btp_wo_payload_t;
-
-
 
 struct itsnet_geo_t
 {
@@ -316,15 +246,10 @@ typedef struct itsnet_geo_t itsnet_geo_t;
 
 struct itsnet_uni_t
 {
-
-
 	short payload[ITSNET_DATA_SIZE];
 };
 
 typedef struct itsnet_uni_t itsnet_uni_t;
-
-
-
 
 struct itsnet_any_t
 {
@@ -417,17 +342,11 @@ struct itsnet_tsb_t
 };
 
 typedef struct itsnet_tsb_t itsnet_tsb_t;
-
-
 struct itsnet_shb_t
-{
-
-	itsnet_btp payload;
-
+{	itsnet_btp payload;
 };
 
 typedef struct itsnet_shb_t itsnet_shb_t;
-
 
 /**
  *The structure describes the Location service request subtypes
@@ -435,25 +354,20 @@ typedef struct itsnet_shb_t itsnet_shb_t;
 
 struct itsnet_ls_request
 {
-
 	itsnet_position_vector source_position_vector;/** Source node position vector */
 	itsnet_node_id request_id;/** Request ID */
 };
-
 typedef struct itsnet_ls_request itsnet_ls_request;
 
 /**
  *The structure describes the Location service reply subtypes
  */
 struct itsnet_ls_reply
-{
-
-	itsnet_position_vector source_position_vector;/** Source node position vector */
+{	itsnet_position_vector source_position_vector;/** Source node position vector */
 	itsnet_node_id dest_node_id;
 	itsnet_latitude dest_latitude;
 	itsnet_longitude dest_longitude;
 };
-
 typedef struct itsnet_ls_reply itsnet_ls_reply;
 
 /**
@@ -462,8 +376,7 @@ typedef struct itsnet_ls_reply itsnet_ls_reply;
 struct itsnet_ls_t
 {
 	union ls_t
-	{
-		struct itsnet_ls_request ls_request;
+	{	struct itsnet_ls_request ls_request;
 		struct itsnet_ls_reply ls_reply;
 	} ls;
 };
@@ -485,11 +398,8 @@ struct itsnet_packet
 		struct itsnet_geobroadcast_t itsnet_geobroadcast;/** Geo-broadcast */
 		struct itsnet_tsb_t itsnet_tsb;/** Topologically-scoped broadcast */
 		struct itsnet_ls_t itsnet_ls;/** Location service */
-
-
 	} payload;
 };
-
 typedef struct itsnet_packet itsnet_packet;
 
 struct itsnet_packet_f
@@ -499,10 +409,8 @@ struct itsnet_packet_f
 	{
 		struct itsnet_uni_t itsnet_unicast;/** unspecified */
 		struct itsnet_geo_t itsnet_geocast;/** Beacon */
-
 	} payload;
 };
-
 typedef struct itsnet_packet_f itsnet_packet_f;
 
 /**
@@ -510,9 +418,7 @@ typedef struct itsnet_packet_f itsnet_packet_f;
  */
 
 struct mac_addr{
-	unsigned char address[6];
-};
-
+	unsigned char address[6];};
 typedef struct mac_addr mac_addr;
 
 /**
