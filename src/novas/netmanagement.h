@@ -321,7 +321,7 @@ void SystemTickEvent(void);
  * to erase the timer of the element we erase.
 
  */
-void CheckTimerEvent_lsp();
+void CheckTimerEvent_lsp(EV_P_ ev_timer *w, int revents);
 /**
  * @fn CheckTimerEvent_lsp
  * @brief When one of the elements of loct finishes its timer a signal SIGUSR1 is rised and

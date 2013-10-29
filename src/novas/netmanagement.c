@@ -113,13 +113,13 @@ if((nTimer & TIMER_14)!=0)    	{	sup_elem_locT(14,mac_list[14],locT_general);  }
 if((nTimer & TIMER_15)!=0)    	{ 	sup_elem_locT(15,mac_list[15],locT_general);  }
 if((nTimer & TIMER_16)!=0)      {	sup_elem_locT(16,mac_list[16],locT_general);  }
 }}
-void CheckTimerEvent_lsp()
+void CheckTimerEvent_lsp(EV_P_ ev_timer *w, int revents)
 {	printf("6666666\n");
 signal(SIGUSR1, CheckTimerEvent_lsp);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 int aa=0;int i=0;
-while (aa!=0){  if(gTimer_lsp[i]==0) aa=1; else sup_elem_t_lsp(gTimer_lsp[i]);i++; }}
+while (aa==0){  if(gTimer_lsp[i]==0) aa=1; else sup_elem_t_lsp(gTimer_lsp[i]);i++; }}
 
 void SystemTickEvent(void)
 {alarm(1);
@@ -410,11 +410,8 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)//(EV_P_ ev_timer *w, i
 	itsnet_node *data;
 	data=(itsnet_node *)malloc(sizeof(itsnet_node));
 	data->mac_id=*pos;
-	printf("entra do search cando falla\n");
 	int a=search_in_locT(data,locT_general);
-	printf("saio do search cando falla %d\n",a);
 	free(data);data=NULL;
-	printf("saio do search cando falla\n");
 	if (position==NULL) printf("son null\n");
 	while (in<(a-1))
 	{in++;position = position->next;}
@@ -442,10 +439,11 @@ int sup_elem_t_lsp (int num)//(EV_P_ ev_timer *w, int revents)// void * arg){//E
 	int buf_size=sprint_hex_data(position->data.common_header.payload_lenght,2);
 	itsnet_node *data;
 	int in=0;
+	printf("entrei no sup_elem_t_lsp\n");
 	while (in==0 || position==NULL)
 	{
-		char LEN[2];memcpy(LEN,&position->data +14,2);
-		int num0=strtol(LEN,NULL,16);
+		char SN[2];memcpy(SN,&position->data +36,2);
+		int num0=strtol(SN,NULL,16);printf("num %d num0%d busca sup_elem_t_lsp\n",num,num0);
 		if(num0==num)in=1; position = position->next;}
 	if (position==NULL) printf("son null\n");
 	if(position->before==NULL){
@@ -535,7 +533,7 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 	}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 		sn = data.payload.itsnet_geobroadcast.sequencenumber;
 		temp = (LT_s *) data.payload.itsnet_tsb.lt;}else{}
-	if((memcmp(HT,tsb0,1)==0 && lon_int>1)||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
+	if(memcmp(HT,tsb1,1)==0 ||(memcmp(HT,tsb0,1)==0 && lon_int>1)||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 		int str2=temp->multiple;	int str1=temp->base;int num0;
 		if (str1==0){num0=50;}else if(str1==1){num0=100;}else if(str1==2){num0=1000;}else num0=10000;
 		int lt=num0*str2 /100; //lt in seconds
@@ -573,17 +571,27 @@ int sup_elem_lsp (int num){
 	int a=0;
 	Element_lsp *pos=lsp_bc_g->init;
 	int buf_size=sprint_hex_data(pos->data.common_header.payload_lenght,2);
-	if(pos->before==NULL){
-		printf("eliminamos o primeiro \n");
-		lsp_bc_g->init=lsp_bc_g->init->next;
-		if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    	printf("eliminamos o unico \n");}else{lsp_bc_g->init->before=NULL;}
-	}
+	//if(pos->before==NULL){
+	printf("eliminamos o primeiro \n");
+	lsp_bc_g->init=lsp_bc_g->init->next;
+	if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    	printf("eliminamos o unico \n");}else{lsp_bc_g->init->before=NULL;}
+	//}
 	lsp_bc_g->len--;
 	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
-	char HT[1];int sn;
+	char HT[1];int sn;char HL[1];
 	memcpy(HT,&pos->data.common_header.HT_HST,1);
-	if(memcmp(HT,tsb1,1)==0 || memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){a=1;}
-	if (a==1){sup_timer(num,2);}
+	memcpy(HL,pos->data.common_header.hop_limit,1);
+	int lon_int=sprint_hex_data( HL, 1);
+	if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0 || memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){a=1;}
+	if (a==1){ if (num==0xffff){
+		if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0){
+			sn = pos->data.payload.itsnet_tsb.sequencenumber;
+			}else
+			if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
+				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;
+			}
+sup_timer(sn,2);
+	}else sup_timer(num,2);}
 	printf("saimos de suprimir elemento da lsp\n");
 	return 0;
 }
