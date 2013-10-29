@@ -82,9 +82,10 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		memcpy(HT,arg->data +15,1);
 		itsnet_packet_f * pkt=NULL;
 		char HL[1];
-		memcpy(HL,arg->data +2,1);
-		print_hex_data(single,1); print_hex_data(HL,1); printf("\n");
-		if(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0)){
+		memcpy(HL,arg->data +14+7,1);
+		int lon_int=sprint_hex_data( HL, 1);
+		//print_hex_data(single,1); print_hex_data(HL,1); printf(" single and hl\n");
+		if(memcmp(HT,tsb0,1)==0&& (lon_int>1)){
 			printf("entro en tsb \n");
 			//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
 			error =CommonHeader_processing(arg);
@@ -125,10 +126,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		if (error==0 && duplicate_control(datos,arg->locT)==0){
 		if (memcmp(HT,tsb0,1)==0 ||(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
 			printf("entro no envio do enlace cara o enlace \n");
-			unsigned char Hop[1] ;
-			memcpy(Hop,datos+7,1);
-			int lon_int=sprint_hex_data(&Hop, 1);
-			if (lon_int>1){//descartamos o paquete e omitimos os seguintes pasos //ESTO TEÑO QUE CAMBIALO POR >1
+			if (lon_int>1){
 				printf("o meu hop limit é maior que un\n");
 				itsnet_packet * pkt1=NULL;
 				pkt1 =(itsnet_packet *)malloc(sizeof(itsnet_packet));

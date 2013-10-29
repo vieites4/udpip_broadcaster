@@ -476,7 +476,7 @@ void view_lsp (){
 	actual = lsp_bc_g->init;
 	char LEN[2];
 	int num0;
-	while (actual != NULL){ print_hex_data(&actual->data.payload,2);printf(" lista lsp\n");actual = actual->next;}
+	while (actual != NULL){ print_hex_data(&actual->data.payload,2);	printf(" lista lsp\n");actual = actual->next;}
 }
 
 int search_in_locT (itsnet_node * data, List_locT * locT){
@@ -529,7 +529,6 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 	memcpy(HL,&data.common_header.hop_limit,1);
 	int lon_int=sprint_hex_data( HL, 1);
 	memcpy(HT,&data.common_header.HT_HST,1);
-	print_hex_data(HT,1);print_hex_data(tsb0,1);
 	if((memcmp(HT,tsb0,1)==0) && (lon_int>1)){
 		temp = (LT_s *) data.payload.itsnet_tsb.lt;
 		sn = data.payload.itsnet_tsb.sequencenumber;
