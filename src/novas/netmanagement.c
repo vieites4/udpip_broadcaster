@@ -161,9 +161,9 @@ if (aa!=0){raise(SIGUSR1);
 void thr_h2(void *arg){
 	alarm(1);
 	signal(SIGALRM,SystemTickEvent);
-	while(1){
+	//while(1){
 		signal(SIGUSR2, CheckTimerEvent);
-		signal(SIGUSR1, CheckTimerEvent_lsp);	}}
+		signal(SIGUSR1, CheckTimerEvent_lsp);	}//}
 
 List_locT * startup1()
 {
@@ -440,11 +440,19 @@ int sup_elem_t_lsp (int num)//(EV_P_ ev_timer *w, int revents)// void * arg){//E
 	itsnet_node *data;
 	int in=0;
 	printf("entrei no sup_elem_t_lsp\n");
-	while (in==0 || position==NULL)
+	char SN[2];char sn1[1];char sn2[1];
+	//SN=(char *)malloc(2);
+	while (in==0 && position!=NULL)
 	{
-		char SN[2];memcpy(SN,&position->data +36,2);
-		int num0=strtol(SN,NULL,16);printf("num %d num0%d busca sup_elem_t_lsp\n",num,num0);
-		if(num0==num)in=1; position = position->next;}
+//SN=(position->data.payload+1 << 8)|(position->data.payload);
+		memcpy(SN,(char*)(&position->data.payload)+1,1);
+		memcpy(SN +1,&position->data.payload,1);
+		//strcat(SN,sn2);
+		//strcat(SN,sn1);
+		print_hex_data(SN,2);
+		int num0=sprint_hex_data(SN,2);
+		printf("num %d num0 %d busca sup_elem_t_lsp\n",num,num0);
+		if(num0==num)in=1; else position = position->next;}
 	if (position==NULL) printf("son null\n");
 	if(position->before==NULL){
 		printf("eliminamos o primeiro de lsp\n");
@@ -457,6 +465,7 @@ int sup_elem_t_lsp (int num)//(EV_P_ ev_timer *w, int revents)// void * arg){//E
 		printf("eliminamos outro de lsp\n");
 		position->before->next=position->next;
 		position->next->before=position->before;	}
+	//free(SN);SN=NULL;
 	sup_timer(num,2);
 	lsp_bc_g->len--;
 	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
@@ -538,7 +547,8 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 		if (str1==0){num0=50;}else if(str1==1){num0=100;}else if(str1==2){num0=1000;}else num0=10000;
 		int lt=num0*str2 /100; //lt in seconds
 		printf("SEQUENCE NUMBER! %d\n",sn);
-		AddTimer(sn,lt,2);}
+		if (lt>0) AddTimer(sn,lt,2); //revisar esto
+	}
 	lsp_bc_g=lsp;
 	return 0;
 }

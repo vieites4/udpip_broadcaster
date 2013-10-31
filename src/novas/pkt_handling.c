@@ -51,9 +51,20 @@ itsnet_packet * TSB(void *dato, List_lsp *lsp, List_lsp *rep){
 	char SO_pv[28];
 	itsnet_tsb_t tsb_h;
 	tsb_h.sequencenumber=SN_g;
+
 	printf("SN %d\n",tsb_h.sequencenumber);
-	char TS_default[1]={0xf2};
-	memcpy(tsb_h.lt,TS_default,1);
+    int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
+    LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};
+    if (ts_num>6401){base=3; mult=(int) ceil(ts_num/100); } else if (ts_num>64) {base=2; mult=(int) ceil(ts_num/10);}else {base=1; mult=ts_num;}
+    				sprintf(str2, "%04X",mult);
+    				sprintf(str1, "%01X",base);
+    				num4=strtol(str2,NULL,16);
+    				num3=strtol(str1,NULL,16);
+    				lt->base=num3;lt->multiple=num4;
+    				memcpy(tsb_h.lt,(void *)lt,1);
+
+	//char TS_default[1]={0xf2};
+	//memcpy(tsb_h.lt,TS_default,1);
 	SN_g++; //máximo SN?? % SN_MAX;
 	tsb_h.source_position_vector=* LPV;
 	memcpy(tsb_h.payload.payload,dato +20,lon_int);
@@ -168,15 +179,27 @@ itsnet_packet * GeoBroadcast(void *dato, List_lsp *lsp, List_lsp *rep){
 	memcpy(ch.payload_lenght,dato +4,2);
 	memcpy(ch.version_nh,dato +7,1);
 	ch.forwarder_position_vector=* LPV;
+	itsnet_geobroadcast_t gbc_h;
 	char TS [4];
-	memcpy(TS,dato +12,4);
-	char TS_default[1]={0xf2}; //habería que ver como facer a conversión de segundos a o sistema dun so byte que está formado polo multiplier e a base.
+		memcpy(TS,dato +12,4);
+		 int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
+		    LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};
+		    if (ts_num>6401){base=3; mult=(int) ceil(ts_num/100); } else if (ts_num>64) {base=2; mult=(int) ceil(ts_num/10);}else {base=1; mult=ts_num;}
+		    				sprintf(str2, "%04X",mult);
+		    				sprintf(str1, "%01X",base);
+		    				num4=strtol(str2,NULL,16);
+		    				num3=strtol(str1,NULL,16);
+		    				lt->base=num3;lt->multiple=num4;
+		    				memcpy(gbc_h.lt,(void *)lt,1);
+
+
+		//char TS_default[1]={0xf2}; //habería que ver como facer a conversión de segundos a o sistema dun so byte que está formado polo multiplier e a base.
 	//	ch.txpower=0;
 	//create extended header
 	ch.forwarder_position_vector=* LPV;
 	char SO_pv[28];
-	itsnet_geobroadcast_t gbc_h;
-	memcpy(gbc_h.lt,TS_default,1);
+
+	//memcpy(gbc_h.lt,TS_default,1);
 	gbc_h.sequencenumber=SN_g;
 	printf("SN %d\n",gbc_h.sequencenumber);
 	SN_g++;//máximo SN?? % SN_MAX;

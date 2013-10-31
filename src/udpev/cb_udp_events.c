@@ -66,7 +66,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	if ( ( arg->len = recv_message(arg->socket_fd,data))<0)
 	{log_app_msg("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
 	if (memcmp((void *)tipoX,data+12,2)==0){
-		printf("cb_forward_recvfrom1 \n");
+		printf("cb_forward_recvfmakerom1 \n");
 		printf("RECIBO UN PAQUETE\n");
 		//	print_hex_data(data, arg->len);printf("\n");
 		memcpy(arg->data,data,arg->len);
@@ -145,6 +145,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				}
 				printf("remata cb_forward_recvfrom \n");
 			}}}
+
 }
 
 /* cb_broadcast_recvfrom */
