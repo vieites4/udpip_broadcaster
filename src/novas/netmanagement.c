@@ -5,7 +5,7 @@ extern List_lsp * lsp_bc_g;
 extern itsnet_node_id GN_ADDR;
 itsnet_position_vector * LPV;
 ev_timer t_Loct;
-unsigned short variables[17]={0x00,0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
+unsigned short dictionary[17]={0x00,0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
 mac_addr *mac_list[16];
 List_locT *locT_general;
 bool taken_rep[17]={false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
@@ -162,8 +162,8 @@ void thr_h2(void *arg){
 	alarm(1);
 	signal(SIGALRM,SystemTickEvent);
 	//while(1){
-		signal(SIGUSR2, CheckTimerEvent);
-		signal(SIGUSR1, CheckTimerEvent_lsp);	}//}
+	signal(SIGUSR2, CheckTimerEvent);
+	signal(SIGUSR1, CheckTimerEvent_lsp);	}//}
 
 List_locT * startup1()
 {
@@ -181,7 +181,7 @@ List_locT * startup1()
 	}else{
 		printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 	}
-	locT_general = init_locT(); //probablemente teña que facer esto aquí para tódalas listas/buffers.
+	locT_general = init_locT();
 	mpTimerList= init_timer_list ();
 	mpTimerList_lsp= init_timer_list ();
 	return (locT_general);}
@@ -285,13 +285,12 @@ bool mngdaddrconf(int option) //1: initial, 2:update,3:duplicate detection
 
 }
 
-void Beacon_send(EV_P_ ev_timer *w, int revents) {//public_ev_arg_r *arg){
+void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	printf("teño que enviar unha Beacon\n");
 	char h_source[ETH_ALEN];
 	public_ev_arg_r * arg=(public_ev_arg_r *)w->data;
 	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
-	//		tx_frame->buffer.frame_len = sizeof(arg->data) +42;
 	char tipo[2]={0x07,0x07};
 	memcpy(tx_frame->buffer.header.type,tipo,2);
 	const unsigned char beaco[1]={0x01};
@@ -369,7 +368,7 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 	unsigned short num=0;
 	while(a==0 && num2<16){
 		num2=num2 +1;
-		if (taken[num2]==false){num=variables[num2]; taken[num2]=true;mac_list[num2]=&(locT->end->data.mac_id); a=1;}
+		if (taken[num2]==false){num=dictionary[num2]; taken[num2]=true;mac_list[num2]=&(locT->end->data.mac_id); a=1;}
 	}
 	AddTimer(num,itsGnLifetimeLocTE,1);
 	locT_general=locT;
@@ -377,7 +376,7 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 	return 0;
 }
 
-int sup_timer (unsigned short TimerId, int num)//(EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
+int sup_timer (unsigned short TimerId, int num)
 {
 	tTimer * position=NULL;
 	List_timer *list;
@@ -402,7 +401,7 @@ int sup_timer (unsigned short TimerId, int num)//(EV_P_ ev_timer *w, int revents
 	return 0;
 }
 /* erase after a position */
-int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)//(EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
+int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 {
 	Element_locT * position=locT_general->init;
 	print_hex_data(pos->address,6);printf(" para eliminar elemento loct\n");
@@ -427,28 +426,24 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)//(EV_P_ ev_timer *w, i
 		printf("eliminamos outro de loct\n");
 		position->before->next=position->next;
 		position->next->before=position->before;	}
-	sup_timer(variables[num],1);
+	sup_timer(dictionary[num],1);
 	locT_general->len--;
 	taken[num]=0;
 	return 0;
 }
 
-int sup_elem_t_lsp (int num)//(EV_P_ ev_timer *w, int revents)// void * arg){//EV_P_ ev_timer *w,
+int sup_elem_t_lsp (int num)
 {
 	Element_lsp * position=lsp_bc_g->init;
 	int buf_size=sprint_hex_data(position->data.common_header.payload_lenght,2);
 	itsnet_node *data;
 	int in=0;
 	printf("entrei no sup_elem_t_lsp\n");
-	char SN[2];char sn1[1];char sn2[1];
-	//SN=(char *)malloc(2);
+	char SN[2];
 	while (in==0 && position!=NULL)
 	{
-//SN=(position->data.payload+1 << 8)|(position->data.payload);
 		memcpy(SN,(char*)(&position->data.payload)+1,1);
 		memcpy(SN +1,&position->data.payload,1);
-		//strcat(SN,sn2);
-		//strcat(SN,sn1);
 		print_hex_data(SN,2);
 		int num0=sprint_hex_data(SN,2);
 		printf("num %d num0 %d busca sup_elem_t_lsp\n",num,num0);
@@ -474,30 +469,30 @@ int sup_elem_t_lsp (int num)//(EV_P_ ev_timer *w, int revents)// void * arg){//E
 
 /* view List */
 void view_locT (){
-	Element_locT *actual;
-	actual = locT_general->init;
-	while (actual != NULL){	print_hex_data(actual->data.mac_id.address,6);printf(" lista loct\n");actual = actual->next;}
+	Element_locT *aux;
+	aux = locT_general->init;
+	while (aux != NULL){	print_hex_data(aux->data.mac_id.address,6);printf(" lista loct\n");aux = aux->next;}
 }
 void view_lsp (){
-	Element_lsp *actual;
-	actual = lsp_bc_g->init;
+	Element_lsp *aux;
+	aux = lsp_bc_g->init;
 	char LEN[2];
 	int num0;
-	while (actual != NULL){ print_hex_data(&actual->data.payload,2);	printf(" lista lsp\n");actual = actual->next;}
+	while (aux != NULL){ print_hex_data(&aux->data.payload,2);	printf(" lista lsp\n");aux = aux->next;}
 }
 
 int search_in_locT (itsnet_node * data, List_locT * locT){
-	Element_locT *actual;
-	actual = locT->init;
+	Element_locT *aux;
+	aux = locT->init;
 	int i=0;
-	while (actual != NULL){
-		if (memcmp(actual->data.mac_id.address,data->mac_id.address,6)==0){
+	while (aux != NULL){
+		if (memcmp(aux->data.mac_id.address,data->mac_id.address,6)==0){
 			i=1;
-			if(((actual->data.pos_vector.time_stamp < data->pos_vector.time_stamp ) &&(data->pos_vector.time_stamp - actual->data.pos_vector.time_stamp <=4294967296/2))||((actual->data.pos_vector.time_stamp > data->pos_vector.time_stamp)&&(-data->pos_vector.time_stamp + actual->data.pos_vector.time_stamp >4294967296/2)))
-			{				actual->data.pos_vector=data->pos_vector;
-			actual->data.expires.tv_sec= itsGnLifetimeLocTE;
-			actual->data.IS_NEIGHBOUR=true;			}	}
-		actual = actual->next;	}
+			if(((aux->data.pos_vector.time_stamp < data->pos_vector.time_stamp ) &&(data->pos_vector.time_stamp - aux->data.pos_vector.time_stamp <=4294967296/2))||((aux->data.pos_vector.time_stamp > data->pos_vector.time_stamp)&&(-data->pos_vector.time_stamp + aux->data.pos_vector.time_stamp >4294967296/2)))
+			{				aux->data.pos_vector=data->pos_vector;
+			aux->data.expires.tv_sec= itsGnLifetimeLocTE;
+			aux->data.IS_NEIGHBOUR=true;			}	}
+		aux = aux->next;	}
 	int a=0;
 	if(i==1){
 		while ((i<17) &&(a==0))
@@ -570,7 +565,7 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 	unsigned short num=0;
 	while(a==0){
 		num2=(num2 +1) % 16;
-		if (taken_rep[num2]==false){num=variables[num2]; taken_rep[num2]=true; a=1;}
+		if (taken_rep[num2]==false){num=dictionary[num2]; taken_rep[num2]=true; a=1;}
 	}
 	AddTimer(num,itsGnMaxPacketLifeTime,3);
 	return 0;
@@ -596,41 +591,41 @@ int sup_elem_lsp (int num){
 	if (a==1){ if (num==0xffff){
 		if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0){
 			sn = pos->data.payload.itsnet_tsb.sequencenumber;
-			}else
+		}else
 			if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;
 			}
-sup_timer(sn,2);
+		sup_timer(sn,2);
 	}else sup_timer(num,2);}
 	printf("saimos de suprimir elemento da lsp\n");
 	return 0;
 }
 /* view List */
 void view_timers(){
-	tTimer *actual;
-	actual = mpTimerList->init;
-	while (actual != NULL){		printf("timerid %d \n",actual->TimerId);actual = actual->pNext;	}
+	tTimer *aux;
+	aux = mpTimerList->init;
+	while (aux != NULL){		printf("timerid %d \n",aux->TimerId);aux = aux->pNext;	}
 	printf("pinto lista timers loct \n");
-	actual = mpTimerList_lsp->init;
-	while (actual != NULL){		printf("timerid %d \n",actual->TimerId);actual = actual->pNext;	}
+	aux = mpTimerList_lsp->init;
+	while (aux != NULL){		printf("timerid %d \n",aux->TimerId);aux = aux->pNext;	}
 }
 
 int duplicate_control(void * data,List_locT * locT){
 
-	Element_locT *actual;
-	actual = locT->init;
+	Element_locT *aux;
+	aux = locT->init;
 	int i=1;
-	itsnet_node_id * dato=NULL;//
-	dato= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
-	memcpy(dato,data +8,8);
+	itsnet_node_id * buffer=NULL;//
+	buffer= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
+	memcpy(buffer,data +8,8);
 	char SN[2];
 	memcpy(SN,data+36,2);
 	int lon_int=sprint_hex_data( SN, 2);
-	while (actual != NULL){
-		if (actual->data.node_id.id==dato->id){
-			if(((actual->data.Sequence_number < lon_int ) &&(lon_int- actual->data.Sequence_number <=65536/2))||((actual->data.Sequence_number > lon_int)&&(-lon_int + actual->data.Sequence_number >65536/2)))
-			{	actual->data.Sequence_number=lon_int;	i=0	; printf("**************************DUPLICADO*************************** \n"); }		  }
-		actual = actual->next;
+	while (aux != NULL){
+		if (aux->data.node_id.id==buffer->id){
+			if(((aux->data.Sequence_number < lon_int ) &&(lon_int- aux->data.Sequence_number <=65536/2))||((aux->data.Sequence_number > lon_int)&&(-lon_int + aux->data.Sequence_number >65536/2)))
+			{	aux->data.Sequence_number=lon_int;	i=0	; printf("**************************DUPLICADO*************************** \n"); }		  }
+		aux = aux->next;
 	}
 	return(i);
 }

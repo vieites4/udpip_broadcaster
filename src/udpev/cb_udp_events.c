@@ -71,14 +71,14 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//	print_hex_data(data, arg->len);printf("\n");
 		memcpy(arg->data,data,arg->len);
 		char tipo[2];
-		memcpy(tipo,arg->data + 12 ,2);
+		memcpy(tipo,(char *)(arg->data) + 12 ,2);
 		char datos[arg->len];
-		memcpy(datos,arg->data +14,arg->len -14);
+		memcpy(datos,(char *)(arg->data) +14,arg->len -14);
 		char HT[1];
-		memcpy(HT,arg->data +15,1);
+		memcpy(HT,(char *)(arg->data) +15,1);
 		itsnet_packet_f * pkt=NULL;
 		char HL[1];
-		memcpy(HL,arg->data +14+7,1);
+		memcpy(HL,(char *)(arg->data) +14+7,1);
 		int lon_int=sprint_hex_data( HL, 1);
 		//print_hex_data(single,1); print_hex_data(HL,1); printf(" single and hl\n");
 		if(memcmp(HT,tsb0,1)==0&& (lon_int>1)){
@@ -170,7 +170,7 @@ memcpy(HT,arg->data,2);
 itsnet_packet * pkt=NULL;
 pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 char HL[1];
-memcpy(HL,arg->data +2,1);
+memcpy(HL,(char *)(arg->data) +2,1);
 if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
 	printf("entro en tsb1\n");
 	pkt = TSB(datos,arg->lsp,arg->rep);
