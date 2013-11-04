@@ -188,6 +188,7 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0)
 		memcpy(tx_frame->buffer.data, (char *) pkt, IEEE_80211_BLEN);
 		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);//probei o +4
 		ev_timer_again (l_Beacon,&t_Beacon);}
+//	print_hex_data(&tx_frame->buffer,50);printf(" paquete enviado a ll\n");
 }
 free(pkt);pkt=NULL; //	printf("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
 printf("saio ben do cb_broadcast_recvfrom\n");

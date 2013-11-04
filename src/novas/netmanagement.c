@@ -356,22 +356,23 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 	new_element->data= data;
 	new_element->next = NULL;
 	new_element->before = NULL;
-	if (locT->init==NULL) {
+	if (locT_general->init==NULL) {
 		//new_element->before=locT->init;
-		locT->init=new_element; //new_element->next=locT->end;
+		locT_general->init=new_element; //new_element->next=locT->end;
 	} else {
-		new_element->before=locT->end;
-		locT->end->next = new_element;	}
-	locT->end = new_element;
-	locT ->len++;
+		new_element->before=locT_general->end;
+		locT_general->end->next = new_element;	}
+	locT_general->end = new_element;
+	locT_general ->len++;
 	int num2=0;a=0;
 	unsigned short num=0;
 	while(a==0 && num2<16){
 		num2=num2 +1;
-		if (taken[num2]==false){num=dictionary[num2]; taken[num2]=true;mac_list[num2]=&(locT->end->data.mac_id); a=1;}
+		if (taken[num2]==false){num=dictionary[num2]; mac_list[num2]=&(new_element->data.mac_id); a=1;taken[num2]=true;}
 	}
+
 	AddTimer(num,itsGnLifetimeLocTE,1);
-	locT_general=locT;
+	//locT_general=locT;
 	printf("fin add_en_loct\n");
 	return 0;
 }
@@ -412,7 +413,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	int a=search_in_locT(data,locT_general);
 	free(data);data=NULL;
 	if (position==NULL) printf("son null\n");
-	while (in<(a-1))
+	while (in<(a))
 	{in++;position = position->next;}
 	printf("busco position %d\n",a);if (position==NULL) printf("son null\n"); print_hex_data(position->data.mac_id.address,6);printf(" elimino este en loct\n");
 	if(position->before==NULL){
@@ -428,7 +429,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 		position->next->before=position->before;	}
 	sup_timer(dictionary[num],1);
 	locT_general->len--;
-	taken[num]=0;
+	taken[num]=false;
 	return 0;
 }
 
@@ -493,11 +494,13 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 			aux->data.expires.tv_sec= itsGnLifetimeLocTE;
 			aux->data.IS_NEIGHBOUR=true;			}	}
 		aux = aux->next;	}
+
 	int a=0;
 	if(i==1){
 		while ((i<17) &&(a==0))
-		{			if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}
-		if (a==0) i++;		}	}
+
+		{print_hex_data(mac_list[i]->address,6);printf("\n");print_hex_data(data->mac_id.address,6);	printf(" esta é a que busco\n");	if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}
+		else i++;		}	}
 	return(i);
 }
 
