@@ -247,16 +247,26 @@ void GeoUnicast(){}
 void GeoAnycast(){}
 int CommonHeader_processing(public_ev_arg_r *arg){
 	////this is the first thing we must do after reception of a GN pkt.
+	printf("entro1\n");
 	char buffer[arg->len];
+	printf("entro2\n");
 	memcpy(buffer,arg->data,arg->len);
+	printf("entro3\n");
 	itsnet_position_vector * PV=NULL;//
+	printf("entro4\n");
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	printf("entro5\n");
 	memcpy( PV,buffer +8+14,28);
+	printf("entro6\n");
 	flags_t * FLAG=NULL;//
+	printf("entro7\n");
 	FLAG= (flags_t *)malloc(sizeof(flags_t));
+	printf("entro8\n");
 	memcpy( FLAG,buffer +3+14,1);
 	itsnet_node * data=NULL;//
+	printf("entro9\n");
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
+	printf("entro1\n");
 	memcpy(data->mac_id.address,buffer+6,6);
 	data->IS_NEIGHBOUR=true;
 	data->pos_vector= * PV;
@@ -267,7 +277,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	free(FLAG);FLAG=NULL;
 	char HT1[1];
 	memcpy(HT1,buffer+15,1);
-
+	printf("entro10\n");
 	if(memcmp(HT1,beacon,1)!=0 ){
 	//printf("entro1\n");
 	char HL[1];
@@ -411,7 +421,7 @@ itsnet_packet_f * SHB_f(void *buffer){
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	printf("xa estou dentro de shb_f \n");
 	memcpy(pkt->common_header.btp,(char *)(buffer)+7,1);
-	itsnet_position_vector * PV=NULL;//
+	itsnet_position_vector * PV=NULL;
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +8,28);
 	pkt->common_header.pv=*PV;
@@ -424,8 +434,10 @@ itsnet_packet_f * SHB_f(void *buffer){
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+2,1);
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+36,lon_int);
 	memcpy(pkt->common_header.pkt_type,buffer,1);
+	printf("chego0\n");
 	memcpy(pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
-	printf("medidas %d< %d",lon_int, ITSNET_DATA_SIZE);
+	print_hex_data(LEN,2);printf(" chego0\n");
+	printf("medidas %d",lon_int);
 	free(PV);PV=NULL;
 	return(pkt);
 }

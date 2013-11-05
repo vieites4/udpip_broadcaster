@@ -618,6 +618,7 @@ int duplicate_control(void * data,List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
 	int i=1;
+	printf("entro en duplicate control\n");
 	itsnet_node_id * buffer=NULL;//
 	buffer= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
 	memcpy(buffer,data +8,8);
@@ -630,5 +631,7 @@ int duplicate_control(void * data,List_locT * locT){
 			{	aux->data.Sequence_number=lon_int;	i=0	; printf("**************************DUPLICADO*************************** \n"); }		  }
 		aux = aux->next;
 	}
+	printf("saio de duplicate control\n");
+
 	return(i);
 }

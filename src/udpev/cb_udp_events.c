@@ -53,19 +53,20 @@ void *thr_h3(void *arg){
 
 #define __TX_DELAY_US 1000000		/**< (usecs) without sending. */
 #define __DATA_BUFFER_LEN 100		/**< Length of the buffer. */
+
 volatile sig_atomic_t keep_going = 1;
 /* cb_forward_recvfrom */
 
 void cb_forward_recvfrom(public_ev_arg_r *arg)
 {
-	char tipoX[2]={0x07,0x07};
+	char type07[2]={0x07,0x07};
 	//	bool blocked = false;
-	arg->len = 0;int error=0;
+	arg->len = 0;int error=0;int aa=0;
 	// 1) read UDP message from network level
 	char data[ITSNET_DATA_SIZE*2];
 	if ( ( arg->len = recv_message(arg->socket_fd,data))<0)
 	{log_app_msg("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
-	if (memcmp((void *)tipoX,data+12,2)==0){
+	if (memcmp((void *)type07,data+12,2)==0){
 		printf("cb_forward_recvfmakerom1 \n");
 		printf("RECIBO UN PAQUETE\n");
 		//	print_hex_data(data, arg->len);printf("\n");
@@ -86,7 +87,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
 			error =CommonHeader_processing(arg);
 			if (error==0 && duplicate_control(datos,arg->locT)==0){
-				pkt = TSB_f(datos);
+				pkt = TSB_f(datos);aa=1;
 				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 				printf("saio de tsb_f \n");}
 		} else if(memcmp(HT,tsb0,1)==0){
@@ -97,8 +98,10 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			printf("entro en geobroadcast \n");
 			error =CommonHeader_processing(arg);
-			printf("entro en geobroadcast! \n");
+			printf("entro en geobroadcast! %d \n",error);
 			if (error==0 && duplicate_control(datos,arg->locT)==0){
+				printf("duplicate \n");
+				aa=1;
 				pkt = GeoBroadcast_f(datos);
 				int y =geo_limit(HT,pkt);
 				if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);}
@@ -114,7 +117,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//{
 		//	log_app_msg(">>>@cb_forward_recvfrom: Message blocked!\n");
 		//	return;	}
-		if (error==0 && duplicate_control(datos,arg->locT)==0){
+		if (aa==1){
 			if (memcmp(HT,tsb0,1)==0 ||(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
 				printf("entro no envio do enlace cara o enlace \n");
 				if (lon_int>1){

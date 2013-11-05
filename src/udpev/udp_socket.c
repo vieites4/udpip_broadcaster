@@ -158,7 +158,7 @@ sockaddr_in_t *init_sockaddr_in(const int port,in_addr_t addr)
 	sockaddr_in_t *s = new_sockaddr_in();
 	s->sin_family = AF_INET;
 	s->sin_port = (in_port_t)htons(port);
-	s->sin_addr.s_addr = addr;//htonl(INADDR_BROADCAST);
+	//s->sin_addr.s_addr = addr;//htonl(INADDR_BROADCAST);
 	return(s);
 }
 
