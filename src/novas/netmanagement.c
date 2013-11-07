@@ -198,7 +198,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	//printf ("ENTRO NO DO LPV\n");
 	if (a==0)LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 
-	if (a==1) {memcpy(LPV_old,LPV,28);print_hex_data((char *) &LPV_old->accuracy,2);printf(" lpv \n");}
+	if (a==1) {memcpy(LPV_old,LPV,28);print_hex_data((char *) &LPV->accuracy,2);printf(" lpv \n");print_hex_data((char *) &LPV_old->accuracy,2);printf(" lpv_old \n");}
 	if (a==1)free(LPV);
 	a=1;
 	LPV=NULL;
@@ -212,7 +212,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	/* Put this in a loop with a call to a high resolution sleep () in it. */
 	int i;
 	for(i = 0; i < 100; i++){
-		if (gps_waiting (&gpsdata, 10000))
+		if (gps_waiting (&gpsdata, 10000)) //wait 10 seconds
 		{
 			if (gps_read (&gpsdata) == -1) {
 			} else {
@@ -255,7 +255,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					LPV->accuracy.head_ac=num4;
 					LPV->accuracy.time_ac=num1;
 					memcpy(LPV->node_id.mac,h_source,6);
-					i=100;				} } }else if (a==1)memcpy(LPV,LPV_old,28);    }
+					i=100;				} } }else {if (a==1)memcpy(LPV,LPV_old,28);    }}
 	gps_close (&gpsdata);
 	return(LPV);
 }
