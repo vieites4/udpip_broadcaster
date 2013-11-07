@@ -166,7 +166,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					printf("strlen(pkt1)  %d\n",strlen(pkt1));
 					//free(data);free(datos);free(HT);
 					sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-					int fwd_bytes = send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, arg->len);
+					//while(
+							send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, arg->len);//==-1){}
 					print_hex_data(&tx_frame1->buffer,arg->len);printf("  forward******* \n");
 					ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;
 				}
@@ -221,7 +222,8 @@ else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoa
 if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0))|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	if (pkt!=NULL){
 		memcpy(tx_frame->buffer.data, (char *) pkt, IEEE_80211_BLEN);
-		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);//probei o +4
+		//while(
+				send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);//==-1){}
 		//	print_hex_data(&tx_frame->buffer,arg->len);printf("   \n");
 		ev_timer_again (l_Beacon,&t_Beacon);}
 	//	print_hex_data(&tx_frame->buffer,50);printf(" paquete enviado a ll\n");

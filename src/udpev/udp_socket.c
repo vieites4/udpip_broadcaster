@@ -536,10 +536,10 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 
 	int sent_bytes = 0;
 	if ( ( sent_bytes = sendto(socket_fd, buffer, len
-			, 0, dest_addr, LEN__SOCKADDR_LL) ) < 0 ) // solo habería que cambiar esta liña
+			, 0, dest_addr, LEN__SOCKADDR_LL) ) < 0 )
 	{
 		log_sys_error("cb_broadcast_sendto (fd=%d): <sendto> ERROR.\n"	, socket_fd);
-		getchar();
+	//	getchar();
 		return(EX_ERR);
 	}
 	if ( sent_bytes < len )

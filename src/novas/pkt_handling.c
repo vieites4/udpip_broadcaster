@@ -429,7 +429,8 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			memcpy(tx_frame->buffer.header.type,tipo,2);
 
 			memcpy(tx_frame->buffer.data, &pos->data, IEEE_80211_BLEN);
-			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sizeof(itsnet_common_header)+ size);
+			//while (
+					send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sizeof(itsnet_common_header)+ size);//==-1){}
 			printf("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
 
 			ev_timer_again (l_Beacon,&t_Beacon);

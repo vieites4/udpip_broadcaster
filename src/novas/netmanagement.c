@@ -196,7 +196,8 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
 	gpsdata=*gpsdata_p;
 	//printf ("ENTRO NO DO LPV\n");
-	if (a==0)LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	int timer;
+	if (a==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));timer=50000;}else timer=5000;
 
 	if (a==1) {memcpy(LPV_old,LPV,28);print_hex_data((char *) &LPV->accuracy,2);printf(" lpv \n");print_hex_data((char *) &LPV_old->accuracy,2);printf(" lpv_old \n");}
 	if (a==1)free(LPV);
@@ -212,7 +213,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	/* Put this in a loop with a call to a high resolution sleep () in it. */
 	int i;
 	for(i = 0; i < 100; i++){
-		if (gps_waiting (&gpsdata, 10000)) //wait 10 seconds
+		if (gps_waiting (&gpsdata, timer)) //wait 5 seconds
 		{
 			if (gps_read (&gpsdata) == -1) {
 			} else {
@@ -327,7 +328,8 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	memcpy(pkt->payload.itsnet_beacon.payload.btp1,num1,2);	memcpy(pkt->payload.itsnet_beacon.payload.btp2,num2,2);
 	memcpy(tx_frame->buffer.data, (char *) pkt,sizeof(itsnet_common_header)+sizeof(itsnet_beacon_t) );
 	// 2) broadcast application level UDP message to network level
-	int fwd_bytes = send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);
+	//while(
+			send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);//==-1){}
 	printf("beacon enviada\n");
 
 }
@@ -415,10 +417,11 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	data=(itsnet_node *)malloc(sizeof(itsnet_node));
 	data->mac_id=*pos;
 	int a=search_in_locT(data,locT_general);
-	free(data);data=NULL;
+	free(data);data=NULL;printf("paso \n");
 	if (position==NULL) printf("son null\n");
+	printf("paso \n");
 	while (in<(a))
-	{in++;position = position->next;print_hex_data(position->data.mac_id.address,6);printf(" \n");}
+	{printf("paso \n");in++;position = position->next;print_hex_data(position->data.mac_id.address,6);printf(" \n");}
 	printf("busco position %d\n",a);if (position==NULL) printf("son null\n"); print_hex_data(position->data.mac_id.address,6);printf(" elimino este en loct\n");
 	if(position->before==NULL){
 		printf("eliminamos o primeiro de loct\n");
