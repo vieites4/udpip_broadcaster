@@ -276,11 +276,14 @@ typedef struct itsnet_beacon_t itsnet_beacon_t;
  */
 struct itsnet_unicast_t
 {
+	itsnet_sequencenumber sequencenumber;
+		unsigned char lt[1];
+	    unsigned char reserved[1];
 	itsnet_position_vector source_position_vector;/** Source node position vector */
-	itsnet_node_id dest_node_id;
-	itsnet_latitude dest_latitude;
-	itsnet_longitude dest_longitude;
-	short payload[ITSNET_DATA_SIZE]; /** data temp must be fixed*/
+	itsnet_position_vector dest_position_vector;
+	//itsnet_latitude dest_latitude;
+	//itsnet_longitude dest_longitude;
+	itsnet_btp payload; /** data temp must be fixed*/
 };
 
 typedef struct itsnet_unicast_t itsnet_unicast_t;
@@ -294,7 +297,7 @@ struct itsnet_geoanycast_t
 	itsnet_radius geo_area_size;/** radius/height,latitude and longitude (geo-area destination)   */
 	itsnet_latitude dest_latitude;
 	itsnet_longitude dest_longitude;
-	short payload[ITSNET_DATA_SIZE];/** data temp must be fixed*/
+	itsnet_btp payload;/** data temp must be fixed*/
 };
 
 typedef struct itsnet_geoanycast_t itsnet_geoanycast_t;

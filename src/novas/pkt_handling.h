@@ -60,11 +60,26 @@ itsnet_packet_f * SHB_f(void *dato);
   */
 itsnet_packet_f * GeoBroadcast_f(void *dato);
 /**
+ *  @fn GeoUnicast_f
+ * @brief This function create the GeoUnicast packet to send to upper layer.
+ * @param data, we use  to make the packet
+ * @return the packet.
+  */
+itsnet_packet_f * GeoUnicast_f(void *dato);
+/**
+ *  @fn GEOUN_f
+ * @brief This function create the geounicast packet to send to upper layer.
+ * @param data, we use  to make the packet
+ * @return the packet.
+  */
+//itsnet_packet_f * GEOUN_f(void *dato);
+/**
  *  @fn CommonHeader_processing
  * @brief This function makes the common header processing of packets arrived from link layer.
  * @param arg
  * @return 0 if everything is correct.
   */
+
 int CommonHeader_processing(public_ev_arg_r *arg);
 
 /**
@@ -89,6 +104,6 @@ void determine_nexthop();
  * @fn GeoUnicast
  * @brief GeoUnicast no implemented yet
  */
-void GeoUnicast();
+
 
 #endif /* PKT_HANDLING_H_ */

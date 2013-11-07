@@ -4,6 +4,7 @@ const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 extern List_lsp * lsp_bc_g;
 extern itsnet_node_id GN_ADDR;
 itsnet_position_vector * LPV;
+itsnet_position_vector *LPV_old;
 ev_timer t_Loct;
 unsigned short dictionary[17]={0x00,0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
 mac_addr *mac_list[16];
@@ -195,6 +196,9 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
 	gpsdata=*gpsdata_p;
 	//printf ("ENTRO NO DO LPV\n");
+	if (a==0)LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+
+	if (a==1) {memcpy(LPV_old,LPV,28);print_hex_data((char *) &LPV_old->accuracy,2);printf(" lpv \n");}
 	if (a==1)free(LPV);
 	a=1;
 	LPV=NULL;
@@ -208,7 +212,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	/* Put this in a loop with a call to a high resolution sleep () in it. */
 	int i;
 	for(i = 0; i < 100; i++){
-		if (gps_waiting (&gpsdata, 50000000))
+		if (gps_waiting (&gpsdata, 10000))
 		{
 			if (gps_read (&gpsdata) == -1) {
 			} else {
@@ -251,7 +255,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					LPV->accuracy.head_ac=num4;
 					LPV->accuracy.time_ac=num1;
 					memcpy(LPV->node_id.mac,h_source,6);
-					i=100;				} } }    }
+					i=100;				} } }else if (a==1)memcpy(LPV,LPV_old,28);    }
 	gps_close (&gpsdata);
 	return(LPV);
 }
@@ -414,7 +418,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	free(data);data=NULL;
 	if (position==NULL) printf("son null\n");
 	while (in<(a))
-	{in++;position = position->next;}
+	{in++;position = position->next;print_hex_data(position->data.mac_id.address,6);printf(" \n");}
 	printf("busco position %d\n",a);if (position==NULL) printf("son null\n"); print_hex_data(position->data.mac_id.address,6);printf(" elimino este en loct\n");
 	if(position->before==NULL){
 		printf("eliminamos o primeiro de loct\n");
@@ -484,7 +488,7 @@ void view_lsp (){
 
 int search_in_locT (itsnet_node * data, List_locT * locT){
 	Element_locT *aux;
-	aux = locT->init;
+	aux = locT_general->init;
 	int i=0;
 	while (aux != NULL){
 		if (memcmp(aux->data.mac_id.address,data->mac_id.address,6)==0){
@@ -516,6 +520,7 @@ return(lsp);}
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 
 	Element_lsp *new_element=NULL;
+	print_hex_data((char *) &data,strlen((char *)&data));printf(" os que sairon de lsp\n ");
 	new_element = (Element_lsp *) malloc (sizeof (Element_lsp));
 	if (new_element==NULL) printf( "No hay memoria disponible!\n");
 	new_element->data= data;

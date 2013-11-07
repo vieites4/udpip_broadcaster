@@ -28,6 +28,7 @@ extern unsigned short dictionary[16];
 extern List_locT *locT_general;
 extern List_lsp * lsp_bc_g;
 extern ev_timer t_Beacon;
+const unsigned char BROADCAST[6]={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	//	Create common header
 	itsnet_packet * pkt = NULL;
@@ -67,6 +68,14 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	pkt->payload.itsnet_tsb=tsb_h;
 	pkt->common_header=ch;
 	//NEIGHBOURS.
+	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
+	{		memcpy(pkt->payload.itsnet_tsb.payload.btp1,(char *)(buffer) + 18,2);
+	memcpy(pkt->payload.itsnet_tsb.payload.btp2,(char *)(buffer) + 16,2);
+	}else{
+		char info_dest[2];
+		memset(info_dest,0,2);
+		memcpy(pkt->payload.itsnet_tsb.payload.btp1,(char *)(buffer) + 18,2);
+		memcpy(pkt->payload.itsnet_tsb.payload.btp2,info_dest,2);		}
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -82,14 +91,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		return(pkt1);
 		//buffer in BC AND omit next executions
 	}
-	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
-	{		memcpy(pkt->payload.itsnet_tsb.payload.btp1,(char *)(buffer) + 18,2);
-	memcpy(pkt->payload.itsnet_tsb.payload.btp2,(char *)(buffer) + 16,2);
-	}else{
-		char info_dest[2];
-		memset(info_dest,0,2);
-		memcpy(pkt->payload.itsnet_tsb.payload.btp1,(char *)(buffer) + 18,2);
-		memcpy(pkt->payload.itsnet_tsb.payload.btp2,info_dest,2);		}
+
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,buffer +8,4);
@@ -125,6 +127,13 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	pkt->common_header=ch;
 	pkt->payload.itsnet_shb=shb_h;
 	//NEIGHBOURS.
+	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
+	{memcpy(pkt->payload.itsnet_shb.payload.btp1,(char *)(buffer) + 18,2);
+	memcpy(pkt->payload.itsnet_shb.payload.btp2,(char *)(buffer) + 16,2);
+	}else{char info_dest [2];
+	memset(info_dest,0,2);
+	memcpy(pkt->payload.itsnet_shb.payload.btp1,(char *)(buffer) + 18,2);
+	memcpy(pkt->payload.itsnet_shb.payload.btp2,info_dest,2);		}
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -139,13 +148,7 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		return(pkt1);
 		//buffer in BC AND omit next executions
 	}
-	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
-	{memcpy(pkt->payload.itsnet_shb.payload.btp1,(char *)(buffer) + 18,2);
-	memcpy(pkt->payload.itsnet_shb.payload.btp2,(char *)(buffer) + 16,2);
-	}else{char info_dest [2];
-	memset(info_dest,0,2);
-	memcpy(pkt->payload.itsnet_shb.payload.btp1,(char *)(buffer) + 18,2);
-	memcpy(pkt->payload.itsnet_shb.payload.btp2,info_dest,2);		}
+
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,(char *)(buffer) +8,4);
@@ -156,7 +159,81 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	}
 	//	printf("saio de shb\n");
 	return(pkt);}
+itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
+	//	Create common header
+	itsnet_packet * pkt = NULL;
+	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+	itsnet_common_header ch;
+	printf("xa estou dentro de unicast \n");
+	char LEN[2] ;
+	memcpy(LEN,(char *)(buffer) +4,2);
+	int lon_int=sprint_hex_data( LEN, 2);
+	memcpy(ch.traffic_class,(char *)(buffer) +6,1);
+	memcpy(ch.flags,(char *)(buffer) +3,1);
+	memcpy(ch.hop_limit,(char *)(buffer) +2,1);
+	ch.HT_HST.HT=5;
+	ch.HT_HST.HST=1;
+	memcpy(ch.payload_lenght,(char *)(buffer) +4,2);
+	memcpy(ch.version_nh,(char *)(buffer) +7,1);
+	ch.forwarder_position_vector=* LPV;
+	//create extended header
+	char TS[4];
+	memcpy(TS,(char *)(buffer) +12,4);
+	char SO_pv[28]; //aqui temos que darlle o dato PV do destino
+	//memcpy(SO_pv,(char *)(buffer) +68,28);
+	itsnet_unicast_t unicast_t;
+	unicast_t.sequencenumber=SN_g;
+	printf("SN %d\n",unicast_t.sequencenumber);
+	int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
+	LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};
+	if (ts_num>6401){base=3; mult=(int) ceil(ts_num/100); } else if (ts_num>64) {base=2; mult=(int) ceil(ts_num/10);}else {base=1; mult=ts_num;}
+	sprintf(str2, "%04X",mult);
+	sprintf(str1, "%01X",base);
+	num4=strtol(str2,NULL,16);
+	num3=strtol(str1,NULL,16);
+	lt->base=num3;lt->multiple=num4;
+	memcpy(unicast_t.lt,(void *)lt,1);
+	SN_g++; //máximo SN?? % SN_MAX;
+	unicast_t.source_position_vector=* LPV;
+	memcpy(&unicast_t.dest_position_vector,SO_pv,28);
+	memcpy(unicast_t.payload.payload,buffer +28,lon_int);
+	pkt->payload.itsnet_unicast=unicast_t;
+	pkt->common_header=ch;
+	//NEIGHBOURS.
+	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
+	{		memcpy(pkt->payload.itsnet_unicast.payload.btp1,(char *)(buffer) + 26,2);
+	memcpy(pkt->payload.itsnet_unicast.payload.btp2,(char *)(buffer) + 24,2);
+	}else{
+		char info_dest[2];
+		memset(info_dest,0,2);
+		memcpy(pkt->payload.itsnet_unicast.payload.btp1,(char *)(buffer) + 26,2);
+		memcpy(pkt->payload.itsnet_unicast.payload.btp2,info_dest,2);		}
+	if  (locT_general->len== 0){
+		itsnet_packet * pkt1 = NULL;
+		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
 
+		//delete old buffered elements if we need more size to add a new one.
+		while (val>itsGnBcForwardingPacketBufferSize){
+			sup_elem_lsp(0xffff);
+			val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data(pkt->common_header.payload_lenght,2);
+			printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
+		}
+		int i =add_end_lsp(lsp_bc_g, *pkt);
+		return(pkt1);
+		//buffer in BC AND omit next executions
+	}
+
+	//REPETITION INTERVAL
+	char REP[4];
+	memcpy(REP,buffer +8,4);
+	if(atoi(REP)==0){
+		//GARDAR O PAQUETE
+		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
+	}
+	printf("saio de tsb\n");
+	return(pkt);
+}
 itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 
 	//	Create common header
@@ -205,6 +282,15 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	gbc_h->source_position_vector=* LPV;
 	memcpy(&pkt->payload.itsnet_geobroadcast,gbc_h,lon_int +48);//print_hex_data(gbc_h,20);printf(" gbc_h\n");
 	pkt->common_header=ch;
+	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
+	{//printf("é btp tipo a\n");
+		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer)  + 34,2);
+		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,(char *)(buffer)  + 32,2);
+	}else{
+		char info_dest[2];
+		memset(info_dest,0,2);
+		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer)  + 34,2);
+		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,info_dest,2);	}
 	//NEIGHBOURS.
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
@@ -231,19 +317,10 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//execute simple geobroadcast forwarding algorithm
 		//implement F function to obtain LL_ADDR
 	}
-	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
-	{//printf("é btp tipo a\n");
-		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer)  + 34,2);
-		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,(char *)(buffer)  + 32,2);
-	}else{
-		char info_dest[2];
-		memset(info_dest,0,2);
-		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer)  + 34,2);
-		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,info_dest,2);	}
+
 	return(pkt);
 }
 
-void GeoUnicast(){}
 void GeoAnycast(){}
 int CommonHeader_processing(public_ev_arg_r *arg){
 	////this is the first thing we must do after reception of a GN pkt.
@@ -279,23 +356,23 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	memcpy(HT1,buffer+15,1);
 	printf("entro10\n");
 	if(memcmp(HT1,beacon,1)!=0 ){
-	//printf("entro1\n");
-	char HL[1];
-	memcpy(HL,buffer+14+7,1);
-	int lon_int=sprint_hex_data( HL, 1);
-	//printf("entro2 %d\n", lon_int);
-	//print_hex_data(buffer,40);printf("\n");
+		//printf("entro1\n");
+		char HL[1];
+		memcpy(HL,buffer+14+7,1);
+		int lon_int=sprint_hex_data( HL, 1);
+		//printf("entro2 %d\n", lon_int);
+		//print_hex_data(buffer,40);printf("\n");
 
-	if ((memcmp(HT1,tsb1,1)==0 && (lon_int>1))||(memcmp(HT1,geobroad2,1)==0)||(memcmp(HT1,geobroad1,1)==0)||(memcmp(HT1,geobroad0,1)==0))
-	{printf("entro3\n");
+		if ((memcmp(HT1,tsb1,1)==0 && (lon_int>1))||(memcmp(HT1,geobroad2,1)==0)||(memcmp(HT1,geobroad1,1)==0)||(memcmp(HT1,geobroad0,1)==0))
+		{printf("entro3\n");
 		char SN[2];
 		memcpy(SN,arg->data+36+15,1);
 		memcpy(SN+1,arg->data+36+14,1);
-	//	print_hex_data(arg->data,60);printf("\n");print_hex_data(SN,2);
+		//	print_hex_data(arg->data,60);printf("\n");print_hex_data(SN,2);
 		int lon_int=sprint_hex_data( SN, 2);printf(" sequence number %d\n", lon_int);
 		data->Sequence_number=lon_int;}else{data->Sequence_number=0;
 		}
-	data->LS_PENDING=false;
+		data->LS_PENDING=false;
 	}
 	int val=search_in_locT(data,locT_general);printf("%d \n",val);
 	if(val==0){add_end_locT (locT_general,*data);}else{AddTimer(dictionary[val],itsGnLifetimeLocTE,1);}printf("entro4\n");
@@ -303,11 +380,11 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	//int num1=0x0f00*num;
 	//int num2=0x00f0*num;printf("entro4\n");
 	//if (num1==0 || num2==0){
-		//discard the packet
-		//	return(1);
+	//discard the packet
+	//	return(1);
 	//}
 	if(arg->lsp->len>0){
-printf("arg->lsp->len %d \n",arg->lsp->len);
+		printf("arg->lsp->len %d \n",arg->lsp->len);
 		Element_lsp *pos=arg->lsp->init;
 		while(pos!=NULL){
 			char Hop[1] ;tTimer * temp;
@@ -346,8 +423,15 @@ printf("arg->lsp->len %d \n",arg->lsp->len);
 			}free(lt);lt=NULL;
 			char h_source[ETH_ALEN];
 			sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&pos->data,sizeof(itsnet_common_header)+ size);
+			get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, BROADCAST,h_source);
+			char tipo[2]={0x07,0x07};
+			memcpy(tx_frame->buffer.header.type,tipo,2);
+
+			memcpy(tx_frame->buffer.data, &pos->data, IEEE_80211_BLEN);
+			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sizeof(itsnet_common_header)+ size);
 			printf("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
+
 			ev_timer_again (l_Beacon,&t_Beacon);
 
 			sup_elem_lsp(sn);
@@ -396,7 +480,7 @@ void determine_nexthop(){
 itsnet_packet_f * TSB_f(void *buffer){
 	//	Create common header
 	itsnet_packet_f * pkt = NULL;
-	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
+	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
 	printf("xa estou dentro de tsb_f \n");
 	memcpy(pkt->common_header.btp,(char *)(buffer)+7,1);
 	itsnet_position_vector * PV=NULL;//
@@ -409,7 +493,7 @@ itsnet_packet_f * TSB_f(void *buffer){
 	memcpy(pkt->common_header.payload_lenght,LEN,2);
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+2,1);
-	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+64,lon_int);
+	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68,lon_int);
 	memcpy(pkt->common_header.pkt_type,buffer,1);
 	memcpy(pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
 	printf("saio de tsb_f \n");
@@ -418,7 +502,7 @@ itsnet_packet_f * TSB_f(void *buffer){
 itsnet_packet_f * SHB_f(void *buffer){
 	//	Create common header
 	itsnet_packet_f * pkt = NULL;
-	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
+	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
 	printf("xa estou dentro de shb_f \n");
 	memcpy(pkt->common_header.btp,(char *)(buffer)+7,1);
 	itsnet_position_vector * PV=NULL;
@@ -437,14 +521,42 @@ itsnet_packet_f * SHB_f(void *buffer){
 	printf("chego0\n");
 	memcpy(pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
 	print_hex_data(LEN,2);printf(" chego0\n");
+
+	free(PV);PV=NULL;
+	printf("medidas %d \n",lon_int);
+	return(pkt);
+}
+itsnet_packet_f * GeoUnicast_f(void *buffer){
+	//	Create common header
+	itsnet_packet_f * pkt = NULL;
+	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
+	printf("xa estou dentro de GeoUnicast_f \n");
+	memcpy(pkt->common_header.btp,(char *)(buffer)+7,1);
+	itsnet_position_vector * PV=NULL;
+	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	memcpy(PV,(char *)(buffer) +8,28);
+	pkt->common_header.pv=*PV;
+	memcpy(pkt->common_header.traffic_class,(char *)(buffer) +6,1);
+	char LEN[2] ;
+	memcpy(LEN,(char *)(buffer) +4,2);
+	int lon_int=sprint_hex_data( LEN, 2);
+	memcpy(pkt->common_header.payload_lenght,LEN,2);
+	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
+	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+2,1);
+	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68+28,lon_int);
+	memcpy(pkt->common_header.pkt_type,buffer,1);
+	printf("chego0\n");
+	memcpy(pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
+	print_hex_data(LEN,2);printf(" chego0\n");
 	printf("medidas %d",lon_int);
 	free(PV);PV=NULL;
 	return(pkt);
 }
 
+
 itsnet_packet_f * GeoBroadcast_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
-	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
+	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_geo_t)+ sizeof(itsnet_common));
 	printf("xa estou dentro de geo_f \n");
 	memcpy(pkt->common_header.btp,(char *)(buffer)+7,1);
 	itsnet_position_vector * PV=NULL;//
