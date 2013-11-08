@@ -106,7 +106,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				int y =geo_limit(HT,pkt);
 				if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);}
 				printf("saio de geobroadcast_f \n");
-			}}
+			}else printf("%d \n",duplicate_control(datos,arg->locT));}
 		else if(memcmp(HT,beacon,1)==0 ){
 			printf("entro en beacon\n");
 			CommonHeader_processing(arg);
@@ -132,8 +132,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		}else if(memcmp(HT,ls0,1)==0){}
 		else if(memcmp(HT,ls1,1)==0){}
 		else{}
-		if(memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0 ){
-			free(pkt);pkt=NULL;}
+		if(aa==1 && (memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
+			printf("entro en free\n");free(pkt);pkt=NULL;}
 		// 2) in case the message comes from the localhost, it is discarded
 		//if ( blocked == true )
 		//{
@@ -188,6 +188,8 @@ if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header, arg->local_addr->sin
 {
 	log_app_msg("cb_broadcast_recvfrom: <recv_msg> Could not receive message.\n");
 	return;		}
+
+
 char h_source[ETH_ALEN];
 get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
 ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROADCAST,h_source);
@@ -195,6 +197,7 @@ char tipo[2]={0x07,0x07};
 memcpy(tx_frame->buffer.header.type,tipo,2);
 char datos[arg->len];
 memcpy(datos,arg->data,arg->len);//+4
+//print_hex_data(datos,arg->len);printf("\n");
 char HT[2];
 memcpy(HT,arg->data,2);
 itsnet_packet * pkt=NULL;

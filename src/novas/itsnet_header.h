@@ -324,7 +324,7 @@ struct itsnet_geobroadcast_t
 	unsigned char distanceB[2];/** radius/height,latitude and longitude (geo-area destination)   */
 	//itsnet_radius
 	unsigned char angle[2]; //orientation
-	  unsigned char reserved[1];
+	  unsigned char reserved[2];
 			itsnet_btp payload;
 };
 typedef struct itsnet_geobroadcast_t itsnet_geobroadcast_t;
@@ -415,6 +415,7 @@ struct itsnet_packet_f
 	} payload;
 };
 typedef struct itsnet_packet_f itsnet_packet_f;
+typedef struct itsnet_geo_t itsnet_geo_t;
 
 /**
  *The structure describes adress

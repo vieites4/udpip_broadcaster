@@ -5,6 +5,7 @@ extern List_lsp * lsp_bc_g;
 extern itsnet_node_id GN_ADDR;
 itsnet_position_vector * LPV;
 itsnet_position_vector *LPV_old;
+//itsnet_position_vector *LPV_trans;
 ev_timer t_Loct;
 unsigned short dictionary[17]={0x00,0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
 mac_addr *mac_list[16];
@@ -197,9 +198,11 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	gpsdata=*gpsdata_p;
 	//printf ("ENTRO NO DO LPV\n");
 	int timer;
-	if (a==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));timer=50000;}else timer=5000;
+	if (a==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	//LPV_trans=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	timer=50000;}else timer=5000;
 
-	if (a==1) {memcpy(LPV_old,LPV,28);print_hex_data((char *) &LPV->accuracy,2);printf(" lpv \n");print_hex_data((char *) &LPV_old->accuracy,2);printf(" lpv_old \n");}
+	if (a==1) {memcpy(LPV_old,LPV,28);}
 	if (a==1)free(LPV);
 	a=1;
 	LPV=NULL;
@@ -255,9 +258,17 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					LPV->accuracy.speed_ac=num3;
 					LPV->accuracy.head_ac=num4;
 					LPV->accuracy.time_ac=num1;
-					memcpy(LPV->node_id.mac,h_source,6);
+					char h_source_trans[6];
+					memcpy((char *)(h_source_trans),(char *)(h_source)+5,1);memcpy((char *)(h_source_trans)+1,(char *)(h_source)+4,1);memcpy((char *)(h_source_trans)+2,(char *)(h_source)+3,1);memcpy((char *)(h_source_trans)+3,(char *)(h_source)+2,1);memcpy((char *)(h_source_trans)+4,(char *)(h_source)+1,1);
+					memcpy((char *)(h_source_trans)+5,(char *)(h_source),1);
+					memcpy(LPV->node_id.mac,h_source_trans,6);
 					i=100;				} } }else {if (a==1)memcpy(LPV,LPV_old,28);    }}
+
+  /**  memcpy(LPV_trans,LPV,2);
+	memcpy((char *)(LPV_trans)+2,(char *)(LPV)+7,1);memcpy((char *)(LPV_trans)+3,(char *)(LPV)+6,1);memcpy((char *)(LPV_trans)+4,(char *)(LPV)+5,1);memcpy((char *)(LPV_trans)+5,(char *)(LPV)+4,1);memcpy((char *)(LPV_trans)+6,(char *)(LPV)+3,1);
+	memcpy((char *)(LPV_trans)+7,(char *)(LPV)+2,1);memcpy((char *)LPV_trans+8,(char *)LPV+8,20);**/
 	gps_close (&gpsdata);
+	//print_hex_data(LPV,28);printf("\n");
 	return(LPV);
 }
 
@@ -443,7 +454,10 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 int sup_elem_t_lsp (int num)
 {
 	Element_lsp * position=lsp_bc_g->init;
-	int buf_size=sprint_hex_data(position->data.common_header.payload_lenght,2);
+	char LEN[2];
+	memcpy(LEN,position->data.common_header.payload_lenght+1,1);
+	memcpy(LEN+1,position->data.common_header.payload_lenght,1);
+	int buf_size=sprint_hex_data(LEN,2);
 	itsnet_node *data;
 	int in=0;
 	printf("entrei no sup_elem_t_lsp\n");
@@ -535,7 +549,11 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 			lsp->end->next = new_element;}
 	lsp->end = new_element;
 	lsp ->len++;
-	lsp->size=lsp->size+sizeof(itsnet_common_header)+sprint_hex_data(data.common_header.payload_lenght,2);
+	char LEN[2];
+	memcpy(LEN,data.common_header.payload_lenght+1,1);
+	memcpy(LEN+1,data.common_header.payload_lenght,1);
+
+	lsp->size=lsp->size+sizeof(itsnet_common_header)+sprint_hex_data(LEN,2);
 	printf("AQUI en engadir en lsp! %d \n",lsp->len);
 	int sn;	LT_s *temp;
 	char HT[1];	char HL[1];
@@ -586,7 +604,10 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 int sup_elem_lsp (int num){
 	int a=0;
 	Element_lsp *pos=lsp_bc_g->init;
-	int buf_size=sprint_hex_data(pos->data.common_header.payload_lenght,2);
+	char LEN[2];
+	memcpy(LEN,pos->data.common_header.payload_lenght+1,1);
+	memcpy(LEN+1,pos->data.common_header.payload_lenght,1);
+	int buf_size=sprint_hex_data(LEN,2);
 	//if(pos->before==NULL){
 	printf("eliminamos o primeiro \n");
 	lsp_bc_g->init=lsp_bc_g->init->next;
