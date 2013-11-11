@@ -551,7 +551,7 @@ return(lsp);}
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 
 	Element_lsp *new_element=NULL;
-	print_hex_data((char *) &data,strlen((char *)&data));printf(" os que sairon de lsp\n ");
+	//print_hex_data((char *) &data,strlen((char *)&data));printf(" os que sairon de lsp\n ");
 	new_element = (Element_lsp *) malloc (sizeof (Element_lsp));
 	if (new_element==NULL) printf( "No hay memoria disponible!\n");
 	new_element->data= data;

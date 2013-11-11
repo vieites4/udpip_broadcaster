@@ -228,7 +228,8 @@ else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoa
 // 2) broadcast application level UDP message to network level
 if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0))|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	if (pkt!=NULL){
-		memcpy(tx_frame->buffer.data, (char *) pkt, IEEE_80211_BLEN);
+		memcpy(tx_frame->buffer.data, (char *) pkt, strlen((char *)pkt));
+
 		//while(
 		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);//==-1){}
 		//	print_hex_data(&tx_frame->buffer,arg->len);printf("   \n");

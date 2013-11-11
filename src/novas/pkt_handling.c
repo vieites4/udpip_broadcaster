@@ -180,14 +180,14 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	memcpy(ch.traffic_class,(char *)(buffer)  +6,1);
 	memcpy(ch.flags,(char *)(buffer)  +3,1);
 	memcpy(ch.hop_limit,(char *)(buffer)  +2,1);
-	ch.HT_HST.HT=4;
-	ch.HT_HST.HST=0; //ESTE HAI QUE ADAPTALO
+
+	memcpy(&ch.HT_HST,(char *)(buffer),1);
+//	print_hex_data(&ch.HT_HST,1);printf(" o do HT\n");
 	memcpy(ch.payload_lenght,(char *)(buffer)  +5,1);
 	memcpy(ch.payload_lenght+1,(char *)(buffer)  +4,1);
 	memcpy(ch.version_nh,(char *)(buffer)  +7,1);
 	ch.forwarder_position_vector=* LPV;
-	itsnet_geobroadcast_t * gbc_h=NULL;
-	gbc_h=(itsnet_geobroadcast_t *)malloc(sizeof(itsnet_geobroadcast_t));
+	itsnet_geobroadcast_t gbc_h;
 	char TS [4];
 	memcpy(TS,(char *)(buffer) +12,4);
 	int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
@@ -198,54 +198,58 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	num4=strtol(str2,NULL,16);
 	num3=strtol(str1,NULL,16);
 	lt->base=num3;lt->multiple=num4;
-	memcpy(gbc_h->lt,(void *)lt,1);
-	//char TS_default[1]={0xf2};
+	memcpy(gbc_h.lt,(void *)lt,1);
 	//	ch.txpower=0;
 	//create extended header
-	ch.forwarder_position_vector=* LPV;
-	char SO_pv[28];
-	gbc_h->sequencenumber=SN_g;
-	printf("SN %d\n",gbc_h->sequencenumber);
+	//char SO_pv[28];
+	gbc_h.sequencenumber=SN_g;
+	printf("SN %d\n",gbc_h.sequencenumber);
 	SN_g++;//máximo SN?? % SN_MAX;
 
 	//we have to reorder this bytes
 
 	/**
-	 * memcpy(gbc_h->dest_latitude,(char *)(buffer) +16,4);
-	 * memcpy(gbc_h->dest_longitude,(char *)(buffer) +20,4);
-	 * memcpy(gbc_h->distanceA,(char *)(buffer) +24,2);
-	 * memcpy(gbc_h->distanceB,(char *)(buffer) +26,2);
-	 * memcpy(gbc_h->angle,(char *)(buffer) +28,2);
+	 * memcpy(gbc_h.dest_latitude,(char *)(buffer) +16,4);
+	 * memcpy(gbc_h.dest_longitude,(char *)(buffer) +20,4);
+	 * memcpy(gbc_h.distanceA,(char *)(buffer) +24,2);
+	 * memcpy(gbc_h.distanceB,(char *)(buffer) +26,2);
+	 * memcpy(gbc_h.angle,(char *)(buffer) +28,2);
 	 * **/
 
-	memcpy(gbc_h->dest_latitude,(char *)(buffer) +17,1);memcpy(gbc_h->dest_latitude+1,(char *)(buffer) +18,1);memcpy(gbc_h->dest_latitude+2,(char *)(buffer) +17,1);memcpy(gbc_h->dest_latitude+3,(char *)(buffer) +16,1);
-
-	memcpy(gbc_h->dest_longitude,(char *)(buffer) +23,1);memcpy(gbc_h->dest_longitude+1,(char *)(buffer) +22,1);memcpy(gbc_h->dest_longitude+2,(char *)(buffer) +21,1);memcpy(gbc_h->dest_longitude+3,(char *)(buffer) +20,1);
-	memcpy(gbc_h->distanceA+1,(char *)(buffer) +24,1);memcpy(gbc_h->distanceA,(char *)(buffer) +25,1);
-	memcpy(gbc_h->distanceB+1,(char *)(buffer) +26,1);memcpy(gbc_h->distanceB,(char *)(buffer) +27,1);
-	memcpy(gbc_h->angle+1,(char *)(buffer) +28,1);memcpy(gbc_h->angle,(char *)(buffer) +29,1);
-	memcpy(gbc_h->reserved+1,(char *)(buffer) +30,1);memcpy(gbc_h->reserved,(char *)(buffer) +31,1);
-	memcpy(gbc_h->payload.payload,(char *)(buffer) +36,lon_int);
-	gbc_h->source_position_vector=* LPV;
-	memcpy(&pkt->payload.itsnet_geobroadcast,gbc_h,lon_int +48);//print_hex_data(gbc_h,20);printf(" gbc_h\n");
+	memcpy(gbc_h.dest_latitude,(char *)(buffer) +19,1);memcpy((char *)(gbc_h.dest_latitude)+1,(char *)(buffer) +18,1);memcpy((char *)(gbc_h.dest_latitude)+2,(char *)(buffer) +17,1);memcpy((char *)(gbc_h.dest_latitude)+3,(char *)(buffer) +16,1);
+	memcpy(gbc_h.dest_longitude,(char *)(buffer) +23,1);memcpy((char *)(gbc_h.dest_longitude)+1,(char *)(buffer) +22,1);memcpy((char *)(gbc_h.dest_longitude)+2,(char *)(buffer) +21,1);memcpy((char *)(gbc_h.dest_longitude)+3,(char *)(buffer) +20,1);
+	memcpy((char *)(gbc_h.distanceA)+1,(char *)(buffer) +24,1);memcpy(gbc_h.distanceA,(char *)(buffer) +25,1);
+	memcpy((char *)(gbc_h.distanceB)+1,(char *)(buffer) +26,1);memcpy(gbc_h.distanceB,(char *)(buffer) +27,1);
+	memcpy((char *)(gbc_h.angle)+1,(char *)(buffer) +28,1);memcpy(gbc_h.angle,(char *)(buffer) +29,1);
+	memcpy((char *)(gbc_h.reserved)+1,(char *)(buffer) +30,1);memcpy(gbc_h.reserved,(char *)(buffer) +31,1);
+	memcpy(gbc_h.payload.payload,(char *)(buffer) +36,lon_int);
+	gbc_h.source_position_vector=* LPV;
+	pkt->payload.itsnet_geobroadcast=gbc_h;
 	pkt->common_header=ch;
+
+
+
 	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 	{//printf("é btp tipo a\n");
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer)  + 34,2);
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,(char *)(buffer)  + 32,2);
 	}else{
 		char info_dest[2];
-		memset(info_dest,0,2);
+		//memset(info_dest,0,2);
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer)  + 34,2);
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,info_dest,2);	}
 	//NEIGHBOURS.
+
+
+
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		pkt1=NULL;int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
+		pkt1=NULL;int val=(lsp_bc_g->size)+(sizeof(itsnet_common_header))+(sprint_hex_data((char *)(buffer) +4,2));
+		printf(" val: %d %d %d\n",lsp_bc_g->size,sizeof(itsnet_common_header),sprint_hex_data((char *)(buffer) +4,2));
 		//delete old buffered elements if we need more size to add a new one.
 
-		while (val>itsGnBcForwardingPacketBufferSize){
+	while (val>itsGnBcForwardingPacketBufferSize){
 			sup_elem_lsp(0xffff);
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
 			printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
@@ -261,10 +265,10 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
-	if (itsGnGeoBroadcastForwardingAlgorithm==0 || itsGnGeoBroadcastForwardingAlgorithm==1){
+	//if (itsGnGeoBroadcastForwardingAlgorithm==0 || itsGnGeoBroadcastForwardingAlgorithm==1){
 		//execute simple geobroadcast forwarding algorithm
 		//implement F function to obtain LL_ADDR
-	}
+	//}
 
 	return(pkt);
 }
