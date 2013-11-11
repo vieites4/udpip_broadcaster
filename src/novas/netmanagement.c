@@ -371,6 +371,8 @@ List_timer * init_timer_list ()
 /*add at list end  */
 int add_end_locT ( List_locT * locT, itsnet_node data){
 	Element_locT *new_element=NULL;
+
+	printf("ENTRO EN ADD LOCT\n");
 	new_element = (Element_locT *) malloc (sizeof (Element_locT));
 	if (new_element==NULL) printf( "No hay memoria disponible!\n");
 	new_element->data= data;
@@ -529,10 +531,10 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 
 	int a=0; int e=i;
 	if(i==1){
-		while ((i<17) &&(a==0))
+		while ((i<17) &&(a==0)&& (e<17))
 
-		{print_hex_data(mac_list[i]->address,6);printf("\n");print_hex_data(data->mac_id.address,6);	printf(" esta é a que busco\n");
-		if (taken[i]){if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}else e++;}
+		{
+		if (taken[i]==true){print_hex_data(mac_list[i]->address,6);printf("\n");print_hex_data(data->mac_id.address,6);	printf(" esta é a que busco\n");if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}else{ e++;i++;}}
 		else i++;		}	}
 	return(e);
 }
