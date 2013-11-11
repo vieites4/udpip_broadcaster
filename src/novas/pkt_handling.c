@@ -228,6 +228,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	memcpy(gbc_h->payload.payload,(char *)(buffer) +36,lon_int);
 	gbc_h->source_position_vector=* LPV;
 	memcpy(&pkt->payload.itsnet_geobroadcast,gbc_h,lon_int +48);//print_hex_data(gbc_h,20);printf(" gbc_h\n");
+	free(gbc_h);gbc_h=NULL;
 	pkt->common_header=ch;
 	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 	{//printf("é btp tipo a\n");
@@ -444,7 +445,7 @@ itsnet_packet_f * TSB_f(void *buffer){
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68,lon_int);
 	memcpy(pkt->common_header.pkt_type,buffer,1);
 	memcpy(pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
-	printf("saio de tsb_f \n");
+	printf("saio de tsb_f \n");free(PV);PV=NULL;
 	return(pkt);}
 
 itsnet_packet_f * SHB_f(void *buffer){
@@ -526,7 +527,7 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer){
 	memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4);
 	memcpy(pkt->payload.itsnet_geocast.reserved,(char *)(buffer)+2,1);
 	memcpy(pkt->common_header.pkt_type,buffer,1);
-	memcpy(pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
+	memcpy(pkt->common_header.pkt_stype,(char *)(buffer)+1,1);free(PV);PV=NULL;
 	return(pkt);
 
 }
