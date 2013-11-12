@@ -95,13 +95,13 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
 		error =CommonHeader_processing(arg);
 		if (error==0 && duplicate_control(datos,arg->locT)==0){
-			pkt = TSB_f(datos);aa=1;
+			pkt = TSB_f(datos,arg->gn);aa=1;
 			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 			printf("saio de tsb_f \n");}
 	} else if(memcmp(HT,tsb0,1)==0){
 		//printf("entro en shb\n");
 		error =CommonHeader_processing(arg);
-		pkt = SHB_f(datos);
+		pkt = SHB_f(datos,arg->gn);
 		send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 		printf("envio realizado\n");
 	} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
@@ -110,7 +110,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		printf("entro en geobroadcast! %d \n",error);
 		if (error==0 && duplicate_control(datos,arg->locT)==0){
 			aa=1;
-			pkt = GeoBroadcast_f(datos);
+			pkt = GeoBroadcast_f(datos,arg->gn);
 			int y =geo_limit(HT,pkt);
 			if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);}
 			printf("saio de geobroadcast_f \n");
@@ -210,13 +210,13 @@ char HL[1];
 memcpy(HL,(char *)(arg->data) +2,1);
 if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
 	printf("entro en tsb1\n");
-	pkt = TSB(datos,arg->lsp,arg->rep);
+	pkt = TSB(datos,arg->lsp,arg->rep,arg->gn);
 } else if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)==0)){
 	printf("entro en tsb0\n");
-	pkt = SHB((void *)datos,arg->lsp,arg->rep);
+	pkt = SHB((void *)datos,arg->lsp,arg->rep,arg->gn);
 } else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	printf("entro en geobroad\n");
-	pkt = GeoBroadcast(datos,arg->lsp,arg->rep);
+	pkt = GeoBroadcast(datos,arg->lsp,arg->rep,arg->gn);
 }else if(memcmp(HT,geounicast,1)==0){
 	printf("entro en geounicast\n");
 	pkt = GeoUnicast(datos,arg->lsp,arg->rep); //hai que decirlle a que dirección vai

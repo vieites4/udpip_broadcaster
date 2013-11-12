@@ -55,13 +55,14 @@ int main(int argc, char **argv)
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
 	log_app_msg(">>> Opening UDP APP RX socket...\n");
-	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g);//broadcast
+	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn);//broadcast
 	pthread_create(&h3,NULL, thr_h3, argum);	//Beacon_send(arg);
 	log_app_msg(">>> UDP APP RX socket open!\n");
 	log_app_msg(">>> Opening RAW NET RX socket...\n");
-	net_events = init_net_raw_events(cfg->tx_port,cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,rep_bc_g);
+	net_events = init_net_raw_events(cfg->tx_port,cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn);
 	log_app_msg(">>> raw NET RX socket open!\n");
 	public_ev_arg_r * argument= (public_ev_arg_r *)argum;
+	if (argument->gn)printf("sae true\n");
 	char h_source[ETH_ALEN];
 	get_mac_address(argument->forwarding_socket_fd, "wlan0", (unsigned char *) h_source) ;
 	t_LPV.data=(void *)h_source;

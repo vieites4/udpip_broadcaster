@@ -32,7 +32,7 @@ configuration_t *new_configuration()
 	memset(cfg, 0, LEN__T_CONFIGURATION);
 	cfg->__tx_test = false;
 	cfg->__verbose = false;
-
+	cfg->gn = false;
 	return(cfg);
 
 }
@@ -42,130 +42,136 @@ configuration_t *create_configuration(int argc, char** argv)
 {
 
 	configuration_t *cfg = new_configuration();
-	
+
 	read_configuration(argc, argv, cfg);
 	check_configuration(cfg);
-	
+
 	return(cfg);
-	
+
 }
 
 /* read_configuration */
 int read_configuration(int argc, char** argv, configuration_t* cfg)
 {
-bool tic=false;
+	bool tic=false;
 	int idx = 0, read = 0;
-    
-    static struct option args[] =
+
+	static struct option args[] =
 	{
-		{"help",	no_argument,		NULL, 	'h'	},
-		{"verbose",	no_argument,		NULL,	'e'	},
-		{"version",	no_argument,		NULL, 	'v'	},
-		{"nettx",	required_argument,	NULL, 	't'	},
-		{"netrx",  	required_argument,	NULL, 	'r'	},
-		{"apptx",	required_argument,	NULL, 	'u'	},
-		{"apprx",  	required_argument,	NULL, 	'w'	},
-		{"appaddr", required_argument,  NULL,	'd'	},
-		{"ifname",	required_argument,	NULL,	'i'	}, //wlan0
-		{"txtest",  no_argument,		NULL,   's' },
-		{"app",     no_argument,		NULL,   'a' },
-		{"nec",		no_argument,		NULL,	'n' },
-		{0,0,0,0}
+			{"help",	no_argument,		NULL, 	'h'	},
+			{"verbose",	no_argument,		NULL,	'e'	},
+			{"version",	no_argument,		NULL, 	'v'	},
+			{"nettx",	required_argument,	NULL, 	't'	},
+			{"netrx",  	required_argument,	NULL, 	'r'	},
+			{"apptx",	required_argument,	NULL, 	'u'	},
+			{"apprx",  	required_argument,	NULL, 	'w'	},
+			{"appaddr", required_argument,  NULL,	'd'	},
+			{"ifname",	required_argument,	NULL,	'i'	}, //wlan0
+			{"txtest",  no_argument,		NULL,   's' },
+			{"app",     no_argument,		NULL,   'a' },
+			{"nec",		no_argument,		NULL,	'n' },
+			{"gn",		no_argument,		NULL,	'g' },
+			{0,0,0,0}
 	};
-	
+
 	while
-		( ( read = getopt_long(argc, argv, "anhsevt:r:i:u:w:d:", args, &idx) )
+		( ( read = getopt_long(argc, argv, "ganhsevt:r:i:u:w:d:", args, &idx) )
 				> -1 )
 	{
 
 		switch(read)
 		{
-			case 't':
-				
-				cfg->tx_port = atoi(optarg);
-				break;
-				
-			case 'r':
-				
-				cfg->rx_port = atoi(optarg);
-				break;
+		case 't':
 
-			case 'd': // se se define esa é a dirección de destino, se non o destino é broadcast
+			cfg->tx_port = atoi(optarg);
+			break;
 
-				if ( strlen(optarg) <= 0 )
-					{ handle_app_error("read_configuration: " \
-										"wrong application address.\n"); }
-				cfg->app_address = optarg;
-				cfg->app_inet_addr = inet_addr(optarg);
-				tic=true;
+		case 'r':
 
-				if ( ( cfg->app_inet_addr == 0 ) ||	( cfg->app_inet_addr < 0 ) ||
-						( cfg->app_inet_addr == 0xFFFFFFfF )	)
-					{ handle_app_error("read_configuration: " \
-										"wrong application address.\n"); }
+			cfg->rx_port = atoi(optarg);
+			break;
 
-				break;
+		case 'd': // se se define esa é a dirección de destino, se non o destino é broadcast
 
-			case 'u':
+			if ( strlen(optarg) <= 0 )
+			{ handle_app_error("read_configuration: " \
+					"wrong application address.\n"); }
+			cfg->app_address = optarg;
+			cfg->app_inet_addr = inet_addr(optarg);
+			tic=true;
 
-				cfg->app_tx_port = atoi(optarg);
-				break;
+			if ( ( cfg->app_inet_addr == 0 ) ||	( cfg->app_inet_addr < 0 ) ||
+					( cfg->app_inet_addr == 0xFFFFFFfF )	)
+			{ handle_app_error("read_configuration: " \
+					"wrong application address.\n"); }
 
-			case 'w':
+			break;
 
-				cfg->app_rx_port = atoi(optarg);
-				break;
+		case 'u':
 
-			case 's':
+			cfg->app_tx_port = atoi(optarg);
+			break;
 
-				cfg->__tx_test = true;
-				break;
+		case 'w':
 
-			case 'i':
-			
-				if ( strlen(optarg) > IF_NAMESIZE )
-				{
-					log_app_msg("[WARNING] if_name length = %d, maximum = %d.\
+			cfg->app_rx_port = atoi(optarg);
+			break;
+
+		case 's':
+
+			cfg->__tx_test = true;
+			break;
+
+		case 'i':
+
+			if ( strlen(optarg) > IF_NAMESIZE )
+			{
+				log_app_msg("[WARNING] if_name length = %d, maximum = %d.\
 								TRUNCATING!\n", (int)strlen(optarg), \
 								IF_NAMESIZE);
-				}
-				
-				strncpy(cfg->if_name, optarg, IF_NAMESIZE);
-				break;
+			}
 
-			case 'n':
+			strncpy(cfg->if_name, optarg, IF_NAMESIZE);
+			break;
 
-				cfg->nec_mode = true;
-				break;
+		case 'n':
 
-			case 'e':
-				
-				__verbose = true;
-				cfg->__verbose = true;
-				break;
+			cfg->nec_mode = true;
+			break;
 
-			case 'v':
-			
+
+		case 'e':
+
+			__verbose = true;
+			cfg->__verbose = true;
+			break;
+
+		case 'v':
+
 			//	print_version();
-				exit(EXIT_SUCCESS);
-				break;
-			case 'a':
-				cfg->ladoapp=true;
-				break;
-			case 'h':
-			default:
-			
-			//	print_help();
-				exit(EXIT_SUCCESS);
+			exit(EXIT_SUCCESS);
+			break;
+		case 'a':
+			cfg->ladoapp=true;
+			break;
+		case 'g':
 
-				printf("go2\n");
-				break;
+			cfg->gn = true;
+			break;
+		case 'h':
+		default:
+
+			//	print_help();
+			exit(EXIT_SUCCESS);
+
+			printf("go2\n");
+			break;
 		}
 
 	};
-	printf("go\n");
-//	if (!tic){ cfg->app_address = "255.255.255.255";
-//	cfg->app_inet_addr = inet_addr("255.255.255.255");}
+	//	if (!tic){ cfg->app_address = "255.255.255.255";
+	//	cfg->app_inet_addr = inet_addr("255.255.255.255");}
+	if (cfg->gn) printf("é positivo \n");
 	return(EX_OK);
 
 }
@@ -182,20 +188,20 @@ int check_configuration(configuration_t *cfg)
 	}
 
 	if ( ( cfg->tx_port <= 0 ) || ( cfg->rx_port <= 0 ) )
-		{ handle_app_error("Both TX and RX port must be set.\n"); }
-	
+	{ handle_app_error("Both TX and RX port must be set.\n"); }
+
 	if ( strlen(cfg->if_name) <= 0  )
-		{ handle_app_error("Network interface name must be provided.\n"); }
+	{ handle_app_error("Network interface name must be provided.\n"); }
 
 	if ( cfg->app_address != NULL )
 	{
 		if ( strlen(cfg->app_address) <= 0  )
-			{ handle_app_error("Application address must be provided.\n"); }
+		{ handle_app_error("Application address must be provided.\n"); }
 	}
 
 	if ( ( cfg->app_tx_port <= 0 ) || ( cfg->app_rx_port <= 0 ) )
-		{ handle_app_error("Both APP. TX and RX port must be set.\n"); }
-
+	{ handle_app_error("Both APP. TX and RX port must be set.\n"); }
+	if (cfg->gn) printf("é positivo \n");
 	return(EX_OK);
 
 }
@@ -205,8 +211,8 @@ void print_configuration(const configuration_t *cfg)
 {
 
 	if ( cfg == NULL )
-		{ handle_app_error("Given configuration is NULL.\n"); }
-	
+	{ handle_app_error("Given configuration is NULL.\n"); }
+
 	log_app_msg(">>> Configuration = \n{\n");
 	log_app_msg("\t.app_addr = %s\n", cfg->app_address);
 	log_app_msg("\t.app_inet_addr = %.2X\n", cfg->app_inet_addr);
@@ -219,6 +225,7 @@ void print_configuration(const configuration_t *cfg)
 	log_app_msg("\t.__tx_test = %s\n", cfg->__tx_test ? "true" : "false");
 	log_app_msg("\t.ladoapp = %s\n", cfg->ladoapp ? "true" : "false");
 	log_app_msg("\t.__verbose = %s\n", cfg->__verbose ? "true" : "false");
+	log_app_msg("\t.gn = %s\n", cfg->gn ? "true" : "false");
 	log_app_msg("}\n");
-	
+
 }

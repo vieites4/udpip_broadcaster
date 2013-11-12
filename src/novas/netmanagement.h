@@ -63,6 +63,7 @@ struct public_ev_arg
 	List_locT *locT;
 	List_lsp *lsp;
 	List_lsp *rep;
+	bool gn;
 };
 
 

@@ -29,7 +29,7 @@ extern List_locT *locT_general;
 extern List_lsp * lsp_bc_g;
 extern ev_timer t_Beacon;
 const unsigned char BROADCAST[6]={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
-itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
+itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	//	Create common header
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -43,8 +43,10 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	memcpy(ch.hop_limit,(char *)(buffer) +2,1);
 	ch.HT_HST.HT=5;
 	ch.HT_HST.HST=1;
-	memcpy(ch.payload_lenght+1,(char *)(buffer) +4,1);
-	memcpy(ch.payload_lenght,(char *)(buffer) +5,1);
+
+	if (g==false){
+		memcpy(ch.payload_lenght+1,(char *)(buffer) +4,1);	memcpy(ch.payload_lenght,(char *)(buffer) +5,1);}
+	else{memcpy(ch.payload_lenght,(char *)(buffer) +4,2);}
 	memcpy(ch.version_nh,(char *)(buffer) +7,1);
 	ch.forwarder_position_vector=* LPV;
 	//create extended header
@@ -106,7 +108,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	return(pkt);
 }
 
-itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
+itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 
 	printf("SHB ");
 	//	Create common header
@@ -121,8 +123,9 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	memcpy(ch.hop_limit,(char *)(buffer) +2,1);
 	ch.HT_HST.HT=5;
 	ch.HT_HST.HST=0;
-	memcpy(ch.payload_lenght +1,(char *)(buffer) +4,1);
-	memcpy(ch.payload_lenght,(char *)(buffer) +5,1);
+	if (g==false){
+		memcpy(ch.payload_lenght+1,(char *)(buffer) +4,1);	memcpy(ch.payload_lenght,(char *)(buffer) +5,1);}
+	else{memcpy(ch.payload_lenght,(char *)(buffer) +4,2);}
 	memcpy(ch.version_nh,(char *)(buffer) +7,1);
 	ch.forwarder_position_vector=* LPV;
 	itsnet_shb_t shb_h;
@@ -167,7 +170,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 
 
 }
-itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
+itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 
 	//	Create common header
 	itsnet_packet * pkt = NULL;
@@ -182,9 +185,10 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	memcpy(ch.hop_limit,(char *)(buffer)  +2,1);
 
 	memcpy(&ch.HT_HST,(char *)(buffer),1);
-//	print_hex_data(&ch.HT_HST,1);printf(" o do HT\n");
-	memcpy(ch.payload_lenght,(char *)(buffer)  +5,1);
-	memcpy(ch.payload_lenght+1,(char *)(buffer)  +4,1);
+	//	print_hex_data(&ch.HT_HST,1);printf(" o do HT\n");
+	if (g==false){
+		memcpy(ch.payload_lenght+1,(char *)(buffer) +4,1);	memcpy(ch.payload_lenght,(char *)(buffer) +5,1);}
+	else{memcpy(ch.payload_lenght,(char *)(buffer) +4,2);}
 	memcpy(ch.version_nh,(char *)(buffer)  +7,1);
 	ch.forwarder_position_vector=* LPV;
 	itsnet_geobroadcast_t gbc_h;
@@ -215,13 +219,21 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	 * memcpy(gbc_h.distanceB,(char *)(buffer) +26,2);
 	 * memcpy(gbc_h.angle,(char *)(buffer) +28,2);
 	 * **/
+	if (g==false){
+		memcpy(gbc_h.dest_latitude,(char *)(buffer) +19,1);memcpy((char *)(gbc_h.dest_latitude)+1,(char *)(buffer) +18,1);memcpy((char *)(gbc_h.dest_latitude)+2,(char *)(buffer) +17,1);memcpy((char *)(gbc_h.dest_latitude)+3,(char *)(buffer) +16,1);
+		memcpy(gbc_h.dest_longitude,(char *)(buffer) +23,1);memcpy((char *)(gbc_h.dest_longitude)+1,(char *)(buffer) +22,1);memcpy((char *)(gbc_h.dest_longitude)+2,(char *)(buffer) +21,1);memcpy((char *)(gbc_h.dest_longitude)+3,(char *)(buffer) +20,1);
+		memcpy((char *)(gbc_h.distanceA)+1,(char *)(buffer) +24,1);memcpy(gbc_h.distanceA,(char *)(buffer) +25,1);
+		memcpy((char *)(gbc_h.distanceB)+1,(char *)(buffer) +26,1);memcpy(gbc_h.distanceB,(char *)(buffer) +27,1);
+		memcpy((char *)(gbc_h.angle)+1,(char *)(buffer) +28,1);memcpy(gbc_h.angle,(char *)(buffer) +29,1);
+		memcpy((char *)(gbc_h.reserved)+1,(char *)(buffer) +30,1);memcpy(gbc_h.reserved,(char *)(buffer) +31,1);
 
-	memcpy(gbc_h.dest_latitude,(char *)(buffer) +19,1);memcpy((char *)(gbc_h.dest_latitude)+1,(char *)(buffer) +18,1);memcpy((char *)(gbc_h.dest_latitude)+2,(char *)(buffer) +17,1);memcpy((char *)(gbc_h.dest_latitude)+3,(char *)(buffer) +16,1);
-	memcpy(gbc_h.dest_longitude,(char *)(buffer) +23,1);memcpy((char *)(gbc_h.dest_longitude)+1,(char *)(buffer) +22,1);memcpy((char *)(gbc_h.dest_longitude)+2,(char *)(buffer) +21,1);memcpy((char *)(gbc_h.dest_longitude)+3,(char *)(buffer) +20,1);
-	memcpy((char *)(gbc_h.distanceA)+1,(char *)(buffer) +24,1);memcpy(gbc_h.distanceA,(char *)(buffer) +25,1);
-	memcpy((char *)(gbc_h.distanceB)+1,(char *)(buffer) +26,1);memcpy(gbc_h.distanceB,(char *)(buffer) +27,1);
-	memcpy((char *)(gbc_h.angle)+1,(char *)(buffer) +28,1);memcpy(gbc_h.angle,(char *)(buffer) +29,1);
-	memcpy((char *)(gbc_h.reserved)+1,(char *)(buffer) +30,1);memcpy(gbc_h.reserved,(char *)(buffer) +31,1);
+	}
+	else{memcpy(gbc_h.dest_latitude,(char *)(buffer) +16,4);
+	memcpy(gbc_h.dest_longitude,(char *)(buffer) +20,4);
+	memcpy(gbc_h.distanceA,(char *)(buffer) +24,2);
+	memcpy(gbc_h.distanceB,(char *)(buffer) +26,2);
+	memcpy(gbc_h.angle,(char *)(buffer) +28,2);}
+
 	memcpy(gbc_h.payload.payload,(char *)(buffer) +36,lon_int);
 	gbc_h.source_position_vector=* LPV;
 	pkt->payload.itsnet_geobroadcast=gbc_h;
@@ -249,7 +261,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		printf(" val: %d %d %d\n",lsp_bc_g->size,sizeof(itsnet_common_header),sprint_hex_data((char *)(buffer) +4,2));
 		//delete old buffered elements if we need more size to add a new one.
 
-	while (val>itsGnBcForwardingPacketBufferSize){
+		while (val>itsGnBcForwardingPacketBufferSize){
 			sup_elem_lsp(0xffff);
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
 			printf("aqui podo liala porque non se actualice lsp_bc_g a tempo");
@@ -266,8 +278,8 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
 	//if (itsGnGeoBroadcastForwardingAlgorithm==0 || itsGnGeoBroadcastForwardingAlgorithm==1){
-		//execute simple geobroadcast forwarding algorithm
-		//implement F function to obtain LL_ADDR
+	//execute simple geobroadcast forwarding algorithm
+	//implement F function to obtain LL_ADDR
 	//}
 
 	return(pkt);
@@ -429,7 +441,7 @@ void determine_nexthop(){
 
 }
 
-itsnet_packet_f * TSB_f(void *buffer){
+itsnet_packet_f * TSB_f(void *buffer,bool g){
 	//	Create common header
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
@@ -442,7 +454,21 @@ itsnet_packet_f * TSB_f(void *buffer){
 	memcpy(pkt->common_header.traffic_class,(char *)(buffer) +6,1);
 	char LEN[2] ;memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
 	int lon_int=sprint_hex_data( LEN, 2);
-	memcpy(pkt->common_header.payload_lenght,LEN,2);
+	if (g==false){	memcpy(pkt->common_header.payload_lenght,LEN,2);
+	pkt->common_header.pv=*PV;
+	}else{
+		memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
+				memcpy((char *)(pkt->common_header.pv.heading)+1,PV->heading,1);memcpy(pkt->common_header.pv.heading,(char *)(PV->heading) +1,1);
+				memcpy((char *)(pkt->common_header.pv.altitude)+1,PV->altitude,1);memcpy(pkt->common_header.pv.altitude,(char *)(PV->altitude) +1,1);
+				memcpy((char *)(&pkt->common_header.pv.accuracy)+1,&PV->accuracy,1);memcpy(&pkt->common_header.pv.accuracy,(char *)(&PV->accuracy) +1,1);
+				memcpy((char *)(pkt->common_header.pv.latitude)+3,PV->latitude,1);memcpy((char *)(pkt->common_header.pv.latitude)+2,(char *)(PV->latitude) +1,1);
+				memcpy((char *)(pkt->common_header.pv.latitude)+1,(char *)(PV->latitude)+2,1);memcpy(pkt->common_header.pv.latitude,(char *)(PV->latitude) +3,1);
+				memcpy((char *)(pkt->common_header.pv.longitude)+3,PV->longitude,1);memcpy((char *)(pkt->common_header.pv.longitude)+2,(char *)(PV->longitude) +1,1);
+				memcpy((char *)(pkt->common_header.pv.longitude)+1,(char *)(PV->longitude)+2,1);memcpy(pkt->common_header.pv.longitude,(char *)(PV->longitude) +3,1);
+				memcpy((char *)(pkt->common_header.pv.time_stamp)+3,PV->time_stamp,1);memcpy((char *)(pkt->common_header.pv.time_stamp)+2,(char *)(PV->time_stamp) +1,1);
+				memcpy((char *)(pkt->common_header.pv.time_stamp)+1,(char *)(PV->time_stamp)+2,1);memcpy(pkt->common_header.pv.time_stamp,(char *)(PV->time_stamp) +3,1);
+	memcpy(pkt->common_header.payload_lenght,LEN+1,1);memcpy(pkt->common_header.payload_lenght+1,LEN,1);
+	}
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+2,1);
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68,lon_int);
@@ -451,7 +477,7 @@ itsnet_packet_f * TSB_f(void *buffer){
 	printf("saio de tsb_f \n");
 	return(pkt);}
 
-itsnet_packet_f * SHB_f(void *buffer){
+itsnet_packet_f * SHB_f(void *buffer,bool g){
 	//	Create common header
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
@@ -460,12 +486,29 @@ itsnet_packet_f * SHB_f(void *buffer){
 	itsnet_position_vector * PV=NULL;
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +8,28);
-	pkt->common_header.pv=*PV;
 	memcpy(pkt->common_header.traffic_class,(char *)(buffer) +6,1);
 	char LEN[2] ;
 	memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
 	int lon_int=sprint_hex_data( LEN, 2);
-	memcpy(pkt->common_header.payload_lenght,LEN,2);
+	if (g==true){printf("what true\n");}else printf("oh no!\n");
+	if (g==false){	printf("what false\n");memcpy(pkt->common_header.payload_lenght,LEN,2);
+	printf("what 1\n");
+	pkt->common_header.pv=*PV;
+	printf("what2\n");
+	}else{
+		memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
+		memcpy((char *)(pkt->common_header.pv.heading)+1,PV->heading,1);memcpy(pkt->common_header.pv.heading,(char *)(PV->heading) +1,1);
+		memcpy((char *)(pkt->common_header.pv.altitude)+1,PV->altitude,1);memcpy(pkt->common_header.pv.altitude,(char *)(PV->altitude) +1,1);
+		memcpy((char *)(&pkt->common_header.pv.accuracy)+1,&PV->accuracy,1);memcpy(&pkt->common_header.pv.accuracy,(char *)(&PV->accuracy) +1,1);
+		memcpy((char *)(pkt->common_header.pv.latitude)+3,PV->latitude,1);memcpy((char *)(pkt->common_header.pv.latitude)+2,(char *)(PV->latitude) +1,1);
+		memcpy((char *)(pkt->common_header.pv.latitude)+1,(char *)(PV->latitude)+2,1);memcpy(pkt->common_header.pv.latitude,(char *)(PV->latitude) +3,1);
+		memcpy((char *)(pkt->common_header.pv.longitude)+3,PV->longitude,1);memcpy((char *)(pkt->common_header.pv.longitude)+2,(char *)(PV->longitude) +1,1);
+		memcpy((char *)(pkt->common_header.pv.longitude)+1,(char *)(PV->longitude)+2,1);memcpy(pkt->common_header.pv.longitude,(char *)(PV->longitude) +3,1);
+		memcpy((char *)(pkt->common_header.pv.time_stamp)+3,PV->time_stamp,1);memcpy((char *)(pkt->common_header.pv.time_stamp)+2,(char *)(PV->time_stamp) +1,1);
+		memcpy((char *)(pkt->common_header.pv.time_stamp)+1,(char *)(PV->time_stamp)+2,1);memcpy(pkt->common_header.pv.time_stamp,(char *)(PV->time_stamp) +3,1);
+		memcpy(pkt->common_header.payload_lenght,LEN+1,1);memcpy(pkt->common_header.payload_lenght+1,LEN,1);
+	}
+	printf("what\n");
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+2,1);
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+36,lon_int);
@@ -506,7 +549,7 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 }
 
 
-itsnet_packet_f * GeoBroadcast_f(void *buffer){
+itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_geo_t)+ sizeof(itsnet_common));
 	printf("xa estou dentro de geo_f \n");
@@ -519,18 +562,46 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer){
 	char LEN[2] ;
 	memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
 	int lon_int=sprint_hex_data( LEN, 2);
-	memcpy(pkt->common_header.payload_lenght,LEN,2);
-	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
-	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+2,1);
-	memcpy(pkt->payload.itsnet_geocast.angle,(char *)(buffer)+80,2);
-	memcpy(pkt->payload.itsnet_geocast.distanceA,(char *)(buffer)+76,2);
-	memcpy(pkt->payload.itsnet_geocast.distanceB,(char *)(buffer)+78,2);
+
+	if (g==false){
+		memcpy(pkt->common_header.payload_lenght,LEN,2);
+		memcpy(pkt->payload.itsnet_geocast.angle,(char *)(buffer)+80,2);
+		memcpy(pkt->payload.itsnet_geocast.distanceA,(char *)(buffer)+76,2);
+		memcpy(pkt->payload.itsnet_geocast.distanceB,(char *)(buffer)+78,2);
+		memcpy(pkt->payload.itsnet_geocast.repetitionInterval,(char *)(buffer)+8,4);
+		memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4);
+		pkt->common_header.pv=*PV;
+	}
+	else{
+
+		memcpy((char *)(pkt->common_header.payload_lenght)+1,LEN,1);memcpy(pkt->common_header.payload_lenght,LEN+1,1);
+		memcpy(pkt->payload.itsnet_geocast.angle + 1,(char *)(buffer)+80,1);memcpy(pkt->payload.itsnet_geocast.angle,(char *)(buffer)+81,1);
+		memcpy(pkt->payload.itsnet_geocast.distanceA + 1,(char *)(buffer)+76,1);memcpy(pkt->payload.itsnet_geocast.distanceA,(char *)(buffer)+77,1);
+		memcpy(pkt->payload.itsnet_geocast.distanceB + 1,(char *)(buffer)+78,1);memcpy(pkt->payload.itsnet_geocast.distanceB,(char *)(buffer)+79,1);
+		memcpy(pkt->payload.itsnet_geocast.repetitionInterval,(char *)(buffer)+11,1);memcpy(pkt->payload.itsnet_geocast.repetitionInterval+1,(char *)(buffer)+10,1);
+		memcpy(pkt->payload.itsnet_geocast.repetitionInterval+2,(char *)(buffer)+9,1);memcpy(pkt->payload.itsnet_geocast.repetitionInterval+3,(char *)(buffer)+8,1);
+		memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+41,1);memcpy(pkt->payload.itsnet_geocast.lt+1,(char *)(buffer)+40,1);
+		memcpy(pkt->payload.itsnet_geocast.lt+2,(char *)(buffer)+39,1);memcpy(pkt->payload.itsnet_geocast.lt+3,(char *)(buffer)+38,1);
+		memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
+				memcpy((char *)(pkt->common_header.pv.heading)+1,PV->heading,1);memcpy(pkt->common_header.pv.heading,(char *)(PV->heading) +1,1);
+				memcpy((char *)(pkt->common_header.pv.altitude)+1,PV->altitude,1);memcpy(pkt->common_header.pv.altitude,(char *)(PV->altitude) +1,1);
+				memcpy((char *)(&pkt->common_header.pv.accuracy)+1,&PV->accuracy,1);memcpy(&pkt->common_header.pv.accuracy,(char *)(&PV->accuracy) +1,1);
+				memcpy((char *)(pkt->common_header.pv.latitude)+3,PV->latitude,1);memcpy((char *)(pkt->common_header.pv.latitude)+2,(char *)(PV->latitude) +1,1);
+				memcpy((char *)(pkt->common_header.pv.latitude)+1,(char *)(PV->latitude)+2,1);memcpy(pkt->common_header.pv.latitude,(char *)(PV->latitude) +3,1);
+				memcpy((char *)(pkt->common_header.pv.longitude)+3,PV->longitude,1);memcpy((char *)(pkt->common_header.pv.longitude)+2,(char *)(PV->longitude) +1,1);
+				memcpy((char *)(pkt->common_header.pv.longitude)+1,(char *)(PV->longitude)+2,1);memcpy(pkt->common_header.pv.longitude,(char *)(PV->longitude) +3,1);
+				memcpy((char *)(pkt->common_header.pv.time_stamp)+3,PV->time_stamp,1);memcpy((char *)(pkt->common_header.pv.time_stamp)+2,(char *)(PV->time_stamp) +1,1);
+				memcpy((char *)(pkt->common_header.pv.time_stamp)+1,(char *)(PV->time_stamp)+2,1);memcpy(pkt->common_header.pv.time_stamp,(char *)(PV->time_stamp) +3,1);
+
+	}
+
 	memcpy(pkt->payload.itsnet_geocast.payload,(char *)(buffer)+84,lon_int);
-	memcpy(pkt->payload.itsnet_geocast.repetitionInterval,(char *)(buffer)+8,4);
-	memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4);
 	memcpy(pkt->payload.itsnet_geocast.reserved,(char *)(buffer)+2,1);
 	memcpy(pkt->common_header.pkt_type,buffer,1);
 	memcpy(pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
+	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
+	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+2,1);
+
 	return(pkt);
 
 }
@@ -541,9 +612,9 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
 	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
 	char distA[2];
-			char distB[2];
-			memcpy(distA,pkt->payload.itsnet_geocast.distanceA+1,1);memcpy(distA+1,pkt->payload.itsnet_geocast.distanceA,1);
-			memcpy(distB,pkt->payload.itsnet_geocast.distanceB+1,1);memcpy(distB+1,pkt->payload.itsnet_geocast.distanceB,1);
+	char distB[2];
+	memcpy(distA,pkt->payload.itsnet_geocast.distanceA+1,1);memcpy(distA+1,pkt->payload.itsnet_geocast.distanceA,1);
+	memcpy(distB,pkt->payload.itsnet_geocast.distanceB+1,1);memcpy(distB+1,pkt->payload.itsnet_geocast.distanceB,1);
 	if(memcmp(geobroad0,HT,1)==0){
 		printf("circular \n");
 		r=sprint_hex_data(distA, 2);

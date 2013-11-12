@@ -71,6 +71,7 @@ typedef struct configuration
 bool ladoapp;
 	bool __tx_test;							/**< Indicates a TX test. */
 	bool __verbose;							/**< Indicates verbose mode. */
+	bool gn;
 
 } configuration_t;
 

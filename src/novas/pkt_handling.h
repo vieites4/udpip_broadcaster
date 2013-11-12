@@ -14,51 +14,57 @@
  * @param data, we use  to make the packet
  * @param list where we save it if we don't have neighbours
  * @param list where we save it in case of repetition
+ * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
-itsnet_packet * TSB(void *data,List_lsp *lsp,List_lsp *rep);
+itsnet_packet * TSB(void *data,List_lsp *lsp,List_lsp *rep,bool g);
 /**
  * @fn SHB
  * @brief This function create the shb packet to send through link layer.
  * @param data, we use  to make the packet
  * @param list where we save it if we don't have neighbours
  * @param list where we save it in case of repetition
+ * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
 
-itsnet_packet * SHB(void *dato,List_lsp *lsp,List_lsp *rep);
+itsnet_packet * SHB(void *dato,List_lsp *lsp,List_lsp *rep,bool g);
 /**
  *  @fn GeoBroadcast
  * @brief This function create the geobroadcast packet to send through link layer.
  * @param data, we use  to make the packet
  * @param list where we save it if we don't have neighbours
  * @param list where we save it in case of repetition
+ * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
 
-itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep);
+itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep,bool g);
 
 /**
  *  @fn TSB_f
  * @brief This function create the tsb packet to send to upper layer.
  * @param data, we use  to make the packet
+ * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet.
   */
-itsnet_packet_f * TSB_f(void *data);
+itsnet_packet_f * TSB_f(void *data, bool g);
 /**
  * @fn SHB_f
  * @brief This function create the shb packet to send to upper layer.
  * @param data, we use  to make the packet
+ * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet.
   */
-itsnet_packet_f * SHB_f(void *dato);
+itsnet_packet_f * SHB_f(void *dato, bool g);
 /**
  *  @fn GeoBroadcast_f
  * @brief This function create the geobroadcast packet to send to upper layer.
  * @param data, we use  to make the packet
+ * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet.
   */
-itsnet_packet_f * GeoBroadcast_f(void *dato);
+itsnet_packet_f * GeoBroadcast_f(void *dato, bool g);
 /**
  *  @fn GeoUnicast_f
  * @brief This function create the GeoUnicast packet to send to upper layer.
