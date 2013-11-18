@@ -170,19 +170,17 @@ void thr_h2(void *arg){
 	signal(SIGUSR2, CheckTimerEvent);
 	signal(SIGUSR1, CheckTimerEvent_lsp);	}//}
 
-List_locT * startup1()
+List_locT * startup1(configuration_t *cfg)
 {
 	if (itsGnLocalAddrConfMethod==0){
 		printf("AUTOADDRESS CONFIGURATION\n");
-		//GN_ADDR = (itsnet_node_id)malloc(8);
-		GN_ADDR.id[0]=0x14;//itsGnLocalGnAddr(0);
-		GN_ADDR.id[1]=0x00;
-		GN_ADDR.id[2]=0x00;
-		GN_ADDR.id[3]=0x00;
-		GN_ADDR.id[4]=0x00;
-		GN_ADDR.id[5]=0x00;
-		GN_ADDR.id[6]=0x00;
-		GN_ADDR.id[7]=0x00;
+		  if (cfg->manually) GN_ADDR.manually=1; else GN_ADDR.manually=0;
+
+
+		                if (cfg->itss_type>255){GN_ADDR.scc2=floor(cfg->itss_type/256);GN_ADDR.scc=cfg->itss_type-(256*GN_ADDR.scc2);
+
+		                                                        }else {GN_ADDR.scc=cfg->itss_type;GN_ADDR.scc2=0;}
+		                GN_ADDR.itss_type=cfg->itss_type;
 	}else{
 		printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 	}
@@ -669,7 +667,7 @@ int duplicate_control(void * data,List_locT * locT){
 	memcpy(SN,data+36,2);
 	int lon_int=sprint_hex_data( SN, 2);
 	while (aux != NULL){
-		if (aux->data.node_id.id==buffer->id){
+		if (memcmp(aux->data.node_id.mac,buffer->mac,6)==0){
 			if(((aux->data.Sequence_number < lon_int ) &&(lon_int- aux->data.Sequence_number <=65536/2))||((aux->data.Sequence_number > lon_int)&&(-lon_int + aux->data.Sequence_number >65536/2)))
 			{	aux->data.Sequence_number=lon_int;	i=0	; printf("**************************DUPLICADO*************************** \n"); }		  }
 		aux = aux->next;

@@ -14,6 +14,7 @@
 #include <list.h>
 #include "../gps.h"
 #include "../gpsdclient.h"
+#include "configuration.h"
 #include <ev.h>
 #include "itsnet_header.h"
 #include "../udpev/define.h"
@@ -44,26 +45,26 @@ typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
 struct public_ev_arg
 {
 
-	int socket_fd;					/**< Socket file descriptor. */
-	int port;						/**< Port to be used. */
-	int forwarding_socket_fd;		/**< Socket for message forwarding. */
-	int net_socket_fd;
-	int forwarding_port;			/**< Port for message forwarding. */
-	int net_port;
-	sockaddr_in_t *forwarding_addr;	/**< Forwarding address. */
-	sockaddr_ll_t *forwarding_addr_ll;	/**< Forwarding address. */
-	sockaddr_in_t *local_addr;		/**< Local address (NOT localhost) */
-	sockaddr_ll_t *local_addr_ll;		/**< Local address (NOT localhost) */
-	bool print_forwarding_message;	/**< Flag that enables verbose. */
-	void *data;						/**< Buffer for frames reception. */
-	int len;						/**< Data length within the buffer. */
-	msg_header_t *msg_header;		/**< Buffer for msg_header reception. */
-	bool nec_mode;					/**< Flag that indicates NEC mode. */
-	int __test_number;				/**< For testing, counts no tests. */
-	List_locT *locT;
-	List_lsp *lsp;
-	List_lsp *rep;
-	bool gn;
+	int socket_fd;                                        /**< Socket file descriptor. */
+	        int port;                                                /**< Port to be used. */
+	        int forwarding_socket_fd;                /**< Socket for message forwarding. */
+	        int net_socket_fd;
+	        int forwarding_port;                        /**< Port for message forwarding. */
+	        int net_port;
+	        sockaddr_in_t *forwarding_addr;        /**< Forwarding address. */
+	        sockaddr_ll_t *forwarding_addr_ll;        /**< Forwarding address. */
+	        sockaddr_in_t *local_addr;                /**< Local address (NOT localhost) */
+	        sockaddr_ll_t *local_addr_ll;                /**< Local address (NOT localhost) */
+	        bool print_forwarding_message;        /**< Flag that enables verbose. */
+	        void *data;                                                /**< Buffer for frames reception. */
+	        int len;                                                /**< Data length within the buffer. */
+	        msg_header_t *msg_header;                /**< Buffer for msg_header reception. */
+	        bool nec_mode;                                        /**< Flag that indicates NEC mode. */
+	        int __test_number;                                /**< For testing, counts no tests. */
+	        List_locT *locT;
+	        List_lsp *lsp;
+	        List_lsp *rep;
+	        bool gn;
 };
 
 
@@ -217,7 +218,7 @@ void view_lsp ();
  * @brief This function permits view loct list of mac.
  */
 void view_locT ();
-List_locT * startup1();
+List_locT * startup1(configuration_t *cfg);
 /**
  * @fn LPV_update
  * @brief LPV_update This function is the Callback when LPV timer breaks! use gps information to create

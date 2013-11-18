@@ -57,21 +57,23 @@ bool __verbose;
 typedef struct configuration
 {
 	
-	int app_tx_port;						/**< Application tx port. */
-	int app_rx_port;						/**< Application rx port. */
-	char *app_address;						/**< Application address. */
-	in_addr_t app_inet_addr;				/**< Application inet address. */
+	 int app_tx_port;                                                /**< Application tx port. */
+	        int app_rx_port;                                                /**< Application rx port. */
+	        char *app_address;                                                /**< Application address. */
+	        in_addr_t app_inet_addr;                                /**< Application inet address. */
 
-	int tx_port;							/**< Network tx port. */
-	int rx_port;							/**< Network rx port. */
-	
-	char if_name[LEN__LL_IF_NAME_BUFFER];	/**< Name of the interface. */
+	        int tx_port;                                                        /**< Network tx port. */
+	        int rx_port;                                                        /**< Network rx port. */
 
-	bool nec_mode;							/**< Indicates NEC mode. */
-bool ladoapp;
-	bool __tx_test;							/**< Indicates a TX test. */
-	bool __verbose;							/**< Indicates verbose mode. */
-	bool gn;
+	        char if_name[LEN__LL_IF_NAME_BUFFER];        /**< Name of the interface. */
+	        int itss_type;
+	        bool nec_mode;                                                        /**< Indicates NEC mode. */
+	bool ladoapp;
+	        bool __tx_test;                                                        /**< Indicates a TX test. */
+	        bool __verbose;                                                        /**< Indicates verbose mode. */
+	        bool gn;
+	        bool manually;
+	        int scc;
 
 } configuration_t;
 

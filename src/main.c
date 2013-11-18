@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	print_configuration(cfg);
 	lsp_bc_g=init_lsp();
 	List_lsp *rep_bc_g=init_lsp();
-	locT_g=startup1();
+	locT_g=startup1(cfg);
 
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;

@@ -56,7 +56,10 @@ typedef uint8_t  itsnet_channel;
 
 struct itsnet_node_id
 {
-	uint8_t id[2];
+	  unsigned char manually :        1;
+	        unsigned char itss_type:5;
+	        unsigned char scc2: 2;
+	        unsigned char scc:8;
 	char mac[6];
 };
 
