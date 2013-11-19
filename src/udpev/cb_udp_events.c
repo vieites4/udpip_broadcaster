@@ -71,11 +71,11 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 	char h_source[ETH_ALEN];
 	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-	/**if(memcmp((void *)data +6,h_source,6)==0){
+	if(memcmp((void *)data +6,h_source,6)==0){
 		log_app_msg(">>>@cb_forward_recvfrom: Message blocked!\n");
-		return;	}**/
+		return;	}
 
-	printf("cb_forward_recvfmakerom1 \n");
+	//	printf("cb_forward_recvfmakerom1 \n");
 	//printf("RECIBO UN PAQUETE\n");
 	//print_hex_data(data, arg->len);printf("\n");
 	memcpy(arg->data,data,arg->len);
@@ -91,43 +91,46 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	int lon_int=sprint_hex_data( HL, 1);
 	//print_hex_data(HT,1); printf(" VALOR DO HT\n");
 	if(memcmp(HT,tsb0,1)==0&& (lon_int>1)){
-		printf("entro en tsb \n");
+		//printf("entro en tsb \n");
 		//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
 		error =CommonHeader_processing(arg);
 		if (error==0 && duplicate_control(datos,arg->locT)==0){
-			pkt = TSB_f(datos,arg->gn);aa=1;
+			pkt = TSB_f(datos,arg->gn);aa=1; 		print_hex_data(&pkt,arg->len);//printf("  cara as facilities tsb \n");
 			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
-			printf("saio de tsb_f \n");}
+			//printf("saio de tsb_f \n");
+			}
 	} else if(memcmp(HT,tsb0,1)==0){
 		//printf("entro en shb\n");
-		error =CommonHeader_processing(arg);
-		pkt = SHB_f(datos,arg->gn);
+		error =CommonHeader_processing(arg);//print_hex_data(datos,arg->len);printf("  chegada desde ll shb \n");
+		pkt = SHB_f(datos,arg->gn); 		//print_hex_data(pkt,arg->len);printf("  cara as facilities shb \n");
 		send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
-		printf("envio realizado\n");
+		//	printf("envio realizado\n");
 	} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
-		printf("entro en geobroadcast \n");
+		//	printf("entro en geobroadcast \n");
 		error =CommonHeader_processing(arg);
-		printf("entro en geobroadcast! %d \n",error);
+		//printf("entro en geobroadcast! %d \n",error);
 		if (error==0 && duplicate_control(datos,arg->locT)==0){
 			aa=1;
 			pkt = GeoBroadcast_f(datos,arg->gn);
 			int y =geo_limit(HT,pkt);
 			if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);}
-			printf("saio de geobroadcast_f \n");
-		}else printf("%d \n",duplicate_control(datos,arg->locT));}
+			//	print_hex_data(&pkt,arg->len);printf("  cara as facilities geo \n");
+			//	printf("saio de geobroadcast_f \n");
+		}else printf("%d \n",duplicate_control(datos,arg->locT));
+	}
 	else if(memcmp(HT,beacon,1)==0 ){
-		printf("entro en beacon\n");
+		//printf("entro en beacon\n");
 		CommonHeader_processing(arg);
-		printf("saio de beacon \n");
+		//	printf("saio de beacon \n");
 	}else if(memcmp(HT,geounicast,1)==0 ){
-		printf("entro en geounicast \n");
+		//printf("entro en geounicast \n");
 		error =CommonHeader_processing(arg);
 		if (error==0 && duplicate_control(datos,arg->locT)==0){
 			aa=1;
 			pkt = GeoUnicast_f(datos);
 			//flush ls uc if its the one they was waiting
 			//send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
-			printf("saio de geounicast \n"); //check gn_address to know if we have to forward in LL
+			//	printf("saio de geounicast \n"); //check gn_address to know if we have to forward in LL
 		}
 	}
 	else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0  ){
@@ -142,14 +145,15 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	else if(memcmp(HT,ls1,1)==0){}
 	else{}
 	if(aa==1 && (memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
-		printf("entro en free\n");free(pkt);pkt=NULL;}
+		//printf("entro en free\n");
+		free(pkt);pkt=NULL;}
 
-	printf("comprobación %d\n",aa);
+	//	printf("comprobación %d\n",aa);
 	if (aa==1){
 		if ( memcmp(HT,tsb0,1)==0 ||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0||memcmp(HT,geounicast,1)==0 ){
 			printf("entro no envio do enlace cara o enlace \n");
 			if (lon_int>1){
-				printf("o meu hop limit é maior que un\n");
+				//	printf("o meu hop limit é maior que un\n");
 				itsnet_packet * pkt1=NULL;
 				pkt1 =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 				memcpy(pkt1, data +14 ,arg->len-14);
@@ -157,7 +161,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				number=(strings_an *)lon_int -1;
 				memcpy(pkt1->common_header.hop_limit,&number,1);
 				pkt1->common_header.forwarder_position_vector=* LPV; //
-				printf("ENVIO UN PAQUETE\n");	print_hex_data(pkt1, arg->len);printf("\n");
+				//	printf("ENVIO UN PAQUETE\n");	print_hex_data(pkt1, arg->len);printf("\n");
 				char h_source2[ETH_ALEN];
 				get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source2) ;
 				ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source2);
@@ -168,7 +172,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				//}else if (memcmp(HT,tsb0,1)==0){
 				//	memcpy(tx_frame1->buffer.data,(char *) pkt1,IEEE_80211_BLEN );
 				//}else {}
-				printf("strlen(pkt1)  %d\n",strlen(pkt1));
+				//	printf("strlen(pkt1)  %d\n",strlen(pkt1));
 
 				sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 				//while(
@@ -185,7 +189,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 /* cb_broadcast_recvfrom */
 void cb_broadcast_recvfrom(public_ev_arg_r *arg)
-{	printf("cb_broadcast_recvfrom\n");
+{//	printf("cb_broadcast_recvfrom\n");
 bool blocked = false;	arg->len = 0;
 // 1) read UDP message from application level
 //		(self-broadcast messages are not received)
@@ -210,20 +214,20 @@ pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 char HL[1];
 memcpy(HL,(char *)(arg->data) +2,1);
 if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
-	printf("entro en tsb1\n");
+	//printf("entro en tsb1\n");
 	pkt = TSB(datos,arg->lsp,arg->rep,arg->gn);
 } else if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)==0)){
-	printf("entro en tsb0\n");
+	//printf("entro en tsb0\n");
 	pkt = SHB((void *)datos,arg->lsp,arg->rep,arg->gn);
 } else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
-	printf("entro en geobroad\n");
+	//printf("entro en geobroad\n");
 	pkt = GeoBroadcast(datos,arg->lsp,arg->rep,arg->gn);
 }else if(memcmp(HT,geounicast,1)==0){
-	printf("entro en geounicast\n");
+	//printf("entro en geounicast\n");
 	pkt = GeoUnicast(datos,arg->lsp,arg->rep); //hai que decirlle a que dirección vai
 }
 else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){
-	printf("entro en geoanycast0\n");
+	//printf("entro en geoanycast0\n");
 	pkt = GeoBroadcast(datos,arg->lsp,arg->rep);//hai que decirlle a que dirección vai
 }else{}
 
@@ -239,15 +243,15 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0)
 		//printf("porto de envio cara arriba: %d porto de recepcion : %d e lonxitude do envio %d arg->len %d\n",arg->forwarding_socket_fd,arg->socket_fd,strlen((char *)&tx_frame->buffer),strlen((char *)pkt));
 		ev_timer_again (l_Beacon,&t_Beacon);
 		//print_hex_data((char *)&tx_frame->buffer,40);
-		printf(" paquete enviado a ll\n");
+		//printf(" paquete enviado a ll\n");
 		free(pkt);pkt=NULL; //	printf("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
 	}
 
 }
 
 
-printf("saio ben do cb_broadcast_recvfrom\n");
-view_locT();printf("pinto lista loct \n");
+//printf("saio ben do cb_broadcast_recvfrom\n");
+view_locT();//printf("pinto lista loct \n");
 //view_lsp();printf("pinto lista lsp\n");
 //view_timers();printf("pinto lista timers lsp \n");
 //return();
