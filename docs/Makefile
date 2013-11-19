@@ -91,7 +91,7 @@ CPPFLAGS =
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
-DOXYGEN = 
+DOXYGEN = doxygen
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
@@ -164,9 +164,9 @@ target_alias =
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-#directory = $(top_srcdir)/docs/man/man3/
-#dist_man_MANS = $(directory)/man_page_1.3 $(directory)/man_page_2.3 $(directory)/man_page_1.3: doxyfile.stamp $(directory)/man_page_2.3: doxyfile.stamp
-#CLEANFILES = doxyfile.stamp
+directory = $(top_srcdir)/docs/man/man3/
+dist_man_MANS = $(directory)/man_page_1.3 $(directory)/man_page_2.3 $(directory)/man_page_1.3: doxyfile.stamp $(directory)/man_page_2.3: doxyfile.stamp
+CLEANFILES = doxyfile.stamp
 all: all-am
 
 .SUFFIXES:
@@ -200,8 +200,8 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-#Doxyfile: $(top_builddir)/config.status $(srcdir)/Doxyfile.in
-#	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+Doxyfile: $(top_builddir)/config.status $(srcdir)/Doxyfile.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-man3: $(dist_man_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man3dir)" || $(MKDIR_P) "$(DESTDIR)$(man3dir)"
@@ -326,7 +326,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-local:
+#all-local:
 all-am: Makefile $(MANS) all-local
 installdirs:
 	for dir in "$(DESTDIR)$(man3dir)" "$(DESTDIR)$(mansdir)"; do \
@@ -363,7 +363,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean-local:
+#clean-local:
 clean: clean-am
 
 clean-am: clean-generic clean-local mostlyclean-am
@@ -447,13 +447,13 @@ uninstall-man: uninstall-man3 uninstall-mans
 	uninstall-man uninstall-man3 uninstall-mans
 
 
-#doxyfile.stamp:
-#   $(DOXYGEN) Doxyfile
-#   echo Timestamp > doxyfile.stamp
+doxyfile.stamp:
+   $(DOXYGEN) Doxyfile
+   echo Timestamp > doxyfile.stamp
 
-#all-local: doxyfile.stamp
-#clean-local:
-#   rm -rf $(top_srcdir)/docs/man
+all-local: doxyfile.stamp
+clean-local:
+   rm -rf $(top_srcdir)/docs/man
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

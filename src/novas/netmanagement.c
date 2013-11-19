@@ -181,7 +181,7 @@ List_locT * startup1(configuration_t *cfg)
 		                if (cfg->scc>255){GN_ADDR.scc2=floor(cfg->scc/256);GN_ADDR.scc=cfg->scc-(256*GN_ADDR.scc2);
 
 		                                                        }else {GN_ADDR.scc=cfg->scc;GN_ADDR.scc2=0;}
-		                print_hex_data(&GN_ADDR,8);printf("cfg->itss_type %d cfg->scc %d %d \n",GN_ADDR.itss_type,GN_ADDR.scc2,GN_ADDR.manually);
+
 	}else{
 		printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 	}
@@ -217,6 +217,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	(void) gps_stream(&gpsdata, WATCH_ENABLE, NULL);//gpsdata.dev);
 	/* Put this in a loop with a call to a high resolution sleep () in it. */
 	int i;
+
 	for(i = 0; i < 100; i++){
 		if (gps_waiting (&gpsdata, timer)) //wait 5 seconds
 		{
@@ -224,7 +225,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 			} else {
 				/* Display data from the GPS receiver. */
 				if (gpsdata.fix.mode>=2 && 	(gpsdata.fix.epx>=0 && gpsdata.fix.epx<366) && 	(gpsdata.fix.epy>=0 && gpsdata.fix.epy<366) && 	(gpsdata.fix.epv>=0 && gpsdata.fix.epv<366)){
-					LPV->node_id=GN_ADDR;print_hex_data(&GN_ADDR,8);printf(" son a gn_addr\n");
+					LPV->node_id=GN_ADDR;
 					LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
 					char str1[2] = {'\0'};	char str2[2] = {'\0'};	char str3[2] = {'\0'};	char str4[2] = {'\0'};	char str5[2] = {'\0'};	char str6[9] = {'\0'};	char str7[9] = {'\0'};
 					char str8[9] = {'\0'};	char str9[5] = {'\0'};	char str10[5] = {'\0'};
