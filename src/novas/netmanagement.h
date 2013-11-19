@@ -69,15 +69,15 @@ struct public_ev_arg
 
 
 typedef struct public_ev_arg public_ev_arg_r;
-struct tq_elem
+/**struct tq_elem
 {
 	struct list_head list;
-	struct timespec expires;       	/* expire time for task */
-	pthread_t thread;		/* who queued this task */
-	void (*task)(struct tq_elem *);	/* pointer to task      */
+	struct timespec expires;       	// expire time for task
+	pthread_t thread;		// who queued this task
+	void (*task)(struct tq_elem *);	// pointer to task
 };
-
-struct itsnet_node_
+**/
+struct itsnet_node_//loct entry
 {
 	struct itsnet_node_id node_id;			/** node identity		*/
 	struct mac_addr mac_id;
@@ -85,8 +85,8 @@ struct itsnet_node_
 	struct itsnet_position_vector pos_vector;	/** position vector		*/
 	bool LS_PENDING;
 	bool IS_NEIGHBOUR;
-	int Sequence_number;
-	struct tq_elem tqe;                    /** Timer queue entry */
+	uint16_t Sequence_number;
+	//struct tq_elem tqe;                    /** Timer queue entry */
 	struct timespec expires;       		/** expire time for message 	*/
 	};
 typedef struct itsnet_node_ itsnet_node;

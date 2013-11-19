@@ -567,7 +567,7 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 
 	lsp->size=lsp->size+sizeof(itsnet_common_header)+sprint_hex_data(LEN,2);
 	printf("AQUI en engadir en lsp! %d \n",lsp->len);
-	int sn;	LT_s *temp;
+	uint16_t sn;	LT_s *temp;
 	char HT[1];	char HL[1];
 	memcpy(HL,&data.common_header.hop_limit,1);
 	int lon_int=sprint_hex_data( HL, 1);
@@ -627,7 +627,7 @@ int sup_elem_lsp (int num){
 	//}
 	lsp_bc_g->len--;
 	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
-	char HT[1];int sn;char HL[1];
+	char HT[1];uint16_t sn;char HL[1];
 	memcpy(HT,&pos->data.common_header.HT_HST,1);
 	memcpy(HL,pos->data.common_header.hop_limit,1);
 	int lon_int=sprint_hex_data( HL, 1);

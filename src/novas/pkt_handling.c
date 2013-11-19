@@ -8,7 +8,7 @@
 const unsigned char tipoa[1]={0x01};
 const unsigned char tipob[1]={0x02};
 extern itsnet_position_vector * LPV;
-extern int SN_g;
+extern uint16_t SN_g;
 const unsigned char tsb0[1]={0x05};
 const unsigned char tsb1[1]={0x15};
 const unsigned char geobroad0[1]={0x04};
@@ -220,6 +220,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	 * memcpy(gbc_h.angle,(char *)(buffer) +28,2);
 	 * **/
 	if (g==false){
+		printf("entrei aqui \n");
 		memcpy(gbc_h.dest_latitude,(char *)(buffer) +19,1);memcpy((char *)(gbc_h.dest_latitude)+1,(char *)(buffer) +18,1);memcpy((char *)(gbc_h.dest_latitude)+2,(char *)(buffer) +17,1);memcpy((char *)(gbc_h.dest_latitude)+3,(char *)(buffer) +16,1);
 		memcpy(gbc_h.dest_longitude,(char *)(buffer) +23,1);memcpy((char *)(gbc_h.dest_longitude)+1,(char *)(buffer) +22,1);memcpy((char *)(gbc_h.dest_longitude)+2,(char *)(buffer) +21,1);memcpy((char *)(gbc_h.dest_longitude)+3,(char *)(buffer) +20,1);
 		memcpy((char *)(gbc_h.distanceA)+1,(char *)(buffer) +24,1);memcpy(gbc_h.distanceA,(char *)(buffer) +25,1);
@@ -256,7 +257,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
-		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 		pkt1=NULL;int val=(lsp_bc_g->size)+(sizeof(itsnet_common_header))+(sprint_hex_data((char *)(buffer) +4,2));
 		printf(" val: %d %d %d\n",lsp_bc_g->size,sizeof(itsnet_common_header),sprint_hex_data((char *)(buffer) +4,2));
 		//delete old buffered elements if we need more size to add a new one.
@@ -329,7 +330,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 		memcpy(SN,arg->data+36+15,1);
 		memcpy(SN+1,arg->data+36+14,1);
 		//	print_hex_data(arg->data,60);printf("\n");print_hex_data(SN,2);
-		int lon_int=sprint_hex_data( SN, 2);printf(" sequence number %d\n", lon_int);
+		uint16_t lon_int=sprint_hex_data( SN, 2);printf(" sequence number %d\n", lon_int);
 		data->Sequence_number=lon_int;}else{data->Sequence_number=0;
 		}
 		data->LS_PENDING=false;
@@ -357,7 +358,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			char zero[1]={0x00};
 			if (lon_int==1)memcpy(pos->data.common_header.hop_limit,zero,1); else sprintf(pos->data.common_header.hop_limit,"X02",lon_int-1);
 			pos->data.common_header.forwarder_position_vector=* LPV; //
-			char HT[1];int sn=0xffff;int base=0;int mult=0;LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};	int num3=0;int num4=0;
+			char HT[1];uint16_t sn=0xffff;int base=0;int mult=0;LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};	int num3=0;int num4=0;
 			memcpy(HT,&pos->data.common_header.HT_HST,1);
 			if(memcmp(HT,tsb1,1)==0){
 				printf("entro en tsb1\n");

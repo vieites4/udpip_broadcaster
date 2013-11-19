@@ -71,9 +71,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 	char h_source[ETH_ALEN];
 	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-	if(memcmp((void *)data +6,h_source,6)==0){
+	/**if(memcmp((void *)data +6,h_source,6)==0){
 		log_app_msg(">>>@cb_forward_recvfrom: Message blocked!\n");
-		return;	}
+		return;	}**/
 
 	printf("cb_forward_recvfmakerom1 \n");
 	//printf("RECIBO UN PAQUETE\n");
@@ -126,7 +126,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			aa=1;
 			pkt = GeoUnicast_f(datos);
 			//flush ls uc if its the one they was waiting
-			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
+			//send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
 			printf("saio de geounicast \n"); //check gn_address to know if we have to forward in LL
 		}
 	}
@@ -136,7 +136,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			aa=1;
 			pkt = GeoBroadcast_f(datos);
 			int y =geo_limit(HT,pkt);
-			if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);}}
+		//	if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);}
+		}
 	}else if(memcmp(HT,ls0,1)==0){}
 	else if(memcmp(HT,ls1,1)==0){}
 	else{}
@@ -178,8 +179,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 		}
 	}
-	}else{printf("NON SON DESE TIPO!!\n");}
-	printf("remata cb_forward_recvfrom \n");
+	}//else{printf("NON SON DESE TIPO!!\n");}
+	//printf("remata cb_forward_recvfrom \n");
 }
 
 /* cb_broadcast_recvfrom */
@@ -225,18 +226,26 @@ else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoa
 	printf("entro en geoanycast0\n");
 	pkt = GeoBroadcast(datos,arg->lsp,arg->rep);//hai que decirlle a que dirección vai
 }else{}
+
 // 2) broadcast application level UDP message to network level
 if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0))|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	if (pkt!=NULL){
-		memcpy(tx_frame->buffer.data, (char *) pkt, strlen((char *)pkt));
+		memcpy(tx_frame->buffer.data, (char *) pkt, arg->len);
 
 		//while(
+
 		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, arg->len);//==-1){}
-		//	print_hex_data(&tx_frame->buffer,arg->len);printf("   \n");
-		ev_timer_again (l_Beacon,&t_Beacon);}
-	//	print_hex_data(&tx_frame->buffer,50);printf(" paquete enviado a ll\n");
+			//print_hex_data(&pkt,arg->len);printf("   \n");
+		//printf("porto de envio cara arriba: %d porto de recepcion : %d e lonxitude do envio %d arg->len %d\n",arg->forwarding_socket_fd,arg->socket_fd,strlen((char *)&tx_frame->buffer),strlen((char *)pkt));
+		ev_timer_again (l_Beacon,&t_Beacon);
+		//print_hex_data((char *)&tx_frame->buffer,40);
+		printf(" paquete enviado a ll\n");
+		free(pkt);pkt=NULL; //	printf("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
+	}
+
 }
-free(pkt);pkt=NULL; //	printf("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
+
+
 printf("saio ben do cb_broadcast_recvfrom\n");
 view_locT();printf("pinto lista loct \n");
 //view_lsp();printf("pinto lista lsp\n");
