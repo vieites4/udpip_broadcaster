@@ -53,12 +53,17 @@ typedef uint8_t  itsnet_channel;
 /**
  *The structure describes itsnet identity
  */
+struct only5{
+
+	  unsigned char itss_type:5;
+};
 
 struct itsnet_node_id
 {
-	  unsigned char manually :        1;
+	 unsigned char scc2: 2;
 	        unsigned char itss_type:5;
-	        unsigned char scc2: 2;
+
+	        unsigned char manually : 1;
 	        unsigned char scc:8;
 	char mac[6];
 };

@@ -1,0 +1,21 @@
+>>> Reading configuration...
+>>> Configuration read! Printing data...
+>>> Configuration = 
+{
+	.app_addr = (null)
+	.app_inet_addr = 00
+	.app_tx_port = 1302
+	.app_rx_port = 1301
+	.tx_port = 1203
+	.rx_port = 1204
+	.if_name = wlan0
+	.nec_mode = false
+	.__tx_test = false
+	.ladoapp = false
+	.__verbose = false
+	.gn = false
+	.itss_type = 8
+}
+AUTOADDRESS CONFIGURATION
+AQUI en init ! 0 
+>>> Opening UDP APP RX socket...

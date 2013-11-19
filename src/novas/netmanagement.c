@@ -174,13 +174,14 @@ List_locT * startup1(configuration_t *cfg)
 {
 	if (itsGnLocalAddrConfMethod==0){
 		printf("AUTOADDRESS CONFIGURATION\n");
-		  if (cfg->manually) GN_ADDR.manually=1; else GN_ADDR.manually=0;
+		memset(&GN_ADDR,0,8);
+		  if (cfg->manually==true) GN_ADDR.manually=1; else GN_ADDR.manually=0;
 
+		  GN_ADDR.itss_type=cfg->itss_type;
+		                if (cfg->scc>255){GN_ADDR.scc2=floor(cfg->scc/256);GN_ADDR.scc=cfg->scc-(256*GN_ADDR.scc2);
 
-		                if (cfg->itss_type>255){GN_ADDR.scc2=floor(cfg->itss_type/256);GN_ADDR.scc=cfg->itss_type-(256*GN_ADDR.scc2);
-
-		                                                        }else {GN_ADDR.scc=cfg->itss_type;GN_ADDR.scc2=0;}
-		                GN_ADDR.itss_type=cfg->itss_type;
+		                                                        }else {GN_ADDR.scc=cfg->scc;GN_ADDR.scc2=0;}
+		                print_hex_data(&GN_ADDR,8);printf("cfg->itss_type %d cfg->scc %d %d \n",GN_ADDR.itss_type,GN_ADDR.scc2,GN_ADDR.manually);
 	}else{
 		printf("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 	}
@@ -223,7 +224,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 			} else {
 				/* Display data from the GPS receiver. */
 				if (gpsdata.fix.mode>=2 && 	(gpsdata.fix.epx>=0 && gpsdata.fix.epx<366) && 	(gpsdata.fix.epy>=0 && gpsdata.fix.epy<366) && 	(gpsdata.fix.epv>=0 && gpsdata.fix.epv<366)){
-					LPV->node_id=GN_ADDR;
+					LPV->node_id=GN_ADDR;print_hex_data(&GN_ADDR,8);printf(" son a gn_addr\n");
 					LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
 					char str1[2] = {'\0'};	char str2[2] = {'\0'};	char str3[2] = {'\0'};	char str4[2] = {'\0'};	char str5[2] = {'\0'};	char str6[9] = {'\0'};	char str7[9] = {'\0'};
 					char str8[9] = {'\0'};	char str9[5] = {'\0'};	char str10[5] = {'\0'};
@@ -273,10 +274,10 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	return(LPV);
 }
 
-itsnet_position_vector * LPV_ini(){
+itsnet_position_vector * LPV_ini(){ //non se está executando nunca
 	itsnet_position_vector * LPV;
-	LPV->altitude=0;	LPV->longitude=0;	LPV->latitude=0;	LPV->time_stamp=0;	LPV->speed=0;	LPV->heading=0;	LPV->node_id=GN_ADDR;	LPV->accuracy.alt_ac=0;
-	LPV->accuracy.pos_ac=0;	LPV->accuracy.speed_ac=0;	LPV->accuracy.head_ac=0;	LPV->accuracy.time_ac=0;	return(LPV);}
+	LPV->altitude=0;	LPV->longitude=0;	LPV->latitude=0;	LPV->time_stamp=0;	LPV->speed=0;	LPV->heading=0;	memcpy(&LPV->node_id,&GN_ADDR,8);	LPV->accuracy.alt_ac=0;
+	print_hex_data(GN_ADDR,8);printf("\n");LPV->accuracy.pos_ac=0;	LPV->accuracy.speed_ac=0;	LPV->accuracy.head_ac=0;	LPV->accuracy.time_ac=0;	return(LPV);}
 
 mac_addr autoaddrconf(){
 	mac_addr addr;
