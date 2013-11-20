@@ -29,6 +29,12 @@ ev_timer t_LPV;
 uint16_t SN_g=0;//sequence number
 itsnet_node_id GN_ADDR;
 List_lsp * lsp_bc_g;
+
+#if DEBUG_PRINT_ENABLED
+#define PRF printf
+#else
+#define PRF(format, args...) ((void)0)
+#endif
 void *thr_h1(void * arg){
 
 	t_LPV.data=arg;
@@ -43,9 +49,9 @@ int main(int argc, char **argv)
 	List_locT * locT_g;
 
 	pthread_t h1,h3, h_locT,h_lsp;
-	log_app_msg(">>> Reading configuration...\n");
+PRF(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
-	log_app_msg(">>> Configuration read! Printing data...\n");
+	PRF(">>> Configuration read! Printing data...\n");
 	print_configuration(cfg);
 	lsp_bc_g=init_lsp();
 	List_lsp *rep_bc_g=init_lsp();
@@ -54,13 +60,13 @@ int main(int argc, char **argv)
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
-	log_app_msg(">>> Opening UDP APP RX socket...\n");
+	PRF(">>> Opening UDP APP RX socket...\n");
 	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn);//broadcast
 	pthread_create(&h3,NULL, thr_h3, argum);	//Beacon_send(arg);
-	log_app_msg(">>> UDP APP RX socket open!\n");
-	log_app_msg(">>> Opening RAW NET RX socket...\n");
+	PRF(">>> UDP APP RX socket open!\n");
+	PRF(">>> Opening RAW NET RX socket...\n");
 	net_events = init_net_raw_events(cfg->tx_port,cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn);
-	log_app_msg(">>> raw NET RX socket open!\n");
+	PRF(">>> raw NET RX socket open!\n");
 	public_ev_arg_r * argument= (public_ev_arg_r *)argum;
 	if (argument->gn)printf("sae true\n");
 	char h_source[ETH_ALEN];

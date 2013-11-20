@@ -23,19 +23,24 @@
 #include "__NEC__gnbtpapi_udp_msg.h"
 
 /* print__NEC__basic_header */
+#if DEBUG_PRINT_ENABLED
+#define PRF printf
+#else
+#define PRF(format, args...) ((void)0)
+#endif
 void print__NEC__basic_header(const void* buffer)
 {
 
 	__NEC__gnbtpapi_basic_header_t* h
 		= (__NEC__gnbtpapi_basic_header_t *)buffer;
 
-	printf("\t* header_type = %.2X\n", h->header_type);
-	printf("\t* header_subtype = %.2X\n", h->header_subtype);
-	printf("\t* hop_limit = %d\n", h->hop_limit);
-	printf("\t* flags = %.2X\n", h->flags);
-	printf("\t* payload_length = %d\n", h->payload_length);
-	printf("\t* traffic_class = %.2X\n", h->traffic_class);
-	printf("\t* btp_type = %.2X\n", h->btp_type);
+	PRF("\t* header_type = %.2X\n", h->header_type);
+	PRF("\t* header_subtype = %.2X\n", h->header_subtype);
+	PRF("\t* hop_limit = %d\n", h->hop_limit);
+	PRF("\t* flags = %.2X\n", h->flags);
+	PRF("\t* payload_length = %d\n", h->payload_length);
+	PRF("\t* traffic_class = %.2X\n", h->traffic_class);
+	PRF("\t* btp_type = %.2X\n", h->btp_type);
 
 }
 
@@ -48,7 +53,7 @@ void print__NEC__extended_header(const void* buffer)
 	__NEC__gnbtpapi_extended_header_t* h
 		= (__NEC__gnbtpapi_extended_header_t *)buffer;
 
-	printf("\t* repetition_interval = %d\n", h->repetition_interval);
-	printf("\t* max_lifetime = %d\n", h->max_lifetime);
+	PRF("\t* repetition_interval = %d\n", h->repetition_interval);
+	PRF("\t* max_lifetime = %d\n", h->max_lifetime);
 
 }

@@ -38,6 +38,10 @@
 #define itsGnTrafficClassReliability 2//10 é binario
 #define itsGnTrafficClassLatency 2 //10 é binario
 #define ETH_ALEN	6
+
+#define DEBUG_PRINT_ENABLED 1  // uncomment to enable DEBUG statements
+
+
 #endif /* DEFINE_H_ */
 
 

@@ -23,7 +23,11 @@
 #include "udp_events.h"
 
 /* new_udp_events */
-
+#if DEBUG_PRINT_ENABLED
+#define PRF printf
+#else
+#define PRF(format, args...) ((void)0)
+#endif
 udp_events_t *new_udp_events()
 {
 	udp_events_t *s = NULL;
@@ -41,10 +45,10 @@ udp_events_t *init_tx_udp_events
 	udp_events_t *s = new_udp_events();
 	if ( broadcast == true )
 	{
-	log_app_msg(">>> Opening TX socket in broadcast mode.");
+		PRF(">>> Opening TX socket in broadcast mode.");
 	s->socket_fd = open_broadcast_udp_socket(if_name, port);
 	}	else	{
-	log_app_msg(">>> Opening TX socket in normal mode.");
+		PRF(">>> Opening TX socket in normal mode.");
 	s->socket_fd = open_transmitter_udp_socket(port, addr);
 	}
 		if ( init_watcher(s, callback, EV_READ, port, if_name, addr) < 0 )	{ handle_app_error("init_tx_udp_events: <init_watcher> error.\n"); }
@@ -61,10 +65,10 @@ udp_events_t *init_tx_raw_events
 	udp_events_t *s = new_udp_events();
 	if ( broadcast == true )
 	{
-		log_app_msg(">>> Opening TX socket in broadcast mode.");
+		PRF(">>> Opening TX socket in broadcast mode.");
 		s->socket_fd = open_broadcast_raw_socket(if_name, port);
 	}	else	{
-		log_app_msg(">>> Opening TX socket in normal mode.");
+		PRF(">>> Opening TX socket in normal mode.");
 		s->socket_fd = open_transmitter_raw_socket(port);
 	}
 
@@ -137,7 +141,7 @@ void *init_app_udp_events
 	arg->public_arg.lsp=lsp;
 	arg->public_arg.rep=rep;
 	arg->public_arg.gn=g;
-	if (g) printf("é true\n");else printf("é false\n");
+	//if (g) PRF("é true\n");else PRF("é false\n");
 	public_ev_arg_r * argum= &arg->public_arg;
 
 	return((void *)argum);
@@ -154,11 +158,11 @@ void free_udp_events(udp_events_t *m)
 void print_udp_events
 (const udp_events_t *m, const int rx_port, const int fwd_port)
 {
-	log_app_msg("{\n");
-	log_app_msg("\t* rx_port = %d\n", rx_port);
-	log_app_msg("\t* fw_port = %d\n", fwd_port);
-	log_app_msg("\t* sock_fd = %d\n", m->socket_fd);
-	log_app_msg("}\n");
+	PRF("{\n");
+	PRF("\t* rx_port = %d\n", rx_port);
+	PRF("\t* fw_port = %d\n", fwd_port);
+	PRF("\t* sock_fd = %d\n", m->socket_fd);
+	PRF("}\n");
 }
 
 /* new_ev_io_arg_t */
@@ -231,7 +235,7 @@ void cb_common
 	public_arg->socket_fd = watcher->fd;
 	if ( arg->cb_specfic == NULL )
 	{
-		log_app_msg("cb_common (ev=%d,fd=%d): <cb_function> NULL!\n", revents, watcher->fd);
+		PRF("cb_common (ev=%d,fd=%d): <cb_function> NULL!\n", revents, watcher->fd);
 		return;
 	}
 	arg->cb_specfic(public_arg);

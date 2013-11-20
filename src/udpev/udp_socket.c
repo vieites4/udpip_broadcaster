@@ -27,14 +27,18 @@ const unsigned char ETH_ADDR_ANY[ETH_ALEN]   ={ 0x00, 0x00, 0x00, 0x00, 0x00, 0x
 const unsigned char ETH_ADDR_FAKE[ETH_ALEN]= { 0x00,0x18,0x39,0xAE,0x7D,0xD5 };
 const unsigned char ETH_ADDR_NULL[ETH_ALEN]   = { 0x00,0x00,0x00,0x00,0x00,0x00 };
 
-
+#if DEBUG_PRINT_ENABLED
+#define PRF printf
+#else
+#define PRF(format, args...) ((void)0)
+#endif
 
 int get_mac_address
 (const int socket_fd, const char *if_name ,const unsigned char *mac)
 {
 	int len_if_name = -1;
 	if ( if_name == NULL )		{ return(EX_NULL_PARAM); }
-	//if ( mac == NULL )		{ return(EX_NULL_PARAM);printf("no"); }
+	//if ( mac == NULL )		{ return(EX_NULL_PARAM); }
 	if ( socket_fd < 0 )		{ return(EX_WRONG_PARAM); }
 
 	len_if_name = strlen(if_name);
@@ -523,7 +527,7 @@ ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char 
 
 	ieee80211_frame_t *f = new_ieee80211_frame();
 	if ( set_ll_frame(&f->info, TYPE_IEEE_80211, ETH_FRAME_LEN) < 0 )
-	{ log_app_msg("Could not set info adequately!\n"); }
+	{ PRF("Could not set info adequately!\n"); }
 	memcpy(f->buffer.header.dest_address, h_dest, ETH_ALEN);
 	memcpy(f->buffer.header.src_address,h_source , ETH_ALEN);
 	return(f);
@@ -544,7 +548,7 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 	}
 	if ( sent_bytes < len )
 	{
-		log_app_msg("send_message: sent %d bytes, requested %d.\n", sent_bytes, len);
+		PRF("send_message: sent %d bytes, requested %d.\n", sent_bytes, len);
 		return(EX_ERR);
 	}
 	return(sent_bytes);
@@ -616,8 +620,8 @@ int print_hex_data(const char *buffer, const int len)
 
 	for ( int i = 0; i < len; i++ )
 	{
-		log_app_msg("%02X", 0xFF & ( int)buffer[i]);
-		if ( i < last_byte ) { log_app_msg(":"); }
+		PRF("%02X", 0xFF & ( int)buffer[i]);
+		if ( i < last_byte ) { PRF(":"); }
 	}
 
 	return(EX_OK);

@@ -21,7 +21,11 @@
  */
 
 #include "configuration.h"
-
+#if DEBUG_PRINT_ENABLED
+#define PRF printf
+#else
+#define PRF(format, args...) ((void)0)
+#endif
 /* new_configuration */
 configuration_t *new_configuration()
 {
@@ -143,7 +147,7 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
 
                         if ( strlen(optarg) > IF_NAMESIZE )
                         {
-                                log_app_msg("[WARNING] if_name length = %d, maximum = %d.\
+                        	PRF("[WARNING] if_name length = %d, maximum = %d.\
                                                                 TRUNCATING!\n", (int)strlen(optarg), \
                                                                 IF_NAMESIZE);
                         }
@@ -180,8 +184,6 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
 
                         //        print_help();
                         exit(EXIT_SUCCESS);
-
-                        printf("go2\n");
                         break;
                 }
 
@@ -189,7 +191,7 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
         //        if (!tic){ cfg->app_address = "255.255.255.255";
         //        cfg->app_inet_addr = inet_addr("255.255.255.255");}
 
-//if (cfg->gn) printf("é positivo \n");
+//if (cfg->gn) PRF("é positivo \n");
         return(EX_OK);
 
 }
@@ -223,7 +225,7 @@ int check_configuration(configuration_t *cfg)
 
         if ( ( cfg->app_tx_port <= 0 ) || ( cfg->app_rx_port <= 0 ) )
         { handle_app_error("Both APP. TX and RX port must be set.\n"); }
-        if (cfg->gn) printf("é positivo \n");
+        if (cfg->gn) PRF("é positivo \n");
         return(EX_OK);
 
 }
@@ -235,21 +237,21 @@ void print_configuration(const configuration_t *cfg)
         if ( cfg == NULL )
         { handle_app_error("Given configuration is NULL.\n"); }
 
-        log_app_msg(">>> Configuration = \n{\n");
-        log_app_msg("\t.app_addr = %s\n", cfg->app_address);
-        log_app_msg("\t.app_inet_addr = %.2X\n", cfg->app_inet_addr);
-        log_app_msg("\t.app_tx_port = %d\n", cfg->app_tx_port);
-        log_app_msg("\t.app_rx_port = %d\n", cfg->app_rx_port);
-        log_app_msg("\t.tx_port = %d\n", cfg->tx_port);
-        log_app_msg("\t.rx_port = %d\n", cfg->rx_port);
-        log_app_msg("\t.if_name = %s\n", cfg->if_name);
-        log_app_msg("\t.nec_mode = %s\n", cfg->nec_mode ? "true" : "false");
-        log_app_msg("\t.__tx_test = %s\n", cfg->__tx_test ? "true" : "false");
-        log_app_msg("\t.ladoapp = %s\n", cfg->ladoapp ? "true" : "false");
-        log_app_msg("\t.__verbose = %s\n", cfg->__verbose ? "true" : "false");
-        log_app_msg("\t.gn = %s\n", cfg->gn ? "true" : "false");
-        log_app_msg("\t.itss_type = %d\n", cfg->itss_type);
-        log_app_msg("}\n");
+        PRF(">>> Configuration = \n{\n");
+        PRF("\t.app_addr = %s\n", cfg->app_address);
+        PRF("\t.app_inet_addr = %.2X\n", cfg->app_inet_addr);
+        PRF("\t.app_tx_port = %d\n", cfg->app_tx_port);
+        PRF("\t.app_rx_port = %d\n", cfg->app_rx_port);
+        PRF("\t.tx_port = %d\n", cfg->tx_port);
+        PRF("\t.rx_port = %d\n", cfg->rx_port);
+        PRF("\t.if_name = %s\n", cfg->if_name);
+        PRF("\t.nec_mode = %s\n", cfg->nec_mode ? "true" : "false");
+        PRF("\t.__tx_test = %s\n", cfg->__tx_test ? "true" : "false");
+        PRF("\t.ladoapp = %s\n", cfg->ladoapp ? "true" : "false");
+        PRF("\t.__verbose = %s\n", cfg->__verbose ? "true" : "false");
+        PRF("\t.gn = %s\n", cfg->gn ? "true" : "false");
+        PRF("\t.itss_type = %d\n", cfg->itss_type);
+        PRF("}\n");
 
 }
 
