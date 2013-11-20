@@ -136,7 +136,7 @@ void cb_broadcast_recvfrom(public_ev_arg_t *arg)
 	printf(">>> esto ben >>>\n");
 	// 2) broadcast application level UDP message to network level
 	fwd_bytes = send_message		(	(sockaddr_t *)arg->forwarding_addr,		arg->forwarding_socket_fd,	arg->data, arg->len,arg->forwarding_port	);
-	printf("aqui tamén fago un envío");
+	printf("aqui tamén fago un envío");print_hex_data(arg->data,arg->len); printf("\n");
 	printf("%d /n",arg->forwarding_port);
 	if ( arg->print_forwarding_message == true )
 	{
