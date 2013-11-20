@@ -75,9 +75,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 	char h_source[ETH_ALEN];
 	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-	/**if(memcmp((void *)data +6,h_source,6)==0){
+	if(memcmp((void *)data +6,h_source,6)==0){
 		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");
-		return;	}**/
+		return;	}
 
 	PRF("cb_forward_recvfmakerom1 \n");
 	PRF("RECIBO UN PAQUETE\n");
@@ -117,7 +117,6 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			pkt = GeoBroadcast_f(datos,arg->gn);
 			int y =geo_limit(HT,pkt);
 			if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, arg->len	);}
-			print_hex_data(pkt,arg->len);PRF("  cara as facilities geo \n");
 			PRF("saio de geobroadcast_f \n");
 		}else PRF("%d \n",duplicate_control(datos,arg->locT));
 	}
