@@ -101,16 +101,16 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
 		error =CommonHeader_processing(arg);
 		if (error==0 && duplicate_control(datos,arg->locT)==1){
-			pkt = TSB_f(datos,arg->gn);aa=1; 	memcpy(tx_frame1->buffer.data,(char *)  pkt, IEEE_80211_BLEN);print_hex_data(&tx_frame1->buffer,arg->len);printf("\n");
-			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame1->buffer, arg->len	);
+			pkt = TSB_f(datos,arg->gn);aa=1; 	memcpy(tx_frame1->buffer.data,(char *)  pkt, IEEE_80211_BLEN);print_hex_data(pkt,arg->len);printf("\n");
+			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, arg->len	);
 			PRF("saio de tsb_f \n");
 			}
 	} else if(memcmp(HT,tsb0,1)==0){
 		PRF("entro en shb\n");
 		error =CommonHeader_processing(arg);//print_hex_data(datos,arg->len);PRF("  chegada desde ll shb \n");
 		pkt = SHB_f(datos,arg->gn); 	memcpy(tx_frame1->buffer.data,(char *)  pkt, IEEE_80211_BLEN);
-		send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame1->buffer, arg->len	);
-		PRF("envio realizado\n");print_hex_data(&tx_frame1->buffer,arg->len);printf("\n");
+		send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, arg->len	);
+		PRF("envio realizado\n");print_hex_data(pkt,arg->len);printf("\n");
 	} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 		PRF("entro en geobroadcast \n");
 		error =CommonHeader_processing(arg);
@@ -118,8 +118,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		if (error==0 && duplicate_control(datos,arg->locT)==1){
 			aa=1;
 			pkt = GeoBroadcast_f(datos,arg->gn);
-			int y =geo_limit(HT,pkt);memcpy(tx_frame1->buffer.data,(char *)  pkt, IEEE_80211_BLEN);print_hex_data(&tx_frame1->buffer,arg->len);printf("\n");
-			if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame1->buffer, arg->len	);}
+			int y =geo_limit(HT,pkt);memcpy(tx_frame1->buffer.data,(char *)  pkt, IEEE_80211_BLEN);print_hex_data(pkt,arg->len);printf("\n");
+			if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, arg->len	);}
 			PRF("saio de geobroadcast_f \n");
 		}else PRF("%d \n",duplicate_control(datos,arg->locT));
 	}

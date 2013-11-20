@@ -157,9 +157,9 @@ struct itsnet_common_header
 typedef struct itsnet_common_header itsnet_common_header;
 
 struct itsnet_common
-{
+{unsigned char pkt_stype[1];
 	unsigned char pkt_type[1]; //itsnet_protocol_info
-	unsigned char pkt_stype[1];
+
 	unsigned char hop_limit[1];
 	unsigned char flags [1];
 	unsigned char payload_lenght[2];
