@@ -98,15 +98,15 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//if (search_in_locT(data)==0){add_end_locT (  locT,*data);}		-->modificar aqui para a actualización
 		error =CommonHeader_processing(arg);
 		if (error==0 && duplicate_control(datos,arg->locT)==1){
-			pkt = TSB_f(datos,arg->gn);aa=1; 		print_hex_data(&pkt,arg->len);//PRF("  cara as facilities tsb \n");
-			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
+			pkt = TSB_f(datos,arg->gn);aa=1; 		print_hex_data(pkt,arg->len);//PRF("  cara as facilities tsb \n");
+			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, arg->len	);
 			PRF("saio de tsb_f \n");
 			}
 	} else if(memcmp(HT,tsb0,1)==0){
 		PRF("entro en shb\n");
 		error =CommonHeader_processing(arg);//print_hex_data(datos,arg->len);PRF("  chegada desde ll shb \n");
 		pkt = SHB_f(datos,arg->gn); 		//print_hex_data(pkt,arg->len);PRF("  cara as facilities shb \n");
-		send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&pkt, arg->len	);
+		send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, arg->len	);
 		PRF("envio realizado\n");
 	} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 		PRF("entro en geobroadcast \n");
