@@ -472,7 +472,7 @@ itsnet_packet_f * TSB_f(void *buffer,bool g){
 	}
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+7,1);
-	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68,lon_int);
+	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_type.HST=0;
 		memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
@@ -514,7 +514,7 @@ itsnet_packet_f * SHB_f(void *buffer,bool g){
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+7,1);
 print_hex_data(pkt->common_header.hop_limit,1);printf("\n");
-	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+36,lon_int);
+	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+36,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 pkt->common_header.pkt_type.HST=0;
 	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
@@ -542,7 +542,7 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 	memcpy(pkt->common_header.payload_lenght,LEN,2);
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+7,1);
-	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68+28,lon_int);
+	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68+28,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_type.HST=0;
 		memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
@@ -601,7 +601,7 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 **/
 	}
 
-	memcpy(pkt->payload.itsnet_geocast.payload,(char *)(buffer)+84,lon_int);
+	memcpy(pkt->payload.itsnet_geocast.payload,(char *)(buffer)+84,lon_int+4);
 	memcpy(pkt->payload.itsnet_geocast.reserved,(char *)(buffer)+2,1);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_type.HST=0;

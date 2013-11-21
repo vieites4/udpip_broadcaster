@@ -86,10 +86,12 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	PRF("RECIBO UN PAQUETE\n");
 	//print_hex_data(data, arg->len);printf("\n");
 	memcpy(arg->data,data,arg->len);
+
 	char tipo[2];
 	memcpy(tipo,(char *)(arg->data) + 12 ,2);
 	char datos[arg->len-14];
-	memcpy(datos,data +14,arg->len -14);
+	memcpy(datos,data +14,arg->len);
+
 	char HT[1];
 	memcpy(HT,data +15,1);
 	itsnet_packet_f * pkt=NULL;
@@ -113,8 +115,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		error =CommonHeader_processing(arg);//print_hex_data(datos,arg->len);PRF("  chegada desde ll shb \n");
 
 		pkt = SHB_f(datos,arg->gn); 	memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in);
-		send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +20);
-		PRF("envio realizado\n");print_hex_data(pkt,arg->len);printf("\n");
+		send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +20);	print_hex_data((char *)pkt,lon_in +20);printf(" cara arriba \n");
+		PRF("envio realizado\n");
 	} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 		PRF("entro en geobroadcast \n");
 		error =CommonHeader_processing(arg);
@@ -179,7 +181,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				char tipo[2]={0x07,0x07};
 				memcpy(tx_frame1->buffer.header.type,tipo,2);
 				//if ((memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
-				memcpy(tx_frame1->buffer.data,(char *)  pkt1, IEEE_80211_BLEN);
+				memcpy(tx_frame1->buffer.data,(char *)  pkt1, lon_in);
 				//}else if (memcmp(HT,tsb0,1)==0){
 				//	memcpy(tx_frame1->buffer.data,(char *) pkt1,IEEE_80211_BLEN );
 				//}else {}
@@ -243,9 +245,9 @@ else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoa
 }else{}
 
 // 2) broadcast application level UDP message to network level
-if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0))|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
+if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	if (pkt!=NULL){
-
+//&& (memcmp(HL,single,1)!=0)
 
 		memcpy(tx_frame->buffer.data, (char *) pkt, arg->len);
 
@@ -255,7 +257,7 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0)
 			//print_hex_data(&pkt,arg->len);PRF("   \n");
 		//PRF("porto de envio cara arriba: %d porto de recepcion : %d e lonxitude do envio %d arg->len %d\n",arg->forwarding_socket_fd,arg->socket_fd,strlen((char *)&tx_frame->buffer),strlen((char *)pkt));
 		ev_timer_again (l_Beacon,&t_Beacon);
-		//print_hex_data((char *)&tx_frame->buffer,40);
+
 		PRF(" paquete enviado a ll\n");
 		free(pkt);pkt=NULL; //	PRF("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
 	}
