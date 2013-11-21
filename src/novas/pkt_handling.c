@@ -238,7 +238,8 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	memcpy(gbc_h.dest_longitude,(char *)(buffer) +20,4);
 	memcpy(gbc_h.distanceA,(char *)(buffer) +24,2);
 	memcpy(gbc_h.distanceB,(char *)(buffer) +26,2);
-	memcpy(gbc_h.angle,(char *)(buffer) +28,2);}
+	memcpy(gbc_h.angle,(char *)(buffer) +28,2);
+	memcpy(gbc_h.reserved,(char *)(buffer) +30,1);}
 
 	memcpy(gbc_h.payload.payload,(char *)(buffer) +36,lon_int);
 	gbc_h.source_position_vector=* LPV;

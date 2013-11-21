@@ -551,6 +551,7 @@ int send_message(	const sockaddr_t* dest_addr, const int socket_fd,
 		PRF("send_message: sent %d bytes, requested %d.\n", sent_bytes, len);
 		return(EX_ERR);
 	}
+
 	return(sent_bytes);
 
 }
