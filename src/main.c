@@ -68,7 +68,7 @@ PRF(">>> Reading configuration...\n");
 	net_events = init_net_raw_events(cfg->tx_port,cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn);
 	PRF(">>> raw NET RX socket open!\n");
 	public_ev_arg_r * argument= (public_ev_arg_r *)argum;
-	if (argument->gn)printf("sae true\n");
+	//if (argument->gn)PRF("sae true\n");
 	char h_source[ETH_ALEN];
 	get_mac_address(argument->forwarding_socket_fd, "wlan0", (unsigned char *) h_source) ;
 	t_LPV.data=(void *)h_source;

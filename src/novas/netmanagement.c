@@ -35,13 +35,6 @@ static unsigned short gTimer;
 static int gTimer_lsp[1000];
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
 
-/**#ifdef showprintf
-	DBG(){
-		printf();
-	}
-#else
-	DBG(...);
-#endif**/
 #if DEBUG_PRINT_ENABLED
 #define PRF printf
 #else

@@ -73,7 +73,9 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	memcpy(tsb_h.lt,(void *)lt,1);
 	SN_g++; //máximo SN?? % SN_MAX;
 	tsb_h.source_position_vector=* LPV;
-	memcpy(tsb_h.payload.payload,buffer +20,lon_int);
+
+	memcpy(tsb_h.payload.payload,(char *)(buffer) +20,lon_int);
+	//print_hex_data();printf("  no tsb\n");
 	pkt->payload.itsnet_tsb=tsb_h;
 	pkt->common_header=ch;
 	//NEIGHBOURS.
@@ -136,7 +138,9 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	ch.forwarder_position_vector=* LPV;
 	itsnet_shb_t shb_h;
 	SN_g++;//máximo SN?? % SN_MAX; //page 16
+	//print_hex_data((char *)(buffer) +20,lon_int);printf("  no tsb\n");
 	memcpy(shb_h.payload.payload,(char *)(buffer) +20,lon_int);
+
 	pkt->common_header=ch;
 	pkt->payload.itsnet_shb=shb_h;
 	//NEIGHBOURS.
@@ -171,6 +175,7 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
 	//	PRF("saio de shb\n");
+	print_hex_data(pkt,lon_int +36 +4);printf("  no tsb\n");
 	return(pkt);}
 itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 
@@ -514,7 +519,7 @@ itsnet_packet_f * SHB_f(void *buffer,bool g){
 	}
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+7,1);
-print_hex_data(pkt->common_header.hop_limit,1);printf("\n");
+print_hex_data(pkt->common_header.hop_limit,1);PRF("\n");
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+36,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 pkt->common_header.pkt_type.HST=0;

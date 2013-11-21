@@ -108,7 +108,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		if (error==0 && duplicate_control(datos,arg->locT)==1){
 			pkt = TSB_f(datos,arg->gn);aa=1;
 		//	memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in +20);
-			print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
+		//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
 			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +20	);
 			PRF("saio de tsb_f \n");
 
@@ -221,9 +221,13 @@ char h_source[ETH_ALEN];
 get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
 ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROADCAST,h_source);
 char tipo[2]={0x07,0x07};
+
+
+		PRF(" paquete \n");
 memcpy(tx_frame->buffer.header.type,tipo,2);
 char datos[arg->len];
 memcpy(datos,arg->data,arg->len);//+4
+
 //print_hex_data(datos,arg->len);PRF("\n");
 char HT[2];
 memcpy(HT,arg->data,2);
@@ -237,7 +241,7 @@ char LEN[2] ;
 char HL[1];
 memcpy(HL,(char *)(arg->data) +2,1);
 if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
-	PRF("entro en tsb1\n");
+	print_hex_data(datos,arg->len);PRF("entro en tsb1\n");
 	pkt = TSB(datos,arg->lsp,arg->rep,arg->gn);
 } else if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)==0)){
 	PRF("entro en tsb0\n");
@@ -259,7 +263,7 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)|| memcmp(HT,geobroad1,1)=
 	if (pkt!=NULL){
 //&& (memcmp(HL,single,1)!=0)
 
-		memcpy(tx_frame->buffer.data, (char *) pkt, arg->len);
+
 
 		//while(
 		PRF(" arg->len %d lon_int %d \n",arg->len, lon_int);
@@ -267,9 +271,10 @@ int cab=0;
 
 if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){cab=84;}
 else if(memcmp(HT,tsb0,1)==0){cab=36;}else{PRF("son eu3!! \n");} //falta tsb
-		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, cab +lon_int+4);//==-1){}
+memcpy(tx_frame->buffer.data, (char *) pkt,lon_int+cab+4);
+		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, cab +lon_int+14+4);//==-1){}
 		ev_timer_again (l_Beacon,&t_Beacon);
-
+		print_hex_data(&tx_frame->buffer, cab +lon_int+14+4);
 		PRF(" paquete enviado a ll\n");
 		free(pkt);pkt=NULL; //	PRF("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
 	}
