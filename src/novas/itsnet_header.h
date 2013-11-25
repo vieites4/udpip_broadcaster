@@ -28,15 +28,15 @@ typedef uint8_t  itsnet_reserved;
 typedef uint16_t itsnet_speed;  /** speed of the ITS station*/
 typedef uint16_t itsnet_heading;  /** heading of the ITS station*/
 typedef int16_t itsnet_altitude;    /** altitude of the ITS station*/
-typedef uint8_t  itsnet_txpower;     /** Transmission power level with which the packet was sent, in 1⁄2 of dBm*/
-typedef uint8_t  itsnet_flags;		/** Flags reserved to distinguish vehicle and RSU */
-typedef uint8_t  itsnet_traffic_class; /** Traffic class parameter*/
+//typedef uint8_t  itsnet_txpower;     /** Transmission power level with which the packet was sent, in 1⁄2 of dBm*/
+//typedef uint8_t  itsnet_flags;		/** Flags reserved to distinguish vehicle and RSU */
+//typedef uint8_t  itsnet_traffic_class; /** Traffic class parameter*/
 
 /** The transport protocol, i.e. the usage of port numbers are still under discussion.*/
-typedef uint16_t itsnet_source_port;  /** Port number of the sending application. It is zero if not used */
-typedef uint16_t itsnet_destination_port; /**Port number of the destination application. It is zero if not used.*/
+//typedef uint16_t itsnet_source_port;  /** Port number of the sending application. It is zero if not used */
+//typedef uint16_t itsnet_destination_port; /**Port number of the destination application. It is zero if not used.*/
 typedef uint16_t itsnet_radius;
-typedef uint8_t  itsnet_channel;
+//typedef uint8_t  itsnet_channel;
 
 /**
  *The structure describes itsnet identity
@@ -75,7 +75,6 @@ struct version_nh
 };
 typedef struct version_nh version_nh;
 
-
 struct flags_t
 {
 	unsigned char ceros :	    6;
@@ -102,7 +101,7 @@ struct ht_hst_t{
 };
 typedef struct ht_hst_t ht_hst_t;
 /**
- *itsnet position vector
+ *itsnet position vector LPV
  */
 struct itsnet_position_vector
 {
@@ -117,12 +116,20 @@ struct itsnet_position_vector
 };
 typedef struct itsnet_position_vector itsnet_position_vector;
 
-struct strings_an
+/**
+ *byte's structure
+ */
+
+struct byte_struct
 {
 	char number: 8;
 
 };
-typedef struct strings_an strings_an;
+typedef struct byte_struct byte_struct;
+
+/**
+ *common_header's structure of link layer packets
+ */
 
 struct itsnet_common_header
 {
@@ -139,6 +146,10 @@ struct itsnet_common_header
 typedef struct itsnet_common_header itsnet_common_header;
 
 
+/**
+ *common_header's structure for packets that are sent to facilities
+ */
+
 struct itsnet_common
 {
 	ht_hst_t pkt_type; //itsnet_protocol_info
@@ -148,7 +159,8 @@ struct itsnet_common
 	unsigned char payload_lenght[2];
 	unsigned char traffic_class [1];
 	ht_hst_t btp;
-	unsigned char p[8];
+	itsnet_longitude longitude;
+	itsnet_latitude latitude;
 	//itsnet_position_vector pv;
 };
 
@@ -203,11 +215,9 @@ enum traffic_class
 	CLASS01=1,
 	CLASS02=2,
 	CLASS03=3
-};**
+};**/
 
-/**
-  *The structure describes itsnet_any packet
-  */
+
 
 struct itsnet_btp
 {
@@ -240,7 +250,8 @@ typedef struct itsnet_geo_t itsnet_geo_t;
 struct itsnet_uni_t
 {
 	short payload[ITSNET_DATA_SIZE];
-}; itsnet_uni_t;
+};
+typedef struct  itsnet_uni_t itsnet_uni_t;
 
 struct itsnet_any_t
 {
@@ -248,7 +259,6 @@ struct itsnet_any_t
 
 	/** unspecified */
 }itsnet_any_t;
-
 /**
  *The structure describes beacon packet
  */
@@ -256,7 +266,6 @@ struct itsnet_beacon_t
 {
 	itsnet_btp_wo_payload_t payload;
 } itsnet_beacon_t;
-
 /**
  *The structure describes itsnet_unicast packet
  */
@@ -269,13 +278,10 @@ struct itsnet_unicast_t
 	itsnet_position_vector dest_position_vector;
 	itsnet_btp payload; /** data temp must be fixed*/
 };
-
 typedef struct itsnet_unicast_t itsnet_unicast_t;
-
 /**
  *The structure describes itsnet_geoanycast packet
  */
-
 struct itsnet_geoanycast_t
 {
 	itsnet_position_vector source_position_vector;// Source node position vector
@@ -284,15 +290,12 @@ struct itsnet_geoanycast_t
 	itsnet_longitude dest_longitude;
 	itsnet_btp payload;// data temp must be fixed*/
 };
-
 typedef struct itsnet_geoanycast_t itsnet_geoanycast_t;
-
 /**
  *The structure describes itsnet_geobroadcast packet
  */
 struct itsnet_geobroadcast_t
 {
-
 	itsnet_sequencenumber sequencenumber;
 	unsigned char lt[1];
 	itsnet_position_vector source_position_vector;/** Source node position vector */
@@ -369,27 +372,29 @@ struct itsnet_ls_t
 typedef struct itsnet_ls_t itsnet_ls_t;
 **/
 /**
- *The structure describes its packet
+ *The structure describes the its packet that is sent through link layer
  */
 struct itsnet_packet
 {
-	struct itsnet_common_header common_header;/** packet header */
+	itsnet_common_header common_header;/** packet header */
 	union payload_packet   /**this is to reserve the maximum space used by packets*/
-	{struct itsnet_shb_t itsnet_shb;
+	{itsnet_shb_t itsnet_shb;
 	struct itsnet_any_t itsnet_any;/** unspecified */
 	struct itsnet_beacon_t itsnet_beacon;/** Beacon */
-	struct itsnet_unicast_t itsnet_unicast;/** Geo-unicast  */
-	struct itsnet_geoanycast_t itsnet_geoanycast;/** Geo-anycast */
-	struct itsnet_geobroadcast_t itsnet_geobroadcast;/** Geo-broadcast */
-	struct itsnet_tsb_t itsnet_tsb;/** Topologically-scoped broadcast */
+	itsnet_unicast_t itsnet_unicast;/** Geo-unicast  */
+	itsnet_geoanycast_t itsnet_geoanycast;/** Geo-anycast */
+	itsnet_geobroadcast_t itsnet_geobroadcast;/** Geo-broadcast */
+	itsnet_tsb_t itsnet_tsb;/** Topologically-scoped broadcast */
 	//struct itsnet_ls_t itsnet_ls;/** Location service */
 	} payload;
 };
 typedef struct itsnet_packet itsnet_packet;
-
+/**
+ *The structure describes the its packet that is sent to facilities
+ */
 struct itsnet_packet_f
 {
-	struct itsnet_common common_header;/** packet header */
+	itsnet_common common_header;/** packet header */
 	union payload_pkt   /**this is to reserve the maximum space used by packets*/
 	{
 		struct itsnet_uni_t itsnet_unicast;/** unspecified */

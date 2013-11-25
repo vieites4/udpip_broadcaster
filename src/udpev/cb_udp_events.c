@@ -116,9 +116,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		} else if(memcmp(HT,tsb0,1)==0){
 			PRF("entro en shb\n");
 			error =CommonHeader_processing(arg);//print_hex_data(datos,arg->len);PRF("  chegada desde ll shb \n");
-
 			pkt = SHB_f(datos,arg->gn); //	memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in +20);
-			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +20);	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
+			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +20);//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
 			PRF("envio realizado\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			PRF("entro en geobroadcast \n");
@@ -128,11 +127,11 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				aa=1;
 				//print_hex_data(datos,arg->len);PRF("datos entrada \n");
 				pkt = GeoBroadcast_f(datos,arg->gn);
-				int y =0;//geo_limit(HT,pkt);
+				int y =0;geo_limit(HT,pkt);
 				//memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in);//print_hex_data(pkt,arg->len);PRF("\n");
 				if (y>=0){
 					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +36	);}
-				print_hex_data(pkt,lon_in +32+4);PRF("datos entrada \n");
+			//	print_hex_data(pkt,lon_in +32+4);PRF("datos entrada \n");
 				PRF("saio de geobroadcast_f \n");
 			}else PRF("%d \n",duplicate_control(datos,arg->locT));
 		}
@@ -175,8 +174,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					itsnet_packet * pkt1=NULL;
 					pkt1 =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 					memcpy(pkt1, data +14 ,arg->len-14);
-					strings_an *number;
-					number=(strings_an *)lon_int -1;
+					byte_struct *number;
+					number=(byte_struct *)lon_int -1;
 					memcpy(pkt1->common_header.hop_limit,&number,1);
 					pkt1->common_header.forwarder_position_vector=* LPV; //
 					//	PRF("ENVIO UN PAQUETE\n");	print_hex_data(pkt1, arg->len);PRF("\n");
@@ -235,13 +234,14 @@ itsnet_packet * pkt=NULL;
 pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 
 char LEN[2] ;
-memcpy(LEN,(char *)(datos) +4,2);
+memcpy(LEN,(char *)(datos) +4,2);print_hex_data(arg->data,arg->len);
 int lon_int=sprint_hex_data( LEN, 2);
-
+PRF("lon_in en broadcast %d \n",lon_int);
 char HL[1];
 memcpy(HL,(char *)(arg->data) +2,1);
 if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
-	print_hex_data(datos,arg->len);PRF("entro en tsb1\n");
+	//print_hex_data(datos,arg->len);
+	PRF("entro en tsb1\n");
 	pkt = TSB(datos,arg->lsp,arg->rep,arg->gn);
 } else if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)==0)){
 	PRF("entro en tsb0\n");
@@ -274,7 +274,7 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)|| memcmp(HT,geobroad1,1)=
 		memcpy(tx_frame->buffer.data, (char *) pkt,lon_int+header_length+4);
 		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4);//==-1){}
 		ev_timer_again (l_Beacon,&t_Beacon);
-		print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4);
+	//	print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4);
 		PRF(" paquete enviado a ll\n");
 		free(pkt);pkt=NULL; //	PRF("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
 	}

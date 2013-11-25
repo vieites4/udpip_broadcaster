@@ -175,7 +175,7 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
 	//	PRF("saio de shb\n");
-	print_hex_data(pkt,lon_int +36 +4);printf("  no tsb\n");
+	//print_hex_data(pkt,lon_int +36 +4);printf("  no tsb\n");
 	return(pkt);}
 itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 
@@ -519,16 +519,14 @@ itsnet_packet_f * SHB_f(void *buffer,bool g){
 	}
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+7,1);
-print_hex_data(pkt->common_header.hop_limit,1);PRF("\n");
+    print_hex_data(pkt->common_header.hop_limit,1);
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+36,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 pkt->common_header.pkt_type.HST=0;
 	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
 	pkt->common_header.pkt_stype.HST=0;
-
 	free(PV);PV=NULL;
-	//	PRF("medidas %d \n",lon_int);
 	return(pkt);
 }
 itsnet_packet_f * GeoUnicast_f(void *buffer){
@@ -582,7 +580,8 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 		memcpy(pkt->payload.itsnet_geocast.distanceB,(char *)(buffer)+78,2);
 		memcpy(pkt->payload.itsnet_geocast.repetitionInterval,(char *)(buffer)+8,4);
 		memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4);
-		//pkt->common_header.pv=*PV;
+		pkt->common_header.longitude=PV->longitude;
+		pkt->common_header.latitude=PV->latitude;
 	}
 	else{
 
@@ -624,8 +623,8 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 {
 	int x,y,r,total,a,b;
 
-	x=1;//abs(pkt->common_header.pv.latitude - LPV->latitude);
-	y=1;//abs(pkt->common_header.pv.longitude - LPV->longitude);
+	x=1;abs(pkt->common_header.latitude - LPV->latitude);
+	y=1;abs(pkt->common_header.longitude - LPV->longitude);
 	char distA[2];
 	char distB[2];
 	memcpy(distA,pkt->payload.itsnet_geocast.distanceA+1,1);memcpy(distA+1,pkt->payload.itsnet_geocast.distanceA,1);
