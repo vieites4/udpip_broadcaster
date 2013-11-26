@@ -230,6 +230,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	 * memcpy(gbc_h.distanceB,(char *)(buffer) +26,2);
 	 * memcpy(gbc_h.angle,(char *)(buffer) +28,2);
 	 * **/
+	print_hex_data(buffer,60);PRF("recibido desde as facilities\n");
 	if (g==false){
 		memcpy(gbc_h.dest_latitude,(char *)(buffer) +19,1);memcpy((char *)(gbc_h.dest_latitude)+1,(char *)(buffer) +18,1);memcpy((char *)(gbc_h.dest_latitude)+2,(char *)(buffer) +17,1);memcpy((char *)(gbc_h.dest_latitude)+3,(char *)(buffer) +16,1);
 		memcpy(gbc_h.dest_longitude,(char *)(buffer) +23,1);memcpy((char *)(gbc_h.dest_longitude)+1,(char *)(buffer) +22,1);memcpy((char *)(gbc_h.dest_longitude)+2,(char *)(buffer) +21,1);memcpy((char *)(gbc_h.dest_longitude)+3,(char *)(buffer) +20,1);
@@ -293,7 +294,6 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	//execute simple geobroadcast forwarding algorithm
 	//implement F function to obtain LL_ADDR
 	//}
-
 	return(pkt);
 }
 
@@ -395,9 +395,10 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 
 			memcpy(tx_frame->buffer.data, &pos->data, IEEE_80211_BLEN);
 			//while (
-			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sizeof(itsnet_common_header)+ size);//==-1){}
+			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sizeof(itsnet_common_header)+ size+4+14);//==-1){}
 			//PRF("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
-
+			print_hex_data(&tx_frame->buffer,sizeof(itsnet_common_header)+ size+4+14);// header_length +lon_int+14+4);
+				PRF(" paquete enviado a ll despois de lsp \n");
 			ev_timer_again (l_Beacon,&t_Beacon);
 
 			sup_elem_lsp(sn);
@@ -619,28 +620,31 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 {
 	int x,y,r,total,a,b;
 
-	x=1;abs(pkt->common_header.pv.latitude - LPV->latitude);
-	y=1;abs(pkt->common_header.pv.longitude - LPV->longitude);
+	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
+	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
+	printf("ben\n");
 	char distA[2];
 	char distB[2];
-	memcpy(distA,pkt->payload.itsnet_geocast.distanceA+1,1);memcpy(distA+1,pkt->payload.itsnet_geocast.distanceA,1);
-	memcpy(distB,pkt->payload.itsnet_geocast.distanceB+1,1);memcpy(distB+1,pkt->payload.itsnet_geocast.distanceB,1);
+	printf("ben\n");
+	memcpy(distA,pkt->payload.itsnet_geocast.distanceA+1,1);printf("ben\n");memcpy(distA+1,pkt->payload.itsnet_geocast.distanceA,1);
+	memcpy(distB,pkt->payload.itsnet_geocast.distanceB+1,1);printf("ben\n");memcpy(distB+1,pkt->payload.itsnet_geocast.distanceB,1);
 	if(memcmp(geobroad0,HT,1)==0){
-		//PRF("circular \n");
-		r=sprint_hex_data(distA, 2);
-		total= 1- pow((x/r),2) - pow((y/r),2);
+		PRF("circular \n");print_hex_data(distA,2);
+		r=sprint_hex_data(distA, 2);printf("ben %d %d %d\n",x,y,r);
+		total= 1- pow((x/r),2) - pow((y/r),2);printf("ben\n");
+
 	}else
 		if(memcmp(geobroad1,HT,1)==0){
 			a=sprint_hex_data(distA, 2);
 			b=sprint_hex_data(distB, 2);
 			total= fmin(1- pow((x/a),2) ,1- pow((y/b),2));
-			//PRF("rectangular \n");
+			PRF("rectangular \n");
 			} else
 				if(memcmp(geobroad2,HT,1)==0){
 					a=sprint_hex_data(distA, 2);
 					b=sprint_hex_data(distB, 2);
 					total= 1- pow((x/a),2) - pow((y/b),2);
-					//	PRF("eliptica \n");
+						PRF("eliptica \n");
 				}
 	//free(pkt1);pkt1=NULL;
 	return(total);

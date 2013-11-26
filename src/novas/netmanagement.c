@@ -488,7 +488,7 @@ int sup_elem_t_lsp (int num)
 	{
 		memcpy(SN,(char*)(&position->data.payload)+1,1);
 		memcpy(SN +1,&position->data.payload,1);
-		print_hex_data(SN,2);PRF(" sn \n");
+	//	print_hex_data(SN,2);PRF(" sn \n");
 		int num0=sprint_hex_data(SN,2);
 		//PRF("num %d num0 %d busca sup_elem_t_lsp\n",num,num0);
 		if(num0==num)in=1; else position = position->next;}
