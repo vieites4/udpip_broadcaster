@@ -304,16 +304,11 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	memcpy(buffer,arg->data,arg->len);
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
-	//PRF("entro5\n");
 	memcpy( PV,buffer +8+14,28);
-	//PRF("entro6\n");
 	flags_t * FLAG=NULL;//
-	//PRF("entro7\n");
 	FLAG= (flags_t *)malloc(sizeof(flags_t));
-	//PRF("entro8\n");
 	memcpy( FLAG,buffer +3+14,1);
 	itsnet_node * data=NULL;//
-	//PRF("entro9\n");
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
 	//PRF("entro1\n");
 	memcpy(data->mac_id.address,buffer+6,6);
@@ -462,7 +457,7 @@ itsnet_packet_f * TSB_f(void *buffer,bool g){
 	char LEN[2] ;memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
 	int lon_int=sprint_hex_data( LEN, 2);
 	if (g==false){	memcpy(pkt->common_header.payload_lenght,LEN,2);
-	//pkt->common_header.pv=*PV;
+	pkt->common_header.pv=*PV;
 	}else{
 		/**memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
 				memcpy((char *)(pkt->common_header.pv.heading)+1,PV->heading,1);memcpy(pkt->common_header.pv.heading,(char *)(PV->heading) +1,1);
@@ -503,7 +498,7 @@ itsnet_packet_f * SHB_f(void *buffer,bool g){
 	memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
 	int lon_int=sprint_hex_data( LEN, 2);
 	if (g==false){memcpy(pkt->common_header.payload_lenght,LEN,2);
-	//pkt->common_header.pv=*PV;
+	pkt->common_header.pv=*PV;
 	}else{
 	/**	memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
 		memcpy((char *)(pkt->common_header.pv.heading)+1,PV->heading,1);memcpy(pkt->common_header.pv.heading,(char *)(PV->heading) +1,1);
@@ -538,7 +533,7 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 	itsnet_position_vector * PV=NULL;
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +8,28);
-	//pkt->common_header.pv=*PV;
+	pkt->common_header.pv=*PV;
 	memcpy(pkt->common_header.traffic_class,(char *)(buffer) +6,1);
 	char LEN[2] ;
 	memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
@@ -567,7 +562,7 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +8,28);
-//	pkt->common_header.pv=*PV;
+	pkt->common_header.pv=*PV;
 	memcpy(pkt->common_header.traffic_class,(char *)(buffer) +6,1);
 	char LEN[2] ;
 	memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
@@ -580,8 +575,9 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 		memcpy(pkt->payload.itsnet_geocast.distanceB,(char *)(buffer)+78,2);
 		memcpy(pkt->payload.itsnet_geocast.repetitionInterval,(char *)(buffer)+8,4);
 		memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4);
-		pkt->common_header.longitude=PV->longitude;
-		pkt->common_header.latitude=PV->latitude;
+
+	//	pkt->common_header.longitude=PV->longitude;
+	//	pkt->common_header.latitude=PV->latitude;
 	}
 	else{
 
@@ -607,7 +603,7 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 	}
 
 	memcpy(pkt->payload.itsnet_geocast.payload,(char *)(buffer)+84,lon_int+4);
-	memcpy(pkt->payload.itsnet_geocast.reserved,(char *)(buffer)+2,1);
+	memcpy(pkt->payload.itsnet_geocast.reserved,(char *)(buffer)+2,1);	//hai que engadir o reservado. suponse q son 2 bytes
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_type.HST=0;
 		memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
@@ -623,8 +619,8 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 {
 	int x,y,r,total,a,b;
 
-	x=1;abs(pkt->common_header.latitude - LPV->latitude);
-	y=1;abs(pkt->common_header.longitude - LPV->longitude);
+	x=1;abs(pkt->common_header.pv.latitude - LPV->latitude);
+	y=1;abs(pkt->common_header.pv.longitude - LPV->longitude);
 	char distA[2];
 	char distB[2];
 	memcpy(distA,pkt->payload.itsnet_geocast.distanceA+1,1);memcpy(distA+1,pkt->payload.itsnet_geocast.distanceA,1);

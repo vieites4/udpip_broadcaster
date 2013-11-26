@@ -109,7 +109,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				pkt = TSB_f(datos,arg->gn);aa=1;
 				//	memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in +20);
 				//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
-				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +20	);
+				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
 				PRF("saio de tsb_f \n");
 
 			}
@@ -117,7 +117,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			PRF("entro en shb\n");
 			error =CommonHeader_processing(arg);//print_hex_data(datos,arg->len);PRF("  chegada desde ll shb \n");
 			pkt = SHB_f(datos,arg->gn); //	memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in +20);
-			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +20);//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
+			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40);//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
 			PRF("envio realizado\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			PRF("entro en geobroadcast \n");
@@ -130,7 +130,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				int y =0;geo_limit(HT,pkt);
 				//memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in);//print_hex_data(pkt,arg->len);PRF("\n");
 				if (y>=0){
-					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +36	);}
+					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
 			//	print_hex_data(pkt,lon_in +32+4);PRF("datos entrada \n");
 				PRF("saio de geobroadcast_f \n");
 			}else PRF("%d \n",duplicate_control(datos,arg->locT));

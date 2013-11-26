@@ -159,9 +159,9 @@ struct itsnet_common
 	unsigned char payload_lenght[2];
 	unsigned char traffic_class [1];
 	ht_hst_t btp;
-	itsnet_longitude longitude;
-	itsnet_latitude latitude;
-	//itsnet_position_vector pv;
+	//itsnet_longitude longitude;
+	//itsnet_latitude latitude;
+	itsnet_position_vector pv;
 };
 
 typedef struct itsnet_common itsnet_common;
@@ -241,7 +241,7 @@ struct itsnet_geo_t
 	unsigned char distanceA[2];// radius/height,latitude and longitude (geo-area destination)   itsnet_radius
 	unsigned char distanceB[2];// radius/height,latitude and longitude (geo-area destination)   itsnet_radius
 	unsigned char angle[2]; //orientation //itsnet_radius
-	unsigned char reserved[1];
+	unsigned char reserved[2];
 	short payload[ITSNET_DATA_SIZE];
 };
 
