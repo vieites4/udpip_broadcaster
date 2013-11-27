@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <linux/if_packet.h>
-#include <net/ethernet.h> /* the L2 protocols */
+//#include <net/ethernet.h> /* the L2 protocols */
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/mman.h>

@@ -230,7 +230,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	 * memcpy(gbc_h.distanceB,(char *)(buffer) +26,2);
 	 * memcpy(gbc_h.angle,(char *)(buffer) +28,2);
 	 * **/
-	print_hex_data(buffer,60);PRF("recibido desde as facilities\n");
+	//print_hex_data(buffer,60);PRF("recibido desde as facilities\n");
 	if (g==false){
 		memcpy(gbc_h.dest_latitude,(char *)(buffer) +19,1);memcpy((char *)(gbc_h.dest_latitude)+1,(char *)(buffer) +18,1);memcpy((char *)(gbc_h.dest_latitude)+2,(char *)(buffer) +17,1);memcpy((char *)(gbc_h.dest_latitude)+3,(char *)(buffer) +16,1);
 		memcpy(gbc_h.dest_longitude,(char *)(buffer) +23,1);memcpy((char *)(gbc_h.dest_longitude)+1,(char *)(buffer) +22,1);memcpy((char *)(gbc_h.dest_longitude)+2,(char *)(buffer) +21,1);memcpy((char *)(gbc_h.dest_longitude)+3,(char *)(buffer) +20,1);
@@ -398,7 +398,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sizeof(itsnet_common_header)+ size+4+14);//==-1){}
 			//PRF("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
 			print_hex_data(&tx_frame->buffer,sizeof(itsnet_common_header)+ size+4+14);// header_length +lon_int+14+4);
-				PRF(" paquete enviado a ll despois de lsp \n");
+				PRF(" paquete enviado a ll despois de lsp %d\n",sizeof(itsnet_common_header)+ size+4+14);
 			ev_timer_again (l_Beacon,&t_Beacon);
 
 			sup_elem_lsp(sn);

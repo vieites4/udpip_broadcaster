@@ -526,7 +526,7 @@ ieee80211_frame_t *init_ieee80211_frame	(	const int ll_sap, const unsigned char 
 {
 
 	ieee80211_frame_t *f = new_ieee80211_frame();
-	if ( set_ll_frame(&f->info, TYPE_IEEE_80211, ETH_FRAME_LEN) < 0 )
+	if ( set_ll_frame(&f->info, TYPE_IEEE_80211, 14+ITSNET_DATA_SIZE) < 0 )
 	{ PRF("Could not set info adequately!\n"); }
 	memcpy(f->buffer.header.dest_address, h_dest, ETH_ALEN);
 	memcpy(f->buffer.header.src_address,h_source , ETH_ALEN);

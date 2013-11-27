@@ -2,9 +2,10 @@
 #define ITSNET_HEADER_H 1
 
 #include <stdint.h>
+#include "../udpev/define.h"
 
 //const uint8_t itsGnLocalGnAddr[8] = {0x14,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-#define ITSNET_DATA_SIZE 1500
+
 
 /**struct itsnet_protocol_info
 {

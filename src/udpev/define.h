@@ -38,9 +38,10 @@
 #define itsGnTrafficClassReliability 2//10 é binario
 #define itsGnTrafficClassLatency 2 //10 é binario
 #define ETH_ALEN	6
-
+#define ETH_P_ALL 3
+//#define ETH_FRAME_LEN	1514
 #define DEBUG_PRINT_ENABLED 1  // uncomment to enable DEBUG statements
-
+#define ITSNET_DATA_SIZE 1500
 
 #endif /* DEFINE_H_ */
 
