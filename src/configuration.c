@@ -36,7 +36,6 @@ configuration_t *new_configuration()
         memset(cfg, 0, LEN__T_CONFIGURATION);
         cfg->__tx_test = false;
         cfg->__verbose = false;
-        cfg->gn = false;
         cfg->manually=false;
         return(cfg);
 
@@ -75,7 +74,7 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
                         {"txtest", no_argument,                NULL, 's' },
                         {"app", no_argument,                NULL, 'a' },
                         {"nec",                no_argument,                NULL,        'n' },
-                        {"gn",                no_argument,                NULL,        'g' },
+
                         {"scc",                required_argument,        NULL,        'x' },
                         {"manually",no_argument,                NULL,        'm' },
                         {"itss_type",required_argument,        NULL,        'y' },
@@ -84,7 +83,7 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
         };
 
         while
-                ( ( read = getopt_long(argc, argv, "mganhset:r:i:u:w:d:y:x:", args, &idx) )
+                ( ( read = getopt_long(argc, argv, "manhset:r:i:u:w:d:y:x:", args, &idx) )
                                 > -1 )
         {
 
@@ -172,10 +171,7 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
                 case 'a':
                         cfg->ladoapp=true;
                         break;
-                case 'g':
 
-                        cfg->gn = true;
-                        break;
                 case 'h':
                 default:
 
