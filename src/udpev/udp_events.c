@@ -129,7 +129,7 @@ udp_events_t *init_net_raw_events
 void *init_app_udp_events
 (	const int app_rx_port,in_addr_t addr,
 		const char* if_name, const int net_fwd_port,
-		const ev_cb_t callback, List_locT *locT,List_lsp *lsp,List_lsp *rep,bool g,int version)
+		const ev_cb_t callback, List_locT *locT,List_lsp *lsp,List_lsp *rep,bool g)
 {	udp_events_t *s = init_rx_udp_events(app_rx_port, if_name, callback);
 	ev_io_arg_t *arg = (ev_io_arg_t *)s->watcher;
 	arg->public_arg.local_addr = init_if_sockaddr_ll(if_name, net_fwd_port);
@@ -141,7 +141,6 @@ void *init_app_udp_events
 	arg->public_arg.lsp=lsp;
 	arg->public_arg.rep=rep;
 	arg->public_arg.gn=g;
-	arg->public_arg.version=version;
 	//if (g) PRF("é true\n");else PRF("é false\n");
 	public_ev_arg_r * argum= &arg->public_arg;
 

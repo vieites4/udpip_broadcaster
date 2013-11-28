@@ -65,7 +65,7 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
         {
                         {"help",        no_argument,                NULL,         'h'        },
                         {"verbose",        no_argument,                NULL,        'e'        },
-                        {"version",        required_argument,                NULL,         'v'        },
+                        //{"version",        required_argument,                NULL,         'v'        },
                         {"nettx",        required_argument,        NULL,         't'        },
                         {"netrx",         required_argument,        NULL,         'r'        },
                         {"apptx",        required_argument,        NULL,         'u'        },
@@ -84,7 +84,7 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
         };
 
         while
-                ( ( read = getopt_long(argc, argv, "mganhset:r:i:u:w:d:y:x:v:", args, &idx) )
+                ( ( read = getopt_long(argc, argv, "mganhset:r:i:u:w:d:y:x:", args, &idx) )
                                 > -1 )
         {
 
@@ -168,11 +168,7 @@ int read_configuration(int argc, char** argv, configuration_t* cfg)
                         cfg->__verbose = true;
                         break;
 
-                case 'v':
 
-                	 cfg->version = atoi(optarg);
-                      //  exit(EXIT_SUCCESS);
-                        break;
                 case 'a':
                         cfg->ladoapp=true;
                         break;

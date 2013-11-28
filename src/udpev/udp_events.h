@@ -149,7 +149,7 @@ udp_events_t *init_net_raw_events
 void *init_app_udp_events
 (	const int app_rx_port,in_addr_t addr,
 		const char* if_name, const int net_fwd_port,
-		const ev_cb_tr callback, List_locT *locT, List_lsp *lsp, List_lsp *rep,bool g,int version);
+		const ev_cb_tr callback, List_locT *locT, List_lsp *lsp, List_lsp *rep,bool g);
 
 /**
  * @fn free_udp_events

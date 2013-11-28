@@ -17,7 +17,7 @@
  * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
-itsnet_packet * TSB(void *data,List_lsp *lsp,List_lsp *rep,bool g);
+itsnet_packet * TSB(void *data,List_lsp *lsp,List_lsp *rep);
 /**
  * @fn SHB
  * @brief This function create the shb packet to send through link layer.
@@ -28,7 +28,7 @@ itsnet_packet * TSB(void *data,List_lsp *lsp,List_lsp *rep,bool g);
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
 
-itsnet_packet * SHB(void *dato,List_lsp *lsp,List_lsp *rep,bool g);
+itsnet_packet * SHB(void *dato,List_lsp *lsp,List_lsp *rep);
 /**
  *  @fn GeoBroadcast
  * @brief This function create the geobroadcast packet to send through link layer.
@@ -39,7 +39,7 @@ itsnet_packet * SHB(void *dato,List_lsp *lsp,List_lsp *rep,bool g);
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
 
-itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep,bool g);
+itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep);
 
 /**
  *  @fn TSB_f
@@ -48,7 +48,7 @@ itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep,bool g);
  * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet.
   */
-itsnet_packet_f * TSB_f(void *data, bool g);
+itsnet_packet_f * TSB_f(void *data);
 /**
  * @fn SHB_f
  * @brief This function create the shb packet to send to upper layer.
@@ -56,7 +56,7 @@ itsnet_packet_f * TSB_f(void *data, bool g);
  * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet.
   */
-itsnet_packet_f * SHB_f(void *dato, bool g);
+itsnet_packet_f * SHB_f(void *dato);
 /**
  *  @fn GeoBroadcast_f
  * @brief This function create the geobroadcast packet to send to upper layer.
@@ -64,7 +64,7 @@ itsnet_packet_f * SHB_f(void *dato, bool g);
  * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet.
   */
-itsnet_packet_f * GeoBroadcast_f(void *dato, bool g);
+itsnet_packet_f * GeoBroadcast_f(void *dato);
 /**
  *  @fn GeoUnicast_f
  * @brief This function create the GeoUnicast packet to send to upper layer.
@@ -79,6 +79,16 @@ itsnet_packet_f * GeoUnicast_f(void *dato);
  * @return the packet.
   */
 //itsnet_packet_f * GEOUN_f(void *dato);
+
+/**
+ *  @fn BasicHeader_processing
+ * @brief This function makes the basic header processing of packets arrived from link layer.
+ * @param arg
+ * @return 0 if everything is correct.
+  */
+
+int BasicHeader_processing(public_ev_arg_r *arg);
+
 /**
  *  @fn CommonHeader_processing
  * @brief This function makes the common header processing of packets arrived from link layer.

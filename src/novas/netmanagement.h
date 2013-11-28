@@ -65,7 +65,6 @@ struct public_ev_arg
 	        List_lsp *lsp;
 	        List_lsp *rep;
 	        bool gn;
-	        int version;
 };
 
 

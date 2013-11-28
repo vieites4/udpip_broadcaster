@@ -61,7 +61,7 @@ PRF(">>> Reading configuration...\n");
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
 	PRF(">>> Opening UDP APP RX socket...\n");
-	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn,cfg->version);//broadcast
+	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn);//broadcast
 	pthread_create(&h3,NULL, thr_h3, argum);	//Beacon_send(arg);
 	PRF(">>> UDP APP RX socket open!\n");
 	PRF(">>> Opening RAW NET RX socket...\n");

@@ -57,17 +57,17 @@ typedef struct itsnet_node_id itsnet_node_id;
 /**
  *itsnet position vector accuracy
  */
-
+/**
 struct itsnet_accuracy
 {
-	unsigned char time_ac :	4; /**time accuracy */
-	unsigned char pos_ac :	4; /**position accuracy*/
-	unsigned char speed_ac :3; /**speed accuracy */
-	unsigned char head_ac :	3; /**heading accuracy */
-	unsigned char alt_ac :	2; /**altitude accuracy */
+	unsigned char time_ac :	4; //time accuracy
+	unsigned char pos_ac :	4; //position accuracy
+	unsigned char speed_ac :3; //speed accuracy
+	unsigned char head_ac :	3; //heading accuracy
+	unsigned char alt_ac :	2; //altitude accuracy
 };
 typedef struct itsnet_accuracy itsnet_accuracy;
-
+**/
 struct version_nh
 {
 	unsigned char version :	4;
@@ -78,9 +78,8 @@ typedef struct version_nh version_nh;
 
 struct flags_t
 {
-	unsigned char ceros :	    6;
 	unsigned char itsStation :	1;
-	unsigned char cero :        1;
+	unsigned char zeros :        7;
 
 };
 typedef struct flags_t flags_t;
@@ -135,22 +134,24 @@ typedef struct byte_struct byte_struct;
 
 struct itsnet_common_header
 {
-	unsigned char version_nh[1]; //itsnet_protocol_info
+	//unsigned char nh_reserved[1]; //itsnet_protocol_info
+	ht_hst_t nh_reserved[1];
 	ht_hst_t HT_HST;
-	unsigned char txpower[1];//reserved
+	unsigned char traffic_class [1];
+
 	unsigned char flags [1];
 	unsigned char payload_lenght[2];
-	unsigned char traffic_class [1];
-	unsigned char hop_limit[1];
-	itsnet_position_vector forwarder_position_vector;/** The Position Vector of the last forwarder (node from which the packet comes)*/ //penso que vou ter que redefinilo porque o espacio que lle da é un cuarto do necesario
+	unsigned char mhl[1];//maximum hop limit //not decremented!!!
+	unsigned char reserved[1];
+//	itsnet_position_vector forwarder_position_vector;/** The Position Vector of the last forwarder (node from which the packet comes)*/ //penso que vou ter que redefinilo porque o espacio que lle da é un cuarto do necesario
 };
 
 struct itsnet_basic_header
 {
-	unsigned char version_nh[1]; //itsnet_protocol_info
+	ht_hst_t version_nh[1]; //nh knows if next header is a common header or a secured packet
 	unsigned char reserved[1];
 	unsigned char lt[1];//LT_s
-	unsigned char hop_limit[1];
+	unsigned char rhl[1];
 	};
 typedef struct itsnet_basic_header itsnet_basic_header;
 typedef struct itsnet_common_header itsnet_common_header;
@@ -274,6 +275,7 @@ struct itsnet_any_t
  */
 struct itsnet_beacon_t
 {
+	itsnet_position_vector source_position_vector;/** Source node position vector */
 	itsnet_btp_wo_payload_t payload;
 } itsnet_beacon_t;
 /**
@@ -282,11 +284,11 @@ struct itsnet_beacon_t
 struct itsnet_unicast_t
 {
 	itsnet_sequencenumber sequencenumber;
-	unsigned char lt[1];
-	unsigned char reserved[1];
+	//unsigned char lt[1];
+	unsigned char reserved[2];
 	itsnet_position_vector source_position_vector;/** Source node position vector */
-	itsnet_position_vector dest_position_vector;
-	itsnet_btp payload; /** data temp must be fixed*/
+	itsnet_position_vector dest_position_vector;/** Dest node position vector */
+	itsnet_btp payload;
 };
 typedef struct itsnet_unicast_t itsnet_unicast_t;
 /**
@@ -294,11 +296,19 @@ typedef struct itsnet_unicast_t itsnet_unicast_t;
  */
 struct itsnet_geoanycast_t
 {
-	itsnet_position_vector source_position_vector;// Source node position vector
-	itsnet_radius geo_area_size;// radius/height,latitude and longitude (geo-area destination)
-	itsnet_latitude dest_latitude;
-	itsnet_longitude dest_longitude;
-	itsnet_btp payload;// data temp must be fixed*/
+	itsnet_sequencenumber sequencenumber;
+		unsigned char reserved[2];
+		itsnet_position_vector source_position_vector;/** Source node position vector */
+		unsigned char dest_latitude[4];//itsnet_latitude
+		unsigned char dest_longitude[4];//itsnet_longitude
+		//itsnet_radius
+		unsigned char distanceA[2];/** radius/height,latitude and longitude (geo-area destination)   */
+		//itsnet_radius
+		unsigned char distanceB[2];/** radius/height,latitude and longitude (geo-area destination)   */
+		//itsnet_radius
+		unsigned char angle[2]; //orientation
+		unsigned char reserved2[2];
+		itsnet_btp payload;
 };
 typedef struct itsnet_geoanycast_t itsnet_geoanycast_t;
 /**
@@ -307,7 +317,7 @@ typedef struct itsnet_geoanycast_t itsnet_geoanycast_t;
 struct itsnet_geobroadcast_t
 {
 	itsnet_sequencenumber sequencenumber;
-	unsigned char lt[1];
+	unsigned char reserved[2];
 	itsnet_position_vector source_position_vector;/** Source node position vector */
 	unsigned char dest_latitude[4];//itsnet_latitude
 	unsigned char dest_longitude[4];//itsnet_longitude
@@ -317,7 +327,7 @@ struct itsnet_geobroadcast_t
 	unsigned char distanceB[2];/** radius/height,latitude and longitude (geo-area destination)   */
 	//itsnet_radius
 	unsigned char angle[2]; //orientation
-	unsigned char reserved[2];
+	unsigned char reserved2[2];
 	itsnet_btp payload;
 };
 typedef struct itsnet_geobroadcast_t itsnet_geobroadcast_t;
@@ -329,8 +339,8 @@ typedef struct itsnet_geobroadcast_t itsnet_geobroadcast_t;
 struct itsnet_tsb_t
 {
 	itsnet_sequencenumber sequencenumber;
-	unsigned char lt[1];
-	unsigned char reserved[1];
+	//unsigned char lt[1];
+	unsigned char reserved[2];
 	itsnet_position_vector source_position_vector;/** Source node position vector */
 	itsnet_btp payload;
 
@@ -340,7 +350,10 @@ typedef struct itsnet_tsb_t itsnet_tsb_t;
  *The structure describes itsnet_shb packet
  */
 struct itsnet_shb_t
-{	itsnet_btp payload;
+{
+itsnet_position_vector source_position_vector;/** Source node position vector */
+unsigned char reserved[4];
+	itsnet_btp payload;
 };
 
 typedef struct itsnet_shb_t itsnet_shb_t;
@@ -385,7 +398,7 @@ typedef struct itsnet_ls_t itsnet_ls_t;
  *The structure describes the its packet that is sent through link layer
  */
 struct itsnet_packet
-{
+{   itsnet_basic_header basic_header;
 	itsnet_common_header common_header;/** packet header */
 	union payload_packet   /**this is to reserve the maximum space used by packets*/
 	{itsnet_shb_t itsnet_shb;
