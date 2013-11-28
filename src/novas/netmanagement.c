@@ -176,6 +176,10 @@ void thr_h2(void *arg){
 	//while(1){
 	signal(SIGUSR2, CheckTimerEvent);
 	signal(SIGUSR1, CheckTimerEvent_lsp);	}//}
+void thr_h4(void *arg){
+//sistema para contar canto tempo
+
+}//}
 
 List_locT * startup1(configuration_t *cfg)
 {
@@ -248,25 +252,25 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					if(gpsdata.fix.altitude<0){sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude*-1));}else {sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude));}
 					sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
 					int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
-					num1=strtol(str1,NULL,16);
-					num2=strtol(str2,NULL,16);
-					num3=strtol(str3,NULL,16);
-					num4=strtol(str4,NULL,16);
-					num5=strtol(str5,NULL,16);
+					//num1=strtol(str1,NULL,16);
+					//num2=strtol(str2,NULL,16);
+					//num3=strtol(str3,NULL,16);
+					//num4=strtol(str4,NULL,16);
+					//num5=strtol(str5,NULL,16);
 					num6=strtol(str6,NULL,16);
 					num7=strtol(str7,NULL,16);
 					num9=strtol(str9,NULL,16);
 					num10=strtol(str10,NULL,16);
 					if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
 					if(gpsdata.fix.longitude<0){LPV->longitude=0xffff-num7;}else{LPV->longitude=num7;}
-					if(gpsdata.fix.altitude<0){LPV->altitude=0xffff-num9;}else{LPV->altitude=num9;}
+					//if(gpsdata.fix.altitude<0){LPV->altitude=0xffff-num9;}else{LPV->altitude=num9;}
 					LPV->time_stamp=num00;// recibe Unix time in seconds with fractional part  e quere miliseconds
 					LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
-					LPV->accuracy.alt_ac=num5;
-					LPV->accuracy.pos_ac=num2;
-					LPV->accuracy.speed_ac=num3;
-					LPV->accuracy.head_ac=num4;
-					LPV->accuracy.time_ac=num1;
+					//LPV->accuracy.alt_ac=num5;
+					//LPV->accuracy.pos_ac=num2;
+					//LPV->accuracy.speed_ac=num3;
+					//LPV->accuracy.head_ac=num4;
+					//LPV->accuracy.time_ac=num1;
 					char h_source_trans[6];
 					memcpy((char *)(h_source_trans),(char *)(h_source)+5,1);memcpy((char *)(h_source_trans)+1,(char *)(h_source)+4,1);memcpy((char *)(h_source_trans)+2,(char *)(h_source)+3,1);memcpy((char *)(h_source_trans)+3,(char *)(h_source)+2,1);memcpy((char *)(h_source_trans)+4,(char *)(h_source)+1,1);
 					memcpy((char *)(h_source_trans)+5,(char *)(h_source),1);
@@ -283,9 +287,12 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 
 itsnet_position_vector * LPV_ini(){ //non se está executando nunca
 	itsnet_position_vector * LPV;
-	LPV->altitude=0;	LPV->longitude=0;	LPV->latitude=0;	LPV->time_stamp=0;	LPV->speed=0;	LPV->heading=0;	memcpy(&LPV->node_id,&GN_ADDR,8);	LPV->accuracy.alt_ac=0;
+	//LPV->altitude=0;
+	LPV->longitude=0;	LPV->latitude=0;	LPV->time_stamp=0;	LPV->speed=0;	LPV->heading=0;	memcpy(&LPV->node_id,&GN_ADDR,8);
+	//LPV->accuracy.alt_ac=0;
 	//print_hex_data(GN_ADDR,8);printf("\n");
-	LPV->accuracy.pos_ac=0;	LPV->accuracy.speed_ac=0;	LPV->accuracy.head_ac=0;	LPV->accuracy.time_ac=0;	return(LPV);}
+	//LPV->accuracy.pos_ac=0;	LPV->accuracy.speed_ac=0;	LPV->accuracy.head_ac=0;	LPV->accuracy.time_ac=0;
+	return(LPV);}
 
 mac_addr autoaddrconf(){
 	mac_addr addr;
@@ -339,10 +346,10 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	memset(pkt->common_header.payload_lenght,0,1);
 	memset(pkt->common_header.hop_limit,1,1);
 	pkt->common_header.forwarder_position_vector=*LPV;
-	tc->reserved=0;
+	/**tc->reserved=0;
 	tc->relevance=itsGnTrafficClassRelevance;
 	tc->reliability=itsGnTrafficClassReliability;
-	tc->latency=itsGnTrafficClassLatency;
+	tc->latency=itsGnTrafficClassLatency;**/
 	memset(pkt->common_header.traffic_class,tc,1);
 	char* num1[2];char* num2[2];
 	sprintf(num1,"%02X",(unsigned int)arg->port);	sprintf(num2,"%02X",(unsigned int)arg->forwarding_port);

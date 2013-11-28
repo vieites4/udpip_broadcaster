@@ -317,7 +317,9 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	itsnet_time_stamp tst=data->pos_vector.time_stamp;
 	free(PV);PV=NULL;
 	data->expires.tv_sec= itsGnLifetimeLocTE;
-	data->tstation=FLAG->itsStation;
+	//data->tstation=FLAG->itsStation;
+	data->version=arg->version;//quizais hai que poñer o que ven na entrada
+	//data->itss_type=arg->
 	free(FLAG);FLAG=NULL;
 	char HT1[1];
 	memcpy(HT1,buffer+15,1);

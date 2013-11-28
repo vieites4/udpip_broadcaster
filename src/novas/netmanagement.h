@@ -65,6 +65,7 @@ struct public_ev_arg
 	        List_lsp *lsp;
 	        List_lsp *rep;
 	        bool gn;
+	        int version;
 };
 
 
@@ -81,13 +82,16 @@ struct itsnet_node_//loct entry
 {
 	struct itsnet_node_id node_id;			/** node identity		*/
 	struct mac_addr mac_id;
-	unsigned char tstation:1;
-	struct itsnet_position_vector pos_vector;	/** position vector		*/
+//	unsigned char tstation:1;
+	 int itss_type;
+	int version;
+	 struct itsnet_position_vector pos_vector;	/** position vector		*/
 	bool LS_PENDING;
 	bool IS_NEIGHBOUR;
 	uint16_t Sequence_number;
 	//struct tq_elem tqe;                    /** Timer queue entry */
 	struct timespec expires;       		/** expire time for message 	*/
+	int pdr; // packet data rate
 	};
 typedef struct itsnet_node_ itsnet_node;
 /**

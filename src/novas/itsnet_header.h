@@ -87,10 +87,10 @@ typedef struct flags_t flags_t;
 
 struct trafficclass_t
 {
-	unsigned char reserved :	1;
-	unsigned char relevance :	3;
-	unsigned char reliability : 2;
-	unsigned char latency :     2;
+	unsigned char scf :	1;
+	unsigned char channel_offload :	1;
+	unsigned char tc_id : 6; //media-dependent part
+
 
 };
 typedef struct trafficclass_t trafficclass_t;
@@ -110,10 +110,11 @@ struct itsnet_position_vector
 	itsnet_time_stamp time_stamp;   /** UTC time in seconds, when the GPS data was calculated,NOT the time this message was generated */
 	itsnet_latitude latitude;  /** the latitude of the global position in 1/8 microdegree */
 	itsnet_longitude longitude;  /** the longitude of the global position in 1/8 microdegree*/
+	char pai:1;
 	itsnet_speed speed;  /** current speed in 0.01 meters per second*/
 	itsnet_heading heading;  /** current curse in 0.005493247 degrees*/
-	itsnet_altitude altitude;    /** the altitude (meter over mean sea level)*/
-	itsnet_accuracy accuracy;
+	//itsnet_altitude altitude;    /** the altitude (meter over mean sea level)*/
+	//itsnet_accuracy accuracy;
 };
 typedef struct itsnet_position_vector itsnet_position_vector;
 
@@ -144,6 +145,14 @@ struct itsnet_common_header
 	itsnet_position_vector forwarder_position_vector;/** The Position Vector of the last forwarder (node from which the packet comes)*/ //penso que vou ter que redefinilo porque o espacio que lle da é un cuarto do necesario
 };
 
+struct itsnet_basic_header
+{
+	unsigned char version_nh[1]; //itsnet_protocol_info
+	unsigned char reserved[1];
+	unsigned char lt[1];//LT_s
+	unsigned char hop_limit[1];
+	};
+typedef struct itsnet_basic_header itsnet_basic_header;
 typedef struct itsnet_common_header itsnet_common_header;
 
 

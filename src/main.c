@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 {
 	List_locT * locT_g;
 
-	pthread_t h1,h3, h_locT,h_lsp;
+	pthread_t h1,h3, h_locT,h_lsp,h4;
 PRF(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
 	PRF(">>> Configuration read! Printing data...\n");
@@ -61,7 +61,7 @@ PRF(">>> Reading configuration...\n");
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
 	PRF(">>> Opening UDP APP RX socket...\n");
-	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn);//broadcast
+	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g,cfg->gn,cfg->version);//broadcast
 	pthread_create(&h3,NULL, thr_h3, argum);	//Beacon_send(arg);
 	PRF(">>> UDP APP RX socket open!\n");
 	PRF(">>> Opening RAW NET RX socket...\n");
@@ -76,10 +76,12 @@ PRF(">>> Reading configuration...\n");
 	LPV_update(l_LPV, &t_LPV, revents);
 	pthread_create(&h1,NULL, thr_h1, (void *)h_source);
 	pthread_create(&h_locT,NULL,thr_h2,(void *)locT_g);
+	pthread_create(&h4,NULL,thr_h4,(void *)locT_g);
 	ev_loop(net_events->loop, 0);
 	pthread_join(h1, NULL);
 	pthread_join(h_locT, NULL);
 	pthread_join(h3, NULL);
+	pthread_join (h4,NULL);
 	// 4) program finalization
 	exit(EXIT_SUCCESS);
 

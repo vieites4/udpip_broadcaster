@@ -74,6 +74,7 @@ typedef struct configuration
 	        bool gn;
 	        bool manually;
 	        int scc;
+	        int version;
 
 } configuration_t;
 
