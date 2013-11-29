@@ -218,7 +218,6 @@ int check_configuration(configuration_t *cfg)
 
         if ( ( cfg->app_tx_port <= 0 ) || ( cfg->app_rx_port <= 0 ) )
         { handle_app_error("Both APP. TX and RX port must be set.\n"); }
-        if (cfg->gn) PRF("é positivo \n");
         return(EX_OK);
 
 }
@@ -242,7 +241,6 @@ void print_configuration(const configuration_t *cfg)
         PRF("\t.__tx_test = %s\n", cfg->__tx_test ? "true" : "false");
         PRF("\t.ladoapp = %s\n", cfg->ladoapp ? "true" : "false");
         PRF("\t.__verbose = %s\n", cfg->__verbose ? "true" : "false");
-        PRF("\t.gn = %s\n", cfg->gn ? "true" : "false");
         PRF("\t.itss_type = %d\n", cfg->itss_type);
         PRF("}\n");
 

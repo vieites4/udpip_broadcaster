@@ -42,6 +42,7 @@ typedef struct sockaddr_in sockaddr_in_t;		/*!< Type for sockaddr_in. */
 typedef struct sockaddr_ll sockaddr_ll_t;       /*!< Type for sockaddr_ll. */
 typedef struct gps_data_t gps_data_t;           /*!< Type for gps_data_t. */
 typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
+
 struct public_ev_arg
 {
 
@@ -80,8 +81,7 @@ struct itsnet_node_//loct entry
 {
 	struct itsnet_node_id node_id;			/** node identity		*/
 	struct mac_addr mac_id;
-//	unsigned char tstation:1;
-	 int itss_type;
+	bool itss_type;
 	int version;
 	 struct itsnet_position_vector pos_vector;	/** position vector		*/
 	bool LS_PENDING;
@@ -340,4 +340,6 @@ void CheckTimerEvent(EV_P_ ev_timer *w, int revents);
 
  */
 void thr_h2(void *arg);
+
+void thr_h4(void *arg);
 #endif /* NETMANAGEMENT_H_ */
