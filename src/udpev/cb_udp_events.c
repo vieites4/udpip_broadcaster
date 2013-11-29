@@ -166,7 +166,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			free(pkt);pkt=NULL;}
 
 		//	PRF("comprobación %d\n",aa);
-		if (aa==1){
+		if (aa==3){
 			if ( memcmp(HT,tsb0,1)==0 ||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0||memcmp(HT,geounicast,1)==0 ){
 				PRF("entro no envio do enlace cara o enlace \n");
 				if (lon_int>1){
@@ -178,7 +178,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					number=(byte_struct *)lon_int -1;
 					memcpy(pkt1->common_header.hop_limit,&number,1);
 					pkt1->common_header.forwarder_position_vector=* LPV; //
-					//	PRF("ENVIO UN PAQUETE\n");	print_hex_data(pkt1, arg->len);PRF("\n");
+					PRF("ENVIO UN PAQUETE\n");	print_hex_data(pkt1, arg->len);PRF("\n");
 					char h_source2[ETH_ALEN];
 					get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source2) ;
 					ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source2);
@@ -280,8 +280,8 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)||
 		//if (n_sends==0) print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4);
 
 
-		PRF(" paquete enviado a ll %d %d.\n",header_length +lon_int+14+4,arg->len);
-		free(pkt);pkt=NULL; //	PRF("ENVIO UN PAQUETE\n");	//int i=print_hex_data(&tx_frame->buffer, arg->len);
+		//PRF(" paquete enviado a ll %d %d.\n",header_length +lon_int+14+4,arg->len);
+		free(pkt);pkt=NULL;  print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4+2); PRF("ENVIO UN PAQUETE DE CERO\n");
 	}
 
 }

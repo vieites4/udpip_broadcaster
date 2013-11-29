@@ -395,10 +395,16 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 
 			memcpy(tx_frame->buffer.data, &pos->data, IEEE_80211_BLEN);
 			//while (
-			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sizeof(itsnet_common_header)+ size+4+14);//==-1){}
+			int header_length=0;
+
+								if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=84;}
+								else if(memcmp(HT,tsb0,1)==0&& (memcmp(Hop,single,1)==0)){header_length=36;}else if(memcmp(HT,tsb0,1)==0&& (memcmp(Hop,single,1)!=0)){header_length=68;}else{PRF("son eu3!! \n");} //falta tsb
+
+			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer, header_length +size+14+4+2);//==-1){}
 			//PRF("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
-			print_hex_data(&tx_frame->buffer,sizeof(itsnet_common_header)+ size+4+14);// header_length +lon_int+14+4);
-				PRF(" paquete enviado a ll despois de lsp %d\n",sizeof(itsnet_common_header)+ size+4+14);
+
+			print_hex_data(&tx_frame->buffer, header_length +size+14+4+2);// header_length +lon_int+14+4);
+				PRF(" paquete enviado a ll despois de lsp %d\n", header_length +size+14+4+2);
 			ev_timer_again (l_Beacon,&t_Beacon);
 
 			sup_elem_lsp(sn);
