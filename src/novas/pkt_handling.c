@@ -51,9 +51,9 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	ch.HT_HST.HT=5;
 	ch.HT_HST.HST=1;
 	memset(ch.reserved,0,1);
-	memcpy(ch.nh_reserved,(char *)(buffer) +7,1);
-	ch.nh_reserved->HT=ch.nh_reserved->HST;
-	ch.nh_reserved->HST=0;
+	memcpy(&ch.nh_reserved,(char *)(buffer) +7,1);
+	ch.nh_reserved.HT=ch.nh_reserved.HST;
+	ch.nh_reserved.HST=0;
 	char TS[4];
 	memcpy(TS,(char *)(buffer) +12,4);
 	int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
@@ -66,9 +66,9 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	lt->base=num3;lt->multiple=num4;
 	memcpy(bh.lt,(void *)lt,1);
 	memset(bh.reserved,0,1);
-	bh.version_nh->HT=itsGnProtocolVersion;
-	if (itsGnSecurity==1)bh.version_nh->HST=2;else bh.version_nh->HST=1;
-	char str3[8] = {'\0'};
+	bh.version_nh.HT=itsGnProtocolVersion;
+	if (itsGnSecurity==1)bh.version_nh.HST=2;else bh.version_nh.HST=1;
+	char str3[9] = {'\0'};
 	sprintf(str3,"%08X",hl_int-1);
 	memcpy(bh.rhl,(void *)str3,1);
 	itsnet_tsb_t tsb_h;
@@ -130,9 +130,9 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	ch.HT_HST.HT=5;
 	ch.HT_HST.HST=1;
 	memset(ch.reserved,0,1);
-	memcpy(ch.nh_reserved,(char *)(buffer) +7,1);
-	ch.nh_reserved->HT=ch.nh_reserved->HST;
-	ch.nh_reserved->HST=0;
+	memcpy(&ch.nh_reserved,(char *)(buffer) +7,1);
+	ch.nh_reserved.HT=ch.nh_reserved.HST;
+	ch.nh_reserved.HST=0;
 	char TS[4];
 	memcpy(TS,(char *)(buffer) +12,4);
 	int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
@@ -145,9 +145,9 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	lt->base=num3;lt->multiple=num4;
 	memcpy(bh.lt,(void *)lt,1);
 	memset(bh.reserved,0,1);
-	bh.version_nh->HT=itsGnProtocolVersion;
-	if (itsGnSecurity==1)bh.version_nh->HST=2;else bh.version_nh->HST=1;
-	char str3[8] = {'\0'};
+	bh.version_nh.HT=itsGnProtocolVersion;
+	if (itsGnSecurity==1)bh.version_nh.HST=2;else bh.version_nh.HST=1;
+	char str3[9] = {'\0'};
 	sprintf(str3,"%08X",hl_int-1);
 	memcpy(bh.rhl,(void *)str3,1);
 	itsnet_shb_t shb_h;
@@ -208,9 +208,9 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	int hl_int=sprint_hex_data( (char *)(buffer) +2, 1);
 	memcpy(&ch.HT_HST,(char *)(buffer),1);
 	memset(ch.reserved,0,1);
-	memcpy(ch.nh_reserved,(char *)(buffer) +7,1);
-	ch.nh_reserved->HT=ch.nh_reserved->HST;
-	ch.nh_reserved->HST=0;
+	memcpy(&ch.nh_reserved,(char *)(buffer) +7,1);
+	ch.nh_reserved.HT=ch.nh_reserved.HST;
+	ch.nh_reserved.HST=0;
 	char TS[4];
 	memcpy(TS,(char *)(buffer) +12,4);
 	int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
@@ -223,13 +223,13 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	lt->base=num3;lt->multiple=num4;
 	memcpy(bh.lt,(void *)lt,1);
 	memset(bh.reserved,0,1);
-	bh.version_nh->HT=itsGnProtocolVersion;
-	if (itsGnSecurity==1)bh.version_nh->HST=2;else bh.version_nh->HST=1;
-	char str3[8] = {'\0'};
+	bh.version_nh.HT=itsGnProtocolVersion;
+	if (itsGnSecurity==1)bh.version_nh.HST=2;else bh.version_nh.HST=1;
+	char str3[9] = {'\0'};
 	sprintf(str3,"%08X",hl_int-1);
 	memcpy(bh.rhl,(void *)str3,1);
 	itsnet_geobroadcast_t gbc_h;
-	//tsb_h.sequencenumber=SN_g;	//PRF("SN %d\n",tsb_h.sequencenumber);
+	//tsb_h.sequencenumber=SN_g;
 	SN_g++; //máximo SN?? % SN_MAX;
 	gbc_h.source_position_vector=* LPV;
 	memset(gbc_h.reserved,0,2);
@@ -286,11 +286,11 @@ int BasicHeader_processing(public_ev_arg_r *arg){
 
 	char buffer[arg->len];
 		memcpy(buffer,arg->data,arg->len);
-		ht_hst_t * VERSION;
-		memcpy(VERSION,buffer+14,1);
+		ht_hst_t VERSION;
+		memcpy(&VERSION,buffer+14,1);
 		int error=0;
-		if (VERSION->HT!=itsGnProtocolVersion){return(1);}
-		if (VERSION->HST!=2){error =CommonHeader_processing(arg);}else{ PRF("SECURE!\n");}
+		if (VERSION.HT!=itsGnProtocolVersion){return(1);}
+		if (VERSION.HST!=2){error =CommonHeader_processing(arg);}else{ PRF("SECURE!\n");}
 return(error);
 
 }

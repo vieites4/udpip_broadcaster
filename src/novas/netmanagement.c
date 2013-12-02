@@ -224,51 +224,26 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 				if (gpsdata.fix.mode>=2 && 	(gpsdata.fix.epx>=0 && gpsdata.fix.epx<366) && 	(gpsdata.fix.epy>=0 && gpsdata.fix.epy<366) && 	(gpsdata.fix.epv>=0 && gpsdata.fix.epv<366)){
 					LPV->node_id=GN_ADDR;
 					LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
-					char str1[2] = {'\0'};	char str2[2] = {'\0'};	char str3[2] = {'\0'};	char str4[2] = {'\0'};	char str5[2] = {'\0'};	char str6[9] = {'\0'};	char str7[9] = {'\0'};
-					char str8[9] = {'\0'};	char str9[5] = {'\0'};	char str10[5] = {'\0'};
-					if(gpsdata.fix.ept==0){memcpy(str1,"0",1);}else {sprintf(str1, "%01X",(int) ceil(log2(1000*gpsdata.fix.ept)));}//ceil(log2(1000*gpsdata.fix.ept)));
-					if(gpsdata.fix.epx==0 && gpsdata.fix.epx==0){memcpy(str2,"0",1);}else {sprintf(str2, "%01X",(int) ceil(log2(sqrt(pow(gpsdata.fix.epx,2)+(pow(gpsdata.fix.epy,2)))/4)));}
-					if(gpsdata.fix.eps==0){memcpy(str3,"0",1);}else {sprintf(str3, "%01X",(int) ceil(log2(100*gpsdata.fix.eps)));}
-					if(gpsdata.fix.ept==0){memcpy(str4,"0",1);}else {sprintf(str4, "%01X",(int) ceil(log2((1/0.005493247)*gpsdata.fix.ept)));}
-					if(gpsdata.fix.epv==0){memcpy(str5,"0",1);}else {sprintf(str5, "%01X",(int) ceil(log2(gpsdata.fix.epv)));}
+					char str6[9] = {'\0'};	char str7[9] = {'\0'};	char str8[9] = {'\0'};	char str10[5] = {'\0'};
 					if(gpsdata.fix.latitude<0){sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.latitude * -10000000));}else{sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.latitude * 10000000));}
 					if(gpsdata.fix.longitude<0){sprintf(str7, "%08X",(signed int) ceil(gpsdata.fix.longitude * -10000000));}else{sprintf(str7, "%08X",(signed int) ceil(gpsdata.fix.longitude * 10000000));}
 					long double num0=fmod(((long double)gpsdata.fix.time*1000),4294967296);
 					double num00= (double) num0;
 					sprintf(str8, "%08X",(uint32_t)  num00);
-					if(gpsdata.fix.altitude<0){sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude*-1));}else {sprintf(str9, "%04X",(signed int)floor(gpsdata.fix.altitude));}
 					sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
-					int num1=0;int num2=0;int num3=0;int num4=0;int num5=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
-					//num1=strtol(str1,NULL,16);
-					//num2=strtol(str2,NULL,16);
-					//num3=strtol(str3,NULL,16);
-					//num4=strtol(str4,NULL,16);
-					//num5=strtol(str5,NULL,16);
+					int num1=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
+					print_hex_data(str7,4);printf(" longitud\n");
 					num6=strtol(str6,NULL,16);
 					num7=strtol(str7,NULL,16);
-					num9=strtol(str9,NULL,16);
 					num10=strtol(str10,NULL,16);
 					if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
 					if(gpsdata.fix.longitude<0){LPV->longitude=0xffff-num7;}else{LPV->longitude=num7;}
-					//if(gpsdata.fix.altitude<0){LPV->altitude=0xffff-num9;}else{LPV->altitude=num9;}
 					LPV->time_stamp=num00;// recibe Unix time in seconds with fractional part  e quere miliseconds
 					LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
-					//LPV->accuracy.alt_ac=num5;
-					//LPV->accuracy.pos_ac=num2;
-					//LPV->accuracy.speed_ac=num3;
-					//LPV->accuracy.head_ac=num4;
-					//LPV->accuracy.time_ac=num1;
-					char h_source_trans[6];
-					memcpy((char *)(h_source_trans),(char *)(h_source)+5,1);memcpy((char *)(h_source_trans)+1,(char *)(h_source)+4,1);memcpy((char *)(h_source_trans)+2,(char *)(h_source)+3,1);memcpy((char *)(h_source_trans)+3,(char *)(h_source)+2,1);memcpy((char *)(h_source_trans)+4,(char *)(h_source)+1,1);
-					memcpy((char *)(h_source_trans)+5,(char *)(h_source),1);
-					memcpy(LPV->node_id.mac,h_source_trans,6);
+					memcpy(LPV->node_id.mac,h_source,6);
 					i=100;				} } }else {if (a==1)memcpy(LPV,LPV_old,24);    }}
-
-	/**  memcpy(LPV_trans,LPV,2);
-	memcpy((char *)(LPV_trans)+2,(char *)(LPV)+7,1);memcpy((char *)(LPV_trans)+3,(char *)(LPV)+6,1);memcpy((char *)(LPV_trans)+4,(char *)(LPV)+5,1);memcpy((char *)(LPV_trans)+5,(char *)(LPV)+4,1);memcpy((char *)(LPV_trans)+6,(char *)(LPV)+3,1);
-	memcpy((char *)(LPV_trans)+7,(char *)(LPV)+2,1);memcpy((char *)LPV_trans+8,(char *)LPV+8,20);**/
 	gps_close (&gpsdata);
-	//print_hex_data(LPV,28);printf("\n");
+	//print_hex_data(LPV,24);PRF(" é o lpv\n");
 	return(LPV);
 }
 
@@ -293,28 +268,35 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	flags_t * flags=NULL;
 	flags= (flags_t *)malloc(1);
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	res->version=itsGnProtocolVersion;
-	res->nh=1;
-	memcpy(pkt->basic_header.version_nh,res,1);
+	pkt->basic_header.version_nh.HST=1;
+	pkt->basic_header.version_nh.HT=itsGnProtocolVersion;
+
+	char res_char[1];
+	//res_char=(char *)res;PRF("beacon enviada\n");
+	//memcpy(pkt->basic_header.version_nh,(void *)res,1);	PRF("beacon enviada\n");
 	memset(pkt->basic_header.reserved,0,1);
 	memset(pkt->basic_header.lt,itsGnMaxPacketLifeTime,1);
-			memset(pkt->basic_header.rhl,1,1);
+	memset(pkt->basic_header.rhl,1,1);
 	pkt->common_header.HT_HST.HT=1;
 	pkt->common_header.HT_HST.HST=0;
 	memset(flags,0,1);
 	flags->itsStation=itsGnStationType;
 	memcpy(pkt->common_header.flags,flags,1);
 	memset(pkt->common_header.payload_lenght,0,1);
+	memset(pkt->common_header.reserved,0,1);
 	memset(pkt->common_header.mhl,1,1);
 	pkt->payload.itsnet_beacon.source_position_vector=*LPV;
+	tc->channel_offload=0;
+	tc->scf=0;
+	tc->tc_id=itsGnDefaultTrafficClass;
 	memset(pkt->common_header.traffic_class,tc,1);
 	char* num1[2];char* num2[2];
 	sprintf(num1,"%02X",(unsigned int)arg->port);	sprintf(num2,"%02X",(unsigned int)arg->forwarding_port);
 	memcpy(pkt->payload.itsnet_beacon.payload.btp1,num1,2);	memcpy(pkt->payload.itsnet_beacon.payload.btp2,num2,2);
-	memcpy(tx_frame->buffer.data, (char *) pkt,sizeof(itsnet_common_header)+sizeof(struct itsnet_beacon_t) );
+	memcpy(tx_frame->buffer.data, (char *) pkt,8+4+24);
 	// 2) broadcast application level UDP message to network level
 	//while(
-	send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_basic_header)+24+sizeof(itsnet_btp_wo_payload_t)+14);//==-1){}
+	send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer,24+8+4+14);//==-1){}
 	PRF("beacon enviada\n");
 
 }

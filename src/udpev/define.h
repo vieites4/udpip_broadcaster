@@ -48,7 +48,7 @@
 #define itsGnUcForwardingPacketBufferSize 256
 #define itsGnBcForwardingPacketBufferSize 1024000
 #define itsGnCbfPacketBufferSize 256000
-#define itsGnTrafficClass 0
+#define itsGnDefaultTrafficClass 0
 //#define itsGnTrafficClassRelevance 3
 //#define itsGnTrafficClassReliability 2//10 é binario
 //#define itsGnTrafficClassLatency 2 //10 é binario

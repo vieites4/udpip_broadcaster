@@ -78,18 +78,18 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		return;	}**/
 		PRF("cb_forward_recv \n");
 		memcpy(arg->data,data,arg->len);
-		//print_hex_data((char *)data,arg->len);PRF(" cara arriba \n");
+	//	print_hex_data((char *)data,arg->len);PRF(" cara arriba \n");
 		char datos[arg->len];
 		memcpy(datos,data +14,arg->len);
-		char HT[1];char HL[1];char LEN[2];
-		memcpy(HT,(char *)(datos) +1,1);
+		char HT[1];char HL[1];char LEN[2];//PRF("sip \n");
+		memcpy(HT,(char *)(datos)+4 +1,1);
 		itsnet_packet_f * pkt=NULL;
-		memcpy(HL,(char *)(datos)+3,1);
+		memcpy(HL,(char *)(datos)+3+4,1);
 		memcpy(LEN,(char *)(datos) +4+4,2);
 		int lon_in=sprint_hex_data( LEN, 2);
-		int hl_int=sprint_hex_data( HL, 1);
+		int hl_int=sprint_hex_data( HL, 1);//PRF("sip \n");
 		int error =BasicHeader_processing(arg);
-        int duplicate=duplicate_control(datos,arg->locT);
+        int duplicate=duplicate_control(datos,arg->locT);PRF("sip \n");
 		if(memcmp(HT,tsb0,1)==0&& (hl_int>1)){
 			PRF("entro en tsb \n");
 			if (error==0 && duplicate==1){
@@ -183,7 +183,7 @@ char HT[2];char LEN[2] ;char HL[1];
 memcpy(HT,arg->data,2);
 itsnet_packet * pkt=NULL;
 pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
-memcpy(LEN,(char *)(datos) +4,2);//print_hex_data(arg->data,arg->len);
+memcpy(LEN,(char *)(datos) +4,2);print_hex_data(arg->data,arg->len);printf("entro \n");
 int lon_int=sprint_hex_data( LEN, 2);
 memcpy(HL,(char *)(arg->data) +2,1);
 if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
@@ -195,6 +195,7 @@ if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
 } else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	PRF("entro en geobroad\n");
 	pkt = GeoBroadcast(datos,arg->lsp,arg->rep);
+	PRF("entro en geobroad!\n");
 }else if(memcmp(HT,geounicast,1)==0){
 	PRF("entro en geounicast\n");
 	pkt = GeoUnicast(datos,arg->lsp,arg->rep); //hai que decirlle a que dirección vai

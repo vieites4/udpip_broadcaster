@@ -128,6 +128,7 @@ struct byte_struct
 };
 typedef struct byte_struct byte_struct;
 
+
 /**
  *common_header's structure of link layer packets
  */
@@ -135,7 +136,7 @@ typedef struct byte_struct byte_struct;
 struct itsnet_common_header
 {
 	//unsigned char nh_reserved[1]; //itsnet_protocol_info
-	ht_hst_t *nh_reserved;
+	ht_hst_t nh_reserved;
 	ht_hst_t HT_HST;
 	unsigned char traffic_class [1];
 	unsigned char flags [1];
@@ -147,7 +148,7 @@ struct itsnet_common_header
 
 struct itsnet_basic_header
 {
-	ht_hst_t *version_nh; //nh knows if next header is a common header or a secured packet
+	ht_hst_t version_nh; //nh knows if next header is a common header or a secured packet
 	unsigned char reserved[1];
 	unsigned char lt[1];//LT_s
 	unsigned char rhl[1];
