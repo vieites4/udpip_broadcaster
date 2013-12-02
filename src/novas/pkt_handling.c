@@ -384,8 +384,12 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);
 			memcpy(tx_frame->buffer.data, &pos->data, IEEE_80211_BLEN);
-			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sizeof(itsnet_common_header)+ size+4+14);//==-1){}
-			print_hex_data(&tx_frame->buffer,sizeof(itsnet_common_header)+ size+4+14);
+
+			int header_length=0;
+					if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=44;} //cambiar esto por datos novos
+					else if(memcmp(HT,tsb0,1)==0){header_length=28;}
+			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,header_length+ size+4+14);//==-1){}
+			print_hex_data(&tx_frame->buffer,header_length+ size+4+14);
 			PRF(" paquete enviado a ll despois de lsp %d\n",sizeof(itsnet_common_header)+ size+4+14);
 			ev_timer_again (l_Beacon,&t_Beacon);
 			sup_elem_lsp(sn);

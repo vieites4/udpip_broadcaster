@@ -285,7 +285,6 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 	char tipo[2]={0x07,0x07};
 	memcpy(tx_frame->buffer.header.type,tipo,2);
-	const unsigned char beaco[1]={0x01};
 	version_nh * res=NULL;
 	itsnet_packet * pkt = NULL;
 	trafficclass_t *tc=NULL;
@@ -298,6 +297,8 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	res->nh=1;
 	memcpy(pkt->basic_header.version_nh,res,1);
 	memset(pkt->basic_header.reserved,0,1);
+	memset(pkt->basic_header.lt,itsGnMaxPacketLifeTime,1);
+			memset(pkt->basic_header.rhl,1,1);
 	pkt->common_header.HT_HST.HT=1;
 	pkt->common_header.HT_HST.HST=0;
 	memset(flags,0,1);
