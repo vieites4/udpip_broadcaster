@@ -132,7 +132,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				if (y>=0){
 					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
 		//	print_hex_data(pkt,lon_in +56);PRF("datos entrada \n");
-				PRF("saio de geobroadcast_f \n");
+				PRF("saio de geobroadcast_f %d \n", y);
 			}else PRF("%d \n",duplicate_control(datos,arg->locT));
 		}
 		else if(memcmp(HT,beacon,1)==0 ){

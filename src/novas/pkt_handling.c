@@ -625,7 +625,7 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 int geo_limit(void *HT,itsnet_packet_f *pkt)
 {
 	int x,y,r,total,a,b;
-
+printf("latitude lonxitude %d %d %d %d",pkt->common_header.pv.latitude,  LPV->latitude,pkt->common_header.pv.longitude,LPV->longitude);
 	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
 	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
 	char distA[2];
@@ -634,19 +634,19 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 	memcpy(distB,pkt->payload.itsnet_geocast.distanceB+1,1);memcpy(distB+1,pkt->payload.itsnet_geocast.distanceB,1);
 	if(memcmp(geobroad0,HT,1)==0){
 		PRF("circular \n");print_hex_data(distA,2);
-		r=sprint_hex_data(distA, 2);PRF("ben %d %d %d\n",x,y,r);
+		r=sprint_hex_data(distA, 2)*100;PRF("ben %d %d %d\n",x,y,r);
 		total= 1- pow((x/r),2) - pow((y/r),2);
 
 	}else
 		if(memcmp(geobroad1,HT,1)==0){
-			a=sprint_hex_data(distA, 2);
-			b=sprint_hex_data(distB, 2);
+			a=sprint_hex_data(distA, 2)*100;
+			b=sprint_hex_data(distB, 2)*100;
 			total= fmin(1- pow((x/a),2) ,1- pow((y/b),2));
 			PRF("rectangular \n");
 			} else
 				if(memcmp(geobroad2,HT,1)==0){
-					a=sprint_hex_data(distA, 2);
-					b=sprint_hex_data(distB, 2);
+					a=sprint_hex_data(distA, 2)*100;
+					b=sprint_hex_data(distB, 2)*100;
 					total= 1- pow((x/a),2) - pow((y/b),2);
 						PRF("eliptica \n");
 				}
