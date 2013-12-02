@@ -131,7 +131,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				//memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in);//print_hex_data(pkt,arg->len);PRF("\n");
 				if (y>=0){
 					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
-			//	print_hex_data(pkt,lon_in +32+4);PRF("datos entrada \n");
+		//	print_hex_data(pkt,lon_in +56);PRF("datos entrada \n");
 				PRF("saio de geobroadcast_f \n");
 			}else PRF("%d \n",duplicate_control(datos,arg->locT));
 		}
@@ -281,7 +281,8 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)||
 
 
 		//PRF(" paquete enviado a ll %d %d.\n",header_length +lon_int+14+4,arg->len);
-		free(pkt);pkt=NULL;  print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4+2); PRF("ENVIO UN PAQUETE DE CERO\n");
+		free(pkt);pkt=NULL;  //print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4);
+		PRF("ENVIO UN PAQUETE DE CERO\n");
 	}
 
 }

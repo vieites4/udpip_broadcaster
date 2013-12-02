@@ -400,11 +400,11 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 								if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=84;}
 								else if(memcmp(HT,tsb0,1)==0&& (memcmp(Hop,single,1)==0)){header_length=36;}else if(memcmp(HT,tsb0,1)==0&& (memcmp(Hop,single,1)!=0)){header_length=68;}else{PRF("son eu3!! \n");} //falta tsb
 
-			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer, header_length +size+14+4+2);//==-1){}
+			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer, header_length +size+14+4);//==-1){}
 			//PRF("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
 
-			print_hex_data(&tx_frame->buffer, header_length +size+14+4+2);// header_length +lon_int+14+4);
-				PRF(" paquete enviado a ll despois de lsp %d\n", header_length +size+14+4+2);
+			//print_hex_data(&tx_frame->buffer, header_length +size+14+4);// header_length +lon_int+14+4);
+				PRF(" paquete enviado a ll despois de lsp %d\n", header_length +size+14+4);
 			ev_timer_again (l_Beacon,&t_Beacon);
 
 			sup_elem_lsp(sn);
@@ -628,16 +628,14 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 
 	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
 	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
-	printf("ben\n");
 	char distA[2];
 	char distB[2];
-	printf("ben\n");
-	memcpy(distA,pkt->payload.itsnet_geocast.distanceA+1,1);printf("ben\n");memcpy(distA+1,pkt->payload.itsnet_geocast.distanceA,1);
-	memcpy(distB,pkt->payload.itsnet_geocast.distanceB+1,1);printf("ben\n");memcpy(distB+1,pkt->payload.itsnet_geocast.distanceB,1);
+	memcpy(distA,pkt->payload.itsnet_geocast.distanceA+1,1);memcpy(distA+1,pkt->payload.itsnet_geocast.distanceA,1);
+	memcpy(distB,pkt->payload.itsnet_geocast.distanceB+1,1);memcpy(distB+1,pkt->payload.itsnet_geocast.distanceB,1);
 	if(memcmp(geobroad0,HT,1)==0){
 		PRF("circular \n");print_hex_data(distA,2);
-		r=sprint_hex_data(distA, 2);printf("ben %d %d %d\n",x,y,r);
-		total= 1- pow((x/r),2) - pow((y/r),2);printf("ben\n");
+		r=sprint_hex_data(distA, 2);PRF("ben %d %d %d\n",x,y,r);
+		total= 1- pow((x/r),2) - pow((y/r),2);
 
 	}else
 		if(memcmp(geobroad1,HT,1)==0){
