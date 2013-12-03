@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <list.h>
 #include "../gps.h"
 #include "../gpsdclient.h"
@@ -341,5 +342,5 @@ void CheckTimerEvent(EV_P_ ev_timer *w, int revents);
  */
 void thr_h2(void *arg);
 
-void thr_h4(void *arg);
+int PDR_update(int pdr);
 #endif /* NETMANAGEMENT_H_ */

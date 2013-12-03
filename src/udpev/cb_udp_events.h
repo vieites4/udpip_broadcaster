@@ -24,6 +24,7 @@
 #include <sys/socket.h>
 #include "../novas/itsnet_header.h"
 #include <stdio.h>
+#include <time.h>
 #include "__NEC__gnbtpapi_udp_msg.h"
 #include "udp_events.h"
 #include "define.h"

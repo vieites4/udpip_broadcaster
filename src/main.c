@@ -29,7 +29,7 @@ ev_timer t_LPV;
 uint16_t SN_g=0;//sequence number
 itsnet_node_id GN_ADDR;
 List_lsp * lsp_bc_g;
-
+int PDR=0;
 #if DEBUG_PRINT_ENABLED
 #define PRF printf
 #else
@@ -44,11 +44,12 @@ void *thr_h1(void * arg){
 	return NULL;
 }
 
+
 int main(int argc, char **argv)
 {
 	List_locT * locT_g;
 
-	pthread_t h1,h3, h_locT,h_lsp,h4;
+	pthread_t h1,h3, h_locT,h_lsp;
 PRF(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
 	PRF(">>> Configuration read! Printing data...\n");
@@ -74,14 +75,13 @@ PRF(">>> Reading configuration...\n");
 	t_LPV.data=(void *)h_source;
 	int revents;
 	LPV_update(l_LPV, &t_LPV, revents);
+
 	pthread_create(&h1,NULL, thr_h1, (void *)h_source);
 	pthread_create(&h_locT,NULL,thr_h2,(void *)locT_g);
-	pthread_create(&h4,NULL,thr_h4,(void *)locT_g);
 	ev_loop(net_events->loop, 0);
 	pthread_join(h1, NULL);
 	pthread_join(h_locT, NULL);
 	pthread_join(h3, NULL);
-	pthread_join (h4,NULL);
 	// 4) program finalization
 	exit(EXIT_SUCCESS);
 

@@ -36,7 +36,7 @@
 #include <string.h>
 #include "logger.h"
 #include "configuration.h"
-
+#include <time.h>
 //MIB ATTRIBUTES
 
 //#define itsGnLocalGnAddr GNAD;// {"0x14","0x00","0x00","0x00","0x00","0x00","0x00","0x00"} //é do tipo itnet_node_id
@@ -59,6 +59,6 @@ extern bool __verbose;
 
 void *thr_h1();
 
-
+void *thr_h4(void *arg);
 #endif /* MAIN_H_ */
 

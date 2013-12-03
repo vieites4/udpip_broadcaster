@@ -32,6 +32,8 @@ extern const unsigned char ls1[1];
 extern const unsigned char single[1];
 //Global variable for reference
 static unsigned short gTimer;
+int i=0;
+int PDR_sum=0;
 static int gTimer_lsp[1000];
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
 
@@ -40,7 +42,18 @@ static int gTimer_lsp[1000];
 #else
 #define PRF(format, args...) ((void)0)
 #endif
+int PDR_update(int Pdr_n)
+{
+int PDR_out;
+	// time_t PDR_t = time(0);
+i++;
+PDR_sum= PDR_sum + Pdr_n;
+printf("PDR_sum %d %d\n",Pdr_n,PDR_sum);
+PDR_out=PDR_sum/i;
+	     //   struct tm *tlocal = localtime(&PDR_t);
 
+	return(PDR_out);
+}
 tTimer * FindTimer(unsigned short TimerId,int num)
 {
 	List_timer * list= NULL;
@@ -168,10 +181,7 @@ void thr_h2(void *arg){
 	signal(SIGUSR2, CheckTimerEvent);
 	signal(SIGUSR1, CheckTimerEvent_lsp);	}
 
-void thr_h4(void *arg){
-	//sistema para contar canto tempo
 
-}
 
 List_locT * startup1(configuration_t *cfg)
 {
@@ -190,6 +200,7 @@ List_locT * startup1(configuration_t *cfg)
 	mpTimerList_lsp= init_timer_list ();
 	return (locT_general);}
 int a;
+
 
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	char * h_source= (char *)w->data;

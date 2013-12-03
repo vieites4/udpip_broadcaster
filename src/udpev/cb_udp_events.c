@@ -36,7 +36,11 @@ extern const unsigned char ls0[1];
 extern const unsigned char ls1[1];
 extern const unsigned char single[1];
 extern const unsigned char ETH_ADDR_BROADCAST[6];
+extern int PDR;
+
+
 #include "cb_udp_events.h"
+time_t PDR_t;
 extern itsnet_position_vector * LPV;
 struct ev_loop * l_Beacon;
 #if DEBUG_PRINT_ENABLED
@@ -70,7 +74,13 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	{PRF("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
 	//		(self-broadcast messages are not received)
 	if (memcmp((void *)type07,data+12,2)==0){
-
+		time_t PDR_t_new = time(0);
+		printf("time %d %d\n",PDR_t_new,PDR_t);
+		int PDR_n=PDR_t_new-PDR_t;
+		if (PDR_t!=0){PDR=PDR_update(PDR_n);}
+		PDR_t=PDR_t_new;
+		printf("time %d\n",PDR_n);
+		printf("PDR %d \n", PDR);
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 		/**if(memcmp((void *)data +6,h_source,6)==0){
@@ -78,7 +88,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		return;	}**/
 		PRF("cb_forward_recv \n");
 		memcpy(arg->data,data,arg->len);
-	//	print_hex_data((char *)data,arg->len);PRF(" cara arriba \n");
+		//	print_hex_data((char *)data,arg->len);PRF(" cara arriba \n");
 		char datos[arg->len];
 		memcpy(datos,data +14,arg->len);
 		char HT[1];char HL[1];char LEN[2];//PRF("sip \n");
@@ -89,7 +99,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		int lon_in=sprint_hex_data( LEN, 2);
 		int hl_int=sprint_hex_data( HL, 1);//PRF("sip \n");
 		int error =BasicHeader_processing(arg);
-        int duplicate=duplicate_control(datos,arg->locT);//PRF("sip \n");
+		int duplicate=duplicate_control(datos,arg->locT);//PRF("sip \n");
 		if(memcmp(HT,tsb0,1)==0&& (hl_int>1)){
 			PRF("entro en tsb \n");
 			if (error==0 && duplicate==1){
@@ -216,7 +226,7 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)||
 		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4+8);//==-1){}
 		ev_timer_again (l_Beacon,&t_Beacon);
 		print_hex_data(&tx_frame->buffer,header_length+ lon_int+4+8);
-					PRF(" paquete enviado directo \n");
+		PRF(" paquete enviado directo \n");
 		/**int total=header_length +lon_int +14+4;
 		int n_sends= floor(total/1500);**/
 		free(pkt);pkt=NULL;
