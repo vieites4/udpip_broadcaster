@@ -354,7 +354,7 @@ int sup_timer (unsigned short TimerId, int num)
 	List_timer *list;
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
 	position = FindTimer(TimerId,num);
-	if (position==NULL){PRF("null\n");}
+	if (position==NULL){PRF("null en sup_timer\n");}
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de timer\n");
 		list->init=list->init->pNext;

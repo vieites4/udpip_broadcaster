@@ -340,14 +340,14 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	int val=search_in_locT(data,locT_general);
 	if(val==0){add_end_locT (locT_general,*data);}else{AddTimer(dictionary[val],itsGnLifetimeLocTE,1);}
 	if(arg->lsp->len>0){
-		Element_lsp *pos=arg->lsp->init;
-		while(pos!=NULL){
+		Element_lsp *pos=arg->lsp->init;PRF("seguinte1\n");
+		while(pos!=NULL){PRF("seguinte2\n");
 			tTimer * temp;
 			int lon_int=sprint_hex_data(pos->data.basic_header.rhl, 1);
 			int size=sprint_hex_data(pos->data.common_header.payload_lenght, 2);
-			char zero[1]={0x00};
-			if (lon_int==1)memcpy(pos->data.basic_header.rhl,zero,1); else sprintf(pos->data.basic_header.rhl,"X02",lon_int-1);
-
+			PRF("seguinte\n");
+			if (lon_int==1)memset(pos->data.basic_header.rhl,0,1); else {sprintf(pos->data.basic_header.rhl,"X02",lon_int-1);PRF("seguinte5\n");}
+			PRF("seguinte\n");
 			//que pasa cando chega un 0 hop???
 
 			char HT[1];uint16_t sn=0xffff;int base=0;int mult=0;LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};	int num3=0;int num4=0;
@@ -363,7 +363,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 				lt->base=num3;lt->multiple=num4;
 				memcpy(pos->data.basic_header.lt,(void *)lt,1);
 				pos->data.payload.itsnet_tsb.source_position_vector=* LPV;
-			}else if(memcmp(HT,tsb0,1)==0){
+			}else if(memcmp(HT,tsb0,1)==0){PRF("seguinte3\n");
 				pos->data.payload.itsnet_shb.source_position_vector=* LPV;
 			}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;
@@ -394,7 +394,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			ev_timer_again (l_Beacon,&t_Beacon);
 			sup_elem_lsp(sn);
 			pos=pos->next;
-		}
+		}PRF("seguinte\n");
 		free(data);data=NULL;
 	}
 	//PRF("saio do common header");
