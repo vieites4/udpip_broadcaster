@@ -414,21 +414,18 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 int sup_elem_t_lsp (int num)
 {
 	Element_lsp * position=lsp_bc_g->init;
-	char LEN[2];
-	memcpy(LEN,position->data.common_header.payload_lenght+1,1);
-	memcpy(LEN+1,position->data.common_header.payload_lenght,1);
-	int buf_size=sprint_hex_data(LEN,2);
+
+	int buf_size=sprint_hex_data(position->data.common_header.payload_lenght,2);
 	itsnet_node *data;
 	int in=0;
 	PRF("entrei no sup_elem_t_lsp\n");
 	char SN[2];
 	while (in==0 && position!=NULL)
 	{
-		memcpy(SN,(char*)(&position->data.payload)+1,1);
-		memcpy(SN +1,&position->data.payload,1);
+		memcpy(SN,(char*)(&position->data.payload),2);
 		int num0=sprint_hex_data(SN,2);
 		if(num0==num)in=1; else position = position->next;}
-	if (position==NULL) printf("son null\n");
+	if (position==NULL) printf("son null, no sup_elem_t_lsp\n");
 	if(position->before==NULL){
 		//PRF("eliminamos o primeiro de lsp\n");
 		lsp_bc_g->init=lsp_bc_g->init->next;
@@ -511,10 +508,7 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 			lsp->end->next = new_element;}
 	lsp->end = new_element;
 	lsp ->len++;
-	char LEN[2];
-	memcpy(LEN,data.common_header.payload_lenght+1,1);
-	memcpy(LEN+1,data.common_header.payload_lenght,1);
-	lsp->size=lsp->size+sizeof(itsnet_common_header)+sprint_hex_data(LEN,2);
+	lsp->size=lsp->size+8+4+sprint_hex_data(data.common_header.payload_lenght,2);
 	PRF("AQUI en engadir en lsp! %d \n",lsp->len);
 	uint16_t sn;	LT_s *temp;
 	char HT[1];	char HL[1];
@@ -526,7 +520,7 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 		sn = data.payload.itsnet_tsb.sequencenumber;
 	}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 		sn = data.payload.itsnet_geobroadcast.sequencenumber;
-		temp = (LT_s *) data.basic_header.lt;}else{}
+		temp = (LT_s *) data.basic_header.lt;}else{sn=0;}
 	if(memcmp(HT,tsb1,1)==0 ||(memcmp(HT,tsb0,1)==0 && lon_int>1)||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 		int str2=temp->multiple;	int str1=temp->base;int num0;
 		if (str1==0){num0=50;}else if(str1==1){num0=100;}else if(str1==2){num0=1000;}else num0=10000;
@@ -564,10 +558,7 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 int sup_elem_lsp (int num){
 	int a=0;
 	Element_lsp *pos=lsp_bc_g->init;
-	char LEN[2];
-	memcpy(LEN,pos->data.common_header.payload_lenght+1,1);
-	memcpy(LEN+1,pos->data.common_header.payload_lenght,1);
-	int buf_size=sprint_hex_data(LEN,2);
+	int buf_size=sprint_hex_data(pos->data.common_header.payload_lenght,2);
 	PRF("eliminamos o primeiro de lsp \n");
 	lsp_bc_g->init=lsp_bc_g->init->next;
 	if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    PRF("eliminamos o unico de lsp\n");

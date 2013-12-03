@@ -14,7 +14,7 @@
 #define itsGnProtocolVersion 0
 #define itsGnStationType 0 //0 vehicle 1 roadside
 #define itsGnIsMobile 0// 0 stationary 1 mobile
-#define itsIfType 1 //0 unspecified 1 its-g5
+#define itsIfType 0 //0 unspecified 1 its-g5
 #define itsGnMinimunUpdateFrequencyLPV 1//0 roadside //1000 ms
 #define itsGnPaiInterval 80
 #define itsGnMaxSduSize 1398
