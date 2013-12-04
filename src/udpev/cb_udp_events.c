@@ -84,14 +84,12 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 		PRF("cb_forward_recvfmakerom1 \n");
 		PRF("RECIBO UN PAQUETE\n");
-		//print_hex_data(data, arg->len);PRF("\n");
 		memcpy(arg->data,data,arg->len);
 		//print_hex_data((char *)data,arg->len);PRF(" cara arriba \n");
 		char tipo[2];
 		memcpy(tipo,(char *)(arg->data) + 12 ,2);
 		char datos[arg->len];
 		memcpy(datos,data +14,arg->len);
-
 		char HT[1];
 		memcpy(HT,data +15,1);
 		itsnet_packet_f * pkt=NULL;
@@ -161,9 +159,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		}else if(memcmp(HT,ls0,1)==0){}
 		else if(memcmp(HT,ls1,1)==0){}
 		else{}
-		if(aa==1 && (memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
+		//if(aa==1 && (memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
 			//PRF("entro en free\n");
-			free(pkt);pkt=NULL;}
+			free(pkt);pkt=NULL;//}
 
 		//	PRF("comprobación %d\n",aa);
 		if (aa==3){
@@ -190,14 +188,13 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					//	memcpy(tx_frame1->buffer.data,(char *) pkt1,IEEE_80211_BLEN );
 					//}else {}
 					//	PRF("strlen(pkt1)  %d\n",strlen(pkt1));
-
 					sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 					//while(
 					send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, arg->len);//==-1){}
 					//print_hex_data(&tx_frame1->buffer,arg->len);// header_length +lon_int+14+4);
 					//PRF(" paquete enviado a ll despois de reenvio \n");
 					//print_hex_data(&tx_frame1->buffer,arg->len);PRF("  forward******* \n");
-					ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;
+					ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;free(tx_frame1);
 				}
 
 			}
@@ -217,24 +214,19 @@ if ( ( arg->len = recv_msg(arg->socket_fd, arg->msg_header, arg->local_addr->sin
 	PRF("cb_broadcast_recvfrom: <recv_msg> Could not receive message.\n");
 	return;		}
 
-
 char h_source[ETH_ALEN];
 get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
 ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROADCAST,h_source);
 char tipo[2]={0x07,0x07};
-
-
 PRF(" paquete \n");
 memcpy(tx_frame->buffer.header.type,tipo,2);
 char datos[arg->len];
 memcpy(datos,arg->data,arg->len);//+4
-
 //print_hex_data(datos,arg->len);PRF("\n");
 char HT[2];
 memcpy(HT,arg->data,2);
 itsnet_packet * pkt=NULL;
 pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
-
 char LEN[2] ;
 memcpy(LEN,(char *)(datos) +4,2);//print_hex_data(arg->data,arg->len);
 int lon_int=sprint_hex_data( LEN, 2);
@@ -250,7 +242,6 @@ if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
 } else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	PRF("entro en geobroad\n");
 	pkt = GeoBroadcast(datos,arg->lsp,arg->rep,arg->gn);
-
 }else if(memcmp(HT,geounicast,1)==0){
 	PRF("entro en geounicast\n");
 	pkt = GeoUnicast(datos,arg->lsp,arg->rep); //hai que decirlle a que dirección vai
@@ -264,27 +255,22 @@ else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoa
 if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	if (pkt!=NULL){
 		//&& (memcmp(HL,single,1)!=0)
-
 		//while(
 		//PRF(" arg->len %d lon_int %d \n",arg->len, lon_int);
 		int header_length=0;
-
 		if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=84;}
 		else if(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)==0)){header_length=36;}else if(memcmp(HT,tsb0,1)==0&& (memcmp(HL,single,1)!=0)){header_length=68;}else{PRF("son eu3!! \n");} //falta tsb
 		memcpy(tx_frame->buffer.data, (char *) pkt,lon_int+header_length+4);
 		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4);//==-1){}
 		ev_timer_again (l_Beacon,&t_Beacon);
-
 		int total=header_length +lon_int +14+4;
 		int n_sends= floor(total/1500);
 		//if (n_sends==0) print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4);
-
-
 		//PRF(" paquete enviado a ll %d %d.\n",header_length +lon_int+14+4,arg->len);
 		//print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4);
 		PRF("ENVIO UN PAQUETE DE CERO\n");
 	}
-	free(pkt);pkt=NULL;
+	free(pkt);pkt=NULL;free(tx_frame);
 }
 
 

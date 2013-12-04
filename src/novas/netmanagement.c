@@ -77,18 +77,18 @@ bool AddTimer(unsigned short TimerId, int num, int type)
 	// Check if the timer was found
 	if((pTimer == NULL) )
 	{PRF("esto si null\n");
-		new_element = (tTimer *) malloc(sizeof(tTimer));
-		new_element->TimerId = TimerId;
-		new_element->pNext = NULL;
-		new_element->Period = num;
-		if(list->init==NULL){new_element->before=list->init; new_element->pNext=list->end; list->init=new_element;  }
-		else {
-			new_element->before=list->end;
-			list->end->pNext = new_element;}
-		list->end = new_element;
-		list ->len++;
+	new_element = (tTimer *) malloc(sizeof(tTimer));
+	new_element->TimerId = TimerId;
+	new_element->pNext = NULL;
+	new_element->Period = num;
+	if(list->init==NULL){new_element->before=list->init; new_element->pNext=list->end; list->init=new_element;  }
+	else {
+		new_element->before=list->end;
+		list->end->pNext = new_element;}
+	list->end = new_element;
+	list ->len++;
 
-		// Check if the list is empty
+	// Check if the list is empty
 	}
 	if(pTimer != NULL)
 	{	// Set the timer interval
@@ -182,12 +182,12 @@ List_locT * startup1(configuration_t *cfg)
 	if (itsGnLocalAddrConfMethod==0){
 		PRF("AUTOADDRESS CONFIGURATION\n");
 		memset(&GN_ADDR,0,8);
-		  if (cfg->manually==true) GN_ADDR.manually=1; else GN_ADDR.manually=0;
+		if (cfg->manually==true) GN_ADDR.manually=1; else GN_ADDR.manually=0;
 
-		  GN_ADDR.itss_type=cfg->itss_type;
-		                if (cfg->scc>255){GN_ADDR.scc2=floor(cfg->scc/256);GN_ADDR.scc=cfg->scc-(256*GN_ADDR.scc2);
+		GN_ADDR.itss_type=cfg->itss_type;
+		if (cfg->scc>255){GN_ADDR.scc2=floor(cfg->scc/256);GN_ADDR.scc=cfg->scc-(256*GN_ADDR.scc2);
 
-		                                                        }else {GN_ADDR.scc=cfg->scc;GN_ADDR.scc2=0;}
+		}else {GN_ADDR.scc=cfg->scc;GN_ADDR.scc2=0;}
 
 	}else{
 		PRF("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
@@ -273,7 +273,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					memcpy(LPV->node_id.mac,h_source_trans,6);
 					i=100;				} } }else {if (a==1)memcpy(LPV,LPV_old,28);    }}
 
-  /**  memcpy(LPV_trans,LPV,2);
+	/**  memcpy(LPV_trans,LPV,2);
 	memcpy((char *)(LPV_trans)+2,(char *)(LPV)+7,1);memcpy((char *)(LPV_trans)+3,(char *)(LPV)+6,1);memcpy((char *)(LPV_trans)+4,(char *)(LPV)+5,1);memcpy((char *)(LPV_trans)+5,(char *)(LPV)+4,1);memcpy((char *)(LPV_trans)+6,(char *)(LPV)+3,1);
 	memcpy((char *)(LPV_trans)+7,(char *)(LPV)+2,1);memcpy((char *)LPV_trans+8,(char *)LPV+8,20);**/
 	gps_close (&gpsdata);
@@ -347,12 +347,12 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	char* num1[2];char* num2[2];
 	sprintf(num1,"%02X",(unsigned int)arg->port);	sprintf(num2,"%02X",(unsigned int)arg->forwarding_port);
 	memcpy(pkt->payload.itsnet_beacon.payload.btp1,num1,2);	memcpy(pkt->payload.itsnet_beacon.payload.btp2,num2,2);
-	memcpy(tx_frame->buffer.data, (char *) pkt,sizeof(itsnet_common_header)+sizeof(itsnet_beacon_t) );
+	memcpy(tx_frame->buffer.data, (char *) pkt,sizeof(itsnet_common_header)+sizeof(struct itsnet_beacon_t) );
 	// 2) broadcast application level UDP message to network level
 	//while(
-			send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);//==-1){}
-			PRF("beacon enviada\n");
-free(res);free(flags); free(tc);free(pkt);
+	send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);//==-1){}
+	PRF("beacon enviada\n");
+	free(res);free(flags); free(tc);free(pkt);
 }
 List_locT * init_locT ()
 {
@@ -443,11 +443,11 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 
 	Element_locT *aux;
 	Element_locT *to_erase;
-		aux = locT->init;
-		while (aux != NULL){//	print_hex_data(aux->data.mac_id.address,6);PRF(" lista loct en sup_elem\n");
+	aux = locT->init;
+	while (aux != NULL){//	print_hex_data(aux->data.mac_id.address,6);PRF(" lista loct en sup_elem\n");
 		aux = aux->next;}
 
-		//print_hex_data(pos->address,6);PRF(" para eliminar elemento loct\n");
+	//print_hex_data(pos->address,6);PRF(" para eliminar elemento loct\n");
 	int in=1;
 	itsnet_node *data;
 	data=(itsnet_node *)malloc(sizeof(itsnet_node));
@@ -483,7 +483,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	sup_timer(dictionary[num],1);
 	locT->len--;
 	locT_general=locT;
-memcpy(mac_list[num],ZEROS,6);
+	memcpy(mac_list[num],ZEROS,6);
 	taken[num]=false;
 	return 0;
 }
@@ -505,7 +505,7 @@ int sup_elem_t_lsp (int num)
 
 		memcpy(SN,(char*)(&position->data.payload)+1,1);
 		memcpy(SN +1,&position->data.payload,1);
-	//	print_hex_data(SN,2);PRF(" sn \n");
+		//	print_hex_data(SN,2);PRF(" sn \n");
 		int num0=sprint_hex_data(SN,2);
 		//PRF("num %d num0 %d busca sup_elem_t_lsp\n",num,num0);
 		if(num0==num)in=1; else position = position->next;}
@@ -519,9 +519,9 @@ int sup_elem_t_lsp (int num)
 		free(to_erase);
 	}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
 		to_erase=lsp_bc_g->end;
-	lsp_bc_g->end->before->next=NULL;
-	lsp_bc_g->end=lsp_bc_g->end->before;
-	free(to_erase);
+		lsp_bc_g->end->before->next=NULL;
+		lsp_bc_g->end=lsp_bc_g->end->before;
+		free(to_erase);
 
 	}else{
 		//PRF("eliminamos outro de lsp\n");
@@ -543,7 +543,7 @@ void view_locT (){
 	aux = locT_general->init;
 	while (aux != NULL){//	print_hex_data(aux->data.mac_id.address,6);
 		PRF(" lista loct\n");
-	aux = aux->next;}
+		aux = aux->next;}
 }
 void view_lsp (){
 	Element_lsp *aux;
@@ -551,7 +551,7 @@ void view_lsp (){
 	char LEN[2];
 	int num0;
 	while (aux != NULL){ //print_hex_data(&aux->data.payload,2);	PRF(" lista lsp\n");
-	aux = aux->next;
+		aux = aux->next;
 	}
 }
 
@@ -573,10 +573,10 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 		while ((i<17) &&(a==0)&& (e<17))
 
 		{
-		if (taken[i]==true){
-			//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
-			if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}else{ e++;i++;}}
-		else i++;		}	}
+			if (taken[i]==true){
+				//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
+				if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}else{ e++;i++;}}
+			else i++;		}	}
 	return(e);
 }
 
@@ -667,9 +667,10 @@ int sup_elem_lsp (int num){
 	PRF("eliminamos o primeiro \n");
 	Element_lsp *to_erase=lsp_bc_g->init;
 	lsp_bc_g->init=lsp_bc_g->init->next;
-	free(to_erase);
+
 	if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    PRF("eliminamos o unico \n");
 	}else{lsp_bc_g->init->before=NULL;}
+	free(to_erase);
 	//}
 	lsp_bc_g->len--;
 	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;

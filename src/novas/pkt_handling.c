@@ -73,7 +73,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	memcpy(tsb_h.lt,(void *)lt,1);
 	SN_g++; //máximo SN?? % SN_MAX;
 	tsb_h.source_position_vector=* LPV;
-free(lt);
+	free(lt);
 	memcpy(tsb_h.payload.payload,(char *)(buffer) +20,lon_int);
 	//print_hex_data();printf("  no tsb\n");
 	pkt->payload.itsnet_tsb=tsb_h;
@@ -90,10 +90,7 @@ free(lt);
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-
-
 		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
-
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
 			sup_elem_lsp(0xffff);
@@ -329,13 +326,13 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 		int lon_int=sprint_hex_data( HL, 1);
 		if ((memcmp(HT1,tsb1,1)==0 && (lon_int>1))||(memcmp(HT1,geobroad2,1)==0)||(memcmp(HT1,geobroad1,1)==0)||(memcmp(HT1,geobroad0,1)==0))
 		{
-		char SN[2];
-		memcpy(SN,arg->data+36+15,1);
-		memcpy(SN+1,arg->data+36+14,1);
-		//	print_hex_data(arg->data,60);PRF("\n");print_hex_data(SN,2);
-		uint16_t lon_int=sprint_hex_data( SN, 2);//PRF(" sequence number %d\n", lon_int);
-		data->Sequence_number=lon_int;}else{data->Sequence_number=0;
-		}
+			char SN[2];
+			memcpy(SN,arg->data+36+15,1);
+			memcpy(SN+1,arg->data+36+14,1);
+			//	print_hex_data(arg->data,60);PRF("\n");print_hex_data(SN,2);
+			uint16_t lon_int=sprint_hex_data( SN, 2);//PRF(" sequence number %d\n", lon_int);
+			data->Sequence_number=lon_int;}else{data->Sequence_number=0;
+			}
 		data->LS_PENDING=false;
 	}
 	int val=search_in_locT(data,locT_general);
@@ -399,22 +396,23 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			//while (
 			int header_length=0;
 
-								if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=84;}
-								else if(memcmp(HT,tsb0,1)==0&& (memcmp(Hop,single,1)==0)){header_length=36;}else if(memcmp(HT,tsb0,1)==0&& (memcmp(Hop,single,1)!=0)){header_length=68;}else{PRF("son eu3!! \n");} //falta tsb
+			if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=84;}
+			else if(memcmp(HT,tsb0,1)==0&& (memcmp(Hop,single,1)==0)){header_length=36;}else if(memcmp(HT,tsb0,1)==0&& (memcmp(Hop,single,1)!=0)){header_length=68;}else{PRF("son eu3!! \n");} //falta tsb
 
 			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer, header_length +size+14+4);//==-1){}
 			//PRF("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
 
 			//print_hex_data(&tx_frame->buffer, header_length +size+14+4);// header_length +lon_int+14+4);
-				PRF(" paquete enviado a ll despois de lsp %d\n", header_length +size+14+4);
+			PRF(" paquete enviado a ll despois de lsp %d\n", header_length +size+14+4);
 			ev_timer_again (l_Beacon,&t_Beacon);
 
 			sup_elem_lsp(sn);
 			//PRF("despois do sup_elem_lsp\n");
 			pos=pos->next;
 		}
-		free(data);data=NULL;
+
 	}
+	free(data);data=NULL;
 	//PRF("saio do common header");
 	//flush the SE LS_pkt_buffer
 	//forward the stored pkts
@@ -465,9 +463,10 @@ itsnet_packet_f * TSB_f(void *buffer,bool g){
 	memcpy(pkt->common_header.traffic_class,(char *)(buffer) +6,1);
 	char LEN[2] ;memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
 	int lon_int=sprint_hex_data( LEN, 2);
-	if (g==false){	memcpy(pkt->common_header.payload_lenght,LEN,2);
+	///if (g==false){
+		memcpy(pkt->common_header.payload_lenght,LEN,2);
 	pkt->common_header.pv=*PV;
-	}else{
+	//}else{
 		/**memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
 				memcpy((char *)(pkt->common_header.pv.heading)+1,PV->heading,1);memcpy(pkt->common_header.pv.heading,(char *)(PV->heading) +1,1);
 				memcpy((char *)(pkt->common_header.pv.altitude)+1,PV->altitude,1);memcpy(pkt->common_header.pv.altitude,(char *)(PV->altitude) +1,1);
@@ -478,16 +477,16 @@ itsnet_packet_f * TSB_f(void *buffer,bool g){
 				memcpy((char *)(pkt->common_header.pv.longitude)+1,(char *)(PV->longitude)+2,1);memcpy(pkt->common_header.pv.longitude,(char *)(PV->longitude) +3,1);
 				memcpy((char *)(pkt->common_header.pv.time_stamp)+3,PV->time_stamp,1);memcpy((char *)(pkt->common_header.pv.time_stamp)+2,(char *)(PV->time_stamp) +1,1);
 				memcpy((char *)(pkt->common_header.pv.time_stamp)+1,(char *)(PV->time_stamp)+2,1);memcpy(pkt->common_header.pv.time_stamp,(char *)(PV->time_stamp) +3,1);
-	**/memcpy(pkt->common_header.payload_lenght,LEN+1,1);memcpy(pkt->common_header.payload_lenght+1,LEN,1);
-	}
+		 **///memcpy(pkt->common_header.payload_lenght,LEN+1,1);memcpy(pkt->common_header.payload_lenght+1,LEN,1);
+	//}
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+7,1);
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_type.HST=0;
-		memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
-		pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
-		pkt->common_header.pkt_stype.HST=0;free(PV);
+	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
+	pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
+	pkt->common_header.pkt_stype.HST=0;free(PV);
 	//PRF("saio de tsb_f \n");
 	return(pkt);}
 
@@ -498,7 +497,7 @@ itsnet_packet_f * SHB_f(void *buffer,bool g){
 	//PRF("xa estou dentro de shb_f \n");
 	memcpy(&pkt->common_header.btp,(char *)(buffer),1);
 	//pkt->common_header.btp.HT=pkt->common_header.btp.HST;
-		//pkt->common_header.btp.HST=0;
+	//pkt->common_header.btp.HST=0;
 	itsnet_position_vector * PV=NULL;
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +8,28);
@@ -506,10 +505,11 @@ itsnet_packet_f * SHB_f(void *buffer,bool g){
 	char LEN[2] ;
 	memcpy(LEN,(char *)(buffer) +5,1);memcpy(LEN+1,(char *)(buffer) +4,1);
 	int lon_int=sprint_hex_data( LEN, 2);
-	if (g==false){memcpy(pkt->common_header.payload_lenght,LEN,2);
+	//if (g==false){
+		memcpy(pkt->common_header.payload_lenght,LEN,2);
 	pkt->common_header.pv=*PV;
-	}else{
-	/**	memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
+	//}else{
+		/**	memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
 		memcpy((char *)(pkt->common_header.pv.heading)+1,PV->heading,1);memcpy(pkt->common_header.pv.heading,(char *)(PV->heading) +1,1);
 		memcpy((char *)(pkt->common_header.pv.altitude)+1,PV->altitude,1);memcpy(pkt->common_header.pv.altitude,(char *)(PV->altitude) +1,1);
 		memcpy((char *)(&pkt->common_header.pv.accuracy)+1,&PV->accuracy,1);memcpy(&pkt->common_header.pv.accuracy,(char *)(&PV->accuracy) +1,1);
@@ -519,14 +519,14 @@ itsnet_packet_f * SHB_f(void *buffer,bool g){
 		memcpy((char *)(pkt->common_header.pv.longitude)+1,(char *)(PV->longitude)+2,1);memcpy(pkt->common_header.pv.longitude,(char *)(PV->longitude) +3,1);
 		memcpy((char *)(pkt->common_header.pv.time_stamp)+3,PV->time_stamp,1);memcpy((char *)(pkt->common_header.pv.time_stamp)+2,(char *)(PV->time_stamp) +1,1);
 		memcpy((char *)(pkt->common_header.pv.time_stamp)+1,(char *)(PV->time_stamp)+2,1);memcpy(pkt->common_header.pv.time_stamp,(char *)(PV->time_stamp) +3,1);
-		**/memcpy(pkt->common_header.payload_lenght,LEN+1,1);memcpy(pkt->common_header.payload_lenght+1,LEN,1);
-	}
+		 **///memcpy(pkt->common_header.payload_lenght,LEN+1,1);memcpy(pkt->common_header.payload_lenght+1,LEN,1);
+	//}
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+7,1);
-    print_hex_data(pkt->common_header.hop_limit,1);
+	print_hex_data(pkt->common_header.hop_limit,1);
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+36,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
-pkt->common_header.pkt_type.HST=0;
+	pkt->common_header.pkt_type.HST=0;
 	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
 	pkt->common_header.pkt_stype.HST=0;
@@ -553,9 +553,9 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+68+28,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_type.HST=0;
-		memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
-		pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
-		pkt->common_header.pkt_stype.HST=0;
+	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
+	pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
+	pkt->common_header.pkt_stype.HST=0;
 	//print_hex_data(LEN,2);
 	//PRF("medidas %d",lon_int);
 	free(PV);PV=NULL;
@@ -585,8 +585,8 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 		memcpy(pkt->payload.itsnet_geocast.repetitionInterval,(char *)(buffer)+8,4);
 		memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4);
 
-	//	pkt->common_header.longitude=PV->longitude;
-	//	pkt->common_header.latitude=PV->latitude;
+		//	pkt->common_header.longitude=PV->longitude;
+		//	pkt->common_header.latitude=PV->latitude;
 	}
 	else{
 
@@ -598,7 +598,7 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 		memcpy(pkt->payload.itsnet_geocast.repetitionInterval+2,(char *)(buffer)+9,1);memcpy(pkt->payload.itsnet_geocast.repetitionInterval+3,(char *)(buffer)+8,1);
 		memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+41,1);memcpy(pkt->payload.itsnet_geocast.lt+1,(char *)(buffer)+40,1);
 		memcpy(pkt->payload.itsnet_geocast.lt+2,(char *)(buffer)+39,1);memcpy(pkt->payload.itsnet_geocast.lt+3,(char *)(buffer)+38,1);
-	/**	memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
+		/**	memcpy((char *)(pkt->common_header.pv.speed)+1,PV->speed,1);memcpy(pkt->common_header.pv.speed,(char *)(PV->speed) +1,1);
 				memcpy((char *)(pkt->common_header.pv.heading)+1,PV->heading,1);memcpy(pkt->common_header.pv.heading,(char *)(PV->heading) +1,1);
 				memcpy((char *)(pkt->common_header.pv.altitude)+1,PV->altitude,1);memcpy(pkt->common_header.pv.altitude,(char *)(PV->altitude) +1,1);
 				memcpy((char *)(&pkt->common_header.pv.accuracy)+1,&PV->accuracy,1);memcpy(&pkt->common_header.pv.accuracy,(char *)(&PV->accuracy) +1,1);
@@ -608,16 +608,16 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 				memcpy((char *)(pkt->common_header.pv.longitude)+1,(char *)(PV->longitude)+2,1);memcpy(pkt->common_header.pv.longitude,(char *)(PV->longitude) +3,1);
 				memcpy((char *)(pkt->common_header.pv.time_stamp)+3,PV->time_stamp,1);memcpy((char *)(pkt->common_header.pv.time_stamp)+2,(char *)(PV->time_stamp) +1,1);
 				memcpy((char *)(pkt->common_header.pv.time_stamp)+1,(char *)(PV->time_stamp)+2,1);memcpy(pkt->common_header.pv.time_stamp,(char *)(PV->time_stamp) +3,1);
-**/
+		 **/
 	}
 
 	memcpy(pkt->payload.itsnet_geocast.payload,(char *)(buffer)+84,lon_int+4);
 	memcpy(pkt->payload.itsnet_geocast.reserved,(char *)(buffer)+2,1);	//hai que engadir o reservado. suponse q son 2 bytes
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_type.HST=0;
-		memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
-		pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
-		pkt->common_header.pkt_stype.HST=0;
+	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
+	pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
+	pkt->common_header.pkt_stype.HST=0;
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+7,1);
 
@@ -627,7 +627,7 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer,bool g){
 int geo_limit(void *HT,itsnet_packet_f *pkt)
 {
 	int x,y,r,total,a,b;
-printf("latitude lonxitude %d %d %d %d",pkt->common_header.pv.latitude,  LPV->latitude,pkt->common_header.pv.longitude,LPV->longitude);
+	printf("latitude lonxitude %d %d %d %d",pkt->common_header.pv.latitude,  LPV->latitude,pkt->common_header.pv.longitude,LPV->longitude);
 	x=abs(pkt->common_header.pv.latitude - LPV->latitude);
 	y=abs(pkt->common_header.pv.longitude - LPV->longitude);
 	char distA[2];
@@ -645,13 +645,13 @@ printf("latitude lonxitude %d %d %d %d",pkt->common_header.pv.latitude,  LPV->la
 			b=sprint_hex_data(distB, 2)*100;
 			total= fmin(1- pow((x/a),2) ,1- pow((y/b),2));
 			PRF("rectangular \n");
-			} else
-				if(memcmp(geobroad2,HT,1)==0){
-					a=sprint_hex_data(distA, 2)*100;
-					b=sprint_hex_data(distB, 2)*100;
-					total= 1- pow((x/a),2) - pow((y/b),2);
-						PRF("eliptica \n");
-				}
+		} else
+			if(memcmp(geobroad2,HT,1)==0){
+				a=sprint_hex_data(distA, 2)*100;
+				b=sprint_hex_data(distB, 2)*100;
+				total= 1- pow((x/a),2) - pow((y/b),2);
+				PRF("eliptica \n");
+			}
 	//free(pkt1);pkt1=NULL;
 	return(total);
 }
