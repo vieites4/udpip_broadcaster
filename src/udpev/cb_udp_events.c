@@ -194,7 +194,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					//print_hex_data(&tx_frame1->buffer,arg->len);// header_length +lon_int+14+4);
 					//PRF(" paquete enviado a ll despois de reenvio \n");
 					//print_hex_data(&tx_frame1->buffer,arg->len);PRF("  forward******* \n");
-					ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;free(tx_frame1);
+					ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;free(tx_frame1);free(dir);
 				}
 
 			}
@@ -226,7 +226,7 @@ memcpy(datos,arg->data,arg->len);//+4
 char HT[2];
 memcpy(HT,arg->data,2);
 itsnet_packet * pkt=NULL;
-pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
+//pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 char LEN[2] ;
 memcpy(LEN,(char *)(datos) +4,2);//print_hex_data(arg->data,arg->len);
 int lon_int=sprint_hex_data( LEN, 2);

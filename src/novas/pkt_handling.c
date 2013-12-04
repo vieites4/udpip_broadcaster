@@ -63,6 +63,10 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	tsb_h.sequencenumber=SN_g;
 	PRF("SN %d\n",tsb_h.sequencenumber);
 	int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
+
+	char TS_zero[4]; memset(TS_zero,0,4);
+		if (memcmp(TS,TS_zero,4)==0){ ts_num=itsGnMaxPacketLifeTime;}
+
 	LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};
 	if (ts_num>6401){base=3; mult=(int) ceil(ts_num/100); } else if (ts_num>64) {base=2; mult=(int) ceil(ts_num/10);}else {base=1; mult=ts_num;}
 	sprintf(str2, "%04X",mult);
@@ -203,7 +207,11 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	itsnet_geobroadcast_t gbc_h;
 	char TS [4];
 	memcpy(TS,(char *)(buffer) +12,4);
-	int ts_num=sprint_hex_data(TS,4);int base=0;int mult=0;int num4=0;int num3=0;
+	int ts_num=sprint_hex_data(TS,4);
+	char TS_zero[4]; memset(TS_zero,0,4);
+	if (memcmp(TS,TS_zero,4)==0){ ts_num=itsGnMaxPacketLifeTime;}
+
+	int base=0;int mult=0;int num4=0;int num3=0;
 	LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};
 	if (ts_num>6401){base=3; mult=(int) ceil(ts_num/100); } else if (ts_num>64) {base=2; mult=(int) ceil(ts_num/10);}else {base=1; mult=ts_num;}
 	sprintf(str2, "%04X",mult);
@@ -309,7 +317,8 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	memcpy( FLAG,buffer +3+14,1);
 	itsnet_node * data=NULL;//
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
-	//PRF("entro1\n");
+	//PRF("entro1\n");data
+
 	memcpy(data->mac_id.address,buffer+6,6);
 	data->IS_NEIGHBOUR=true;
 	data->pos_vector= * PV;
@@ -401,12 +410,13 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 
 			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer, header_length +size+14+4);//==-1){}
 			//PRF("elementos enviados: %d \n",sizeof(itsnet_common_header)+ size);
-
+free(tx_frame);free(dir);
 			//print_hex_data(&tx_frame->buffer, header_length +size+14+4);// header_length +lon_int+14+4);
 			PRF(" paquete enviado a ll despois de lsp %d\n", header_length +size+14+4);
 			ev_timer_again (l_Beacon,&t_Beacon);
 
 			sup_elem_lsp(sn);
+
 			//PRF("despois do sup_elem_lsp\n");
 			pos=pos->next;
 		}
@@ -486,7 +496,8 @@ itsnet_packet_f * TSB_f(void *buffer,bool g){
 	pkt->common_header.pkt_type.HST=0;
 	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
 	pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
-	pkt->common_header.pkt_stype.HST=0;free(PV);
+	pkt->common_header.pkt_stype.HST=0;
+	free(PV);
 	//PRF("saio de tsb_f \n");
 	return(pkt);}
 
