@@ -73,7 +73,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	memcpy(tsb_h.lt,(void *)lt,1);
 	SN_g++; //máximo SN?? % SN_MAX;
 	tsb_h.source_position_vector=* LPV;
-
+free(lt);
 	memcpy(tsb_h.payload.payload,(char *)(buffer) +20,lon_int);
 	//print_hex_data();printf("  no tsb\n");
 	pkt->payload.itsnet_tsb=tsb_h;
@@ -89,7 +89,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 		memcpy(pkt->payload.itsnet_tsb.payload.btp2,info_dest,2);		}
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
-		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 
 
 		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
@@ -153,8 +153,9 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	memcpy(pkt->payload.itsnet_shb.payload.btp2,info_dest,2);		}
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
-		pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		pkt1=NULL;int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
+		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		//pkt1=NULL;
+		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
@@ -214,6 +215,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	num3=strtol(str1,NULL,16);
 	lt->base=num3;lt->multiple=num4;
 	memcpy(gbc_h.lt,(void *)lt,1);
+	free(lt);
 	//	ch.txpower=0;
 	//create extended header
 	//char SO_pv[28];
@@ -485,7 +487,7 @@ itsnet_packet_f * TSB_f(void *buffer,bool g){
 	pkt->common_header.pkt_type.HST=0;
 		memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1,1);
 		pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
-		pkt->common_header.pkt_stype.HST=0;
+		pkt->common_header.pkt_stype.HST=0;free(PV);
 	//PRF("saio de tsb_f \n");
 	return(pkt);}
 

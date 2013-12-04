@@ -105,8 +105,8 @@ unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 nTimer = gTimer;gTimer = 0;
 // Check for TimerId
-mac_addr * pos;
-pos=(mac_addr *)malloc(6);
+//mac_addr * pos;
+//pos=(mac_addr *)malloc(6);
 if( nTimer != 0)
 { if((nTimer & TIMER_1)!=0)     {	sup_elem_locT(1,mac_list[1],locT_general);    }
 if((nTimer & TIMER_2)!=0)       { 	sup_elem_locT(2,mac_list[2],locT_general);    }
@@ -352,7 +352,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	//while(
 			send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, sizeof(itsnet_common_header)+sizeof(itsnet_btp_wo_payload_t)+14);//==-1){}
 			PRF("beacon enviada\n");
-
+free(res);free(flags); free(tc);free(pkt);
 }
 List_locT * init_locT ()
 {
@@ -407,22 +407,29 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 int sup_timer (unsigned short TimerId, int num)
 {
 	tTimer * position=NULL;
+	tTimer * to_erase;
 	List_timer *list;
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
 	position = FindTimer(TimerId,num);
 	if (position==NULL){PRF("null\n");}
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de timer\n");
+		to_erase=list->init;
 		list->init=list->init->pNext;
+		free(to_erase);
 		if(list->len==1){list->end=NULL;   PRF("eliminamos o unico \n");
 		}else{list->init->before=NULL;}
 	}else if (position->pNext==NULL){       PRF("eliminamos o ultimo de timer \n");
+	to_erase=list->end;
 	list->end->before->pNext=NULL;
 	list->end=list->end->before;
+	free(to_erase);
 	}else{
 		PRF("eliminamos outro de timer \n");
+		to_erase=position;
 		position->before->pNext=position->pNext;
 		position->pNext->before=position->before;
+		free(to_erase);
 	}
 	list->len--;
 	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}
@@ -435,6 +442,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	Element_locT * position=locT->init;
 
 	Element_locT *aux;
+	Element_locT *to_erase;
 		aux = locT->init;
 		while (aux != NULL){//	print_hex_data(aux->data.mac_id.address,6);PRF(" lista loct en sup_elem\n");
 		aux = aux->next;}
@@ -451,20 +459,27 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	while (in<(a))
 	{in++;position = position->next;//print_hex_data(position->data.mac_id.address,6);PRF(" \n");
 	}
-	//PRF("busco position %d\n",a);
-	if (position==NULL) PRF("son null\n"); //print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
+
+	if (position==NULL) PRF("son null no sup_elem_loct\n"); //print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de loct\n");
+		to_erase=locT->init;
 		locT->init=locT->init->next;
+		free(to_erase);
 		if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico \n");
 		}else{locT->init->before=NULL;}
 	}else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
+	to_erase=locT->end;
 	locT->end->before->next=NULL;
 	locT->end=locT->end->before;
+	free((void *)to_erase);
 	}else{
+		to_erase=position;
 		PRF("eliminamos outro de loct\n");
 		position->before->next=position->next;
-		position->next->before=position->before;	}
+		position->next->before=position->before;
+		free(to_erase);
+	}
 	sup_timer(dictionary[num],1);
 	locT->len--;
 	locT_general=locT;
@@ -476,6 +491,7 @@ memcpy(mac_list[num],ZEROS,6);
 int sup_elem_t_lsp (int num)
 {
 	Element_lsp * position=lsp_bc_g->init;
+	Element_lsp * to_erase;
 	char LEN[2];
 	memcpy(LEN,position->data.common_header.payload_lenght+1,1);
 	memcpy(LEN+1,position->data.common_header.payload_lenght,1);
@@ -486,6 +502,7 @@ int sup_elem_t_lsp (int num)
 	char SN[2];
 	while (in==0 && position!=NULL)
 	{
+
 		memcpy(SN,(char*)(&position->data.payload)+1,1);
 		memcpy(SN +1,&position->data.payload,1);
 	//	print_hex_data(SN,2);PRF(" sn \n");
@@ -495,16 +512,24 @@ int sup_elem_t_lsp (int num)
 	if (position==NULL) printf("son null\n");
 	if(position->before==NULL){
 		//PRF("eliminamos o primeiro de lsp\n");
+		to_erase=lsp_bc_g->init;
 		lsp_bc_g->init=lsp_bc_g->init->next;
 		if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    //	PRF("eliminamos o unico \n");
 		}else{lsp_bc_g->init->before=NULL;}
+		free(to_erase);
 	}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
+		to_erase=lsp_bc_g->end;
 	lsp_bc_g->end->before->next=NULL;
 	lsp_bc_g->end=lsp_bc_g->end->before;
+	free(to_erase);
+
 	}else{
 		//PRF("eliminamos outro de lsp\n");
+		to_erase=position;
 		position->before->next=position->next;
-		position->next->before=position->before;	}
+		position->next->before=position->before;
+		free(to_erase);
+	}
 	//free(SN);SN=NULL;
 	sup_timer(num,2);
 	lsp_bc_g->len--;
@@ -640,7 +665,9 @@ int sup_elem_lsp (int num){
 	int buf_size=sprint_hex_data(LEN,2);
 	//if(pos->before==NULL){
 	PRF("eliminamos o primeiro \n");
+	Element_lsp *to_erase=lsp_bc_g->init;
 	lsp_bc_g->init=lsp_bc_g->init->next;
+	free(to_erase);
 	if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    PRF("eliminamos o unico \n");
 	}else{lsp_bc_g->init->before=NULL;}
 	//}
@@ -693,6 +720,7 @@ int duplicate_control(void * data,List_locT * locT){
 			}		  }
 		aux = aux->next;
 	}
+	free(buffer);
 	PRF("saio de duplicate control\n");
 
 	return(i);
