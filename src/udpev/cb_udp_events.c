@@ -67,9 +67,13 @@ volatile sig_atomic_t keep_going = 1;
 
 void cb_forward_recvfrom(public_ev_arg_r *arg)
 {
+
+	char data[ITSNET_DATA_SIZE*3];
+
+
 	arg->len = 0;int error=0;int aa=0;
 	// 1) read UDP message from network level
-	char data[ITSNET_DATA_SIZE*3];
+
 	if ( ( arg->len = recv_message(arg->socket_fd,data))<0)
 	{PRF("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
 	//		(self-broadcast messages are not received)
