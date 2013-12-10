@@ -4,6 +4,7 @@ const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 const unsigned char ZEROS[ETH_ALEN] ={ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
 extern List_lsp * lsp_bc_g;
 extern itsnet_node_id GN_ADDR;
+extern int PDR;
 itsnet_position_vector * LPV;
 itsnet_position_vector *LPV_old;
 //itsnet_position_vector *LPV_trans;
@@ -201,13 +202,13 @@ List_locT * startup1(configuration_t *cfg)
 	return (locT_general);}
 int a;
 
-
+gps_data_t * gpsdata_p=NULL;
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	char * h_source= (char *)w->data;
-	gps_data_t * gpsdata_p=NULL;
-	if (a==1)free(gpsdata_p);
+
+	//if (a==1)free(gpsdata_p);
 	gps_data_t gpsdata;
-	gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
+	if (a==0)gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
 	gpsdata=*gpsdata_p;
 	PRF ("ENTRO NO DO LPV_update\n");
 	int timer;
@@ -215,10 +216,11 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	//LPV_trans=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	timer=50000;}else timer=5000;
 	if (a==1) {memcpy(LPV_old,LPV,24);}
-	if (a==1)free(LPV);
+	if (a==0)	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	//if (a==1)free(LPV);
 	a=1;
-	LPV=NULL;
-	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	//LPV=NULL;
+
 	if( gps_open("localhost","2947",&gpsdata)!=0){
 		return(LPV);
 	}
@@ -307,7 +309,9 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	memcpy(tx_frame->buffer.data, (char *) pkt,8+4+24);
 	// 2) broadcast application level UDP message to network level
 	//while(
+	free(tc);free(flags);free(res);free(pkt);
 	send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer,24+8+4+14);//==-1){}
+	free(tx_frame);
 	PRF("beacon enviada\n");
 
 }
@@ -481,6 +485,7 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 	while (aux != NULL){
 		if (memcmp(aux->data.mac_id.address,data->mac_id.address,6)==0){
 			i=1;
+			aux->data.pdr=PDR;
 			if(((aux->data.pos_vector.time_stamp < data->pos_vector.time_stamp ) &&(data->pos_vector.time_stamp - aux->data.pos_vector.time_stamp <=4294967296/2))||((aux->data.pos_vector.time_stamp > data->pos_vector.time_stamp)&&(-data->pos_vector.time_stamp + aux->data.pos_vector.time_stamp >4294967296/2)))
 			{				aux->data.pos_vector=data->pos_vector;
 			aux->data.expires.tv_sec= itsGnLifetimeLocTE;

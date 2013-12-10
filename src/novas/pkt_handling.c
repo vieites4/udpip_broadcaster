@@ -28,7 +28,7 @@ extern unsigned short dictionary[16];
 extern List_locT *locT_general;
 extern List_lsp * lsp_bc_g;
 extern ev_timer t_Beacon;
-
+extern int PDR;
 #if DEBUG_PRINT_ENABLED
 #define PRF printf
 #else
@@ -285,14 +285,14 @@ void GeoAnycast(){}
 int BasicHeader_processing(public_ev_arg_r *arg){
 
 	char buffer[arg->len];
-		memcpy(buffer,arg->data,arg->len);
-		ht_hst_t VERSION;
-		memcpy(&VERSION,buffer+14,1);
-		int error=0;
-		if (VERSION.HT!=itsGnProtocolVersion){return(1);}
-		if (itsIfType==1){PRF("Media-dependent funcionalities for ITS-G5\n");}
-		if (VERSION.HST!=2){error =CommonHeader_processing(arg);}else{ PRF("SECURE!\n");}
-return(error);
+	memcpy(buffer,arg->data,arg->len);
+	ht_hst_t VERSION;
+	memcpy(&VERSION,buffer+14,1);
+	int error=0;
+	if (VERSION.HT!=itsGnProtocolVersion){return(1);}
+	if (itsIfType==1){PRF("Media-dependent funcionalities for ITS-G5\n");}
+	if (VERSION.HST!=2){error =CommonHeader_processing(arg);}else{ PRF("SECURE!\n");}
+	return(error);
 
 }
 int CommonHeader_processing(public_ev_arg_r *arg){
@@ -327,6 +327,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	ht_hst_t *conv=(ht_hst_t *)VERSION;
 	data->version=conv->HT; //comprobar si es correcto
 	data->itss_type=FLAG->itsStation;
+	data->pdr= PDR;
 	//data->pdr
 	free(FLAG);FLAG=NULL;
 	if(memcmp(HT1,beacon,1)!=0 ){
@@ -364,7 +365,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 				memcpy(pos->data.basic_header.lt,(void *)lt,1);
 				pos->data.payload.itsnet_tsb.source_position_vector=* LPV;
 			}else if(memcmp(HT,tsb0,1)==0){PRF("seguinte3\n");
-				pos->data.payload.itsnet_shb.source_position_vector=* LPV;
+			pos->data.payload.itsnet_shb.source_position_vector=* LPV;
 			}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;
 				temp=FindTimer(sn,2);
@@ -386,11 +387,11 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			memcpy(tx_frame->buffer.data, &pos->data, IEEE_80211_BLEN);
 
 			int header_length=0;
-					if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=44;} //cambiar esto por datos novos
-					else if(memcmp(HT,tsb0,1)==0){header_length=28;}
-			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,header_length+ size+4+8+14+4);//==-1){}
+			if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=44;} //cambiar esto por datos novos
+			else if(memcmp(HT,tsb0,1)==0){header_length=28;}
+if (PDR<= itsGnMaxPacketDataRate) send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,header_length+ size+4+8+14+4);//==-1){}
 			print_hex_data(&tx_frame->buffer,header_length+ size+4+8);
-			PRF(" paquete enviado a ll despois de lsp \n");
+			PRF(" paquete enviado a ll despois de lsp \n");free(tx_frame);free(dir);free(pos);
 			ev_timer_again (l_Beacon,&t_Beacon);
 			sup_elem_lsp(sn);
 			pos=pos->next;
@@ -435,25 +436,25 @@ void determine_nexthop(){
 }
 
 itsnet_packet_f * TSB_f(void *buffer){
-
+	PRF("AQI SI\n");
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
 	memcpy(&pkt->common_header.btp,(char *)(buffer)+4,1);
-	pkt->common_header.btp.HST=pkt->common_header.btp.HT;
+	pkt->common_header.btp.HST=pkt->common_header.btp.HT;PRF("AQI SI\n");
 	itsnet_position_vector * PV=NULL;//
-	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));PRF("AQI SI\n");
 	memcpy(PV,(char *)(buffer) +4+4+8,24);
 	memcpy(pkt->common_header.traffic_class,(char *)(buffer) +6,1);
 	char LEN[2];memcpy(LEN,(char *)(buffer) +4+4,2);
 	int lon_int=sprint_hex_data( LEN, 2);
 	memcpy(pkt->common_header.payload_lenght,LEN,2);
 	pkt->common_header.pv=*PV;
-	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);
+	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);PRF("AQI SI\n");
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+3,1);
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+4+24+8,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1+4,1);
 	pkt->common_header.pkt_type.HST=0;
-	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1+4,1);
+	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1+4,1);PRF("AQI SI\n");
 	pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
 	pkt->common_header.pkt_stype.HST=0;
 	return(pkt);}

@@ -150,10 +150,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		}else if(memcmp(HT,ls0,1)==0){}
 		else if(memcmp(HT,ls1,1)==0){}
 		else{}
-
 		if(aa==1 && (memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
 			free(pkt);pkt=NULL;}
-		if (aa==3){
+		if (aa==3 && PDR<= itsGnMaxPacketDataRate){
 			if ( memcmp(HT,tsb0,1)==0 ||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0||memcmp(HT,geounicast,1)==0 ){
 				PRF("entro no envio do enlace cara o enlace \n");
 				if (hl_int>1){
@@ -172,8 +171,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					memcpy(tx_frame1->buffer.data,(char *)  pkt1, arg->len);
 					sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 					send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, arg->len);
-					ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;
+					ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;free(tx_frame1);free(dir);
 				}			}		}	}//else{PRF("NON SON DESE TIPO!!\n");}
+	PRF("AQI SI ANTES DE AA==3\n");
 }
 
 /* cb_broadcast_recvfrom */
@@ -221,7 +221,7 @@ else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoa
 }else{}
 // 2) broadcast application level UDP message to network level
 if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
-	if (pkt!=NULL){
+	if (pkt!=NULL&& PDR<= itsGnMaxPacketDataRate){
 		//&& (memcmp(HL,single,1)!=0)
 		int header_length=0;
 		if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=44;}
@@ -233,11 +233,13 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)||
 		PRF(" paquete enviado directo \n");
 		/**int total=header_length +lon_int +14+4;
 		int n_sends= floor(total/1500);**/
-		free(pkt);pkt=NULL;
+
 	}
-}
+
+}	free(pkt);pkt=NULL;free(tx_frame);
 //PRF("saio ben do cb_broadcast_recvfrom\n");
-//view_locT();PRF("pinto lista loct \n");
+//view_locT();
+PRF("pinto lista loct \n");
 //view_lsp();PRF("pinto lista lsp\n");
 //view_timers();PRF("pinto lista timers lsp \n");
 //return();

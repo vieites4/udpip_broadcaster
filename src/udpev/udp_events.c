@@ -147,10 +147,10 @@ void *init_app_udp_events
 }
 
 /* free_udp_events */
-void free_udp_events(udp_events_t *m)
+/**void free_udp_events(udp_events_t *m)
 {
 	free(m);
-}
+}**/
 
 /* print_udp_events */
 void print_udp_events
