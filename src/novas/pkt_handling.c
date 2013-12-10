@@ -416,7 +416,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			ev_timer_again (l_Beacon,&t_Beacon);
 
 			sup_elem_lsp(sn);
-
+			//free(&pos->data);
 			//PRF("despois do sup_elem_lsp\n");
 			pos=pos->next;
 		}
