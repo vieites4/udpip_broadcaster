@@ -112,7 +112,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
 	//PRF("saio de tsb\n");
-	return(pkt);
+	free(lt);return(pkt);
 }
 
 itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
@@ -189,7 +189,7 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
-	return(pkt);}
+	free(lt);return(pkt);}
 itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 
 
@@ -276,7 +276,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	//execute simple geobroadcast forwarding algorithm
 	//implement F function to obtain LL_ADDR
 	//}
-	return(pkt);
+	free(lt);return(pkt);
 }
 
 void GeoAnycast(){}
@@ -391,7 +391,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			else if(memcmp(HT,tsb0,1)==0){header_length=28;}
 if (PDR<= itsGnMaxPacketDataRate) send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,header_length+ size+4+8+14+4);//==-1){}
 			print_hex_data(&tx_frame->buffer,header_length+ size+4+8);
-			PRF(" paquete enviado a ll despois de lsp \n");free(tx_frame);free(dir);free(pos);
+			PRF(" paquete enviado a ll despois de lsp \n");free(tx_frame);free(dir);
 			ev_timer_again (l_Beacon,&t_Beacon);
 			sup_elem_lsp(sn);
 			pos=pos->next;

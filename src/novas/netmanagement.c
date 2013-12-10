@@ -45,13 +45,13 @@ static int gTimer_lsp[1000];
 #endif
 int PDR_update(int Pdr_n)
 {
-int PDR_out;
+	int PDR_out;
 	// time_t PDR_t = time(0);
-i++;
-PDR_sum= PDR_sum + Pdr_n;
-printf("PDR_sum %d %d\n",Pdr_n,PDR_sum);
-PDR_out=PDR_sum/i;
-	     //   struct tm *tlocal = localtime(&PDR_t);
+	i++;
+	PDR_sum= PDR_sum + Pdr_n;
+	printf("PDR_sum %d %d\n",Pdr_n,PDR_sum);
+	PDR_out=PDR_sum/i;
+	//   struct tm *tlocal = localtime(&PDR_t);
 
 	return(PDR_out);
 }
@@ -113,7 +113,7 @@ unsigned short nTimer;
 nTimer = gTimer;gTimer = 0;
 // Check for TimerId
 mac_addr * pos;
-pos=(mac_addr *)malloc(6);
+//pos=(mac_addr *)malloc(6);
 if( nTimer != 0)
 { if((nTimer & TIMER_1)!=0)     {	sup_elem_locT(1,mac_list[1],locT_general);    }
 if((nTimer & TIMER_2)!=0)       { 	sup_elem_locT(2,mac_list[2],locT_general);    }
@@ -392,6 +392,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 {
 	Element_locT * position=locT->init;
 	Element_locT *aux;
+	Element_locT *to_erase;
 	aux = locT->init;
 	while (aux != NULL){//	print_hex_data(aux->data.mac_id.address,6);PRF(" lista loct en sup_elem\n");
 		aux = aux->next;}
@@ -408,16 +409,23 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	if (position==NULL) PRF("a posición é null\n"); //print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de loct\n");
+		to_erase=locT->init;
 		locT->init=locT->init->next;
+		free(to_erase);
 		if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico de loct\n");
 		}else{locT->init->before=NULL;}
 	}else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
+	to_erase=locT->end;
 	locT->end->before->next=NULL;
 	locT->end=locT->end->before;
+	free((void *)to_erase);
 	}else{
+		to_erase=position;
 		PRF("eliminamos outro de loct\n");
 		position->before->next=position->next;
-		position->next->before=position->before;	}
+		position->next->before=position->before;
+		free(to_erase);
+	}
 	sup_timer(dictionary[num],1);
 	locT->len--;
 	locT_general=locT;
@@ -429,7 +437,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 int sup_elem_t_lsp (int num)
 {
 	Element_lsp * position=lsp_bc_g->init;
-
+	Element_lsp *to_erase;
 	int buf_size=sprint_hex_data(position->data.common_header.payload_lenght,2);
 	itsnet_node *data;
 	int in=0;
@@ -442,17 +450,23 @@ int sup_elem_t_lsp (int num)
 		if(num0==num)in=1; else position = position->next;}
 	if (position==NULL) printf("son null, no sup_elem_t_lsp\n");
 	if(position->before==NULL){
+		to_erase=lsp_bc_g->init;
 		//PRF("eliminamos o primeiro de lsp\n");
 		lsp_bc_g->init=lsp_bc_g->init->next;
 		if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    //	PRF("eliminamos o unico \n");
 		}else{lsp_bc_g->init->before=NULL;}
+		free(to_erase);
 	}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
+		to_erase=lsp_bc_g->end;
 		lsp_bc_g->end->before->next=NULL;
-		lsp_bc_g->end=lsp_bc_g->end->before;
+		lsp_bc_g->end=lsp_bc_g->end->before;free(to_erase);
 	}else{
 		//PRF("eliminamos outro de lsp\n");
+		to_erase=position;
 		position->before->next=position->next;
-		position->next->before=position->before;	}
+		position->next->before=position->before;
+		free(to_erase);
+	}
 	//free(SN);SN=NULL;
 	sup_timer(num,2);
 	lsp_bc_g->len--;
@@ -574,11 +588,13 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 int sup_elem_lsp (int num){
 	int a=0;
 	Element_lsp *pos=lsp_bc_g->init;
+	Element_lsp *to_erase=lsp_bc_g->init;
 	int buf_size=sprint_hex_data(pos->data.common_header.payload_lenght,2);
 	PRF("eliminamos o primeiro de lsp \n");
 	lsp_bc_g->init=lsp_bc_g->init->next;
 	if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    PRF("eliminamos o unico de lsp\n");
 	}else{lsp_bc_g->init->before=NULL;}
+	free(to_erase);
 	lsp_bc_g->len--;
 	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
 	char HT[1];uint16_t sn;char HL[1];
@@ -628,6 +644,7 @@ int duplicate_control(void * data,List_locT * locT){
 			}		  }
 		aux = aux->next;
 	}
+	free(buffer);
 	PRF("saio de duplicate control\n");
 
 	return(i);
