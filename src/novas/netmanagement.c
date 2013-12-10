@@ -57,11 +57,11 @@ tTimer * FindTimer(unsigned short TimerId,int num)
 	{        // Move through the list until the timer id is found
 		while((pTimer!= NULL) )
 		{            // Timer ids - not match, Move onto the next timer
-			if (pTimer->TimerId == TimerId){PRF("COINCIDENCIA!!!\n");
+			if (pTimer->TimerId == TimerId){//PRF("COINCIDENCIA!!!\n");
 			pTimerC=pTimer;}
 			pTimer = pTimer->pNext;        }    }
 
-	PRF("saio de find timer\n");
+	//PRF("saio de find timer\n");
 	return (pTimerC);}
 
 bool AddTimer(unsigned short TimerId, int num, int type)
@@ -198,26 +198,26 @@ List_locT * startup1(configuration_t *cfg)
 	mpTimerList_lsp= init_timer_list ();
 	return (locT_general);}
 
-
+gps_data_t * gpsdata_p=NULL;
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	char * h_source= (char *)w->data;
-	gps_data_t * gpsdata_p=NULL;
+
 	static int a=0;
-	if (a==1)free(gpsdata_p);
+	//if (a==1)free(gpsdata_p);
 	gps_data_t gpsdata;
-	gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
+	if (a==0) gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
 	gpsdata=*gpsdata_p;
 	PRF ("ENTRO NO DO LPV\n");
 	int timer;
 	if (a==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	//LPV_trans=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	timer=50000;}else timer=5000;
-
+	if (a==0) LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	if (a==1) {memcpy(LPV_old,LPV,28);}
-	if (a==1){PRF("LIBERA LPV \n)");free(LPV);}
+	//if (a==1){free(LPV);}
 	a=1;
-	LPV=NULL;
-	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+
+
 	if( gps_open("localhost","2947",&gpsdata)!=0){
 		return(LPV);
 	}
@@ -552,7 +552,7 @@ void view_locT (){
 	Element_locT *aux;
 	aux = locT_general->init;
 	while (aux != NULL){//	print_hex_data(aux->data.mac_id.address,6);
-		PRF(" lista loct\n");
+		//PRF(" lista loct\n");
 		aux = aux->next;}
 }
 void view_lsp (){
@@ -717,7 +717,7 @@ int duplicate_control(void * data,List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
 	int i=1;
-	PRF("entro en duplicate control\n");
+	//PRF("entro en duplicate control\n");
 	itsnet_node_id * buffer=NULL;//
 	buffer= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
 	memcpy(buffer,data +8,8);
@@ -733,7 +733,7 @@ int duplicate_control(void * data,List_locT * locT){
 		aux = aux->next;
 	}
 	free(buffer);
-	PRF("saio de duplicate control\n");
+	//PRF("saio de duplicate control\n");
 
 	return(i);
 }

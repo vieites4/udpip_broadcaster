@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 	List_locT * locT_g;
 
 	pthread_t h1,h3, h_locT,h_lsp;
-PRF(">>> Reading configuration...\n");
+	PRF(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
 	PRF(">>> Configuration read! Printing data...\n");
 	print_configuration(cfg);

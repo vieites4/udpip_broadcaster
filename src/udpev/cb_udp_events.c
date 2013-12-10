@@ -97,7 +97,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		memcpy(HL,(char *)(arg->data) +14+7,1);
 		char LEN[2];
 		memcpy(LEN,(char *)(datos) +5,1);memcpy(LEN+1,(char *)(datos) +4,1);
-		int lon_in=sprint_hex_data( LEN, 2);PRF("lon_in %d %d \n",lon_in,arg->len);
+		int lon_in=sprint_hex_data( LEN, 2);//PRF("lon_in %d %d \n",lon_in,arg->len);
 		int lon_int=sprint_hex_data( HL, 1);
 		if(memcmp(HT,tsb0,1)==0&& (lon_int>1)){
 			PRF("entro en tsb \n");
@@ -116,7 +116,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			error =CommonHeader_processing(arg);//print_hex_data(datos,arg->len);PRF("  chegada desde ll shb \n");
 			pkt = SHB_f(datos,arg->gn); //	memcpy(tx_frame1->buffer.data,(char *)  pkt, lon_in +20);
 			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40);//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
-			PRF("envio realizado\n");
+			//PRF("envio realizado\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			PRF("entro en geobroadcast \n");
 			error =CommonHeader_processing(arg);
@@ -160,8 +160,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		else if(memcmp(HT,ls1,1)==0){}
 		else{}
 		//if(aa==1 && (memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
-			//PRF("entro en free\n");
-			free(pkt);pkt=NULL;//}
+		//PRF("entro en free\n");
+		free(pkt);pkt=NULL;//}
 
 		//	PRF("comprobación %d\n",aa);
 		if (aa==3){
@@ -218,7 +218,7 @@ char h_source[ETH_ALEN];
 get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
 ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROADCAST,h_source);
 char tipo[2]={0x07,0x07};
-PRF(" paquete \n");
+//PRF(" paquete \n");
 memcpy(tx_frame->buffer.header.type,tipo,2);
 char datos[arg->len];
 memcpy(datos,arg->data,arg->len);//+4
@@ -270,12 +270,12 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)||
 		//print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4);
 		PRF("ENVIO UN PAQUETE DE CERO\n");
 	}
-	free(pkt);pkt=NULL;free(tx_frame);
+	free(pkt);pkt=NULL;
 }
-
+free(tx_frame);
 
 //PRF("saio ben do cb_broadcast_recvfrom\n");
-view_locT();PRF("pinto lista loct \n");
+view_locT();//PRF("pinto lista loct \n");
 //view_lsp();PRF("pinto lista lsp\n");
 //view_timers();PRF("pinto lista timers lsp \n");
 //return();

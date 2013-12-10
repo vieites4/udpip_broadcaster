@@ -107,12 +107,8 @@ udp_events_t *new_udp_events();
  * 					UDP messages to all hosts in the network or not.
  * @return Manager's structure configured.
  */
-udp_events_t *init_tx_udp_events
-(const char* if_name, const int port, in_addr_t addr
-		, const ev_cb_tr callback, const bool broadcast);
-udp_events_t *init_tx_raw_events
-(const char* if_name, const int port
-		, const ev_cb_tr callback, const bool broadcast);
+//udp_events_t *init_tx_udp_events(const char* if_name, const int port, in_addr_t addr, const ev_cb_tr callback, const bool broadcast);
+//udp_events_t *init_tx_raw_events(const char* if_name, const int port	, const ev_cb_tr callback, const bool broadcast);
 
 /**
  * @fn init_rx_udp_events
@@ -126,10 +122,8 @@ udp_events_t *init_tx_raw_events
  * 					reception events.
  * @return Manager's structure configured.
  */
-udp_events_t *init_rx_udp_events(const int port, const char* if_name
-		, const ev_cb_tr callback);
-udp_events_t *init_rx_raw_events(const int port, const char* if_name
-		, const ev_cb_tr callback);
+udp_events_t *init_rx_udp_events(const int port, const char* if_name	, const ev_cb_tr callback);
+udp_events_t *init_rx_raw_events(const int port, const char* if_name	, const ev_cb_tr callback);
 /**
  * @fn init_net_raw_events
  * @brief Initializes a new structure for handling libev's reception events
@@ -157,15 +151,14 @@ void *init_app_udp_events
  * 			manager.
  * @param m Pointer to the manager structure.
  */
-void free_udp_events(udp_events_t *m);
+//void free_udp_events(udp_events_t *m);
 
 /**
  * @fn print_udp_events
  * @brief Prints the data of the udp_events structure.
  * @param m The structure whose data is going to be printed out.
  */
-void print_udp_events
-(const udp_events_t *m, const int rx_port, const int fwd_port);
+//void print_udp_events(const udp_events_t *m, const int rx_port, const int fwd_port);
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 // LIBEV EVENTS MANAGEMENT

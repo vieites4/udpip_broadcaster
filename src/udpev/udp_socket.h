@@ -93,7 +93,7 @@ ifreq_t *init_ifreq(const char *if_name);
  * @brief Allocates memory for an sockaddr structure.
  * @return A pointer to the newly allocated block of memory.
  */
-sockaddr_t *new_sockaddr();
+//sockaddr_t *new_sockaddr();
 
 
 #define LEN__SOCKADDR_IN sizeof(sockaddr_in_t)
@@ -200,7 +200,7 @@ int set_broadcast_socket(const int socket_fd);
 int set_bindtodevice_socket(const char *if_name, const int socket_fd);
 
 int set_msghdrs_socket(const int socket_fd);
-int set_msghdrs_socket_raw(const int socket_fd);
+//int set_msghdrs_socket_raw(const int socket_fd);
 /**
  * @fn open_receiver_udp_socket
  * @brief Creates and binds an UDP socket that uses the given port.
@@ -216,8 +216,8 @@ int open_receiver_raw_socket(const int port);
  * @param port The UDP port to be used by this socket.
  * @return File descriptor of the opened UDP socket.
  */
-int open_transmitter_udp_socket(const int port, in_addr_t addr);
-int open_transmitter_raw_socket(const int port);
+//int open_transmitter_udp_socket(const int port, in_addr_t addr);
+//int open_transmitter_raw_socket(const int port);
 /**
  * @fn open_broadcast_udp_socket
  * @brief Creates and binds an UDP socket that uses the given port with

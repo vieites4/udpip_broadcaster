@@ -29,7 +29,7 @@
 #define PRF(format, args...) ((void)0)
 #endif
 udp_events_t *new_udp_events()
-{
+{PRF("entrei en new_udp_events\n");
 	udp_events_t *s = NULL;
 	if ( ( s = (udp_events_t *)malloc(LEN__UDP_EVENTS) ) == NULL )
 	{ handle_sys_error("new_udp_events: <malloc> returns NULL."); }
@@ -38,7 +38,7 @@ udp_events_t *new_udp_events()
 	return(s);
 }
 
-/* init_tx_udp_events */
+/* init_tx_udp_events *//**
 udp_events_t *init_tx_udp_events
 (const char* if_name, const int port, in_addr_t addr, const ev_cb_t callback, const bool broadcast)
 {
@@ -56,10 +56,10 @@ udp_events_t *init_tx_udp_events
 	arg->public_arg.__test_number = 0;
 	return(s);
 
-}
+}**/
 
 
-udp_events_t *init_tx_raw_events
+/**udp_events_t *init_tx_raw_events
 (const char* if_name, const int port, const ev_cb_t callback, const bool broadcast)
 {
 	udp_events_t *s = new_udp_events();
@@ -77,7 +77,7 @@ udp_events_t *init_tx_raw_events
 	arg->public_arg.__test_number = 0;
 	return(s);
 
-}
+}**/
 
 /* init_rx_udp_events */
 udp_events_t *init_rx_udp_events(const int port, const char* if_name, const ev_cb_t callback)
@@ -149,12 +149,12 @@ void *init_app_udp_events
 }
 
 /* free_udp_events */
-void free_udp_events(udp_events_t *m)
+/**void free_udp_events(udp_events_t *m)
 {
 	free(m);
-}
+}**/
 
-/* print_udp_events */
+/* print_udp_events *//**
 void print_udp_events
 (const udp_events_t *m, const int rx_port, const int fwd_port)
 {
@@ -163,11 +163,11 @@ void print_udp_events
 	PRF("\t* fw_port = %d\n", fwd_port);
 	PRF("\t* sock_fd = %d\n", m->socket_fd);
 	PRF("}\n");
-}
+}**/
 
 /* new_ev_io_arg_t */
 ev_io_arg_t *new_ev_io_arg()
-{
+{PRF("entrei en new_ev_io_arg\n");
 	ev_io_arg_t *s = NULL;
 	if ( ( s = (ev_io_arg_t *)malloc(LEN__EV_IO_ARG) ) == NULL )
 	{ handle_sys_error("new_ev_io_arg_t: <malloc> returns NULL.\n"); }
@@ -178,7 +178,7 @@ ev_io_arg_t *new_ev_io_arg()
 
 /* init_watcher */
 int init_watcher(udp_events_t *m, const ev_cb_t callback, const int events, const int port, const char* if_name,in_addr_t addr)
-{
+{PRF("entrei en init_watcher\n");
 	m->loop = EV_DEFAULT;
 	ev_io_arg_t *arg = init_ev_io_arg(m, callback, port, if_name);
 	arg->public_arg.local_addr = init_if_sockaddr_in(if_name, port);
@@ -192,7 +192,7 @@ int init_watcher(udp_events_t *m, const ev_cb_t callback, const int events, cons
 
 }
 int init_watcher_raw(udp_events_t *m, const ev_cb_t callback, const int events, const int port, const char* if_name,in_addr_t addr)
-{
+{PRF("entrei en init_watcher_raw\n");
 	m->loop = EV_DEFAULT;
 	ev_io_arg_t *arg = init_ev_io_arg(m, callback, port, if_name);
 	arg->public_arg.local_addr = init_if_sockaddr_ll(if_name, port);
@@ -208,7 +208,7 @@ int init_watcher_raw(udp_events_t *m, const ev_cb_t callback, const int events, 
 
 /* init_ev_io_arg */
 ev_io_arg_t *init_ev_io_arg(const udp_events_t *m, const ev_cb_t callback, const int port, const char* if_name)
-{
+{PRF("entrei en init_ev_io_arg\n");
 	ev_io_arg_t *s = new_ev_io_arg();
 
 	// 1) private data initialization
