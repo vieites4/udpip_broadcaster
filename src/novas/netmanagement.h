@@ -186,7 +186,7 @@ int search_in_locT (itsnet_node * data, List_locT * locT);
  * @brief This function erase last element of lsp list.
  * @param num, not necessary
   */
-int sup_elem_lsp (int num);
+List_lsp * sup_elem_lsp (int num);
 /**
  * @fn add_end_locT
  * @brief This function add an element of loct list.

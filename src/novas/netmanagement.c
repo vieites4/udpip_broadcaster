@@ -58,7 +58,7 @@ tTimer * FindTimer(unsigned short TimerId,int num)
 		while((pTimer!= NULL) )
 		{            // Timer ids - not match, Move onto the next timer
 			if (pTimer->TimerId == TimerId){//PRF("COINCIDENCIA!!!\n");
-			pTimerC=pTimer;}
+				pTimerC=pTimer;}
 			pTimer = pTimer->pNext;        }    }
 
 	//PRF("saio de find timer\n");
@@ -412,7 +412,7 @@ int sup_timer (unsigned short TimerId, int num)
 	tTimer * to_erase;
 	List_timer *list;
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
-if (TimerId!=0xffff){	position = FindTimer(TimerId,num);
+	if (TimerId!=0xffff){	PRF("entrei en 0xffff\n");position = FindTimer(TimerId,num);
 	if (position==NULL){PRF("null en sup_timer\n");}
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de timer\n");
@@ -435,12 +435,12 @@ if (TimerId!=0xffff){	position = FindTimer(TimerId,num);
 	}}else
 	{   position=list->init;
 	if(position->before==NULL){
-			PRF("eliminamos o primeiro de timer\n");
-			to_erase=list->init;
-			list->init=list->init->pNext;
-			//free(to_erase);
-			if(list->len==1){list->end=NULL;   PRF("eliminamos o unico \n");
-			}else{list->init->before=NULL;}
+		PRF("eliminamos o primeiro de timer\n");
+		to_erase=list->init;
+		list->init=list->init->pNext;
+		//free(to_erase);
+		if(list->len==1){list->end=NULL;   PRF("eliminamos o unico \n");
+		}else{list->init->before=NULL;}
 	}}
 	list->len--;
 	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}
@@ -666,7 +666,7 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 }
 
 /* erase after a position */
-int sup_elem_lsp (int num){
+List_lsp * sup_elem_lsp (int num){
 	int a=0;
 	Element_lsp *pos=lsp_bc_g->init;
 	char LEN[2];
@@ -700,7 +700,7 @@ int sup_elem_lsp (int num){
 	}else
 		sup_timer(num,2);}
 	PRF("saimos de suprimir elemento da lsp\n");
-	return 0;
+	return (lsp_bc_g);
 }
 /* view List */
 void view_timers(){
