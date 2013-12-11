@@ -252,7 +252,10 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
 					if(gpsdata.fix.longitude<0){LPV->longitude=0xffff-num7;}else{LPV->longitude=num7;}
 					LPV->time_stamp=num00;// recibe Unix time in seconds with fractional part  e quere miliseconds
-					LPV->speed=num10; //recibe metros por segundo e quere 1/100 m/s
+					int speed1=floor(num10/128); //división entera
+					int speed2=num10%128;
+					LPV->speed1=speed1;
+					LPV->speed2=speed2; //recibe metros por segundo e quere 1/100 m/s
 					memcpy(LPV->node_id.mac,h_source,6);
 					i=100;				} } }else {if (a==1)memcpy(LPV,LPV_old,24);    }}
 	gps_close (&gpsdata);
@@ -262,7 +265,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 
 itsnet_position_vector * LPV_ini(){ //non se está executando nunca
 	itsnet_position_vector * LPV;
-	LPV->longitude=0;	LPV->latitude=0;	LPV->time_stamp=0;	LPV->speed=0;	LPV->heading=0;	memcpy(&LPV->node_id,&GN_ADDR,8);
+	LPV->longitude=0;	LPV->latitude=0;	LPV->time_stamp=0;	LPV->speed1=0;LPV->speed2=0;	LPV->heading=0;	memcpy(&LPV->node_id,&GN_ADDR,8);
 	return(LPV);}
 
 void Beacon_send(EV_P_ ev_timer *w, int revents) {

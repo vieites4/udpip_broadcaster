@@ -26,7 +26,7 @@ typedef int32_t itsnet_longitude;  /** longitude of the ITS station*/
 typedef uint16_t itsnet_sequencenumber;
 typedef uint8_t  itsnet_reserved;
 //typedef uint8_t itsnet_lt;
-typedef uint16_t itsnet_speed;  /** speed of the ITS station*/
+typedef uint8_t itsnet_speed;  /** speed of the ITS station*/
 typedef uint16_t itsnet_heading;  /** heading of the ITS station*/
 typedef int16_t itsnet_altitude;    /** altitude of the ITS station*/
 //typedef uint8_t  itsnet_txpower;     /** Transmission power level with which the packet was sent, in 1⁄2 of dBm*/
@@ -110,7 +110,8 @@ struct itsnet_position_vector
 	itsnet_latitude latitude;  /** the latitude of the global position in 1/8 microdegree */
 	itsnet_longitude longitude;  /** the longitude of the global position in 1/8 microdegree*/
 	char pai:1;
-	itsnet_speed speed;  /** current speed in 0.01 meters per second*/
+	itsnet_speed speed1;  /** current speed in 0.01 meters per second*/
+	unsigned char speed2:7;
 	itsnet_heading heading;  /** current curse in 0.005493247 degrees*/
 	//itsnet_altitude altitude;    /** the altitude (meter over mean sea level)*/
 	//itsnet_accuracy accuracy;
