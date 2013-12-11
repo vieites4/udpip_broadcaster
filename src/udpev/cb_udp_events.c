@@ -196,7 +196,7 @@ memcpy(datos,arg->data,arg->len);//+4
 char HT[2];char LEN[2] ;char HL[1];
 memcpy(HT,arg->data,2);
 itsnet_packet * pkt=NULL;
-pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
+//pkt =(itsnet_packet *)malloc(sizeof(itsnet_packet));
 memcpy(LEN,(char *)(datos) +4,2);
 //print_hex_data(arg->data,arg->len);printf("entro en broadcast\n");
 int lon_int=sprint_hex_data( LEN, 2);

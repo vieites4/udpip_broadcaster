@@ -138,9 +138,9 @@ signal(SIGUSR1, CheckTimerEvent_lsp);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 int aa=0;int i=0;
-while (aa==0){  if(gTimer_lsp[i]==0) aa=1; else sup_elem_t_lsp(gTimer_lsp[i]);i++; }
+while (aa==0){  if(gTimer_lsp[i]==0){ aa=1;PRF("entro na primeira\n");} else {PRF("entro na segunda\n");sup_elem_t_lsp(gTimer_lsp[i]);i++; }
 PRF("CheckTimerEvent_lsp SIGUSR1 fin\n");
-}
+}}
 
 void SystemTickEvent(void)
 {alarm(1);
@@ -374,21 +374,24 @@ int sup_timer (unsigned short TimerId, int num)
 	List_timer *list;
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
 	position = FindTimer(TimerId,num);
-	if (position==NULL){PRF("null en sup_timer\n");
-	if(position->before==NULL){
-		PRF("eliminamos o primeiro de timer\n");
-		list->init=list->init->pNext;
-		if(list->len==1){list->end=NULL;   PRF("eliminamos o unico timer \n");
-		}else{list->init->before=NULL;}
-	}else if (position->pNext==NULL){       PRF("eliminamos o ultimo de timer \n");
-	list->end->before->pNext=NULL;
-	list->end=list->end->before;
-	}else{
+	if (position==NULL){
+		PRF("null en sup_timer\n");	}
+	else{
+		if(position->before==NULL){
+			PRF("eliminamos o primeiro de timer\n");
+			list->init=list->init->pNext;
+			if(list->len==1){list->end=NULL;   PRF("eliminamos o unico timer \n");
+			}else{list->init->before=NULL;}
+		}else if (position->pNext==NULL){
+			PRF("eliminamos o ultimo de timer \n");
+			list->end->before->pNext=NULL;
+			list->end=list->end->before;
+		}else{
 		PRF("eliminamos outro de timer \n");
 		position->before->pNext=position->pNext;
 		position->pNext->before=position->before;
-	}
-	list->len--;
+		}
+		list->len--;
 	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}}
 	return 0;
 }
