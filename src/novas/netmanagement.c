@@ -138,7 +138,9 @@ signal(SIGUSR1, CheckTimerEvent_lsp);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 int aa=0;int i=0;
-while (aa==0){  if(gTimer_lsp[i]==0) aa=1; else sup_elem_t_lsp(gTimer_lsp[i]);i++; }}
+while (aa==0){  if(gTimer_lsp[i]==0) aa=1; else sup_elem_t_lsp(gTimer_lsp[i]);i++; }
+PRF("CheckTimerEvent_lsp SIGUSR1 fin\n");
+}
 
 void SystemTickEvent(void)
 {alarm(1);
@@ -588,7 +590,7 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 }
 
 /* erase after a position */
-int sup_elem_lsp (int num){
+List_lsp * sup_elem_lsp (int num){
 	int a=0;
 	Element_lsp *pos=lsp_bc_g->init;
 	Element_lsp *to_erase=lsp_bc_g->init;
@@ -615,7 +617,7 @@ int sup_elem_lsp (int num){
 		sup_timer(sn,2);
 	}else sup_timer(num,2);}
 	PRF("saimos de suprimir elemento da lsp\n");
-	return 0;
+	return (lsp_bc_g);
 }
 /* view List */
 void view_timers(){

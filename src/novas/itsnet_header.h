@@ -26,7 +26,7 @@ typedef int32_t itsnet_longitude;  /** longitude of the ITS station*/
 typedef uint16_t itsnet_sequencenumber;
 typedef uint8_t  itsnet_reserved;
 //typedef uint8_t itsnet_lt;
-typedef uint8_t itsnet_speed;  /** speed of the ITS station*/
+typedef int8_t itsnet_speed;  /** speed of the ITS station*/
 typedef uint16_t itsnet_heading;  /** heading of the ITS station*/
 typedef int16_t itsnet_altitude;    /** altitude of the ITS station*/
 //typedef uint8_t  itsnet_txpower;     /** Transmission power level with which the packet was sent, in 1⁄2 of dBm*/
