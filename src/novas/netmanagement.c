@@ -374,7 +374,7 @@ int sup_timer (unsigned short TimerId, int num)
 	List_timer *list;
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
 	position = FindTimer(TimerId,num);
-	if (position==NULL){PRF("null en sup_timer\n");}
+	if (position==NULL){PRF("null en sup_timer\n");
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de timer\n");
 		list->init=list->init->pNext;
@@ -389,7 +389,7 @@ int sup_timer (unsigned short TimerId, int num)
 		position->pNext->before=position->before;
 	}
 	list->len--;
-	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}
+	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}}
 	return 0;
 }
 /* erase after a position */
