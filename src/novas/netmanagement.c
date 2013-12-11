@@ -412,139 +412,142 @@ int sup_timer (unsigned short TimerId, int num)
 	tTimer * to_erase;
 	List_timer *list;
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
-	if (TimerId!=0xffff){	PRF("entrei en diferente a 0xffff\n");position = FindTimer(TimerId,num);
-	if (position==NULL){PRF("null en sup_timer\n");
-	if(position->before==NULL){
-		PRF("eliminamos o primeiro de timer\n");
-		to_erase=list->init;
-		list->init=list->init->pNext;
-		//free(to_erase);
-		if(list->len==1){list->end=NULL;   PRF("eliminamos o unico \n");
-		}else{list->init->before=NULL;}
-	}else if (position->pNext==NULL){       PRF("eliminamos o ultimo de timer \n");
-	to_erase=list->end;
-	list->end->before->pNext=NULL;
-	list->end=list->end->before;
-	//free(to_erase);
-	}else{
-		PRF("eliminamos outro de timer \n");
-		to_erase=position;
-		position->before->pNext=position->pNext;
-		position->pNext->before=position->before;
-		//free(to_erase);
-	}}else
+	if (TimerId!=0xffff){
+		PRF("entrei en diferente a 0xffff\n");position = FindTimer(TimerId,num);
+		if (position==NULL){PRF("null en sup_timer\n");}else{
+			if(position->before==NULL){
+				PRF("eliminamos o primeiro de timer\n");
+				to_erase=list->init;
+				list->init=list->init->pNext;
+				free(to_erase);
+				if(list->len==1){list->end=NULL;   PRF("eliminamos o unico \n");
+				}else{list->init->before=NULL;}
+			}else if (position->pNext==NULL){       PRF("eliminamos o ultimo de timer \n");
+			to_erase=list->end;
+			list->end->before->pNext=NULL;
+			list->end=list->end->before;
+			free(to_erase);
+			}else{
+				PRF("eliminamos outro de timer \n");
+				to_erase=position;
+				position->before->pNext=position->pNext;
+				position->pNext->before=position->before;
+				free(to_erase);
+			}
+		}
+	}else
 	{   position=list->init;
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de timer\n");
 		to_erase=list->init;
 		list->init=list->init->pNext;
-		//free(to_erase);
+		free(to_erase);
 		if(list->len==1){list->end=NULL;   PRF("eliminamos o unico \n");
 		}else{list->init->before=NULL;}
 	}}
 	list->len--;
 	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}
-	//    mac_list[p.num]=0;
-	return 0;}return 1;
+	//    mac_list[p.num]=0;}
+	return 0;
 }
 /* erase after a position */
 int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 {PRF("sup_elem_locT  \n");
-	Element_locT * position=locT->init;
+Element_locT * position=locT->init;
 
-	Element_locT *aux;
-	Element_locT *to_erase;
-	aux = locT->init;
-	while (aux != NULL){//	print_hex_data(aux->data.mac_id.address,6);PRF(" lista loct en sup_elem\n");
-		aux = aux->next;}
+Element_locT *aux;
+Element_locT *to_erase;
+aux = locT->init;
+while (aux != NULL){//	print_hex_data(aux->data.mac_id.address,6);PRF(" lista loct en sup_elem\n");
+	aux = aux->next;}
 
-	//print_hex_data(pos->address,6);PRF(" para eliminar elemento loct\n");
-	int in=1;
-	itsnet_node *data;
-	data=(itsnet_node *)malloc(sizeof(itsnet_node));
-	data->mac_id=*pos;
-	int a=search_in_locT(data,locT);
-	free(data);data=NULL;
-	if (position==NULL) PRF("son null\n");
+//print_hex_data(pos->address,6);PRF(" para eliminar elemento loct\n");
+int in=1;
+itsnet_node *data;
+data=(itsnet_node *)malloc(sizeof(itsnet_node));
+data->mac_id=*pos;
+int a=search_in_locT(data,locT);
+free(data);data=NULL;
+if (position==NULL) PRF("son null\n");
 
-	while (in<(a))
-	{in++;position = position->next;//print_hex_data(position->data.mac_id.address,6);PRF(" \n");
-	}
+while (in<(a))
+{in++;position = position->next;//print_hex_data(position->data.mac_id.address,6);PRF(" \n");
+}
 
-	if (position==NULL) PRF("son null no sup_elem_loct\n"); //print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
-	if(position->before==NULL){
-		PRF("eliminamos o primeiro de loct\n");
-		to_erase=locT->init;
-		locT->init=locT->init->next;
-		free(to_erase);
-		if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico \n");
-		}else{locT->init->before=NULL;}
-	}else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
-	to_erase=locT->end;
-	locT->end->before->next=NULL;
-	locT->end=locT->end->before;
-	free((void *)to_erase);
-	}else{
-		to_erase=position;
-		PRF("eliminamos outro de loct\n");
-		position->before->next=position->next;
-		position->next->before=position->before;
-		free(to_erase);
-	}
-	sup_timer(dictionary[num],1);
-	locT->len--;
-	locT_general=locT;
-	memcpy(mac_list[num],ZEROS,6);
-	taken[num]=false;
-	return 0;
+if (position==NULL) PRF("son null no sup_elem_loct\n"); //print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
+if(position->before==NULL){
+	PRF("eliminamos o primeiro de loct\n");
+	to_erase=locT->init;
+	locT->init=locT->init->next;
+	free(to_erase);
+	if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico \n");
+	}else{locT->init->before=NULL;}
+}else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
+to_erase=locT->end;
+locT->end->before->next=NULL;
+locT->end=locT->end->before;
+free((void *)to_erase);
+}else{
+	to_erase=position;
+	PRF("eliminamos outro de loct\n");
+	position->before->next=position->next;
+	position->next->before=position->before;
+	free(to_erase);
+}
+sup_timer(dictionary[num],1);
+locT->len--;
+locT_general=locT;
+memcpy(mac_list[num],ZEROS,6);
+taken[num]=false;
+return 0;
 }
 
 int sup_elem_t_lsp (int num)
 {PRF("sup_elem_t_lsp %d\n",num);
-	Element_lsp * position=lsp_bc_g->init;
-	Element_lsp * to_erase;
-	char LEN[2];
-	memcpy(LEN,position->data.common_header.payload_lenght+1,1);
-	memcpy(LEN+1,position->data.common_header.payload_lenght,1);
-	int buf_size=sprint_hex_data(LEN,2);
-	itsnet_node *data;
-	int in=0;
-	PRF("entrei no sup_elem_t_lsp\n");
-	char SN[2];
-	while (in==0 && position!=NULL)
-	{
+Element_lsp * position=lsp_bc_g->init;
+Element_lsp * to_erase;
+char LEN[2];
+memcpy(LEN,position->data.common_header.payload_lenght+1,1);
+memcpy(LEN+1,position->data.common_header.payload_lenght,1);
+int buf_size=sprint_hex_data(LEN,2);
+itsnet_node *data;
+int in=0;
+PRF("entrei no sup_elem_t_lsp\n");
+char SN[2];
+while (in==0 && position!=NULL)
+{
 
-		memcpy(SN,(char*)(&position->data.payload)+1,1);
-		memcpy(SN +1,&position->data.payload,1);
-		//	print_hex_data(SN,2);PRF(" sn \n");
-		int num0=sprint_hex_data(SN,2);
-		//PRF("num %d num0 %d busca sup_elem_t_lsp\n",num,num0);
-		if(num0==num)in=1; else position = position->next;}
-	if (position==NULL) printf("son null\n");
-	if(position->before==NULL){
-		//PRF("eliminamos o primeiro de lsp\n");
-		to_erase=lsp_bc_g->init;
-		lsp_bc_g->init=lsp_bc_g->init->next;
-		if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    //	PRF("eliminamos o unico \n");
-		}else{lsp_bc_g->init->before=NULL;}
-		free(to_erase);
-	}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
-		to_erase=lsp_bc_g->end;
-		lsp_bc_g->end->before->next=NULL;
-		lsp_bc_g->end=lsp_bc_g->end->before;
-		free(to_erase);
+	memcpy(SN,(char*)(&position->data.payload)+1,1);
+	memcpy(SN +1,&position->data.payload,1);
+	//	print_hex_data(SN,2);PRF(" sn \n");
+	int num0=sprint_hex_data(SN,2);
+	//PRF("num %d num0 %d busca sup_elem_t_lsp\n",num,num0);
+	if(num0==num)in=1; else position = position->next;}
+if (position==NULL) printf("son null\n");
+if(position->before==NULL){
+	//PRF("eliminamos o primeiro de lsp\n");
+	to_erase=lsp_bc_g->init;
+	lsp_bc_g->init=lsp_bc_g->init->next;
+	if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    //	PRF("eliminamos o unico \n");
+	}else{lsp_bc_g->init->before=NULL;}
+	free(to_erase);
+}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
+	to_erase=lsp_bc_g->end;
+	lsp_bc_g->end->before->next=NULL;
+	lsp_bc_g->end=lsp_bc_g->end->before;
+	free(to_erase);
 
-	}else{
-		//PRF("eliminamos outro de lsp\n");
-		to_erase=position;
-		position->before->next=position->next;
-		position->next->before=position->before;
-		free(to_erase);
-	}
-	sup_timer(num,2);
-	lsp_bc_g->len--;
-	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
-	return 0;
+}else{
+	//PRF("eliminamos outro de lsp\n");
+	to_erase=position;
+	position->before->next=position->next;
+	position->next->before=position->before;
+	free(to_erase);
+}
+sup_timer(num,2);
+lsp_bc_g->len--;
+lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
+return 0;
 }
 
 /* view List */

@@ -61,10 +61,12 @@ int get_mac_address(const int socket_fd, const char *if_name,
 	ifreq_t ifr1 = *ifr;
 	strncpy(ifr->ifr_name, if_name, len_if_name);
 	if (ioctl(socket_fd, SIOCGIFHWADDR, ifr) < 0) {
-		log_sys_error("Could not get interface index");
+		PRF("Could not get interface index");
+		free(ifr);
 		return (EX_SYS);
 	}
 	memcpy(mac, ifr->ifr_hwaddr.sa_data, ETH_ALEN);
+	free(ifr);
 	//free(ifr);ifr=NULL;
 	return (EX_OK);
 

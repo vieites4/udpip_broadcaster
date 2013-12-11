@@ -75,9 +75,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-		if(memcmp((void *)data +6,h_source,6)==0){
+		/**if(memcmp((void *)data +6,h_source,6)==0){
 		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");
-		return;	}
+		return;	}**/
 		//ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source);
 		//		memcpy(tx_frame1->buffer.header.type,type07,2);
 		//if ((memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
