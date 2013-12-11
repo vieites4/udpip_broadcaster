@@ -412,8 +412,8 @@ int sup_timer (unsigned short TimerId, int num)
 	tTimer * to_erase;
 	List_timer *list;
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
-	if (TimerId!=0xffff){	PRF("entrei en 0xffff\n");position = FindTimer(TimerId,num);
-	if (position==NULL){PRF("null en sup_timer\n");}
+	if (TimerId!=0xffff){	PRF("entrei en diferente a 0xffff\n");position = FindTimer(TimerId,num);
+	if (position==NULL){PRF("null en sup_timer\n");
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de timer\n");
 		to_erase=list->init;
@@ -445,11 +445,11 @@ int sup_timer (unsigned short TimerId, int num)
 	list->len--;
 	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}
 	//    mac_list[p.num]=0;
-	return 0;
+	return 0;}return 1;
 }
 /* erase after a position */
 int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
-{
+{PRF("sup_elem_locT  \n");
 	Element_locT * position=locT->init;
 
 	Element_locT *aux;
@@ -500,7 +500,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 }
 
 int sup_elem_t_lsp (int num)
-{
+{PRF("sup_elem_t_lsp %d\n",num);
 	Element_lsp * position=lsp_bc_g->init;
 	Element_lsp * to_erase;
 	char LEN[2];
@@ -667,7 +667,7 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 
 /* erase after a position */
 List_lsp * sup_elem_lsp (int num){
-	int a=0;
+	int a=0;PRF("sup_elem_lsp %d  \n",num);
 	Element_lsp *pos=lsp_bc_g->init;
 	char LEN[2];
 	memcpy(LEN,pos->data.common_header.payload_lenght+1,1);

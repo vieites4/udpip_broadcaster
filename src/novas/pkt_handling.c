@@ -414,7 +414,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			//print_hex_data(&tx_frame->buffer, header_length +size+14+4);// header_length +lon_int+14+4);
 			PRF(" paquete enviado a ll despois de lsp %d\n", header_length +size+14+4);
 			ev_timer_again (l_Beacon,&t_Beacon);
-
+PRF("con sn %d\n",sn);
 			lsp_bc_g=sup_elem_lsp(sn);
 			//free(&pos->data);
 			//PRF("despois do sup_elem_lsp\n");
