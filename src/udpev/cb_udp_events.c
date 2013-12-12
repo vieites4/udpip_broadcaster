@@ -233,11 +233,11 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)||
 		PRF(" paquete enviado directo \n");
 		/**int total=header_length +lon_int +14+4;
 		int n_sends= floor(total/1500);**/
-
+		free(pkt);pkt=NULL;
 	}
 
 }
-free(pkt);pkt=NULL;free(tx_frame);
+free(tx_frame);
 //PRF("saio ben do cb_broadcast_recvfrom\n");
 //view_locT();
 PRF("pinto lista loct \n");

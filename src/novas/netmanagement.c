@@ -371,6 +371,7 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 int sup_timer (unsigned short TimerId, int num)
 {
 	tTimer * position=NULL;
+	tTimer * to_erase=NULL;
 	List_timer *list;
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
 	position = FindTimer(TimerId,num);
@@ -379,17 +380,23 @@ int sup_timer (unsigned short TimerId, int num)
 	else{
 		if(position->before==NULL){
 			PRF("eliminamos o primeiro de timer\n");
+			to_erase=list->init;
 			list->init=list->init->pNext;
 			if(list->len==1){list->end=NULL;   PRF("eliminamos o unico timer \n");
 			}else{list->init->before=NULL;}
+			free(to_erase);list->len--;
 		}else if (position->pNext==NULL){
 			PRF("eliminamos o ultimo de timer \n");
+			to_erase=list->end;
 			list->end->before->pNext=NULL;
 			list->end=list->end->before;
+		free(to_erase);list->len--;
 		}else{
 		PRF("eliminamos outro de timer \n");
+		to_erase=position;
 		position->before->pNext=position->pNext;
 		position->pNext->before=position->before;
+		free(to_erase);list->len--;
 		}
 		list->len--;
 	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}}
@@ -419,23 +426,23 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 		PRF("eliminamos o primeiro de loct\n");
 		to_erase=locT->init;
 		locT->init=locT->init->next;
-		free(to_erase);
+		free(to_erase);locT->len--;
 		if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico de loct\n");
 		}else{locT->init->before=NULL;}
 	}else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
 	to_erase=locT->end;
 	locT->end->before->next=NULL;
 	locT->end=locT->end->before;
-	free((void *)to_erase);
+	free((void *)to_erase);locT->len--;
 	}else{
 		to_erase=position;
 		PRF("eliminamos outro de loct\n");
 		position->before->next=position->next;
 		position->next->before=position->before;
-		free(to_erase);
+		free(to_erase);locT->len--;
 	}
 	sup_timer(dictionary[num],1);
-	locT->len--;
+
 	locT_general=locT;
 	memcpy(mac_list[num],ZEROS,6);
 	taken[num]=false;
@@ -461,29 +468,29 @@ int sup_elem_t_lsp (int num)
 		memcpy(SN,(char*)(&position->data.payload),2);
 		int num0=sprint_hex_data(SN,2);
 		if(num0==num)in=1; else position = position->next;}
-	if (position==NULL) printf("son null, no sup_elem_t_lsp\n");
+	if (position==NULL) {printf("son null, no sup_elem_t_lsp\n");}else{
 	if(position->before==NULL){
 		to_erase=lsp_bc_g->init;
 		//PRF("eliminamos o primeiro de lsp\n");
 		lsp_bc_g->init=lsp_bc_g->init->next;
 		if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    //	PRF("eliminamos o unico \n");
 		}else{lsp_bc_g->init->before=NULL;}
-		free(to_erase);
+		free(to_erase);lsp_bc_g->len--;
 	}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
 		to_erase=lsp_bc_g->end;
 		lsp_bc_g->end->before->next=NULL;
-		lsp_bc_g->end=lsp_bc_g->end->before;free(to_erase);
+		lsp_bc_g->end=lsp_bc_g->end->before;free(to_erase);lsp_bc_g->len--;
 	}else{
 		//PRF("eliminamos outro de lsp\n");
 		to_erase=position;
 		position->before->next=position->next;
 		position->next->before=position->before;
-		free(to_erase);
+		free(to_erase);lsp_bc_g->len--;
 	}
 	//free(SN);SN=NULL;
 	sup_timer(num,2);
-	lsp_bc_g->len--;
-	lsp_bc_g->size =lsp_bc_g->size- 12-head-buf_size;
+
+	lsp_bc_g->size =lsp_bc_g->size- 12-head-buf_size-4;}
 	return 0;
 }
 
@@ -551,7 +558,7 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 			lsp->end->next = new_element;}
 	lsp->end = new_element;
 	lsp ->len++;
-	lsp->size=lsp->size+8+4+sprint_hex_data(data.common_header.payload_lenght,2);
+	lsp->size=lsp->size+8+4+4+sprint_hex_data(data.common_header.payload_lenght,2);
 	PRF("AQUI en engadir en lsp! %d \n",lsp->len);
 	uint16_t sn;	LT_s *temp;
 	char HT[1];	char HL[1];
@@ -625,7 +632,7 @@ List_lsp * sup_elem_lsp (int num){
 			}
 		sup_timer(sn,2);
 	}else sup_timer(num,2);}
-	lsp_bc_g->size =lsp_bc_g->size- 12-buf_size-head;
+	lsp_bc_g->size =lsp_bc_g->size- 12-buf_size-head-4;
 	PRF("saimos de suprimir elemento da lsp\n");
 	return (lsp_bc_g);
 }
