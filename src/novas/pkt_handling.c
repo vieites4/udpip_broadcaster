@@ -94,11 +94,11 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+32+sprint_hex_data((char *)(buffer) +4,2);
+		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+32+4+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
 			lsp_bc_g=sup_elem_lsp(0xffff);
-			val=lsp_bc_g->size+sizeof(itsnet_common_header)+32+sprint_hex_data((char *)(buffer) +4,2);
+			val=lsp_bc_g->size+sizeof(itsnet_common_header)+32+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}PRF("TSB ");
 		int i =add_end_lsp(lsp_bc_g, *pkt);
@@ -156,12 +156,12 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 		itsnet_packet * pkt1 = NULL;
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 		//pkt1=NULL;
-		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
+		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+4+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 			lsp_bc_g=sup_elem_lsp(0xffff);
-			val=lsp_bc_g->size+sizeof(itsnet_common_header)+sprint_hex_data((char *)(buffer) +4,2);
+			val=lsp_bc_g->size+sizeof(itsnet_common_header)+4+sprint_hex_data((char *)(buffer) +4,2);
 		}
 		int i =add_end_lsp(lsp, *pkt);
 		return(pkt1);
@@ -277,13 +277,13 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		pkt1=NULL;int val=(lsp_bc_g->size)+48+(sizeof(itsnet_common_header))+(sprint_hex_data((char *)(buffer) +4,2));
+		pkt1=NULL;int val=(lsp_bc_g->size)+48+4+(sizeof(itsnet_common_header))+(sprint_hex_data((char *)(buffer) +4,2));
 		//PRF(" val: %d %d %d\n",lsp_bc_g->size,sizeof(itsnet_common_header),sprint_hex_data((char *)(buffer) +4,2));
 		//delete old buffered elements if we need more size to add a new one.
 
 		while (val>itsGnBcForwardingPacketBufferSize){
 			lsp_bc_g=sup_elem_lsp(0xffff);
-			val=lsp_bc_g->size+sizeof(itsnet_common_header)+48+sprint_hex_data((char *)(buffer) +4,2);
+			val=lsp_bc_g->size+sizeof(itsnet_common_header)+48+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}PRF("GEO ");
 		int i =add_end_lsp(lsp, *pkt);

@@ -556,7 +556,7 @@ if(position->before==NULL){
 }
 sup_timer(num,2);
 lsp_bc_g->len--;
-lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head;}
+lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head-4;}
 return 0;
 }
 
@@ -652,7 +652,7 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 		PRF("SEQUENCE NUMBER! %d\n",sn);
 		if (lt>0) AddTimer(sn,lt,2);
 	}
-	lsp->size=lsp->size+sizeof(itsnet_common_header)+head+sprint_hex_data(LEN,2);
+	lsp->size=lsp->size+sizeof(itsnet_common_header)+head+sprint_hex_data(LEN,2)+4;
 	lsp_bc_g=lsp;
 	return 0;
 }
@@ -714,7 +714,7 @@ List_lsp * sup_elem_lsp (int num){
 		sup_timer(sn,2);
 	}else
 		sup_timer(num,2);}
-	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head;
+	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head-4;
 	PRF("saimos de suprimir elemento da lsp\n");
 	return (lsp_bc_g);
 }
