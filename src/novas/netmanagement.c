@@ -52,13 +52,13 @@ tTimer * FindTimer(unsigned short TimerId,int num)
 	// Move to the start of the list
 	// Check if list is empty
 	PRF("FINDTIMER %d\n",TimerId);
-
+int a=0;
 	if(pTimer != NULL)
 	{        // Move through the list until the timer id is found
-		while((pTimer!= NULL) )
+		while((pTimer!= NULL) && (a==0) )
 		{            // Timer ids - not match, Move onto the next timer
-			if (pTimer->TimerId == TimerId){//PRF("COINCIDENCIA!!!\n");
-				pTimerC=pTimer;}
+			if (pTimer->TimerId == TimerId){PRF("COINCIDENCIA!!!\n");
+				pTimerC=pTimer; a=1;}
 			pTimer = pTimer->pNext;        }    }
 
 	//PRF("saio de find timer\n");
@@ -414,7 +414,7 @@ int sup_timer (unsigned short TimerId, int num)
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
 	if (TimerId!=0xffff){
 		PRF("entrei en diferente a 0xffff\n");position = FindTimer(TimerId,num);
-		if (position==NULL){PRF("null en sup_timer\n");}else{
+		if (position==NULL){PRF("null en sup_timer\n");list->len++;}else{
 			if(position->before==NULL){
 				PRF("eliminamos o primeiro de timer\n");
 				to_erase=list->init;
@@ -437,7 +437,8 @@ int sup_timer (unsigned short TimerId, int num)
 		}
 	}else
 	{   position=list->init;
-	if(position->before==NULL){
+	if (position==NULL){PRF("null en position de sup_timer\n");list->len++;}
+	else if(position->before==NULL){
 		PRF("eliminamos o primeiro de timer\n");
 		to_erase=list->init;
 		list->init=list->init->pNext;
