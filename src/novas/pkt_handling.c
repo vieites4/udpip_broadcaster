@@ -93,11 +93,11 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		int val=lsp_bc_g->size+8+4+sprint_hex_data((char *)(buffer) +4,2);
+		int val=lsp_bc_g->size+8+4+28+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
 			lsp_bc_g=sup_elem_lsp(0xffff);
-			val=lsp_bc_g->size+4+8+sprint_hex_data((char *)(buffer) +4,2);
+			val=lsp_bc_g->size+4+8+28+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
 		int i =add_end_lsp(lsp_bc_g, *pkt);
@@ -171,11 +171,11 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		int val=lsp_bc_g->size+4+8+sprint_hex_data((char *)(buffer) +4,2);
+		int val=lsp_bc_g->size+4+8+28+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
 			lsp_bc_g=sup_elem_lsp(0xffff);
-			val=lsp_bc_g->size+8+4+sprint_hex_data((char *)(buffer) +4,2);
+			val=lsp_bc_g->size+8+4+28+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
 		int i =add_end_lsp(lsp_bc_g, *pkt);
@@ -255,11 +255,11 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		int val=lsp_bc_g->size+8+4+sprint_hex_data((char *)(buffer) +4,2);
+		int val=lsp_bc_g->size+8+4+48+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
 			lsp_bc_g=sup_elem_lsp(0xffff);
-			val=lsp_bc_g->size+8+4+sprint_hex_data((char *)(buffer) +4,2);
+			val=lsp_bc_g->size+8+4+48+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
 		int i =add_end_lsp(lsp_bc_g, *pkt);
