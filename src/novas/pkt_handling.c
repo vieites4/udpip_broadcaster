@@ -353,7 +353,9 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;
 				temp=FindTimer(sn,2);
-				if (temp->Period>640){base=3; mult=(int) ceil(temp->Period/100); } else if (temp->Period>64) {base=2; mult= (int) ceil(temp->Period/10);}else {base=1; mult=temp->Period;}A
+				if (temp->Period>640){base=3; mult=(int) ceil(temp->Period/100); }
+				else if (temp->Period>64) {base=2; mult= (int) ceil(temp->Period/10);}
+				else {base=1; mult=temp->Period;}
 						sprintf(str2, "%04X",mult);
 				sprintf(str1, "%01X",base);
 				num4=strtol(str2,NULL,16);//PRF("%d\n", num4);
