@@ -82,7 +82,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//		memcpy(tx_frame1->buffer.header.type,type07,2);
 		//if ((memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
 
-		PRF("cb_forward_recvfmakerom1 \n");
+		PRF("cb_forward_recvfmakerom1 %d\n",sizeof(itsnet_common_header));
 		PRF("RECIBO UN PAQUETE\n");
 		memcpy(arg->data,data,arg->len);
 		//print_hex_data((char *)data,arg->len);PRF(" cara arriba \n");

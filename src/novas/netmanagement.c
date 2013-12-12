@@ -510,7 +510,16 @@ Element_lsp * to_erase;
 char LEN[2];
 memcpy(LEN,position->data.common_header.payload_lenght+1,1);
 memcpy(LEN+1,position->data.common_header.payload_lenght,1);
-int buf_size=sprint_hex_data(LEN,2);
+int buf_size=sprint_hex_data(LEN,2);char HT[1];
+memcpy(HT,&position->data.common_header.HT_HST,1);
+int head=0;
+
+if(memcmp(HT,tsb1,1)==0){
+			head=32;
+		}else
+			if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
+ head=48;}
+
 itsnet_node *data;
 int in=0;
 PRF("entrei no sup_elem_t_lsp\n");
@@ -547,7 +556,7 @@ if(position->before==NULL){
 }
 sup_timer(num,2);
 lsp_bc_g->len--;
-lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
+lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head;
 return 0;
 }
 
@@ -687,7 +696,7 @@ List_lsp * sup_elem_lsp (int num){
 	free(to_erase);
 	//}
 	lsp_bc_g->len--;
-	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
+	int head=0;
 	char HT[1];uint16_t sn;char HL[1];
 	memcpy(HT,&pos->data.common_header.HT_HST,1);
 	memcpy(HL,pos->data.common_header.hop_limit,1);
@@ -695,14 +704,15 @@ List_lsp * sup_elem_lsp (int num){
 	if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0 || memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){a=1;}
 	if (a==1){ if (num==0xffff){
 		if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0){
-			sn = pos->data.payload.itsnet_tsb.sequencenumber;
+			sn = pos->data.payload.itsnet_tsb.sequencenumber;head=32;
 		}else
 			if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
-				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;
+				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;head=48;
 			}
 		sup_timer(sn,2);
 	}else
 		sup_timer(num,2);}
+	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head;
 	PRF("saimos de suprimir elemento da lsp\n");
 	return (lsp_bc_g);
 }
