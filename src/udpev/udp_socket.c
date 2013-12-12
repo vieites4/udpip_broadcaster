@@ -49,9 +49,9 @@ int get_mac_address
 
 	ifreq_t ifr1=*ifr;
 	strncpy(ifr->ifr_name, if_name, len_if_name);
-	if ( ioctl(socket_fd, SIOCGIFHWADDR, ifr) < 0 )	{		log_sys_error("Could not get interface index");		return(EX_SYS);}
+	if ( ioctl(socket_fd, SIOCGIFHWADDR, ifr) < 0 )	{		PRF("Could not get interface index");	free(ifr);	return(EX_SYS);}
 	memcpy(mac, ifr->ifr_hwaddr.sa_data, ETH_ALEN);
-	//free(ifr);ifr=NULL;
+	free(ifr);ifr=NULL;
 	return(EX_OK);
 
 }
@@ -84,6 +84,7 @@ ifreq_t *init_ifreq(const char *if_name)
 }
 
 /* new_sockaddr */
+/**
 sockaddr_t *new_sockaddr()
 {
 	sockaddr_t *s = NULL;
@@ -91,7 +92,7 @@ sockaddr_t *new_sockaddr()
 	if ( memset(s, 0, LEN__SOCKADDR) == NULL )	{ handle_sys_error("new_sockaddr: <memset> returns NULL.\n"); }
 	return(s);
 
-}
+}**/
 
 /* new_sockaddr_in */
 sockaddr_in_t *new_sockaddr_in()
@@ -471,6 +472,7 @@ int set_bindtodevice_socket(const char *if_name, const int socket_fd)
 	ifreq_t *ifr = init_ifreq(if_name);
 	if ( setsockopt(socket_fd, SOL_SOCKET, SO_BINDTODEVICE, ifr, LEN__IFREQ)< 0 )
 	{ handle_sys_error("set_bindtodevice_socket: <setsockopt> returns error"); }
+	free(ifr);//new
 	return(EX_OK);
 
 }
@@ -483,6 +485,7 @@ int set_msghdrs_socket(const int socket_fd)
 			< 0 )
 	{ handle_sys_error("set_generate_headers: " \
 			"<setsockopt> returns error"); }
+	free(ifr);//new
 	return(EX_OK);
 
 
