@@ -413,39 +413,39 @@ int sup_timer (unsigned short TimerId, int num)
 	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
 	if (TimerId!=0xffff){
 		PRF("entrei en diferente a 0xffff\n");position = FindTimer(TimerId,num);
-		if (position==NULL){PRF("null en sup_timer\n");list->len++;}else{
+		if (position==NULL){PRF("null en sup_timer\n");}else{
 			if(position->before==NULL){
 				PRF("eliminamos o primeiro de timer\n");
 				to_erase=list->init;
 				list->init=list->init->pNext;
-				free(to_erase);
+				free(to_erase);list->len--;
 				if(list->len==1){list->end=NULL;   PRF("eliminamos o unico \n");
 				}else{list->init->before=NULL;}
 			}else if (position->pNext==NULL){       PRF("eliminamos o ultimo de timer \n");
 			to_erase=list->end;
 			list->end->before->pNext=NULL;
 			list->end=list->end->before;
-			free(to_erase);
+			free(to_erase);list->len--;
 			}else{
 				PRF("eliminamos outro de timer \n");
 				to_erase=position;
 				position->before->pNext=position->pNext;
 				position->pNext->before=position->before;
-				free(to_erase);
+				free(to_erase);list->len--;
 			}
 		}
 	}else
 	{   position=list->init;
-	if (position==NULL){PRF("null en position de sup_timer\n");list->len++;}
+	if (position==NULL){PRF("null en position de sup_timer\n");}
 	else if(position->before==NULL){
 		PRF("eliminamos o primeiro de timer\n");
 		to_erase=list->init;
 		list->init=list->init->pNext;
-		free(to_erase);
+		free(to_erase);list->len--;
 		if(list->len==1){list->end=NULL;   PRF("eliminamos o unico \n");
 		}else{list->init->before=NULL;}
 	}}
-	list->len--;
+
 	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}
 	//    mac_list[p.num]=0;}
 	return 0;
@@ -478,23 +478,23 @@ if(position->before==NULL){
 	PRF("eliminamos o primeiro de loct\n");
 	to_erase=locT->init;
 	locT->init=locT->init->next;
-	free(to_erase);
+	free(to_erase);locT->len--;
 	if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico \n");
 	}else{locT->init->before=NULL;}
 }else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
 to_erase=locT->end;
 locT->end->before->next=NULL;
 locT->end=locT->end->before;
-free((void *)to_erase);
+free((void *)to_erase);locT->len--;
 }else{
 	to_erase=position;
 	PRF("eliminamos outro de loct\n");
 	position->before->next=position->next;
 	position->next->before=position->before;
-	free(to_erase);
+	free(to_erase);locT->len--;
 }
 sup_timer(dictionary[num],1);
-locT->len--;
+
 locT_general=locT;
 memcpy(mac_list[num],ZEROS,6);
 taken[num]=false;
@@ -537,22 +537,22 @@ if (position==NULL) {printf("son null\n");} else{
 		lsp_bc_g->init=lsp_bc_g->init->next;
 		if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    //	PRF("eliminamos o unico \n");
 		}else{lsp_bc_g->init->before=NULL;}
-		free(to_erase);
+		free(to_erase);lsp_bc_g->len--;
 	}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
 		to_erase=lsp_bc_g->end;
 		lsp_bc_g->end->before->next=NULL;
 		lsp_bc_g->end=lsp_bc_g->end->before;
-		free(to_erase);
+		free(to_erase);lsp_bc_g->len--;
 
 	}else{
 		//PRF("eliminamos outro de lsp\n");
 		to_erase=position;
 		position->before->next=position->next;
 		position->next->before=position->before;
-		free(to_erase);
+		free(to_erase);lsp_bc_g->len--;
 	}
 	sup_timer(num,2);
-	lsp_bc_g->len--;
+
 	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head-4;}
 return 0;
 }
