@@ -138,7 +138,7 @@ signal(SIGUSR1, CheckTimerEvent_lsp);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 int aa=0;int i=0;
-while (aa==0){  if(gTimer_lsp[i]==0){ aa=1;PRF("entro na primeira\n");} else {PRF("entro na segunda\n");sup_elem_t_lsp(gTimer_lsp[i]);i++; }
+while (aa==0){  if(gTimer_lsp[i]==0){ aa=1;PRF("entro na primeira\n");} else {PRF("entro na segunda\n");sup_elem_t_lsp(gTimer_lsp[i]);i++;PRF("entro na segunda\n"); }
 PRF("CheckTimerEvent_lsp SIGUSR1 fin\n");
 }}
 
@@ -446,7 +446,9 @@ int sup_elem_t_lsp (int num)
 {
 	Element_lsp * position=lsp_bc_g->init;
 	Element_lsp *to_erase;
+	PRF("entrei no sup_elem_t_lsp\n");
 	int buf_size=sprint_hex_data(position->data.common_header.payload_lenght,2);
+	PRF("entrei no sup_elem_t_lsp %d\n",buf_size);
 	itsnet_node *data;
 	int in=0;
 	PRF("entrei no sup_elem_t_lsp\n");
@@ -478,7 +480,7 @@ int sup_elem_t_lsp (int num)
 	//free(SN);SN=NULL;
 	sup_timer(num,2);
 	lsp_bc_g->len--;
-	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
+	lsp_bc_g->size =lsp_bc_g->size- 12-buf_size;
 	return 0;
 }
 
@@ -604,7 +606,7 @@ List_lsp * sup_elem_lsp (int num){
 	}else{lsp_bc_g->init->before=NULL;}
 	free(to_erase);
 	lsp_bc_g->len--;
-	lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size;
+	lsp_bc_g->size =lsp_bc_g->size- 12-buf_size;
 	char HT[1];uint16_t sn;char HL[1];
 	memcpy(HT,&pos->data.common_header.HT_HST,1);
 	memcpy(HL,pos->data.common_header.mhl,1);
