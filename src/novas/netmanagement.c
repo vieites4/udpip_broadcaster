@@ -219,7 +219,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 
 
 	if( gps_open("localhost","2947",&gpsdata)!=0){
-		return(LPV);
+		return(LPV_old);
 	}
 	if (&gpsdata == NULL) {		PRF("Could not connect to gpsd!\n");	}
 	(void) gps_stream(&gpsdata, WATCH_ENABLE, NULL);//gpsdata.dev);
@@ -631,18 +631,19 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 	memcpy(LEN,data.common_header.payload_lenght+1,1);
 	memcpy(LEN+1,data.common_header.payload_lenght,1);
 
-	lsp->size=lsp->size+sizeof(itsnet_common_header)+sprint_hex_data(LEN,2);
+
 	PRF("AQUI en engadir en lsp! %d \n",lsp->len);
 	uint16_t sn=0xffff;	LT_s *temp;
 	char HT[1];	char HL[1];
 	memcpy(HL,&data.common_header.hop_limit,1);
 	int lon_int=sprint_hex_data( HL, 1);
 	memcpy(HT,&data.common_header.HT_HST,1);
-	if((memcmp(HT,tsb0,1)==0) && (lon_int>1)){
+	int head=0;
+	if(memcmp(HT,tsb1,1)==0 ||((memcmp(HT,tsb0,1)==0) && (lon_int>1))){
 		temp = (LT_s *) data.payload.itsnet_tsb.lt;
-		sn = data.payload.itsnet_tsb.sequencenumber;
+		sn = data.payload.itsnet_tsb.sequencenumber;head=32;
 	}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
-		sn = data.payload.itsnet_geobroadcast.sequencenumber;
+		sn = data.payload.itsnet_geobroadcast.sequencenumber;head=48;
 		temp = (LT_s *) data.payload.itsnet_tsb.lt;}else{}
 	if(memcmp(HT,tsb1,1)==0 ||(memcmp(HT,tsb0,1)==0 && lon_int>1)||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 		int str2=temp->multiple;	int str1=temp->base;int num0;
@@ -651,6 +652,7 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data){
 		PRF("SEQUENCE NUMBER! %d\n",sn);
 		if (lt>0) AddTimer(sn,lt,2);
 	}
+	lsp->size=lsp->size+sizeof(itsnet_common_header)+head+sprint_hex_data(LEN,2);
 	lsp_bc_g=lsp;
 	return 0;
 }
