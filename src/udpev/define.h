@@ -32,7 +32,7 @@
 #define itsGnDefaultMaxCommunicationRange 1000
 #define itsGnGeoAreaLineForwarding 0//1 enabled
 #define itsGnUcForwardingPacketBufferSize 256
-#define itsGnBcForwardingPacketBufferSize 1024000
+#define itsGnBcForwardingPacketBufferSize 5240 //1024000
 #define itsGnCbForwardingPacketBufferSize 256000
 #define itsGnTrafficClassRelevance 3
 #define itsGnTrafficClassReliability 2//10 é binario

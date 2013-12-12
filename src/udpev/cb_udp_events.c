@@ -75,9 +75,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
-		/**if(memcmp((void *)data +6,h_source,6)==0){
+		if(memcmp((void *)data +6,h_source,6)==0){
 		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");
-		return;	}**/
+		return;	}
 		//ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source);
 		//		memcpy(tx_frame1->buffer.header.type,type07,2);
 		//if ((memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0)){
@@ -176,7 +176,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					number=(byte_struct *)lon_int -1;
 					memcpy(pkt1->common_header.hop_limit,&number,1);
 					pkt1->common_header.forwarder_position_vector=* LPV; //
-					PRF("ENVIO UN PAQUETE\n");	print_hex_data(pkt1, arg->len);PRF("\n");
+					PRF("ENVIO UN PAQUETE\n");	//print_hex_data(pkt1, arg->len);PRF("\n");
 					char h_source2[ETH_ALEN];
 					get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source2) ;
 					ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source2);
@@ -269,12 +269,13 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)||
 		//PRF(" paquete enviado a ll %d %d.\n",header_length +lon_int+14+4,arg->len);
 		//print_hex_data(&tx_frame->buffer, header_length +lon_int+14+4);
 		PRF("ENVIO UN PAQUETE DE CERO\n");
+		free(pkt);pkt=NULL;
 	}
-	free(pkt);pkt=NULL;
+
 }
 free(tx_frame);
 
-//PRF("saio ben do cb_broadcast_recvfrom\n");
+PRF("saio ben do cb_broadcast_recvfrom\n");
 view_locT();//PRF("pinto lista loct \n");
 //view_lsp();PRF("pinto lista lsp\n");
 //view_timers();PRF("pinto lista timers lsp \n");

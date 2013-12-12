@@ -101,11 +101,10 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+32+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}PRF("TSB ");
-		int i =add_end_lsp(lsp_bc_g, *pkt);
+		int i =add_end_lsp(lsp_bc_g, *pkt);free(pkt);
 		return(pkt1);
 		//buffer in BC AND omit next executions
 	}
-
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,buffer +8,4);
@@ -141,7 +140,6 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	SN_g++;//máximo SN?? % SN_MAX; //page 16
 	//print_hex_data((char *)(buffer) +20,lon_int);printf("  no tsb\n");
 	memcpy(shb_h.payload.payload,(char *)(buffer) +20,lon_int);
-
 	pkt->common_header=ch;
 	pkt->payload.itsnet_shb=shb_h;
 	//NEIGHBOURS.
@@ -158,16 +156,18 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 		//pkt1=NULL;
 		int val=lsp_bc_g->size+sizeof(itsnet_common_header)+4+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
+		PRF("ANTES %d %d\n",val,itsGnBcForwardingPacketBufferSize );
 		while (val>itsGnBcForwardingPacketBufferSize){
-			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
+			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo\n");
+			PRF("ANTES %d %d\n",lsp_bc_g->size,itsGnBcForwardingPacketBufferSize );
 			lsp_bc_g=sup_elem_lsp(0xffff);
+			PRF("DP %d %d\n",lsp_bc_g->size,sprint_hex_data((char *)(buffer)+4 ,2));
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+4+sprint_hex_data((char *)(buffer) +4,2);
 		}
-		int i =add_end_lsp(lsp, *pkt);
+		int i =add_end_lsp(lsp, *pkt);free(pkt);
 		return(pkt1);
 		//buffer in BC AND omit next executions
 	}
-
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,(char *)(buffer) +8,4);
@@ -196,7 +196,6 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	memcpy(ch.traffic_class,(char *)(buffer)  +6,1);
 	memcpy(ch.flags,(char *)(buffer)  +3,1);
 	memcpy(ch.hop_limit,(char *)(buffer)  +2,1);
-
 	memcpy(&ch.HT_HST,(char *)(buffer),1);
 	//	print_hex_data(&ch.HT_HST,1);PRF(" o do HT\n");
 	if (g==false){
@@ -210,7 +209,6 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	int ts_num=sprint_hex_data(TS,4);
 	char TS_zero[4]; memset(TS_zero,0,4);
 	if (memcmp(TS,TS_zero,4)==0){ ts_num=itsGnMaxPacketLifeTime;}
-
 	int base=0;int mult=0;int num4=0;int num3=0;
 	LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};
 	if (ts_num>6401){base=3; mult=(int) ceil(ts_num/100); } else if (ts_num>64) {base=2; mult=(int) ceil(ts_num/10);}else {base=1; mult=ts_num;}
@@ -253,14 +251,10 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 	memcpy(gbc_h.distanceB,(char *)(buffer) +26,2);
 	memcpy(gbc_h.angle,(char *)(buffer) +28,2);
 	memcpy(gbc_h.reserved,(char *)(buffer) +30,1);}
-
 	memcpy(gbc_h.payload.payload,(char *)(buffer) +36,lon_int);
 	gbc_h.source_position_vector=* LPV;
 	pkt->payload.itsnet_geobroadcast=gbc_h;
 	pkt->common_header=ch;
-
-
-
 	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 	{//PRF("é btp tipo a\n");
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer)  + 34,2);
@@ -271,22 +265,20 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer)  + 34,2);
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,info_dest,2);	}
 	//NEIGHBOURS.
-
-
-
 	if  (locT_general->len== 0){
 		itsnet_packet * pkt1 = NULL;
-		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-		pkt1=NULL;int val=(lsp_bc_g->size)+48+4+(sizeof(itsnet_common_header))+(sprint_hex_data((char *)(buffer) +4,2));
-		//PRF(" val: %d %d %d\n",lsp_bc_g->size,sizeof(itsnet_common_header),sprint_hex_data((char *)(buffer) +4,2));
-		//delete old buffered elements if we need more size to add a new one.
-
+		int val=(lsp_bc_g->size)+48+4+(sizeof(itsnet_common_header))+sprint_hex_data((char *)(buffer) +4,2);
+		PRF("ANTES %d %d\n",val,itsGnBcForwardingPacketBufferSize );
 		while (val>itsGnBcForwardingPacketBufferSize){
-			lsp_bc_g=sup_elem_lsp(0xffff);
+					PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo\n");
+						PRF("ANTES %d %d\n",lsp_bc_g->size,itsGnBcForwardingPacketBufferSize );
+						lsp_bc_g=sup_elem_lsp(0xffff);
+						PRF("DP %d %d\n",lsp_bc_g->size,sprint_hex_data((char *)(buffer) +4,2) );
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+48+4+sprint_hex_data((char *)(buffer) +4,2);
-			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
+
 		}PRF("GEO ");
 		int i =add_end_lsp(lsp, *pkt);
+		free(pkt);
 		return(pkt1);
 		//buffer in BC AND omit next executions
 	}
