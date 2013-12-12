@@ -100,7 +100,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 			lsp_bc_g=sup_elem_lsp(0xffff);
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+32+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
-		}
+		}PRF("TSB ");
 		int i =add_end_lsp(lsp_bc_g, *pkt);
 		return(pkt1);
 		//buffer in BC AND omit next executions
@@ -285,7 +285,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,bool g){
 			lsp_bc_g=sup_elem_lsp(0xffff);
 			val=lsp_bc_g->size+sizeof(itsnet_common_header)+48+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
-		}
+		}PRF("GEO ");
 		int i =add_end_lsp(lsp, *pkt);
 		return(pkt1);
 		//buffer in BC AND omit next executions

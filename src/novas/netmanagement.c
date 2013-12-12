@@ -533,7 +533,7 @@ while (in==0 && position!=NULL)
 	int num0=sprint_hex_data(SN,2);
 	//PRF("num %d num0 %d busca sup_elem_t_lsp\n",num,num0);
 	if(num0==num)in=1; else position = position->next;}
-if (position==NULL) printf("son null\n");
+if (position==NULL) {printf("son null\n");} else{
 if(position->before==NULL){
 	//PRF("eliminamos o primeiro de lsp\n");
 	to_erase=lsp_bc_g->init;
@@ -556,7 +556,7 @@ if(position->before==NULL){
 }
 sup_timer(num,2);
 lsp_bc_g->len--;
-lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head;
+lsp_bc_g->size =lsp_bc_g->size- sizeof(itsnet_common_header)-buf_size-head;}
 return 0;
 }
 
