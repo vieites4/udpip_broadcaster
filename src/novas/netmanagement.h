@@ -80,8 +80,8 @@ typedef struct public_ev_arg public_ev_arg_r;
 **/
 struct itsnet_node_//loct entry
 {
-	struct itsnet_node_id node_id;			/** node identity		*/
-	struct mac_addr mac_id;
+	itsnet_node_id node_id;			/** node identity		*/
+	mac_addr mac_id;
 	bool itss_type;
 	int version;
 	 struct itsnet_position_vector pos_vector;	/** position vector		*/
@@ -178,11 +178,30 @@ int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);
 /**
  * @fn search_in_locT
  * @brief This function search an element of loct list.
- * @param data, we use this information to make the search
+ * @param data, we use this information (loct block) to make the search
  * @param list where we look for the element
  * @return the number of position in loct list
   */
 int search_in_locT (itsnet_node * data, List_locT * locT);
+/**
+ * @fn search_in_locT
+ * @brief This function search an element of loct list.
+ * @param data, we use this information (mac address)to make the search
+ * @param list where we look for the element
+ * @return the number of position in loct list
+  */
+int search_in_locT_m (mac_addr data, List_locT * locT);
+
+
+/**
+ * @fn rtx_ls
+ * @brief This function starts when a ls timer expires.
+ * @param num
+
+  */
+int rtx_ls(int num);
+
+
 
 /**
  * @fn sup_elem_lsp
@@ -190,12 +209,22 @@ int search_in_locT (itsnet_node * data, List_locT * locT);
  * @param num, not necessary
   */
 List_lsp * sup_elem_lsp (int num);
+
+/**
+ * @fn sup_elem_t_lsp
+ * @brief This function erase num element of lsp list.
+ * @param num, position of the element we want to erase
+  */
+
+int sup_elem_t_lsp (int num);
+
 /**
  * @fn add_end_locT
  * @brief This function add an element of loct list.
  * @param list where we put the new element
  * @param data is the information of the new element
   */
+
 int add_end_locT ( List_locT * locT, itsnet_node data);
 /**
  * @fn add_end_lsp
@@ -203,7 +232,7 @@ int add_end_locT ( List_locT * locT, itsnet_node data);
  * @param list where we put the new element
  * @param data is the information of the new element
   */
-int add_end_lsp ( List_lsp * lsp, itsnet_packet data);
+int add_end_lsp ( List_lsp * lsp, itsnet_packet data, int type);
 /**
  * @fn add_end_rep
  * @brief This function add an element of rep list.
@@ -221,6 +250,12 @@ void view_lsp ();
  * @brief This function permits view loct list of mac.
  */
 void view_locT ();
+/**
+ * @fn any_neighbours
+ * @brief This function say if there are any neighbours in locT.
+ */
+
+int any_neighbours ();
 List_locT * startup1(configuration_t *cfg);
 /**
  * @fn LPV_update
@@ -250,6 +285,7 @@ void LS(int option);
 typedef struct Timer
 {
 	unsigned short TimerId;
+	int RTC;
 	int Period;
 	struct Timer *pNext;
 	struct Timer * before;
@@ -342,5 +378,11 @@ void CheckTimerEvent(EV_P_ ev_timer *w, int revents);
  */
 void thr_h2(void *arg);
 
+/**
+ * @fn PDR_update
+ * @brief This is the thread we use to calculate PDR (Packet Data Rate).
+ * @param pdr. new time it passed since last reception.
+
+ */
 int PDR_update(int pdr);
 #endif /* NETMANAGEMENT_H_ */

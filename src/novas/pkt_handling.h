@@ -73,11 +73,13 @@ itsnet_packet_f * GeoBroadcast_f(void *dato);
   */
 itsnet_packet_f * GeoUnicast_f(void *dato);
 /**
- *  @fn GEOUN_f
- * @brief This function create the geounicast packet to send to upper layer.
+ *  @fn GeoAnycast_f
+ * @brief This function create the GeoAnycast packet to send to upper layer.
  * @param data, we use  to make the packet
  * @return the packet.
   */
+
+itsnet_packet_f * GeoAnycast_f(void *dato);
 //itsnet_packet_f * GEOUN_f(void *dato);
 
 /**
@@ -110,7 +112,7 @@ int geo_limit(void *HT,itsnet_packet_f *dato);
  * @fn GeoAnycast
  * @brief GeoAnycast no implemented yet
  */
-void GeoAnycast();
+itsnet_packet * GeoAnycast(void *data,List_lsp *lsp,List_lsp *rep);
 /**
  * @fn determine_nexthop
  * @brief determine_nexthop no implemented yet

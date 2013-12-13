@@ -42,14 +42,16 @@ typedef uint16_t itsnet_radius;
 /**
  *The structure describes itsnet identity
  */
-
+struct mac_addr{
+	unsigned char address[6];};
+typedef struct mac_addr mac_addr;
 struct itsnet_node_id
 {
 	unsigned char scc2:     2;
 	unsigned char itss_type:5;
 	unsigned char manually :1;
 	unsigned char scc:      8;
-	char          mac[6];
+	mac_addr          mac;
 };
 
 typedef struct itsnet_node_id itsnet_node_id;
@@ -68,6 +70,7 @@ struct itsnet_accuracy
 };
 typedef struct itsnet_accuracy itsnet_accuracy;
 **/
+
 struct version_nh
 {
 	unsigned char version :	4;
@@ -139,7 +142,7 @@ struct itsnet_common_header
 	//unsigned char nh_reserved[1]; //itsnet_protocol_info
 	ht_hst_t nh_reserved;
 	ht_hst_t HT_HST;
-	unsigned char traffic_class [1];
+	trafficclass_t traffic_class;
 	unsigned char flags [1];
 	unsigned char payload_lenght[2];
 	unsigned char mhl[1];//maximum hop limit //not decremented!!!
@@ -169,7 +172,7 @@ struct itsnet_common
 	unsigned char hop_limit[1];
 	unsigned char flags [1];
 	unsigned char payload_lenght[2];
-	unsigned char traffic_class [1];
+	trafficclass_t traffic_class;
 	ht_hst_t btp;
 	//itsnet_longitude longitude;
 	//itsnet_latitude latitude;
@@ -270,7 +273,9 @@ struct itsnet_any_t
 	itsnet_common_header header;
 
 	/** unspecified */
-}itsnet_any_t;
+};
+typedef struct itsnet_any_t itsnet_any_t;
+
 /**
  *The structure describes beacon packet
  */
@@ -278,7 +283,9 @@ struct itsnet_beacon_t
 {
 	itsnet_position_vector source_position_vector;/** Source node position vector */
 	itsnet_btp_wo_payload_t payload;
-} itsnet_beacon_t;
+} ;
+
+typedef struct itsnet_beacon_t itsnet_beacon_t;
 /**
  *The structure describes itsnet_unicast packet
  */
@@ -347,6 +354,37 @@ struct itsnet_tsb_t
 
 };
 typedef struct itsnet_tsb_t itsnet_tsb_t;
+
+
+/**
+ *The structure describes itsnet_ls_request packet
+ */
+struct itsnet_ls_req_t
+{
+	itsnet_sequencenumber sequencenumber;
+	//unsigned char lt[1];
+	unsigned char reserved[2];
+	itsnet_position_vector source_position_vector;/** Source node position vector */
+	itsnet_node_id GN_ADDR;
+	itsnet_btp_wo_payload_t payload;
+
+};
+typedef struct itsnet_ls_req_t itsnet_ls_req_t;
+/**
+ *The structure describes itsnet_ls_reply packet
+ */
+struct itsnet_ls_rep_t
+{
+	itsnet_sequencenumber sequencenumber;
+	//unsigned char lt[1];
+	unsigned char reserved[2];
+	itsnet_position_vector source_position_vector;/** Source node position vector */
+	itsnet_position_vector dest_position_vector;
+	itsnet_btp_wo_payload_t payload;
+
+};
+typedef struct itsnet_ls_rep_t itsnet_ls_rep_t;
+
 /**
  *The structure describes itsnet_shb packet
  */
@@ -403,12 +441,14 @@ struct itsnet_packet
 	itsnet_common_header common_header;/** packet header */
 	union payload_packet   /**this is to reserve the maximum space used by packets*/
 	{itsnet_shb_t itsnet_shb;
-	struct itsnet_any_t itsnet_any;/** unspecified */
-	struct itsnet_beacon_t itsnet_beacon;/** Beacon */
+	itsnet_any_t itsnet_any;/** unspecified */
+	itsnet_beacon_t itsnet_beacon;/** Beacon */
 	itsnet_unicast_t itsnet_unicast;/** Geo-unicast  */
 	itsnet_geoanycast_t itsnet_geoanycast;/** Geo-anycast */
 	itsnet_geobroadcast_t itsnet_geobroadcast;/** Geo-broadcast */
 	itsnet_tsb_t itsnet_tsb;/** Topologically-scoped broadcast */
+	itsnet_ls_req_t itsnet_ls_req;/** Topologically-scoped broadcast */
+	itsnet_ls_rep_t itsnet_ls_rep;/** Topologically-scoped broadcast */
 	//struct itsnet_ls_t itsnet_ls;/** Location service */
 	} payload;
 };
@@ -432,9 +472,7 @@ typedef struct itsnet_geo_t itsnet_geo_t;
  *The structure describes adress
  */
 
-struct mac_addr{
-	unsigned char address[6];};
-typedef struct mac_addr mac_addr;
+
 
 /**
  *The structure describes Itsnet events

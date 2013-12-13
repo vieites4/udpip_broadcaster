@@ -29,6 +29,7 @@ ev_timer t_LPV;
 uint16_t SN_g=0;//sequence number
 itsnet_node_id GN_ADDR;
 List_lsp * lsp_bc_g;
+ List_lsp * lsp_uc_g;
 int PDR=0;
 #if DEBUG_PRINT_ENABLED
 #define PRF printf
@@ -57,7 +58,7 @@ PRF(">>> Reading configuration...\n");
 	lsp_bc_g=init_lsp();
 	List_lsp *rep_bc_g=init_lsp();
 	locT_g=startup1(cfg);
-
+	lsp_uc_g=init_lsp();
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
