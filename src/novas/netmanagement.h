@@ -91,7 +91,9 @@ struct itsnet_node_//loct entry
 	//struct tq_elem tqe;                    /** Timer queue entry */
 	struct timespec expires;       		/** expire time for message 	*/
 	int pdr; // packet data rate
-	};
+
+
+};
 typedef struct itsnet_node_ itsnet_node;
 /**
  * @struct ElementList_locT
@@ -208,7 +210,7 @@ int rtx_ls(int num);
  * @brief This function erase last element of lsp list.
  * @param num, not necessary
   */
-List_lsp * sup_elem_lsp (int num);
+List_lsp * sup_elem_lsp (int num, int type);
 
 /**
  * @fn sup_elem_t_lsp
@@ -216,7 +218,7 @@ List_lsp * sup_elem_lsp (int num);
  * @param num, position of the element we want to erase
   */
 
-int sup_elem_t_lsp (int num);
+int sup_elem_t_lsp (int num, int type);
 
 /**
  * @fn add_end_locT
@@ -256,6 +258,15 @@ void view_locT ();
  */
 
 int any_neighbours ();
+
+/**
+ * @fn any_ls_proccess
+ * @brief This function say if there are LS_PENDING in locT.
+ */
+
+int any_ls_proccess();
+
+
 List_locT * startup1(configuration_t *cfg);
 /**
  * @fn LPV_update

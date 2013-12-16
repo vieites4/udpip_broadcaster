@@ -4,6 +4,7 @@ const unsigned char ETH_BROAD[ETH_ALEN] ={ 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFf };
 const unsigned char ZEROS[ETH_ALEN] ={ 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
 extern List_lsp * lsp_bc_g;
 extern List_lsp * lsp_uc_g;
+extern List_lsp * ls_buffer;
 extern itsnet_node_id GN_ADDR;
 extern int PDR;
 itsnet_position_vector * LPV;
@@ -19,6 +20,7 @@ List_timer *mpTimerList;
 List_timer *mpTimerList_lsp;
 List_timer *mpTimerList_ls_rtx;
 List_timer *mpTimerList_rep;
+List_timer *mpTimerList_ls_buff;
 extern const unsigned char tsb0[1];
 extern const unsigned char tsb1[1];
 extern const unsigned char geobroad0[1];
@@ -39,6 +41,8 @@ int i=0;
 int PDR_sum=0;
 static int gTimer_lsp[1000];
 static int gTimer_ls_rtx[1000];
+
+static int gTimer_ls_buff[1000];
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
 
 #if DEBUG_PRINT_ENABLED
@@ -80,7 +84,7 @@ bool AddTimer(unsigned short TimerId, int num, int type)
 
 {
 	List_timer * list= NULL;
-	if (type==2){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if (type==3){list=mpTimerList_ls_rtx;}else {list=mpTimerList_rep;}
+	if (type==2){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if (type==3){list=mpTimerList_ls_rtx;}else if (type==4){list=mpTimerList_ls_buff;}else {list=mpTimerList_rep;}
 	tTimer *pTimer;
 	tTimer *new_element = NULL;
 	bool ReturnValue = false;
@@ -105,9 +109,10 @@ bool AddTimer(unsigned short TimerId, int num, int type)
 	{	// Set the timer interval
 		pTimer->Period = num;
 		ReturnValue = true;    }
-	if (type==2){mpTimerList_lsp=list;}else if(type==1){mpTimerList=list;}else if (type==3){mpTimerList_ls_rtx=list;}else {mpTimerList_rep=list;}
+	if (type==2){mpTimerList_lsp=list;}else if(type==1){mpTimerList=list;}else if (type==3){mpTimerList_ls_rtx=list;}else if (type==4){mpTimerList_ls_buff=list;}else {mpTimerList_rep=list;}
 	return ReturnValue;
 }
+
 
 void CheckTimerEvent(EV_P_ ev_timer *w, int revents)
 {signal(SIGUSR2, CheckTimerEvent);
@@ -141,7 +146,7 @@ signal(SIGUSR1, CheckTimerEvent_lsp);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 int aa=0;int i=0;
-while (aa==0){  if(gTimer_lsp[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_lsp[i]);i++; }
+while (aa==0){  if(gTimer_lsp[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_lsp[i],0);i++; }
 PRF("CheckTimerEvent_lsp SIGUSR1 fin\n");
 }}
 
@@ -154,17 +159,25 @@ int aa=0;int i=0;
 while (aa==0){  if(gTimer_ls_rtx[i]==0){ aa=1;} else {rtx_ls(gTimer_ls_rtx[i]);i++; }
 PRF("CheckTimerEvent_lsp SIGUSR1 fin\n");
 }}
-
+void CheckTimerEvent_ls_buff(EV_P_ ev_timer *w, int revents)
+{	PRF("CheckTimerEvent_ls_buff 46\n");
+signal(46, CheckTimerEvent_ls_buff);
+unsigned short nTimer;
+// Read the global variable gTimer and reset the value
+int aa=0;int i=0;
+while (aa==0){  if(gTimer_ls_buff[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_ls_buff[i],2);i++; }
+PRF("CheckTimerEvent_ls_buff fin\n");
+}}
 
 int rtx_ls(int num){
 	int a=0;
-	 List_timer *list;
-	 tTimer *position=list->init;
+	List_timer *list;
+	tTimer *position=list->init;
 
-	 while(position!=NULL){
+	while(position!=NULL){
 
-		 position=position->pNext;
-	 }
+		position=position->pNext;
+	}
 
 	return(a);
 }
@@ -174,7 +187,7 @@ void SystemTickEvent(void)
 signal(SIGALRM, SystemTickEvent);
 tTimer *pTimer;
 int i=0;
-while(i<1000){	gTimer_lsp[i++]=0;	gTimer_ls_rtx[i++]=0;}
+while(i<1000){	gTimer_lsp[i++]=0;	gTimer_ls_rtx[i++]=0;gTimer_ls_buff[i++]=0;}
 // Update the timers
 pTimer = mpTimerList->init;
 while(pTimer != NULL)
@@ -224,6 +237,26 @@ while(i<1000 && aa1==0){if (gTimer_ls_rtx[i++]!=0) aa1=1;}
 if (aa1!=0){raise(45);}
 
 
+
+// Update the timers
+pTimer1 = mpTimerList_ls_buff->init;
+int count2=0;
+while(pTimer1 != NULL)
+{ 	if(pTimer1->Period != 0)
+{  	pTimer1->Period--;
+if(pTimer1->Period == 0)
+{ 		// Set the corresponding bit when the timer reaches zero
+	gTimer_ls_buff[count2] = pTimer1->TimerId;	count2++;
+}        }
+// Move to the next timer in the list
+pTimer1 = pTimer1->pNext;
+}
+i=0;int aa2=0;
+while(i<1000 && aa2==0){if (gTimer_ls_buff[i++]!=0) aa2=1;}
+if (aa2!=0){raise(46);}
+
+
+
 }
 
 void thr_h2(void *arg){
@@ -232,6 +265,7 @@ void thr_h2(void *arg){
 	signal(SIGUSR2, CheckTimerEvent);
 	signal(SIGUSR1, CheckTimerEvent_lsp);
 	signal(45, CheckTimerEvent_ls_rtx);
+	signal(46, CheckTimerEvent_ls_buff);
 }
 
 
@@ -249,9 +283,11 @@ List_locT * startup1(configuration_t *cfg)
 		PRF("MANAGED ADDRESS CONFIGURATION, communication with lateral layer\n");
 	}
 	locT_general = init_locT();
+	ls_buffer= init_lsp();
 	mpTimerList= init_timer_list();
 	mpTimerList_lsp= init_timer_list();
 	mpTimerList_ls_rtx= init_timer_list();
+	mpTimerList_ls_buff=init_timer_list();
 	return (locT_general);
 
 
@@ -444,15 +480,15 @@ int sup_timer (unsigned short TimerId, int num)
 			to_erase=list->end;
 			list->end->before->pNext=NULL;
 			list->end=list->end->before;
-		free(to_erase);list->len--;
+			free(to_erase);list->len--;
 		}else{
-		PRF("eliminamos outro de timer \n");
-		to_erase=position;
-		position->before->pNext=position->pNext;
-		position->pNext->before=position->before;
-		free(to_erase);list->len--;
+			PRF("eliminamos outro de timer \n");
+			to_erase=position;
+			position->before->pNext=position->pNext;
+			position->pNext->before=position->before;
+			free(to_erase);list->len--;
 		}
-	if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}}
+		if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}}
 	return 0;
 }
 /* erase after a position */
@@ -474,7 +510,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	while (in<(a))
 	{in++;position = position->next;//print_hex_data(position->data.mac_id.address,6);PRF(" \n");
 	}
-	if (position==NULL) PRF("a posición é null\n"); //print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
+	if (position==NULL) PRF("a posición é null\n"); else{//print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
 	if(position->before==NULL){
 		PRF("eliminamos o primeiro de loct\n");
 		to_erase=locT->init;
@@ -498,51 +534,57 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 
 	locT_general=locT;
 	memcpy(mac_list[num],ZEROS,6);
-	taken[num]=false;
+	taken[num]=false;}
 	return 0;
 }
 
-int sup_elem_t_lsp (int num)
+int sup_elem_t_lsp (int num,int type)
 {
-	Element_lsp * position=lsp_bc_g->init;
+	List_lsp *lsp;
+
+	if (type==0)lsp=lsp_bc_g; else if (type==1)lsp=lsp_uc_g;else if (type==2)lsp=ls_buffer;
+
+	Element_lsp * position=lsp->init;
 	Element_lsp *to_erase;
 	if (position!=NULL){
-	int buf_size=sprint_hex_data(position->data.common_header.payload_lenght,2);
-	PRF("entrei no sup_elem_t_lsp \n");
-	itsnet_node *data;
-	int in=0;
-	char SN[2];char HT[1];
-	int head=0;
-	memcpy(HT,&position->data.common_header.HT_HST,1);
-	if (memcmp(HT,tsb0,1)==0 || memcmp(HT,tsb1,1)==0)head=28;else if (memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0)head=48;
-	while (in==0 && position!=NULL)
-	{
-		memcpy(SN,(char*)(&position->data.payload),2);
-		int num0=sprint_hex_data(SN,2);
-		if(num0==num)in=1; else position = position->next;}
-	if (position==NULL) {printf("son null, no sup_elem_t_lsp\n");}else{
-	if(position->before==NULL){
-		to_erase=lsp_bc_g->init;
-		//PRF("eliminamos o primeiro de lsp\n");
-		lsp_bc_g->init=lsp_bc_g->init->next;
-		if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    //	PRF("eliminamos o unico \n");
-		}else{lsp_bc_g->init->before=NULL;}
-		free(to_erase);lsp_bc_g->len--;
-	}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
-		to_erase=lsp_bc_g->end;
-		lsp_bc_g->end->before->next=NULL;
-		lsp_bc_g->end=lsp_bc_g->end->before;free(to_erase);lsp_bc_g->len--;
-	}else{
-		//PRF("eliminamos outro de lsp\n");
-		to_erase=position;
-		position->before->next=position->next;
-		position->next->before=position->before;
-		free(to_erase);lsp_bc_g->len--;
-	}
-	//free(SN);SN=NULL;
-	sup_timer(num,2);
+		int buf_size=sprint_hex_data(position->data.common_header.payload_lenght,2);
+		PRF("entrei no sup_elem_t_lsp \n");
+		itsnet_node *data;
+		int in=0;
+		char SN[2];char HT[1];
+		int head=0;
+		memcpy(HT,&position->data.common_header.HT_HST,1);
+		if (memcmp(HT,tsb0,1)==0 || memcmp(HT,tsb1,1)==0)head=28;else if (memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0)head=48;
+		while (in==0 && position!=NULL)
+		{
+			memcpy(SN,(char*)(&position->data.payload),2);
+			int num0=sprint_hex_data(SN,2);
+			if(num0==num)in=1; else position = position->next;}
+		if (position==NULL) {printf("son null, no sup_elem_t_lsp\n");}else{
+			if(position->before==NULL){
+				to_erase=lsp->init;
+				//PRF("eliminamos o primeiro de lsp\n");
+				lsp->init=lsp->init->next;
+				if(lsp->len==1){lsp->end=NULL;    //	PRF("eliminamos o unico \n");
+				}else{lsp_bc_g->init->before=NULL;}
+				free(to_erase);lsp->len--;
+			}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
+				to_erase=lsp->end;
+				lsp->end->before->next=NULL;
+				lsp->end=lsp->end->before;free(to_erase);lsp->len--;
+			}else{
+				//PRF("eliminamos outro de lsp\n");
+				to_erase=position;
+				position->before->next=position->next;
+				position->next->before=position->before;
+				free(to_erase);lsp->len--;
+			}
+			//free(SN);SN=NULL;
+			sup_timer(num,2);
 
-	lsp_bc_g->size =lsp_bc_g->size- 12-head-buf_size-4;}}
+			lsp->size =lsp->size- 12-head-buf_size-4;}}
+	if (type==0)lsp_bc_g=lsp; else if (type==1)lsp_uc_g=lsp;else if (type==2)ls_buffer=lsp;
+
 	return 0;
 }
 
@@ -566,14 +608,28 @@ void view_lsp (){
 int any_neighbours (){
 	Element_locT *aux;
 	aux = locT_general->init;
-int a=0;
+	int a=0;
 	int num0;
 	while (aux != NULL && a==0){ //print_hex_data(&aux->data.payload,2);	PRF(" lista lsp\n");
 		if(aux->data.IS_NEIGHBOUR)a=1;
 		aux = aux->next;
 	}
-return(a);
+	return(a);
 }
+
+
+int any_ls_proccess (){
+	Element_locT *aux;
+	aux = locT_general->init;
+	int a=0;
+	int num0;
+	while (aux != NULL && a==0){ //print_hex_data(&aux->data.payload,2);	PRF(" lista lsp\n");
+		if(aux->data.LS_PENDING)a=1;
+		aux = aux->next;
+	}
+	return(a);
+}
+
 
 int search_in_locT (itsnet_node * data, List_locT * locT){
 	Element_locT *aux;
@@ -603,13 +659,13 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 int search_in_locT_m (mac_addr data, List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
-int e=1;
-		while ((aux!=NULL) &&(a==0)&& (e<17))
-		{
-			if (taken[i]==true){
-				//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
-				if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.IS_NEIGHBOUR ) {a=1;}else{ e++;aux=aux->next;}}
-			else aux=aux->next;		}
+	int e=1;
+	while ((aux!=NULL) &&(a==0)&& (e<17))
+	{
+		if (taken[i]==true){
+			//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
+			if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.IS_NEIGHBOUR ) {a=1;}else{ e++;aux=aux->next;}}
+		else aux=aux->next;		}
 	if (a==0) return (0); else return(e);
 }
 
@@ -617,14 +673,14 @@ int e=1;
 int search_in_locT_m_pending (mac_addr data, List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
-int e=1;
-		while ((aux!=NULL) &&(a==0)&& (e<17))
-		{
-			if (taken[i]==true){
-				//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
-				if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.LS_PENDING==1) {a=1;}else{ e++;aux=aux->next;}}
-			else aux=aux->next;		}
-		if (a==0) return (0); else return(e);
+	int e=1;
+	while ((aux!=NULL) &&(a==0)&& (e<17))
+	{
+		if (taken[i]==true){
+			//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
+			if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.LS_PENDING==1) {a=1;}else{ e++;aux=aux->next;}}
+		else aux=aux->next;		}
+	if (a==0) return (0); else return(e);
 }
 
 
@@ -699,36 +755,41 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 }
 
 /* erase after a position */
-List_lsp * sup_elem_lsp (int num){
+List_lsp * sup_elem_lsp (int num, int type){
 	int a=0;
-	Element_lsp *pos=lsp_bc_g->init;
-	Element_lsp *to_erase=lsp_bc_g->init;
+	List_lsp * lsp;
+	if (type==0)lsp=lsp_bc_g; else if (type==1)lsp=lsp_uc_g;else if (type==2)lsp=ls_buffer;
+
+	Element_lsp *pos=lsp->init;
+	Element_lsp *to_erase=lsp->init;
 	int buf_size=sprint_hex_data(pos->data.common_header.payload_lenght,2);
 	PRF("eliminamos o primeiro de lsp \n");
-	lsp_bc_g->init=lsp_bc_g->init->next;
-	if(lsp_bc_g->len==1){lsp_bc_g->end=NULL;    PRF("eliminamos o unico de lsp\n");
-	}else{lsp_bc_g->init->before=NULL;}
-	free(to_erase);
-	lsp_bc_g->len--;
+	if (lsp->init!=NULL){
+		lsp->init=lsp->init->next;
+		if(lsp->len==1){lsp->end=NULL;    PRF("eliminamos o unico de lsp\n");
+		}else{lsp->init->before=NULL;}
+		free(to_erase);
+		lsp->len--;
 
-	char HT[1];uint16_t sn;char HL[1];
-	memcpy(HT,&pos->data.common_header.HT_HST,1);
-	memcpy(HL,pos->data.common_header.mhl,1);
-	int head=28;
-	int lon_int=sprint_hex_data( HL, 1);
-	if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0 || memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){a=1;}
-	if (a==1){ if (num==0xffff){
-		if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0){
-			sn = pos->data.payload.itsnet_tsb.sequencenumber;head=28;
-		}else
-			if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
-				sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;head=48;
-			}
-		sup_timer(sn,2);
-	}else sup_timer(num,2);}
-	lsp_bc_g->size =lsp_bc_g->size- 12-buf_size-head-4;
-	PRF("saimos de suprimir elemento da lsp\n");
-	return (lsp_bc_g);
+		char HT[1];uint16_t sn;char HL[1];
+		memcpy(HT,&pos->data.common_header.HT_HST,1);
+		memcpy(HL,pos->data.common_header.mhl,1);
+		int head=28;
+		int lon_int=sprint_hex_data( HL, 1);
+		if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0 || memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){a=1;}
+		if (a==1){ if (num==0xffff){
+			if((memcmp(HT,tsb0,1)==0 && lon_int>1) ||memcmp(HT,tsb1,1)==0){
+				sn = pos->data.payload.itsnet_tsb.sequencenumber;head=28;
+			}else
+				if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
+					sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;head=48;
+				}
+			sup_timer(sn,2);
+		}else sup_timer(num,2);}
+		lsp->size =lsp->size- 12-buf_size-head-4;
+		PRF("saimos de suprimir elemento da lsp\n");
+		if (type==0)lsp_bc_g=lsp; else if (type==1)lsp_uc_g=lsp;else if (type==2)ls_buffer=lsp;}
+	return (lsp);
 }
 /* view List */
 void view_timers(){

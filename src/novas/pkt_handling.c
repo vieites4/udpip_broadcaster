@@ -27,6 +27,7 @@ extern struct ev_loop * l_Beacon;
 extern unsigned short dictionary[16];
 extern List_locT *locT_general;
 extern List_lsp * lsp_bc_g;
+extern List_lsp *ls_buffer;
 extern List_lsp * lsp_uc_g;
 extern ev_timer t_Beacon;
 extern int PDR;
@@ -97,7 +98,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		int val=lsp_bc_g->size+8+4+28+4+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
-			lsp_bc_g=sup_elem_lsp(0xffff);
+			lsp_bc_g=sup_elem_lsp(0xffff,0);
 			val=lsp_bc_g->size+4+8+28+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
@@ -105,6 +106,24 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		return(pkt1);
 		//buffer in BC AND omit next executions
 	}
+
+
+	if  (ls_buffer->len>0 && any_ls_proccess()==0 && ch.traffic_class.scf==1){
+		itsnet_packet * pkt1 = NULL;
+		int val=ls_buffer->size+8+4+28+4+sprint_hex_data((char *)(buffer) +4,2);
+		//delete old buffered elements if we need more size to add a new one.
+		while (val>itsGnBcForwardingPacketBufferSize){
+			ls_buffer=sup_elem_lsp(0xffff,2);
+			val=ls_buffer->size+4+8+28+4+sprint_hex_data((char *)(buffer) +4,2);
+			PRF("aqui podo liala porque non se actualice ls_buffer");
+		}
+		int i =add_end_lsp(ls_buffer, *pkt,2);free(pkt);
+		return(pkt1);
+
+	}
+
+
+
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,buffer +8,4);
@@ -175,12 +194,27 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		int val=lsp_bc_g->size+4+8+28+4+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
-			lsp_bc_g=sup_elem_lsp(0xffff);
+			lsp_bc_g=sup_elem_lsp(0xffff,0);
 			val=lsp_bc_g->size+8+4+28+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
 		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);
 		return(pkt1);		//buffer in BC AND omit next executions
+	}
+
+
+	if  (ls_buffer->len>0 && any_ls_proccess()==0 && ch.traffic_class.scf==1){
+		itsnet_packet * pkt1 = NULL;
+		int val=ls_buffer->size+8+4+28+4+sprint_hex_data((char *)(buffer) +4,2);
+		//delete old buffered elements if we need more size to add a new one.
+		while (val>itsGnBcForwardingPacketBufferSize){
+			ls_buffer=sup_elem_lsp(0xffff,2);
+			val=ls_buffer->size+4+8+28+4+sprint_hex_data((char *)(buffer) +4,2);
+			PRF("aqui podo liala porque non se actualice ls_buffer");
+		}
+		int i =add_end_lsp(ls_buffer, *pkt,2);free(pkt);
+		return(pkt1);
+
 	}
 	//REPETITION INTERVAL
 	char REP[4];
@@ -252,65 +286,64 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		memcpy(pkt->payload.itsnet_tsb.payload.btp2,info_dest,2);}
 
 
-	if(search_in_locT_m(LPV_dest->node_id.mac,locT_general)==0){
+	if(search_in_locT_m(LPV_dest->node_id.mac,locT_general)!=0){
 
 
 	}else{
-	PRF("LOCATION SERVICE\n");
-	search_in_locT_m_pending(LPV_dest->node_id.mac,locT_general);
-	if (itsGnSecurity==1){PRF("Security en ls\n");}
-	itsnet_packet * pkt_ls = NULL;
-	pkt_ls=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	pkt_ls->basic_header=bh;
-	ch.HT_HST.HT=6;
-	ch.HT_HST.HST=0;
-	pkt_ls->common_header=ch;
-	itsnet_ls_req_t ls_req;
-	memcpy(&ls_req.GN_ADDR,(char *)(buffer)+16,8);
-	ls_req.source_position_vector=* LPV;
-	ls_req.sequencenumber=SN_g;
+		PRF("LOCATION SERVICE\n");
+		if (itsGnSecurity==1){PRF("Security en ls\n");}
+		itsnet_packet * pkt_ls = NULL;
+		pkt_ls=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+		pkt_ls->basic_header=bh;
+		ch.HT_HST.HT=6;
+		ch.HT_HST.HST=0;
+		pkt_ls->common_header=ch;
+		itsnet_ls_req_t ls_req;
+		memcpy(&ls_req.GN_ADDR,(char *)(buffer)+16,8);
+		ls_req.source_position_vector=* LPV;
+		ls_req.sequencenumber=SN_g;
 
-	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
-	{		memcpy(ls_req.payload.btp1,(char *)(buffer) + 26,2);
-	memcpy(ls_req.payload.btp2,(char *)(buffer) + 24,2);
-	}else{
-		char info_dest[2];
-		memset(info_dest,0,2);
-		memcpy(ls_req.payload.btp1,(char *)(buffer) + 26,2);
-		memcpy(ls_req.payload.btp2,info_dest,2);}
+		if (memcmp((char *)(buffer) +7,tipoa,1)==0)
+		{		memcpy(ls_req.payload.btp1,(char *)(buffer) + 26,2);
+		memcpy(ls_req.payload.btp2,(char *)(buffer) + 24,2);
+		}else{
+			char info_dest[2];
+			memset(info_dest,0,2);
+			memcpy(ls_req.payload.btp1,(char *)(buffer) + 26,2);
+			memcpy(ls_req.payload.btp2,info_dest,2);}
 
-	pkt_ls->payload.itsnet_ls_req=ls_req;
-	itsnet_node * data=NULL;//
-	data= (itsnet_node *)malloc(sizeof(itsnet_node));
-	memcpy(data->mac_id.address,buffer+6,6);
-	data->IS_NEIGHBOUR=false;
-	itsnet_time_stamp tst=data->pos_vector.time_stamp;
-	data->expires.tv_sec= itsGnLifetimeLocTE;
-	char VERSION[1];
-	memcpy(VERSION,buffer+14,1);
-	ht_hst_t *conv=(ht_hst_t *)VERSION;
-	data->version=conv->HT;
-	data->pdr= PDR;
-	data->LS_PENDING=true;
+		pkt_ls->payload.itsnet_ls_req=ls_req;
+		itsnet_node * data=NULL;//
+		data= (itsnet_node *)malloc(sizeof(itsnet_node));
+		memcpy(data->mac_id.address,buffer+6,6);
+		data->IS_NEIGHBOUR=false;
+		itsnet_time_stamp tst=data->pos_vector.time_stamp;
+		data->expires.tv_sec= itsGnLifetimeLocTE;
+		char VERSION[1];
+		memcpy(VERSION,buffer+14,1);
+		ht_hst_t *conv=(ht_hst_t *)VERSION;
+		data->version=conv->HT;
+		data->pdr= PDR;
+		data->LS_PENDING=true;
 
-	int val=search_in_locT(data,locT_general);
-	if(val==0){add_end_locT (locT_general,*data);}else{AddTimer(dictionary[val],itsGnLifetimeLocTE,1);}
+		int val=search_in_locT(data,locT_general);
+		if(val==0){add_end_locT (locT_general,*data);}else{AddTimer(dictionary[val],itsGnLifetimeLocTE,1);}
 
-	//engadir a loct con LS_pending.
-	if (locT_general->len== 0 && any_neighbours()==0 && ch.traffic_class.scf==1){
-		itsnet_packet * pkt1 = NULL;
-		int val=lsp_uc_g->size+8+4+52+4+sprint_hex_data((char *)(buffer) +4,2);
-		//delete old buffered elements if we need more size to add a new one.
-		while (val>itsGnBcForwardingPacketBufferSize){
-			lsp_uc_g=sup_elem_lsp(0xffff);
-			val=lsp_uc_g->size+4+8+52+4+sprint_hex_data((char *)(buffer) +4,2);
-			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
+		//engadir a loct con LS_pending.
+		if (locT_general->len== 0 && any_neighbours()==0 && ch.traffic_class.scf==1){
+			itsnet_packet * pkt1 = NULL;
+			int val=lsp_uc_g->size+8+4+52+4+sprint_hex_data((char *)(buffer) +4,2);
+			//delete old buffered elements if we need more size to add a new one.
+			while (val>itsGnBcForwardingPacketBufferSize){
+				lsp_uc_g=sup_elem_lsp(0xffff,0);
+				val=lsp_uc_g->size+4+8+52+4+sprint_hex_data((char *)(buffer) +4,2);
+				PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
+			}
+			int i =add_end_lsp(lsp_uc_g, *pkt,1);free(pkt);
+			return(pkt_ls);
+			//buffer in BC AND omit next executions
+		} else if (ch.traffic_class.scf==1){	//enviar en broadcast
 		}
-		int i =add_end_lsp(lsp_uc_g, *pkt,1);free(pkt);
-		return(pkt_ls);
-		//buffer in BC AND omit next executions
-	} else if (ch.traffic_class.scf==1){	//enviar en broadcast
-	}
 	}
 	free(LPV_dest);
 
@@ -389,13 +422,30 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		int val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
-			lsp_bc_g=sup_elem_lsp(0xffff);
+			lsp_bc_g=sup_elem_lsp(0xffff,0);
 			val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
 		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);
 		return(pkt1);		//buffer in BC AND omit next executions
 	}
+
+
+
+	if  (ls_buffer->len>0 && any_ls_proccess()==0 && ch.traffic_class.scf==1){
+		itsnet_packet * pkt1 = NULL;
+		int val=ls_buffer->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
+		//delete old buffered elements if we need more size to add a new one.
+		while (val>itsGnBcForwardingPacketBufferSize){
+			ls_buffer=sup_elem_lsp(0xffff,2);
+			val=ls_buffer->size+4+8+48+4+sprint_hex_data((char *)(buffer) +4,2);
+			PRF("aqui podo liala porque non se actualice ls_buffer");
+		}
+		int i =add_end_lsp(ls_buffer, *pkt,2);free(pkt);
+		return(pkt1);
+
+	}
+
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,(char *)(buffer)  +8,4);
@@ -473,13 +523,28 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		int val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
-			lsp_bc_g=sup_elem_lsp(0xffff);
+			lsp_bc_g=sup_elem_lsp(0xffff,0);
 			val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
 		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);
 		return(pkt1);		//buffer in BC AND omit next executions
 	}
+
+	if  (ls_buffer->len>0 && any_ls_proccess()==0 && ch.traffic_class.scf==1){
+		itsnet_packet * pkt1 = NULL;
+		int val=ls_buffer->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
+		//delete old buffered elements if we need more size to add a new one.
+		while (val>itsGnBcForwardingPacketBufferSize){
+			ls_buffer=sup_elem_lsp(0xffff,2);
+			val=ls_buffer->size+4+8+48+4+sprint_hex_data((char *)(buffer) +4,2);
+			PRF("aqui podo liala porque non se actualice ls_buffer");
+		}
+		int i =add_end_lsp(ls_buffer, *pkt,2);free(pkt);
+		return(pkt1);
+
+	}
+
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,(char *)(buffer)  +8,4);
@@ -607,7 +672,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			print_hex_data(&tx_frame->buffer,header_length+ size+4+8);
 			PRF(" paquete enviado a ll despois de lsp \n");free(tx_frame);free(dir);
 			ev_timer_again (l_Beacon,&t_Beacon);
-			lsp_bc_g=sup_elem_lsp(sn);
+			lsp_bc_g=sup_elem_lsp(sn,0);
 			pos=pos->next;
 		}PRF("seguinte\n");
 

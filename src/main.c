@@ -29,6 +29,7 @@ ev_timer t_LPV;
 uint16_t SN_g=0;//sequence number
 itsnet_node_id GN_ADDR;
 List_lsp * lsp_bc_g;
+List_lsp * ls_buffer;
  List_lsp * lsp_uc_g;
 int PDR=0;
 #if DEBUG_PRINT_ENABLED

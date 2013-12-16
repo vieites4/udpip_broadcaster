@@ -150,8 +150,8 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		}else if(memcmp(HT,ls0,1)==0){}
 		else if(memcmp(HT,ls1,1)==0){}
 		else{}
-		if(aa==1 && (memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
-			free(pkt);pkt=NULL;}
+		if((memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb1,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
+			free(pkt);pkt=NULL;PRF("libero pkt!!\n");}
 		if (aa==3 && PDR<= itsGnMaxPacketDataRate){
 			if ( memcmp(HT,tsb0,1)==0 ||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0||memcmp(HT,geounicast,1)==0 ){
 				PRF("entro no envio do enlace cara o enlace \n");
@@ -172,7 +172,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 					send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, arg->len);
 					ev_timer_again (l_Beacon,&t_Beacon);free(pkt1);pkt1=NULL;free(tx_frame1);free(dir);
-				}			}		}	}//else{PRF("NON SON DESE TIPO!!\n");}
+				}			}		}PRF("NON SON DESE TIPO!!\n");	}//else{PRF("NON SON DESE TIPO!!\n");}
 
 }
 
