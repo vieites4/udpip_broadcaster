@@ -7,6 +7,8 @@ extern List_lsp * lsp_uc_g;
 extern List_lsp * ls_buffer;
 extern itsnet_node_id GN_ADDR;
 extern int PDR;
+extern struct ev_loop * l_Beacon;
+extern ev_timer t_Beacon;
 itsnet_position_vector * LPV;
 itsnet_position_vector *LPV_old;
 //itsnet_position_vector *LPV_trans;
@@ -41,7 +43,7 @@ int i=0;
 int PDR_sum=0;
 static int gTimer_lsp[1000];
 static int gTimer_ls_rtx[1000];
-
+char t07[2]={0x07,0x07};
 static int gTimer_ls_buff[1000];
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
 
@@ -154,9 +156,11 @@ void CheckTimerEvent_ls_rtx(EV_P_ ev_timer *w, int revents)
 {	PRF("CheckTimerEvent_ls_rtx 45\n");
 signal(45, CheckTimerEvent_ls_rtx);
 unsigned short nTimer;
+public_ev_arg_r * arg=(public_ev_arg_r *)w->data;
 // Read the global variable gTimer and reset the value
 int aa=0;int i=0;
-while (aa==0){  if(gTimer_ls_rtx[i]==0){ aa=1;} else {rtx_ls(gTimer_ls_rtx[i]);i++; }
+
+while (aa==0){  if(gTimer_ls_rtx[i]==0){ aa=1;} else {rtx_ls(gTimer_ls_rtx[i],arg);i++; }
 PRF("CheckTimerEvent_lsp SIGUSR1 fin\n");
 }}
 void CheckTimerEvent_ls_buff(EV_P_ ev_timer *w, int revents)
@@ -169,15 +173,27 @@ while (aa==0){  if(gTimer_ls_buff[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_ls_
 PRF("CheckTimerEvent_ls_buff fin\n");
 }}
 
-int rtx_ls(int num){
-	int a=0;
-	List_timer *list;
-	tTimer *position=list->init;
+int rtx_ls(int num,public_ev_arg_r * arg){
+	int a=0;int cont=0;
+	//List_lsp *list;
 
-	while(position!=NULL){
-
-		position=position->pNext;
+	Element_lsp *position=ls_buffer->init;
+    tTimer * pos_time= mpTimerList_ls_rtx->init;
+	while(pos_time!=NULL && a==0){
+pos_time=pos_time->pNext;
+		//position=position->next;
+if (cont==num) a=1; else cont++;
 	}
+	char h_source[ETH_ALEN];
+	get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
+	memcpy(tx_frame->buffer.header.type,t07,2);
+
+	memcpy(tx_frame->buffer.data, (char *) &position->data,sprint_hex_data(position->data.common_header.payload_lenght,2)+52+4+8+4);
+		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, 52 +sprint_hex_data(position->data.common_header.payload_lenght,2)+14+4+8+4);//==-1){}
+		ev_timer_again (l_Beacon,&t_Beacon);
+		pos_time->RTC++;
+		if (pos_time->RTC>=itsGnLocationServiceMaxRetrans){sup_timer(num,3);}else pos_time->Period=itsGnLocationServiceRetransmitTimer;
 
 	return(a);
 }
@@ -366,8 +382,8 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	public_ev_arg_r * arg=(public_ev_arg_r *)w->data;
 	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
-	char tipo[2]={0x07,0x07};
-	memcpy(tx_frame->buffer.header.type,tipo,2);
+
+	memcpy(tx_frame->buffer.header.type,t07,2);
 	version_nh * res=NULL;
 	itsnet_packet * pkt = NULL;
 	trafficclass_t *tc=NULL;
@@ -463,7 +479,7 @@ int sup_timer (unsigned short TimerId, int num)
 	tTimer * position=NULL;
 	tTimer * to_erase=NULL;
 	List_timer *list;
-	if (num==2){list= mpTimerList_lsp;}else{list=mpTimerList;}
+	if (num==2){list= mpTimerList_lsp;}else if(num==1){list=mpTimerList;}else if (num==3){list=mpTimerList_ls_rtx;}
 	position = FindTimer(TimerId,num);
 	if (position==NULL){
 		PRF("null en sup_timer\n");	}
@@ -488,7 +504,7 @@ int sup_timer (unsigned short TimerId, int num)
 			position->pNext->before=position->before;
 			free(to_erase);list->len--;
 		}
-		if (num==2){ mpTimerList_lsp=list;}else{mpTimerList=list;}}
+		if (num==2){ mpTimerList_lsp=list;}else if(num==1){mpTimerList=list;}else if (num==3){mpTimerList_ls_rtx=list;}}
 	return 0;
 }
 /* erase after a position */
@@ -538,7 +554,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	return 0;
 }
 
-int sup_elem_t_lsp (int num,int type)
+List_lsp * sup_elem_t_lsp (int num,int type)
 {
 	List_lsp *lsp;
 
@@ -585,7 +601,7 @@ int sup_elem_t_lsp (int num,int type)
 			lsp->size =lsp->size- 12-head-buf_size-4;}}
 	if (type==0)lsp_bc_g=lsp; else if (type==1)lsp_uc_g=lsp;else if (type==2)ls_buffer=lsp;
 
-	return 0;
+	return lsp;
 }
 
 /* view List */
@@ -674,13 +690,14 @@ int search_in_locT_m_pending (mac_addr data, List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
 	int e=1;
-	while ((aux!=NULL) &&(a==0)&& (e<17))
+	int aa=0;
+	while ((aux!=NULL) &&(aa==0)&& (e<17))
 	{
 		if (taken[i]==true){
 			//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
-			if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.LS_PENDING==1) {a=1;}else{ e++;aux=aux->next;}}
+			if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.LS_PENDING) {aa=1;}else{ e++;aux=aux->next;}}
 		else aux=aux->next;		}
-	if (a==0) return (0); else return(e);
+	if (aa==0) return (0); else return(e);
 }
 
 

@@ -65,6 +65,7 @@ struct public_ev_arg
 	        int __test_number;                                /**< For testing, counts no tests. */
 	        List_locT *locT;
 	        List_lsp *lsp;
+	        List_lsp *buffer_ls;
 	        List_lsp *rep;
 };
 
@@ -201,7 +202,7 @@ int search_in_locT_m (mac_addr data, List_locT * locT);
  * @param num
 
   */
-int rtx_ls(int num);
+int rtx_ls(int num,public_ev_arg_r * arg);
 
 
 
@@ -218,7 +219,7 @@ List_lsp * sup_elem_lsp (int num, int type);
  * @param num, position of the element we want to erase
   */
 
-int sup_elem_t_lsp (int num, int type);
+List_lsp * sup_elem_t_lsp (int num, int type);
 
 /**
  * @fn add_end_locT
@@ -293,14 +294,17 @@ void LS(int option);
  *  next and before pointer and TimerId(sn or number unsigned short of loct)
  * .
  */
-typedef struct Timer
+struct Timer
 {
 	unsigned short TimerId;
 	int RTC;
 	int Period;
 	struct Timer *pNext;
 	struct Timer * before;
-}tTimer;
+};
+
+
+typedef struct Timer tTimer;
 /**
  * @struct List_timer
  * @brief Structure for timer list, marks init and end of it.

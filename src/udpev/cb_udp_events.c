@@ -220,6 +220,9 @@ else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoa
 	pkt = GeoAnycast(datos,arg->lsp,arg->rep);
 }else{}
 // 2) broadcast application level UDP message to network level
+
+
+
 if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0|| memcmp(HT,geounicast,1)==0){
 	if (pkt!=NULL&& PDR<= itsGnMaxPacketDataRate){
 		//&& (memcmp(HL,single,1)!=0)
