@@ -19,6 +19,7 @@ List_locT *locT_general;
 bool taken_rep[17]={false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
 bool taken[17]={false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
 List_timer *mpTimerList;
+List_timer *mpTimerList_uc;
 List_timer *mpTimerList_lsp;
 List_timer *mpTimerList_ls_rtx;
 List_timer *mpTimerList_rep;
@@ -43,6 +44,7 @@ int i=0;
 int PDR_sum=0;
 static int gTimer_lsp[1000];
 static int gTimer_ls_rtx[1000];
+static int gTimer_uc[100];
 char t07[2]={0x07,0x07};
 static int gTimer_ls_buff[1000];
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
@@ -64,11 +66,11 @@ int PDR_update(int Pdr_n)
 
 	return(PDR_out);
 }
-tTimer * FindTimer(unsigned short TimerId,int num)
+tTimer * FindTimer(unsigned short TimerId,int type)
 {
 	List_timer * list= NULL;
-	if (num==2){list= mpTimerList_lsp;
-	}else{list=mpTimerList;}
+	if (type==0){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if(type==4){list=mpTimerList_uc;}else if (type==2){list=mpTimerList_ls_rtx;}else if (type==3){list=mpTimerList_ls_buff;}else {list=mpTimerList_rep;}
+
 	tTimer *pTimer=list->init;
 	tTimer *pTimerC=NULL;
 	PRF("FINDTIMER %d\n",TimerId);
@@ -86,7 +88,7 @@ bool AddTimer(unsigned short TimerId, int num, int type)
 
 {
 	List_timer * list= NULL;
-	if (type==2){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if (type==3){list=mpTimerList_ls_rtx;}else if (type==4){list=mpTimerList_ls_buff;}else {list=mpTimerList_rep;}
+	if (type==0){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if(type==4){list=mpTimerList_uc;}else if (type==2){list=mpTimerList_ls_rtx;}else if (type==3){list=mpTimerList_ls_buff;}else {list=mpTimerList_rep;}
 	tTimer *pTimer;
 	tTimer *new_element = NULL;
 	bool ReturnValue = false;
@@ -111,7 +113,7 @@ bool AddTimer(unsigned short TimerId, int num, int type)
 	{	// Set the timer interval
 		pTimer->Period = num;
 		ReturnValue = true;    }
-	if (type==2){mpTimerList_lsp=list;}else if(type==1){mpTimerList=list;}else if (type==3){mpTimerList_ls_rtx=list;}else if (type==4){mpTimerList_ls_buff=list;}else {mpTimerList_rep=list;}
+	if (type==0){mpTimerList_lsp=list;}else if(type==1){mpTimerList=list;}else if (type==2){mpTimerList_ls_rtx=list;}else if (type==3){mpTimerList_ls_buff=list;}else if(type==4){mpTimerList_uc=list;}else {mpTimerList_rep=list;}
 	return ReturnValue;
 }
 
@@ -152,6 +154,16 @@ while (aa==0){  if(gTimer_lsp[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_lsp[i],
 PRF("CheckTimerEvent_lsp SIGUSR1 fin\n");
 }}
 
+void CheckTimerEvent_uc(EV_P_ ev_timer *w, int revents)
+{	PRF("CheckTimerEvent_uc 47\n");
+signal(47, CheckTimerEvent_uc);
+unsigned short nTimer;
+// Read the global variable gTimer and reset the value
+int aa=0;int i=0;
+while (aa==0){  if(gTimer_uc[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_uc[i],4);i++; }
+PRF("CheckTimerEvent_uc 47 fin\n");
+}}
+
 void CheckTimerEvent_ls_rtx(EV_P_ ev_timer *w, int revents)
 {	PRF("CheckTimerEvent_ls_rtx 45\n");
 signal(45, CheckTimerEvent_ls_rtx);
@@ -169,7 +181,7 @@ signal(46, CheckTimerEvent_ls_buff);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 int aa=0;int i=0;
-while (aa==0){  if(gTimer_ls_buff[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_ls_buff[i],2);i++; }
+while (aa==0){  if(gTimer_ls_buff[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_ls_buff[i],3);i++; }
 PRF("CheckTimerEvent_ls_buff fin\n");
 }}
 
@@ -178,11 +190,11 @@ int rtx_ls(int num,public_ev_arg_r * arg){
 	//List_lsp *list;
 
 	Element_lsp *position=ls_buffer->init;
-    tTimer * pos_time= mpTimerList_ls_rtx->init;
+	tTimer * pos_time= mpTimerList_ls_rtx->init;
 	while(pos_time!=NULL && a==0){
-pos_time=pos_time->pNext;
+		pos_time=pos_time->pNext;
 		//position=position->next;
-if (cont==num) a=1; else cont++;
+		if (cont==num) a=1; else cont++;
 	}
 	char h_source[ETH_ALEN];
 	get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
@@ -190,10 +202,14 @@ if (cont==num) a=1; else cont++;
 	memcpy(tx_frame->buffer.header.type,t07,2);
 
 	memcpy(tx_frame->buffer.data, (char *) &position->data,sprint_hex_data(position->data.common_header.payload_lenght,2)+52+4+8+4);
-		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, 52 +sprint_hex_data(position->data.common_header.payload_lenght,2)+14+4+8+4);//==-1){}
-		ev_timer_again (l_Beacon,&t_Beacon);
-		pos_time->RTC++;
-		if (pos_time->RTC>=itsGnLocationServiceMaxRetrans){sup_timer(num,3);}else pos_time->Period=itsGnLocationServiceRetransmitTimer;
+	send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, 52 +sprint_hex_data(position->data.common_header.payload_lenght,2)+14+4+8+4);//==-1){}
+	ev_timer_again (l_Beacon,&t_Beacon);
+	pos_time->RTC++;
+	if (pos_time->RTC>=itsGnLocationServiceMaxRetrans){sup_timer(num,3);
+	// eliminar o que hai en ls_buffer
+	//eliminar o LocTe dese addr
+
+	}else pos_time->Period=itsGnLocationServiceRetransmitTimer;
 
 	return(a);
 }
@@ -203,7 +219,7 @@ void SystemTickEvent(void)
 signal(SIGALRM, SystemTickEvent);
 tTimer *pTimer;
 int i=0;
-while(i<1000){	gTimer_lsp[i++]=0;	gTimer_ls_rtx[i++]=0;gTimer_ls_buff[i++]=0;}
+while(i<1000){	gTimer_lsp[i++]=0;	gTimer_ls_rtx[i++]=0;gTimer_ls_buff[i++]=0; if(i<100){gTimer_uc[i++]=0;}}
 // Update the timers
 pTimer = mpTimerList->init;
 while(pTimer != NULL)
@@ -271,7 +287,22 @@ i=0;int aa2=0;
 while(i<1000 && aa2==0){if (gTimer_ls_buff[i++]!=0) aa2=1;}
 if (aa2!=0){raise(46);}
 
-
+// Update the timers
+pTimer1 = mpTimerList_uc->init;
+count2=0;
+while(pTimer1 != NULL)
+{ 	if(pTimer1->Period != 0)
+{  	pTimer1->Period--;
+if(pTimer1->Period == 0)
+{ 		// Set the corresponding bit when the timer reaches zero
+	gTimer_uc[count2] = pTimer1->TimerId;	count2++;
+}        }
+// Move to the next timer in the list
+pTimer1 = pTimer1->pNext;
+}
+i=0;int aa3=0;
+while(i<1000 && aa3==0){if (gTimer_uc[i++]!=0) aa3=1;}
+if (aa3!=0){raise(47);}
 
 }
 
@@ -282,6 +313,7 @@ void thr_h2(void *arg){
 	signal(SIGUSR1, CheckTimerEvent_lsp);
 	signal(45, CheckTimerEvent_ls_rtx);
 	signal(46, CheckTimerEvent_ls_buff);
+	signal(47, CheckTimerEvent_uc);
 }
 
 
@@ -304,6 +336,7 @@ List_locT * startup1(configuration_t *cfg)
 	mpTimerList_lsp= init_timer_list();
 	mpTimerList_ls_rtx= init_timer_list();
 	mpTimerList_ls_buff=init_timer_list();
+	mpTimerList_uc=init_timer_list();
 	return (locT_general);
 
 
@@ -447,7 +480,7 @@ List_timer * init_timer_list ()
 }
 
 /*add at list end  */
-int add_end_locT ( List_locT * locT, itsnet_node data){
+List_locT * add_end_locT ( List_locT * locT, itsnet_node data){
 	Element_locT *new_element=NULL;
 
 	new_element = (Element_locT *) malloc (sizeof (Element_locT));
@@ -471,15 +504,34 @@ int add_end_locT ( List_locT * locT, itsnet_node data){
 	AddTimer(num,itsGnLifetimeLocTE,1);
 	locT_general=locT;
 	PRF("fin add_en_loct\n");
-	return 0;
+	return locT;
 }
+
+
+
+/*modificate locT  */
+List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node data){
+	Element_locT *pos=locT->init;
+	int aa=0;
+	while (pos!=NULL && aa<val) {
+		pos=pos->next;
+			}
+pos->data.pdr=data.pdr;
+pos->data.pos_vector=data.pos_vector;
+	locT_general=locT;
+
+	return locT;
+}
+
+
+
 
 int sup_timer (unsigned short TimerId, int num)
 {
 	tTimer * position=NULL;
 	tTimer * to_erase=NULL;
 	List_timer *list;
-	if (num==2){list= mpTimerList_lsp;}else if(num==1){list=mpTimerList;}else if (num==3){list=mpTimerList_ls_rtx;}
+	if (num==0){list= mpTimerList_lsp;}else if(num==1){list=mpTimerList;}else if (num==3){list=mpTimerList_ls_rtx;}
 	position = FindTimer(TimerId,num);
 	if (position==NULL){
 		PRF("null en sup_timer\n");	}
@@ -504,7 +556,7 @@ int sup_timer (unsigned short TimerId, int num)
 			position->pNext->before=position->before;
 			free(to_erase);list->len--;
 		}
-		if (num==2){ mpTimerList_lsp=list;}else if(num==1){mpTimerList=list;}else if (num==3){mpTimerList_ls_rtx=list;}}
+		if (num==0){ mpTimerList_lsp=list;}else if(num==1){mpTimerList=list;}else if (num==3){mpTimerList_ls_rtx=list;}}
 	return 0;
 }
 /* erase after a position */
@@ -527,30 +579,30 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	{in++;position = position->next;//print_hex_data(position->data.mac_id.address,6);PRF(" \n");
 	}
 	if (position==NULL) PRF("a posición é null\n"); else{//print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
-	if(position->before==NULL){
-		PRF("eliminamos o primeiro de loct\n");
-		to_erase=locT->init;
-		locT->init=locT->init->next;
-		free(to_erase);
-		if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico de loct\n");
-		}else{locT->init->before=NULL;}locT->len--;
-	}else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
-	to_erase=locT->end;
-	locT->end->before->next=NULL;
-	locT->end=locT->end->before;
-	free((void *)to_erase);locT->len--;
-	}else{
-		to_erase=position;
-		PRF("eliminamos outro de loct\n");
-		position->before->next=position->next;
-		position->next->before=position->before;
-		free(to_erase);locT->len--;
-	}
-	sup_timer(dictionary[num],1);
+		if(position->before==NULL){
+			PRF("eliminamos o primeiro de loct\n");
+			to_erase=locT->init;
+			locT->init=locT->init->next;
+			free(to_erase);
+			if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico de loct\n");
+			}else{locT->init->before=NULL;}locT->len--;
+		}else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
+		to_erase=locT->end;
+		locT->end->before->next=NULL;
+		locT->end=locT->end->before;
+		free((void *)to_erase);locT->len--;
+		}else{
+			to_erase=position;
+			PRF("eliminamos outro de loct\n");
+			position->before->next=position->next;
+			position->next->before=position->before;
+			free(to_erase);locT->len--;
+		}
+		sup_timer(dictionary[num],1);
 
-	locT_general=locT;
-	memcpy(mac_list[num],ZEROS,6);
-	taken[num]=false;}
+		locT_general=locT;
+		memcpy(mac_list[num],ZEROS,6);
+		taken[num]=false;}
 	return 0;
 }
 
@@ -558,7 +610,7 @@ List_lsp * sup_elem_t_lsp (int num,int type)
 {
 	List_lsp *lsp;
 
-	if (type==0)lsp=lsp_bc_g; else if (type==1)lsp=lsp_uc_g;else if (type==2)lsp=ls_buffer;
+	if (type==0)lsp=lsp_bc_g; else if (type==4)lsp=lsp_uc_g;else if (type==3)lsp=ls_buffer;
 
 	Element_lsp * position=lsp->init;
 	Element_lsp *to_erase;
@@ -596,10 +648,10 @@ List_lsp * sup_elem_t_lsp (int num,int type)
 				free(to_erase);lsp->len--;
 			}
 			//free(SN);SN=NULL;
-			sup_timer(num,2);
+			sup_timer(num,type);
 
 			lsp->size =lsp->size- 12-head-buf_size-4;}}
-	if (type==0)lsp_bc_g=lsp; else if (type==1)lsp_uc_g=lsp;else if (type==2)ls_buffer=lsp;
+	if (type==0)lsp_bc_g=lsp; else if (type==4)lsp_uc_g=lsp;else if (type==3)ls_buffer=lsp;
 
 	return lsp;
 }
@@ -685,6 +737,19 @@ int search_in_locT_m (mac_addr data, List_locT * locT){
 	if (a==0) return (0); else return(e);
 }
 
+int search_in_locT_m_wo_n (mac_addr data, List_locT * locT){
+	Element_locT *aux;
+	aux = locT->init;
+	int e=1;
+	while ((aux!=NULL) &&(a==0)&& (e<17))
+	{
+		if (taken[i]==true){
+			//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
+			if(memcmp(data.address,aux->data.mac_id.address,6)==0 ) {a=1;}else{ e++;aux=aux->next;}}
+		else aux=aux->next;		}
+	if (a==0) return (0); else return(e);
+}
+
 
 int search_in_locT_m_pending (mac_addr data, List_locT * locT){
 	Element_locT *aux;
@@ -737,15 +802,24 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data, int type){
 		sn = data.payload.itsnet_tsb.sequencenumber;
 	}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 		sn = data.payload.itsnet_geobroadcast.sequencenumber;
-		temp = (LT_s *) data.basic_header.lt;}else{sn=0;}
-	if(memcmp(HT,tsb1,1)==0 ||(memcmp(HT,tsb0,1)==0 && lon_int>1)||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
+		temp = (LT_s *) data.basic_header.lt;}
+	else if(memcmp(HT,geounicast,1)==0 ){
+		sn = data.payload.itsnet_unicast.sequencenumber;
+		temp = (LT_s *) data.basic_header.lt;}
+	else if(memcmp(HT,ls0,1)==0 ){
+		sn = data.payload.itsnet_ls_req.sequencenumber;
+		temp = (LT_s *) data.basic_header.lt;
+	}					else{sn=0;}
+
+
+	if(memcmp(HT,tsb1,1)==0 ||(memcmp(HT,tsb0,1)==0 && lon_int>1)||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0||memcmp(HT,ls0,1)==0||memcmp(HT,geounicast,1)==0){
 		int str2=temp->multiple;	int str1=temp->base;int num0;
 		if (str1==0){num0=50;}else if(str1==1){num0=100;}else if(str1==2){num0=1000;}else num0=10000;
 		int lt=num0*str2 /100; //lt in seconds
 		PRF("SEQUENCE NUMBER! %d\n",sn);
-		if (lt>0) AddTimer(sn,lt,2);
+		if (lt>0) AddTimer(sn,lt,type);
 	}
-	if (type==0)lsp_bc_g=lsp; else if (type==1)lsp_uc_g=lsp;
+	if (type==0)lsp_bc_g=lsp; else if (type==4)lsp_uc_g=lsp; else if (type==3)ls_buffer=lsp;
 	return 0;
 }
 
@@ -775,7 +849,7 @@ int add_end_rep ( List_lsp * rep, itsnet_packet data){
 List_lsp * sup_elem_lsp (int num, int type){
 	int a=0;
 	List_lsp * lsp;
-	if (type==0)lsp=lsp_bc_g; else if (type==1)lsp=lsp_uc_g;else if (type==2)lsp=ls_buffer;
+	if (type==0)lsp=lsp_bc_g; else if (type==4)lsp=lsp_uc_g;else if (type==3)lsp=ls_buffer;
 
 	Element_lsp *pos=lsp->init;
 	Element_lsp *to_erase=lsp->init;
@@ -801,11 +875,11 @@ List_lsp * sup_elem_lsp (int num, int type){
 				if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0){
 					sn = pos->data.payload.itsnet_geobroadcast.sequencenumber;head=48;
 				}
-			sup_timer(sn,2);
+			sup_timer(sn,type);
 		}else sup_timer(num,2);}
 		lsp->size =lsp->size- 12-buf_size-head-4;
 		PRF("saimos de suprimir elemento da lsp\n");
-		if (type==0)lsp_bc_g=lsp; else if (type==1)lsp_uc_g=lsp;else if (type==2)ls_buffer=lsp;}
+		if (type==0)lsp_bc_g=lsp; else if (type==4)lsp_uc_g=lsp;else if (type==3)ls_buffer=lsp;}
 	return (lsp);
 }
 /* view List */

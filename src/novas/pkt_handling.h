@@ -82,6 +82,9 @@ itsnet_packet_f * GeoUnicast_f(void *dato);
 itsnet_packet_f * GeoAnycast_f(void *dato);
 //itsnet_packet_f * GEOUN_f(void *dato);
 
+
+itsnet_packet * LS_req_f(void *buffer);
+
 /**
  *  @fn BasicHeader_processing
  * @brief This function makes the basic header processing of packets arrived from link layer.

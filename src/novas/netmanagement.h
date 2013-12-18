@@ -188,14 +188,20 @@ int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);
 int search_in_locT (itsnet_node * data, List_locT * locT);
 /**
  * @fn search_in_locT
- * @brief This function search an element of loct list.
+ * @brief This function search an neighbour of loct list.
  * @param data, we use this information (mac address)to make the search
  * @param list where we look for the element
  * @return the number of position in loct list
   */
 int search_in_locT_m (mac_addr data, List_locT * locT);
-
-
+/**
+ * @fn search_in_locT_m_wo_n
+ * @brief This function search an element of loct list.
+ * @param data, we use this information (mac address)to make the search
+ * @param list where we look for the element
+ * @return the number of position in loct list
+  */
+int search_in_locT_m_wo_n (mac_addr data, List_locT * locT);
 /**
  * @fn rtx_ls
  * @brief This function starts when a ls timer expires.
@@ -228,7 +234,16 @@ List_lsp * sup_elem_t_lsp (int num, int type);
  * @param data is the information of the new element
   */
 
-int add_end_locT ( List_locT * locT, itsnet_node data);
+List_locT * add_end_locT ( List_locT * locT, itsnet_node data);
+/**
+ * @fn mod_t_locT
+ * @brief This function modifies element of loct list, when it exist.
+ * @param pos of the mac on the list
+ * @param list where we put the new element
+ * @param data is the information of the new element
+  */
+
+List_locT * mod_t_locT ( int val,List_locT * locT, itsnet_node data);
 /**
  * @fn add_end_lsp
  * @brief This function add an element of lsp list.
@@ -378,6 +393,14 @@ void SystemTickEvent(void);
 
  */
 void CheckTimerEvent_lsp(EV_P_ ev_timer *w, int revents);
+/**
+ * @fn CheckTimerEvent_uc
+ * @brief When one of the elements of lsp finishes its timer a signal 47 is rised and
+ * this function is called to call sup_elem_t_lsp,
+ * to erase the timer of the element we erase.
+
+ */
+void CheckTimerEvent_uc(EV_P_ ev_timer *w, int revents);
 /**
  * @fn CheckTimerEvent_lsp
  * @brief When one of the elements of loct finishes its timer a signal SIGUSR1 is rised and
