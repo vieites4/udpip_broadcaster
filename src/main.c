@@ -31,7 +31,8 @@ itsnet_node_id GN_ADDR;
 List_lsp * lsp_bc_g;
 List_lsp * ls_buffer;
  List_lsp * lsp_uc_g;
-int PDR=0;
+ time_t PDR=0;
+ time_t PDR_ini=0;
 #if DEBUG_PRINT_ENABLED
 #define PRF printf
 #else
@@ -50,7 +51,7 @@ void *thr_h1(void * arg){
 int main(int argc, char **argv)
 {
 	List_locT * locT_g;
-
+PDR_ini=time(0);
 	pthread_t h1,h3, h_locT,h_lsp;
 PRF(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);

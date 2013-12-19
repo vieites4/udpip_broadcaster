@@ -41,31 +41,37 @@ extern const unsigned char single[1];
 //Global variable for reference
 static unsigned short gTimer;
 int i=0;
-int PDR_sum=0;
 static int gTimer_lsp[1000];
 static int gTimer_ls_rtx[1000];
 static int gTimer_uc[100];
 char t07[2]={0x07,0x07};
 static int gTimer_ls_buff[1000];
 #pragma inline SystemTickEvent,SystemTickEvent_lsp
-
+extern  time_t PDR_ini;
 #if DEBUG_PRINT_ENABLED
 #define PRF printf
 #else
 #define PRF(format, args...) ((void)0)
 #endif
-int PDR_update(int Pdr_n)
+int PDR_update(char * data)
 {
-	int PDR_out;
-	// time_t PDR_t = time(0);
-	i++;
-	PDR_sum= PDR_sum + Pdr_n;
-	printf("PDR_sum %d %d\n",Pdr_n,PDR_sum);
-	PDR_out=PDR_sum/i;
-	//   struct tm *tlocal = localtime(&PDR_t);
+	char source[6];
+	memcpy(source, data, 6);
+	time_t PDR_t_new = time(0);
 
-	return(PDR_out);
+	Element_locT * pos=locT_general->init;
+	int same=0;
+	while(same==0 && pos!=NULL){if(memcmp(source,pos->data.mac_id.address,6)){	same=1;}else pos=pos->next;}
+
+			if(pos==NULL){PDR=PDR_t_new;return(0);}else{
+				if (pos->data.tpdr!=0){pos->data.pdr=(0.5*pos->data.pdr) + (0.5*(1/(PDR_t_new-pos->data.tpdr)));pos->data.tpdr=PDR_t_new;}else{pos->data.pdr=1/(PDR_t_new- PDR_ini);pos->data.tpdr=PDR_t_new;}
+				return(pos->data.pdr);
+			}
+
+
+
 }
+
 tTimer * FindTimer(unsigned short TimerId,int type)
 {
 	List_timer * list= NULL;
@@ -515,9 +521,9 @@ List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node data){
 	int aa=0;
 	while (pos!=NULL && aa<val) {
 		pos=pos->next;
-			}
-pos->data.pdr=data.pdr;
-pos->data.pos_vector=data.pos_vector;
+	}
+	pos->data.pdr=data.pdr;
+	pos->data.pos_vector=data.pos_vector;
 	locT_general=locT;
 
 	return locT;

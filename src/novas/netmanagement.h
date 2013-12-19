@@ -92,7 +92,7 @@ struct itsnet_node_//loct entry
 	//struct tq_elem tqe;                    /** Timer queue entry */
 	struct timespec expires;       		/** expire time for message 	*/
 	int pdr; // packet data rate
-
+	time_t tpdr;
 
 };
 typedef struct itsnet_node_ itsnet_node;
@@ -422,5 +422,5 @@ void thr_h2(void *arg);
  * @param pdr. new time it passed since last reception.
 
  */
-int PDR_update(int pdr);
+int PDR_update(char * data);
 #endif /* NETMANAGEMENT_H_ */

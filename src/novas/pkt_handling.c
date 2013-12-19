@@ -31,7 +31,8 @@ extern List_lsp * lsp_bc_g;
 extern List_lsp *ls_buffer;
 extern List_lsp * lsp_uc_g;
 int LS_num=0;
-extern int PDR;
+extern time_t PDR_ini;
+extern time_t PDR;
 #if DEBUG_PRINT_ENABLED
 #define PRF printf
 #else
@@ -579,7 +580,8 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	ht_hst_t *conv=(ht_hst_t *)VERSION;
 	data->version=conv->HT; //comprobar si es correcto
 	data->itss_type=FLAG->itsStation;
-	data->pdr= PDR;
+	data->tpdr= PDR;
+	data->pdr=1/(PDR-PDR_ini);
 	//data->pdr
 	free(FLAG);FLAG=NULL;
 	if(memcmp(HT1,beacon,1)!=0 ){

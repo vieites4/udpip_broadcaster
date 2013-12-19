@@ -36,13 +36,11 @@ extern const unsigned char ls0[1];
 extern const unsigned char ls1[1];
 extern const unsigned char single[1];
 extern const unsigned char ETH_ADDR_BROADCAST[6];
-extern int PDR;
-
 
 #include "cb_udp_events.h"
-
+extern time_t PDR;
 extern itsnet_node_id GN_ADDR;
-time_t PDR_t;
+//time_t PDR_t;
 extern itsnet_position_vector * LPV;
 struct ev_loop * l_Beacon;
 #if DEBUG_PRINT_ENABLED
@@ -80,13 +78,10 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	{PRF("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
 	//		(self-broadcast messages are not received)
 	if (memcmp((void *)type07,data+12,2)==0){
-		time_t PDR_t_new = time(0);
 
-		int PDR_n=PDR_t_new-PDR_t;
-		if (PDR_t!=0){PDR=PDR_update(PDR_n);}
-		PDR_t=PDR_t_new;
-		printf("time %d\n",PDR_n);
-		printf("PDR %d \n", PDR);
+		PDR_update(data);
+		//PDR_t=PDR_t_new;
+
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
 		/**if(memcmp((void *)data +6,h_source,6)==0){
