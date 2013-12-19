@@ -131,9 +131,15 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			PRF("entro en geounicast \n");
 			if (error==0 && duplicate==1){
 				aa=1;
-				pkt = GeoUnicast_f(datos);
-				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
-				PRF("saio de geounicast \n"); //check gn_address to know if we have to forward in LL
+				char ADDR[8];
+				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
+				if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
+					pkt = GeoUnicast_f(datos);
+					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
+					PRF("saio de geounicast \n"); //check gn_address to know if we have to forward in LL
+				}else{
+					//forward
+				}
 			}
 		}
 		else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0  ){
