@@ -516,7 +516,7 @@ List_locT * add_end_locT ( List_locT * locT, itsnet_node data){
 
 
 /*modificate locT  */
-List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node data){
+List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node data,int num,itsnet_time_stamp tst){
 	Element_locT *pos=locT->init;
 	int aa=0;
 	while (pos!=NULL && aa<val) {
@@ -524,7 +524,10 @@ List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node data){
 	}
 	pos->data.pdr=data.pdr;
 	pos->data.pos_vector=data.pos_vector;
+	if (num!=0)pos->data.Sequence_number=num;
+	pos->data.expires=tst;
 	locT_general=locT;
+
 
 	return locT;
 }
@@ -899,6 +902,32 @@ void view_timers(){
 }
 
 int duplicate_control(void * data,List_locT * locT){
+
+	Element_locT *aux;
+	aux = locT->init;
+	int i=1;
+	PRF("entro en duplicate control\n");
+	itsnet_node_id * buffer=NULL;//
+	buffer= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
+	memcpy(buffer,data +8,8); //cambiar
+	char SN[2];
+	memcpy(SN,data+36,2); //cambiar
+	int lon_int=sprint_hex_data( SN, 2);
+	while (aux != NULL){
+		if (memcmp(aux->data.node_id.mac.address,buffer->mac.address,6)==0){
+			if(((aux->data.Sequence_number < lon_int ) &&(lon_int- aux->data.Sequence_number <=65536/2))||((aux->data.Sequence_number > lon_int)&&(-lon_int + aux->data.Sequence_number >65536/2)))
+			{	aux->data.Sequence_number=lon_int;	i=0	;
+			PRF("**************************DUPLICADO*************************** \n");
+			}		  }
+		aux = aux->next;
+	}
+	free(buffer);
+	PRF("saio de duplicate control\n");
+
+	return(i);
+}
+
+int duplicate_control2(void * data,List_locT * locT){
 
 	Element_locT *aux;
 	aux = locT->init;

@@ -568,7 +568,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	itsnet_node * data=NULL;//
 	data= (itsnet_node *)malloc(sizeof(itsnet_node));
 	memcpy(data->mac_id.address,buffer+6,6);
-	if (memcmp(HL,tsb0,1)==0 ||memcmp(HL,beacon,1)==0) data->IS_NEIGHBOUR=true;else data->IS_NEIGHBOUR=false;
+	if (memcmp(HL,tsb0,1)==0 ||memcmp(HL,beacon,1)==0) data->IS_NEIGHBOUR=true;else data->IS_NEIGHBOUR=false; //seguro????????????
 	data->pos_vector= * PV;
 	itsnet_time_stamp tst=data->pos_vector.time_stamp;
 	free(PV);PV=NULL;
@@ -582,19 +582,18 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	data->pdr=1/(PDR-PDR_ini);
 	//data->pdr
 	free(FLAG);FLAG=NULL;
-	if(memcmp(HT1,beacon,1)!=0 ){
-		if ((memcmp(HT1,tsb1,1)==0 && (mhl>1))||(memcmp(HT1,geobroad2,1)==0)||(memcmp(HT1,geobroad1,1)==0)||(memcmp(HT1,geobroad0,1)==0)||(memcmp(HT1,geounicast,1)==0)||(memcmp(HT1,ls0,1)==0)||(memcmp(HT1,ls1,1)==0)){
-			char SN[2];
-			memcpy(SN,arg->data+8+14+4,2);
-			uint16_t lon_int=sprint_hex_data( SN, 2);//PRF(" sequence number %d\n", lon_int);
-			data->Sequence_number=lon_int;}else{data->Sequence_number=0; //dará problemas igualar esto a cero??
-			}
-		data->LS_PENDING=false;
-	}
+	uint16_t lon_int;
+	if(memcmp(HT1,beacon,1)!=0 && (memcmp(HT1,tsb0,1)!=0) ){
+		char SN[2];
+		memcpy(SN,arg->data+8+14+4,2);
+		lon_int=sprint_hex_data( SN, 2);//PRF(" sequence number %d\n", lon_int);
+		data->Sequence_number=lon_int;}else{data->Sequence_number=0; //dará problemas igualar esto a cero??
+		}
+	data->LS_PENDING=false;
 	int val=search_in_locT(data,locT_general);
 	if(val==0){locT_general=add_end_locT (locT_general,*data);}else{
 		//modificar locT
-		locT_general=mod_t_locT (val,locT_general,*data);
+		locT_general=mod_t_locT (val,locT_general,*data,lon_int);
 		AddTimer(dictionary[val],itsGnLifetimeLocTE,1);}
 
 

@@ -243,7 +243,7 @@ List_locT * add_end_locT ( List_locT * locT, itsnet_node data);
  * @param data is the information of the new element
   */
 
-List_locT * mod_t_locT ( int val,List_locT * locT, itsnet_node data);
+List_locT * mod_t_locT ( int val,List_locT * locT, itsnet_node data,int num,itsnet_time_stamp tst);
 /**
  * @fn add_end_lsp
  * @brief This function add an element of lsp list.

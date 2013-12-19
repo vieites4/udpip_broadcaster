@@ -36,8 +36,8 @@ extern const unsigned char ls0[1];
 extern const unsigned char ls1[1];
 extern const unsigned char single[1];
 extern const unsigned char ETH_ADDR_BROADCAST[6];
-
 #include "cb_udp_events.h"
+extern List_locT *locT_general;
 extern time_t PDR;
 extern itsnet_node_id GN_ADDR;
 //time_t PDR_t;
@@ -71,7 +71,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	char data[ITSNET_DATA_SIZE*3];
 
 
-	arg->len = 0;int error=0;int aa=0;
+	arg->len = 0;int aa=0;
 	// 1) read UDP message from network level
 
 	if ( ( arg->len = recv_message(arg->socket_fd,data))<0)
@@ -92,23 +92,23 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		//	print_hex_data((char *)data,arg->len);PRF(" cara arriba \n");
 		char datos[arg->len];
 		memcpy(datos,data +14,arg->len);
-		char HT[1];char HL[1];char LEN[2];//PRF("sip \n");
+		char HT[1];char HL[1];char LEN[2];
 		memcpy(HT,(char *)(datos)+4 +1,1);
 		itsnet_packet_f * pkt=NULL;
 		memcpy(HL,(char *)(datos)+3+4,1);
 		memcpy(LEN,(char *)(datos) +4+4,2);
 		int lon_in=sprint_hex_data( LEN, 2);
-		int hl_int=sprint_hex_data( HL, 1);//PRF("sip \n");
-		int error =BasicHeader_processing(arg);
-		int duplicate=duplicate_control(datos,arg->locT);//PRF("sip \n");
+		int hl_int=sprint_hex_data( HL, 1);
+	if((memcmp(HT,tsb0,1)==0&& (hl_int>1))||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0 ||memcmp(HT,geounicast,1)==0 ||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0 || memcmp(HT,ls0,1)==0||memcmp(HT,ls1,1)==0){
+		if(duplicate_control(datos,arg->locT)==0||memcmp((void *)&GN_ADDR,(char *)(datos)+16,8)==0)return;	}
+	else if(memcmp(HT,beacon,1)==0 || (memcmp(HT,tsb0,1)==0)){	if(duplicate_control2(datos,arg->locT)==0||memcmp((void *)&GN_ADDR,(char *)(datos)+12,8)==0)return;}
+		if(BasicHeader_processing(arg)!=0){return;}
 		if(memcmp(HT,tsb0,1)==0&& (hl_int>1)){
 			PRF("entro en tsb \n");
-			if (error==0 && duplicate==1){
 				pkt = TSB_f(datos);aa=1;
 				//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
 				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
 				PRF("saio de tsb_f \n");
-			}
 		} else if(memcmp(HT,tsb0,1)==0){
 			PRF("entro en shb\n");
 			pkt = SHB_f(datos);
@@ -116,20 +116,18 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			PRF("envio realizado\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			PRF("entro en geobroadcast \n");
-			if (error==0 && duplicate==1){
 				aa=1;
 				pkt = GeoBroadcast_f(datos);
 				int y =geo_limit(HT,pkt);
 				if (y>=0){
 					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
 				PRF("saio de geobroadcast_f \n");
-			}else PRF("%d \n",duplicate);
+
 		}
 		else if(memcmp(HT,beacon,1)==0 ){
 			PRF("entro en beacon\n");
 		}else if(memcmp(HT,geounicast,1)==0 ){
 			PRF("entro en geounicast \n");
-			if (error==0 && duplicate==1){
 				aa=1;
 				char ADDR[8];
 				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
@@ -140,17 +138,13 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				}else{
 					//forward
 				}
-			}
 		}
 		else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0  ){
-			if (error==0 && duplicate==1){
 				aa=1;
 				pkt = GeoAnycast_f(datos);
 				int y =geo_limit(HT,pkt);
 				if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in+56	);}
-			}
 		}else if(memcmp(HT,ls0,1)==0){
-			if (error==0 && duplicate==1){
 				aa=1;
 				char ADDR[8];
 				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
@@ -163,16 +157,20 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				}else{
 					pkt = TSB_f(datos);free(pkt);
 				}
-			}
 		}
 		else if(memcmp(HT,ls1,1)==0){
-			if (error==0 && duplicate==1){
-
 				aa=1;
 				char ADDR[8];
 				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
 				if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
 					itsnet_packet * pkt1=NULL;
+					mac_addr package;
+					memcpy(package.address,ADDR,6);
+					int pos=search_in_locT_m_pending(package,locT_general);
+					Element_locT * position=locT_general->init;
+					int cont=0;
+					while(cont<pos){position=position->next;cont++;}
+					position->data.LS_PENDING=false;
 
 					//stop timer Tls,gn e reset RTCls,gn
 				}else{
@@ -181,7 +179,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				}
 
 
-			}}
+			}
 		else{}
 		if((memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb1,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
 			free(pkt);pkt=NULL;}
