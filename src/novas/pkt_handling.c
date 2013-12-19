@@ -235,7 +235,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	//PRF("SN %d\n",tsb_h.sequencenumber);
 	SN_g++; //máximo SN?? % SN_MAX;
 	un_h.source_position_vector=* LPV;
-	itsnet_position_vector *LPV_dest=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	itsnet_position_short_vector *LPV_dest=(itsnet_position_short_vector *)malloc(sizeof(itsnet_position_short_vector));
 	memcpy(&LPV_dest->node_id,(char *)(buffer)+16,8);
 	un_h.dest_position_vector=* LPV_dest;
 	memset(un_h.reserved,0,2);
@@ -271,10 +271,8 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 			int i =add_end_lsp(ls_buffer, *pkt,3);free(pkt);
 			return(pkt1);
 		}
-
-
-		if ( search_in_locT_m(LPV_dest->node_id.mac,locT_general)==0 && ch.traffic_class.scf==1){
-
+		int pos_loct=search_in_locT_m(LPV_dest->node_id.mac,locT_general);
+		if ( pos_loct==0 && ch.traffic_class.scf==1){
 			int val=lsp_uc_g->size+8+4+52+4+sprint_hex_data((char *)(buffer) +4,2);
 			//delete old buffered elements if we need more size to add a new one.
 			while (val>itsGnBcForwardingPacketBufferSize){
@@ -285,11 +283,17 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 			int i =add_end_lsp(lsp_uc_g, *pkt,4);free(pkt);
 			return(pkt_lsp);
 			//buffer in BC AND omit next executions
-		} else if (ch.traffic_class.scf==0){	//enviar en broadcast
+		} else if (pos_loct==0 &&ch.traffic_class.scf==0){	//enviar en broadcast
+		} else if(pos_loct!=0) {
+			//envío cara abaixo da guc
+			int same=0;
+			int cont=0;
+			Element_locT *position=locT_general->init;
+			while(position!=NULL && same==0){if(cont==pos_loct)same=1; else {cont++;position=position->next;}}
+			memcpy(&un_h.dest_position_vector,position,20);
+			pkt->payload.itsnet_unicast=un_h;
 		}
 	}else{
-
-
 		PRF("LOCATION SERVICE\n");
 		if (itsGnSecurity==1){PRF("Security en ls\n");}
 		itsnet_packet * pkt_ls = NULL;
@@ -302,7 +306,6 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		memcpy(&ls_req.GN_ADDR,(char *)(buffer)+16,8);
 		ls_req.source_position_vector=* LPV;
 		ls_req.sequencenumber=SN_g;
-
 		if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 		{		memcpy(ls_req.payload.btp1,(char *)(buffer) + 26,2);
 		memcpy(ls_req.payload.btp2,(char *)(buffer) + 24,2);
@@ -326,8 +329,6 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		data->pdr= PDR;
 		data->LS_PENDING=true;
 		AddTimer(LS_num++,itsGnLocationServiceRetransmitTimer,3); //ou poñer o nome do addr?? en vez de LS_num
-
-
 		int val=ls_buffer->size+8+4+52+4+sprint_hex_data((char *)(pkt_ls->common_header.payload_lenght),2);
 		//delete old buffered elements if we need more size to add a new one.
 		while (val>itsGnBcForwardingPacketBufferSize){
@@ -344,11 +345,8 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 			PRF("aqui podo liala porque non se actualice ls_buffer");
 		}
 		add_end_lsp(ls_buffer, *pkt,3);
-
-
 	}
 	free(LPV_dest);
-
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,buffer +8,4);
@@ -832,21 +830,21 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
 	memcpy(&pkt->common_header.btp,(char *)(buffer)+4,1);
-	pkt->common_header.btp.HST=pkt->common_header.btp.HT;PRF("AQI SI\n");
+	pkt->common_header.btp.HST=pkt->common_header.btp.HT;
 	itsnet_position_vector * PV=NULL;//
-	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));PRF("AQI SI\n");
+	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +4+4+8+24,24);
 	memcpy(&pkt->common_header.traffic_class,(char *)(buffer) +6,1);
 	char LEN[2];memcpy(LEN,(char *)(buffer) +4+4,2);
 	int lon_int=sprint_hex_data( LEN, 2);
 	memcpy(pkt->common_header.payload_lenght,LEN,2);
 	pkt->common_header.pv=*PV;
-	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);PRF("AQI SI\n");
+	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+3,1);
 	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+4+24+8,lon_int+4);
 	memcpy(&pkt->common_header.pkt_type,(char *)(buffer)+1+4,1);
 	pkt->common_header.pkt_type.HST=0;
-	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1+4,1);PRF("AQI SI\n");
+	memcpy(&pkt->common_header.pkt_stype,(char *)(buffer)+1+4,1);
 	pkt->common_header.pkt_stype.HT=pkt->common_header.pkt_stype.HST;
 	pkt->common_header.pkt_stype.HST=0;free(PV);
 	return(pkt);}
@@ -914,8 +912,39 @@ itsnet_packet_f * GeoAnycast_f(void *buffer){
 itsnet_packet * LS_req_f(void *buffer){
 
 	itsnet_packet * pkt = NULL;
-		//pkt=(itsnet_packet*)malloc(sizeof(itsnet_geo_t)+ sizeof(itsnet_common));
-
+	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+	itsnet_common_header ch;
+	itsnet_basic_header bh;
+	memcpy(&bh,(char *)(buffer),4);
+	memcpy(&ch,(char *)(buffer) +4,8);
+	memset(ch.mhl,0,1);
+	ch.HT_HST.HT=2;
+	ch.HT_HST.HST=1;
+	int ts_num=itsGnMaxPacketLifeTime; //tamén podería usar o Default en vez do Max
+	int base=0;int mult=0;int num4=0;int num3=0;
+	LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};
+	if (ts_num>6401){base=3; mult=(int) ceil(ts_num/100); } else if (ts_num>64) {base=2; mult=(int) ceil(ts_num/10);}else {base=1; mult=ts_num;}
+	sprintf(str2, "%04X",mult);
+	sprintf(str1, "%01X",base);
+	num4=strtol(str2,NULL,16);
+	num3=strtol(str1,NULL,16);
+	lt->base=num3;lt->multiple=num4;
+	memcpy(bh.lt,(void *)lt,1);
+	memset(bh.reserved,0,1);
+	bh.version_nh.HT=itsGnProtocolVersion;
+	if (itsGnSecurity==1)bh.version_nh.HST=2;else bh.version_nh.HST=1;
+	itsnet_unicast_t un_h;
+	un_h.sequencenumber=SN_g;
+	//PRF("SN %d\n",tsb_h.sequencenumber);
+	SN_g++; //máximo SN?? % SN_MAX;
+	memcpy(&un_h.dest_position_vector,LPV,20);
+	itsnet_position_vector *LPV_so=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	memcpy(LPV_so,(char *)(buffer)+12,24);
+	un_h.source_position_vector=* LPV_so;
+	memset(un_h.reserved,0,2);
+	pkt->payload.itsnet_unicast=un_h;//print_hex_data(pkt->payload.itsnet_tsb.payload.payload,lon_int);printf(" .\n");
+	pkt->common_header=ch;
+	pkt->basic_header=bh;
 	return(pkt);
 
 }

@@ -150,23 +150,32 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
 				if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
 					itsnet_packet * pkt1=NULL;
-				pkt1 = LS_req_f(datos);
-				//send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);}
+					pkt1 = LS_req_f(datos);
+					//send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);}
 
-				//o envio é cara a rede no caso de reply, faise igual que se faría o forwardin cara a rede de GUC
+					//o envio é cara a rede no caso de reply, faise igual que se faría o forwardin cara a rede de GUC
 				}else{
 					pkt = TSB_f(datos);free(pkt);
 				}
-				}
+			}
 		}
 		else if(memcmp(HT,ls1,1)==0){
 			if (error==0 && duplicate==1){
 
-				//stop timer Tls,gn e reset RTCls,gn
-			}
+				aa=1;
+				char ADDR[8];
+				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
+				if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
+					itsnet_packet * pkt1=NULL;
+
+					//stop timer Tls,gn e reset RTCls,gn
+				}else{
+
+					//forward coma en guc!
+				}
 
 
-		}
+			}}
 		else{}
 		if((memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb1,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
 			free(pkt);pkt=NULL;}

@@ -122,6 +122,20 @@ struct itsnet_position_vector
 typedef struct itsnet_position_vector itsnet_position_vector;
 
 /**
+ *itsnet short position vector LPV
+ */
+
+struct itsnet_position_short_vector
+{
+	itsnet_node_id node_id;
+	itsnet_time_stamp time_stamp;   /** UTC time in seconds, when the GPS data was calculated,NOT the time this message was generated */
+	itsnet_latitude latitude;  /** the latitude of the global position in 1/8 microdegree */
+	itsnet_longitude longitude;  /** the longitude of the global position in 1/8 microdegree*/
+
+};
+typedef struct itsnet_position_short_vector itsnet_position_short_vector;
+
+/**
  *byte's structure
  */
 
@@ -295,9 +309,10 @@ struct itsnet_unicast_t
 	//unsigned char lt[1];
 	unsigned char reserved[2];
 	itsnet_position_vector source_position_vector;/** Source node position vector */
-	itsnet_position_vector dest_position_vector;/** Dest node position vector */
+	itsnet_position_short_vector dest_position_vector;/** Dest node position vector */
 	itsnet_btp payload;
 };
+
 typedef struct itsnet_unicast_t itsnet_unicast_t;
 /**
  *The structure describes itsnet_geoanycast packet
@@ -373,17 +388,18 @@ typedef struct itsnet_ls_req_t itsnet_ls_req_t;
 /**
  *The structure describes itsnet_ls_reply packet
  */
+/**
 struct itsnet_ls_rep_t
 {
 	itsnet_sequencenumber sequencenumber;
 	//unsigned char lt[1];
 	unsigned char reserved[2];
-	itsnet_position_vector source_position_vector;/** Source node position vector */
+	itsnet_position_vector source_position_vector;
 	itsnet_position_vector dest_position_vector;
 	itsnet_btp_wo_payload_t payload;
 
 };
-typedef struct itsnet_ls_rep_t itsnet_ls_rep_t;
+typedef struct itsnet_ls_rep_t itsnet_ls_rep_t;**/
 
 /**
  *The structure describes itsnet_shb packet
@@ -448,7 +464,7 @@ struct itsnet_packet
 	itsnet_geobroadcast_t itsnet_geobroadcast;/** Geo-broadcast */
 	itsnet_tsb_t itsnet_tsb;/** Topologically-scoped broadcast */
 	itsnet_ls_req_t itsnet_ls_req;/** Topologically-scoped broadcast */
-	itsnet_ls_rep_t itsnet_ls_rep;/** Topologically-scoped broadcast */
+	//itsnet_ls_rep_t itsnet_ls_rep;/** Topologically-scoped broadcast */ //igual que guc
 	//struct itsnet_ls_t itsnet_ls;/** Location service */
 	} payload;
 };
