@@ -119,7 +119,7 @@ bool AddTimer(unsigned short TimerId, int num, int type)
 	{	// Set the timer interval
 		pTimer->Period = num;
 		ReturnValue = true;    }
-	if (type==0){mpTimerList_lsp=list;}else if(type==1){mpTimerList=list;}else if (type==2){mpTimerList_ls_rtx=list;}else if (type==3){mpTimerList_ls_buff=list;}else if(type==4){mpTimerList_uc=list;}else {mpTimerList_rep=list;}
+	if (type==0){mpTimerList_lsp=list;}else if(type==1){mpTimerList=list;}else if (type==2){mpTimerList_ls_rtx=list;}else if (type==3){mpTimerList_ls_buff=list;}else if(type==4){mpTimerList_uc=list;} else{mpTimerList_rep=list;}
 	return ReturnValue;
 }
 
@@ -192,32 +192,58 @@ PRF("CheckTimerEvent_ls_buff fin\n");
 }}
 
 int rtx_ls(int num,public_ev_arg_r * arg){
-	int a=0;int cont=0;
-	//List_lsp *list;
-
+	int a=0;
 	Element_lsp *position=ls_buffer->init;
 	tTimer * pos_time= mpTimerList_ls_rtx->init;
 	while(pos_time!=NULL && a==0){
-		pos_time=pos_time->pNext;
-		//position=position->next;
-		if (cont==num) a=1; else cont++;
+		if (pos_time->TimerId==num) a=1; else{
+			pos_time=pos_time->pNext;}
 	}
+	a=0;	while(position!=NULL && a==0){
+		if (position->data.payload.itsnet_ls_req.sequencenumber==pos_time->TimerId) a=1; else {position=position->next;}
+	}
+	Element_locT *pos_locT=locT_general->init;
+	a=0;	while(pos_locT!=NULL && a==0){
+	if (position->data.payload.itsnet_ls_req.sequencenumber==pos_locT->data.SN1) a=1; else {pos_locT=pos_locT->next;}
+	}
+
+	if (pos_locT!=NULL){if(pos_locT->data.LS_PENDING){
 	char h_source[ETH_ALEN];
 	get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 	memcpy(tx_frame->buffer.header.type,t07,2);
-
 	memcpy(tx_frame->buffer.data, (char *) &position->data,sprint_hex_data(position->data.common_header.payload_lenght,2)+52+4+8+4);
 	send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, 52 +sprint_hex_data(position->data.common_header.payload_lenght,2)+14+4+8+4);//==-1){}
-	ev_timer_again (l_Beacon,&t_Beacon);
+	//	ev_timer_again (l_Beacon,&t_Beacon);
 	pos_time->RTC++;
-	if (pos_time->RTC>=itsGnLocationServiceMaxRetrans){sup_timer(num,3);
-	// eliminar o que hai en ls_buffer
-	//eliminar o LocTe dese addr
+	if (pos_time->RTC>=itsGnLocationServiceMaxRetrans){sup_timer(num,3);sup_timer(num,2);
+
+	//search_in_locT_m(position->data.payload.itsnet_ls_req.GN_ADDR.mac,locT_general);
+	Element_lsp * pos_lsp=ls_buffer->init;
+	while(pos_lsp!=NULL){
+		if(memcmp(pos_lsp->data.payload.itsnet_ls_req.GN_ADDR.mac.address,position->data.payload.itsnet_ls_req.GN_ADDR.mac.address,6)==0)
+		{sup_elem_t_lsp(pos_lsp->data.payload.itsnet_ls_req.sequencenumber,3);
+		}
+		pos_lsp=pos_lsp->next;
+	}
+
+	Element_locT * pos_locT=locT_general->init;
+	while(pos_locT!=NULL){
+		if(memcmp(pos_locT->data.mac_id.address,position->data.payload.itsnet_ls_req.GN_ADDR.mac.address,6)==0)
+		{
+			int i=1;
+			bool a=taken[i];int aa=1;
+			while(a && aa==0){if(memcmp((void *)mac_list[i],pos_locT->data.mac_id.address,6)==0){aa=0;}else {a=taken[i];i++;}}
+
+			sup_elem_locT(i,&pos_locT->data.mac_id,locT_general);
+		}
+		pos_locT=pos_locT->next;
+	}
 
 	}else pos_time->Period=itsGnLocationServiceRetransmitTimer;
-
-	return(a);
+	}else{if(pos_time!=NULL){sup_timer(pos_time->TimerId,2);}
+	if (position!=NULL){sup_elem_t_lsp(num,3);}}
+	}	return(a);
 }
 
 void SystemTickEvent(void)
@@ -539,7 +565,7 @@ int sup_timer (unsigned short TimerId, int num)
 	tTimer * position=NULL;
 	tTimer * to_erase=NULL;
 	List_timer *list;
-	if (num==0){list= mpTimerList_lsp;}else if(num==1){list=mpTimerList;}else if (num==3){list=mpTimerList_ls_rtx;}
+	if (num==0){list= mpTimerList_lsp;}else if(num==1){list=mpTimerList;}else if(num==2){list=mpTimerList_ls_rtx;}else if (num==3){list=mpTimerList_ls_buff;}
 	position = FindTimer(TimerId,num);
 	if (position==NULL){
 		PRF("null en sup_timer\n");	}
@@ -564,7 +590,7 @@ int sup_timer (unsigned short TimerId, int num)
 			position->pNext->before=position->before;
 			free(to_erase);list->len--;
 		}
-		if (num==0){ mpTimerList_lsp=list;}else if(num==1){mpTimerList=list;}else if (num==3){mpTimerList_ls_rtx=list;}}
+		if (num==0){ mpTimerList_lsp=list;}else if(num==1){mpTimerList=list;}else if (num==2){mpTimerList_ls_rtx=list;}else if (num==3){mpTimerList_ls_buff=list;}}
 	return 0;
 }
 /* erase after a position */
@@ -752,7 +778,6 @@ int search_in_locT_m_wo_n (mac_addr data, List_locT * locT){
 	while ((aux!=NULL) &&(a==0)&& (e<17))
 	{
 		if (taken[i]==true){
-			//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
 			if(memcmp(data.address,aux->data.mac_id.address,6)==0 ) {a=1;}else{ e++;aux=aux->next;}}
 		else aux=aux->next;		}
 	if (a==0) return (0); else return(e);

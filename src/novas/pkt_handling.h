@@ -14,7 +14,6 @@
  * @param data, we use  to make the packet
  * @param list where we save it if we don't have neighbours
  * @param list where we save it in case of repetition
- * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
 itsnet_packet * TSB(void *data,List_lsp *lsp,List_lsp *rep);
@@ -24,7 +23,6 @@ itsnet_packet * TSB(void *data,List_lsp *lsp,List_lsp *rep);
  * @param data, we use  to make the packet
  * @param list where we save it if we don't have neighbours
  * @param list where we save it in case of repetition
- * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
 
@@ -35,7 +33,6 @@ itsnet_packet * SHB(void *dato,List_lsp *lsp,List_lsp *rep);
  * @param data, we use  to make the packet
  * @param list where we save it if we don't have neighbours
  * @param list where we save it in case of repetition
- * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet. if it is null the packet was discarded or saved in the buffer
   */
 
@@ -45,9 +42,22 @@ itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep);
  *  @fn TSB_f
  * @brief This function create the tsb packet to send to upper layer.
  * @param data, we use  to make the packet
- * @param g, say if we have to adapt to v1.1.1 format convention
  * @return the packet.
   */
+
+
+/**
+ *  @fn GeoUnicast
+ * @brief This function create the geounicast packet to send through link layer.
+ * @param data, we use  to make the packet
+ * @param list where we save it if we don't have neighbours
+ * @param list where we save it in case of repetition
+ * @return the packet. if it is null the packet was discarded or saved in the buffer
+  */
+
+itsnet_packet * GeoUnicast(void *dato,List_lsp *lsp,List_lsp *rep);
+
+
 itsnet_packet_f * TSB_f(void *data);
 /**
  * @fn SHB_f

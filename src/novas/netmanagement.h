@@ -93,6 +93,7 @@ struct itsnet_node_//loct entry
 	struct timespec tst;       		/** expire time for message 	*/
 	int pdr; // packet data rate
 	time_t tpdr;
+	int SN1; // sequence number of first LS, timeId of rtx timer.
 
 };
 typedef struct itsnet_node_ itsnet_node;
