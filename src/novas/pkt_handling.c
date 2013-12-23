@@ -321,7 +321,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		memcpy(data->mac_id.address,buffer+6,6);
 		data->IS_NEIGHBOUR=false;
 		itsnet_time_stamp tst=data->pos_vector.time_stamp;
-		data->expires.tv_sec= itsGnLifetimeLocTE;
+		data->tst.tv_sec= tst;
 		char VERSION[1];
 		memcpy(VERSION,buffer+14,1);
 		ht_hst_t *conv=(ht_hst_t *)VERSION;
@@ -572,7 +572,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	data->pos_vector= * PV;
 	itsnet_time_stamp tst=data->pos_vector.time_stamp;
 	free(PV);PV=NULL;
-	data->expires.tv_sec= itsGnLifetimeLocTE;
+	data->tst.tv_sec= tst;
 	char VERSION[1];
 	memcpy(VERSION,buffer+14,1);
 	ht_hst_t *conv=(ht_hst_t *)VERSION;
@@ -587,15 +587,16 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 		char SN[2];
 		memcpy(SN,arg->data+8+14+4,2);
 		lon_int=sprint_hex_data( SN, 2);//PRF(" sequence number %d\n", lon_int);
-		data->Sequence_number=lon_int;}else{data->Sequence_number=0; //dará problemas igualar esto a cero??
+		data->Sequence_number=lon_int;}else{data->Sequence_number=0;
+		//dará problemas igualar esto a cero??
 		}
 	data->LS_PENDING=false;
 	int val=search_in_locT(data,locT_general);
 	if(val==0){locT_general=add_end_locT (locT_general,*data);}else{
 		//modificar locT
-		locT_general=mod_t_locT (val,locT_general,*data,lon_int);
+		locT_general=mod_t_locT (val,locT_general,*data,lon_int,tst);
+		sup_timer(dictionary[val],1);//eliminamos anterior temp e poñemos o novo
 		AddTimer(dictionary[val],itsGnLifetimeLocTE,1);}
-
 
 	int a= search_in_locT_m_pending(data->mac_id,locT_general);
 	if (a!=0){
@@ -634,7 +635,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 					memcpy(tx_frame->buffer.header.type,type,2);
 					memcpy(tx_frame->buffer.data, &pos1->data, IEEE_80211_BLEN);
 
-					if (PDR<= itsGnMaxPacketDataRate) send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,52+ size+4+8+14+4);//==-1){}
+					send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,52+ size+4+8+14+4);//==-1){}
 					print_hex_data(&tx_frame->buffer,52+ size+4+8);
 					PRF(" paquete enviado a ll despois de ls_buffer \n");free(tx_frame);free(dir);
 
@@ -672,7 +673,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 					memcpy(tx_frame->buffer.header.type,type,2);
 					memcpy(tx_frame->buffer.data, &pos0->data, IEEE_80211_BLEN);
 
-					if (PDR<= itsGnMaxPacketDataRate) send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,52+ size+4+8+14+4);//==-1){}
+					send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,52+ size+4+8+14+4);//==-1){}
 					PRF(" paquete enviado a ll despois de ls_buffer \n");free(tx_frame);free(dir);
 
 					lsp_uc_g=sup_elem_t_lsp(sn,4); //igual teño que cambiar esto se pode haber uc para diferentes MAC, usar sup_t_elem_lsp
@@ -729,7 +730,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			int header_length=0;
 			if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=44;} //cambiar esto por datos novos
 			else if(memcmp(HT,tsb0,1)==0){header_length=28;}
-			if (PDR<= itsGnMaxPacketDataRate) send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,header_length+ size+4+8+14+4);//==-1){}
+			 send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,header_length+ size+4+8+14+4);//==-1){}
 			print_hex_data(&tx_frame->buffer,header_length+ size+4+8);
 			PRF(" paquete enviado a ll despois de lsp \n");free(tx_frame);free(dir);
 			if(memcmp(HT,tsb0,1)==0)ev_timer_again (l_Beacon,&t_Beacon);

@@ -99,16 +99,16 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		memcpy(LEN,(char *)(datos) +4+4,2);
 		int lon_in=sprint_hex_data( LEN, 2);
 		int hl_int=sprint_hex_data( HL, 1);
-	if((memcmp(HT,tsb0,1)==0&& (hl_int>1))||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0 ||memcmp(HT,geounicast,1)==0 ||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0 || memcmp(HT,ls0,1)==0||memcmp(HT,ls1,1)==0){
-		if(duplicate_control(datos,arg->locT)==0||memcmp((void *)&GN_ADDR,(char *)(datos)+16,8)==0)return;	}
-	else if(memcmp(HT,beacon,1)==0 || (memcmp(HT,tsb0,1)==0)){	if(duplicate_control2(datos,arg->locT)==0||memcmp((void *)&GN_ADDR,(char *)(datos)+12,8)==0)return;}
+		if((memcmp(HT,tsb0,1)==0&& (hl_int>1))||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0 ||memcmp(HT,geounicast,1)==0 ||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0 || memcmp(HT,ls0,1)==0||memcmp(HT,ls1,1)==0){
+			if(duplicate_control(datos,arg->locT)==0||memcmp((void *)&GN_ADDR,(char *)(datos)+16,8)==0)return;	}
+		else if(memcmp(HT,beacon,1)==0 || (memcmp(HT,tsb0,1)==0)){	if(duplicate_control2(datos,arg->locT)==0||memcmp((void *)&GN_ADDR,(char *)(datos)+12,8)==0)return;}
 		if(BasicHeader_processing(arg)!=0){return;}
 		if(memcmp(HT,tsb0,1)==0&& (hl_int>1)){
 			PRF("entro en tsb \n");
-				pkt = TSB_f(datos);aa=1;
-				//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
-				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
-				PRF("saio de tsb_f \n");
+			pkt = TSB_f(datos);aa=1;
+			//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
+			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
+			PRF("saio de tsb_f \n");
 		} else if(memcmp(HT,tsb0,1)==0){
 			PRF("entro en shb\n");
 			pkt = SHB_f(datos);
@@ -116,74 +116,89 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			PRF("envio realizado\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			PRF("entro en geobroadcast \n");
-				aa=1;
-				pkt = GeoBroadcast_f(datos);
-				int y =geo_limit(HT,pkt);
-				if (y>=0){
-					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
-				PRF("saio de geobroadcast_f \n");
+			aa=1;
+			pkt = GeoBroadcast_f(datos);
+			int y =geo_limit(HT,pkt);
+			if (y>=0){
+				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
+			PRF("saio de geobroadcast_f \n");
 
 		}
 		else if(memcmp(HT,beacon,1)==0 ){
 			PRF("entro en beacon\n");
 		}else if(memcmp(HT,geounicast,1)==0 ){
 			PRF("entro en geounicast \n");
-				aa=1;
-				char ADDR[8];
-				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
-				if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
-					pkt = GeoUnicast_f(datos);
-					send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
-					PRF("saio de geounicast \n"); //check gn_address to know if we have to forward in LL
-				}else{
-					//forward
-				}
+			aa=1;
+			char ADDR[8];
+			memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
+			if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
+				pkt = GeoUnicast_f(datos);
+				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
+				PRF("saio de geounicast \n"); //check gn_address to know if we have to forward in LL
+			}else{
+				//forward
+			}
 		}
 		else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0  ){
-				aa=1;
-				pkt = GeoAnycast_f(datos);
-				int y =geo_limit(HT,pkt);
-				if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in+56	);}
+			aa=1;
+			pkt = GeoAnycast_f(datos);
+			int y =geo_limit(HT,pkt);
+			if (y>=0){	send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in+56	);}
 		}else if(memcmp(HT,ls0,1)==0){
-				aa=1;
-				char ADDR[8];
-				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
-				if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
-					itsnet_packet * pkt1=NULL;
-					pkt1 = LS_req_f(datos);
-					//send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);}
+			aa=1;
+			char ADDR[8];
+			memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
+			if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
+				itsnet_packet * pkt1=NULL;
+				pkt1 = LS_req_f(datos);
+				//send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);}
 
-					//o envio é cara a rede no caso de reply, faise igual que se faría o forwardin cara a rede de GUC
-				}else{
-					pkt = TSB_f(datos);free(pkt);
-				}
+				//o envio é cara a rede no caso de reply, faise igual que se faría o forwardin cara a rede de GUC
+			}else{
+				pkt = TSB_f(datos);free(pkt);
+			}
 		}
 		else if(memcmp(HT,ls1,1)==0){
-				aa=1;
-				char ADDR[8];
-				memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
-				if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
-					itsnet_packet * pkt1=NULL;
-					mac_addr package;
-					memcpy(package.address,ADDR,6);
-					int pos=search_in_locT_m_pending(package,locT_general);
-					Element_locT * position=locT_general->init;
-					int cont=0;
-					while(cont<pos){position=position->next;cont++;}
-					position->data.LS_PENDING=false;
+			aa=1;
+			char ADDR[8];
+			memcpy(ADDR,(char *)(datos)+8+4+4+24,8);
+			if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
+				itsnet_packet * pkt1=NULL;
+				mac_addr package;
+				memcpy(package.address,ADDR,6);
+				int pos=search_in_locT_m_pending(package,locT_general);
+				Element_locT * position=locT_general->init;
+				int cont=0;
+				while(cont<pos){position=position->next;cont++;}
+				position->data.LS_PENDING=false;
 
-					//stop timer Tls,gn e reset RTCls,gn
-				}else{
+				//stop timer Tls,gn e reset RTCls,gn
+			}else{
 
-					//forward coma en guc!
-				}
-
-
+				//forward coma en guc!
 			}
+
+
+		}
 		else{}
+
+
+		Element_locT *aux;
+		aux = locT_general->init;
+		int i=0;
+		char MAC[6];
+		memcpy(MAC,arg->data,6);
+		int PDR_int=0;
+		while (aux != NULL && i==0){
+			if (memcmp(aux->data.mac_id.address,MAC,6)==0){
+				i=1;PDR_int=aux->data.pdr;}else		aux = aux->next;	}
+
+
+
+
 		if((memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb1,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
 			free(pkt);pkt=NULL;}
-		if (aa==3 && PDR<= itsGnMaxPacketDataRate){
+		if (aa==3 && PDR_int<= itsGnMaxPacketDataRate){
 			if ( memcmp(HT,tsb0,1)==0 ||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0||memcmp(HT,geounicast,1)==0 ){
 				PRF("entro no envio do enlace cara o enlace \n");
 				if (hl_int>1){
@@ -233,45 +248,59 @@ memcpy(LEN,(char *)(datos) +4,2);
 //print_hex_data(arg->data,arg->len);printf("entro en broadcast\n");
 int lon_int=sprint_hex_data( LEN, 2);
 memcpy(HL,(char *)(arg->data) +2,1);
-if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
-	PRF("entro en tsb1\n");
-	pkt = TSB(datos,arg->lsp,arg->rep);
-} else if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)==0)){
-	PRF("entro en tsb0\n");
-	pkt = SHB((void *)datos,arg->lsp,arg->rep);
-} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
-	PRF("entro en geobroad\n");
-	pkt = GeoBroadcast(datos,arg->lsp,arg->rep);
-	PRF("entro en geobroad!\n");
-}else if(memcmp(HT,geounicast,1)==0){
-	PRF("entro en geounicast\n");
-	pkt = GeoUnicast(datos,arg->lsp,arg->rep); //hai que decirlle a que dirección vai
-}
-else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){
-	PRF("entro en geoanycast0\n");
-	pkt = GeoAnycast(datos,arg->lsp,arg->rep);
-}else{}
-// 2) broadcast application level UDP message to network level
 
-memcmp(HT,(char *)&pkt->common_header.HT_HST,1);
+/**Element_locT *aux;
+aux = locT_general->init;
+int i=0;
+char MAC[6];
+memcpy(MAC,datos,6);
+int PDR_int=0;
+while (aux != NULL && i==0){
+	if (memcmp(aux->data.mac_id.address,MAC,6)==0){
+		i=1;PDR_int=aux->data.pdr;}else		aux = aux->next;	}
 
-if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0|| memcmp(HT,geounicast,1)==0|| memcmp(HT,ls0,1)==0){
-	if (pkt!=NULL&& PDR<= itsGnMaxPacketDataRate){
-		//&& (memcmp(HL,single,1)!=0)
-		int header_length=0;
-		if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0 ||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){header_length=44;}
-		else if(memcmp(HT,tsb0,1)==0){header_length=28;}else if(memcmp(HT,geounicast,1)==0){header_length=52;} else if(memcmp(HT,ls0,1)==0){header_length=36;}else if(memcmp(HT,ls0,1)==0){header_length=52;}
-		memcpy(tx_frame->buffer.data, (char *) pkt,lon_int+header_length+4+8+4);
-		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4+8+4);//==-1){}
-		if(memcmp(HT,tsb0,1)==0)ev_timer_again (l_Beacon,&t_Beacon);
-		//print_hex_data(&tx_frame->buffer,header_length+ lon_int+4+8);
-		PRF(" paquete enviado directo \n");
-		/**int total=header_length +lon_int +14+4;
-		int n_sends= floor(total/1500);**/
-		free(pkt);pkt=NULL;
+if (PDR_int<=itsGnMaxPacketDataRate )
+{**/
+
+	if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
+		PRF("entro en tsb1\n");
+		pkt = TSB(datos,arg->lsp,arg->rep);
+	} else if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)==0)){
+		PRF("entro en tsb0\n");
+		pkt = SHB((void *)datos,arg->lsp,arg->rep);
+	} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
+		PRF("entro en geobroad\n");
+		pkt = GeoBroadcast(datos,arg->lsp,arg->rep);
+		PRF("entro en geobroad!\n");
+	}else if(memcmp(HT,geounicast,1)==0){
+		PRF("entro en geounicast\n");
+		pkt = GeoUnicast(datos,arg->lsp,arg->rep); //hai que decirlle a que dirección vai
 	}
+	else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){
+		PRF("entro en geoanycast0\n");
+		pkt = GeoAnycast(datos,arg->lsp,arg->rep);
+	}else{}
+	// 2) broadcast application level UDP message to network level
 
-}
+	memcmp(HT,(char *)&pkt->common_header.HT_HST,1);
+
+	if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)|| memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0|| memcmp(HT,geounicast,1)==0|| memcmp(HT,ls0,1)==0){
+		if (pkt!=NULL){
+			//&& (memcmp(HL,single,1)!=0)
+			int header_length=0;
+			if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0 ||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){header_length=44;}
+			else if(memcmp(HT,tsb0,1)==0){header_length=28;}else if(memcmp(HT,geounicast,1)==0){header_length=52;} else if(memcmp(HT,ls0,1)==0){header_length=36;}else if(memcmp(HT,ls0,1)==0){header_length=52;}
+			memcpy(tx_frame->buffer.data, (char *) pkt,lon_int+header_length+4+8+4);
+			send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4+8+4);//==-1){}
+			if(memcmp(HT,tsb0,1)==0)ev_timer_again (l_Beacon,&t_Beacon);
+			//print_hex_data(&tx_frame->buffer,header_length+ lon_int+4+8);
+			PRF(" paquete enviado directo \n");
+			/**int total=header_length +lon_int +14+4;
+		int n_sends= floor(total/1500);**/
+			free(pkt);pkt=NULL;
+		}
+
+	}
 free(tx_frame);
 //PRF("saio ben do cb_broadcast_recvfrom\n");
 //view_locT();

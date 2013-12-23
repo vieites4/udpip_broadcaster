@@ -63,10 +63,10 @@ int PDR_update(char * data)
 	int same=0;
 	while(same==0 && pos!=NULL){if(memcmp(source,pos->data.mac_id.address,6)){	same=1;}else pos=pos->next;}
 
-			if(pos==NULL){PDR=PDR_t_new;return(0);}else{
-				if (pos->data.tpdr!=0){pos->data.pdr=(0.5*pos->data.pdr) + (0.5*(1/(PDR_t_new-pos->data.tpdr)));pos->data.tpdr=PDR_t_new;}else{pos->data.pdr=1/(PDR_t_new- PDR_ini);pos->data.tpdr=PDR_t_new;}
-				return(pos->data.pdr);
-			}
+	if(pos==NULL){PDR=PDR_t_new;return(0);}else{
+		if (pos->data.tpdr!=0){pos->data.pdr=(0.5*pos->data.pdr) + (0.5*(1/(PDR_t_new-pos->data.tpdr)));pos->data.tpdr=PDR_t_new;}else{pos->data.pdr=1/(PDR_t_new- PDR_ini);pos->data.tpdr=PDR_t_new;}
+		return(pos->data.pdr);
+	}
 
 
 
@@ -523,12 +523,11 @@ List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node data,int num,itsn
 		pos=pos->next;
 	}
 	pos->data.pdr=data.pdr;
-	pos->data.pos_vector=data.pos_vector;
+	if(((pos->data.tst.tv_sec < tst ) &&(tst- pos->data.tst.tv_sec<=65536/2))||((pos->data.tst.tv_sec > tst)&&(-tst + pos->data.tst.tv_sec >65536/2)))
+	{	pos->data.pos_vector=data.pos_vector;}
 	if (num!=0)pos->data.Sequence_number=num;
-	pos->data.expires=tst;
+	pos->data.tst.tv_sec=tst;
 	locT_general=locT;
-
-
 	return locT;
 }
 
@@ -718,7 +717,7 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 			aux->data.pdr=PDR;
 			if(((aux->data.pos_vector.time_stamp < data->pos_vector.time_stamp ) &&(data->pos_vector.time_stamp - aux->data.pos_vector.time_stamp <=4294967296/2))||((aux->data.pos_vector.time_stamp > data->pos_vector.time_stamp)&&(-data->pos_vector.time_stamp + aux->data.pos_vector.time_stamp >4294967296/2)))
 			{				aux->data.pos_vector=data->pos_vector;
-			aux->data.expires.tv_sec= itsGnLifetimeLocTE;
+			aux->data.tst.tv_sec= data->tst.tv_sec;
 			aux->data.IS_NEIGHBOUR=true;			}	}
 		aux = aux->next;	}
 	int a=0; int e=i;
@@ -909,17 +908,24 @@ int duplicate_control(void * data,List_locT * locT){
 	PRF("entro en duplicate control\n");
 	itsnet_node_id * buffer=NULL;//
 	buffer= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
-	memcpy(buffer,data +8,8); //cambiar
+	memcpy(buffer,data +8+4+4,8);
 	char SN[2];
-	memcpy(SN,data+36,2); //cambiar
+	memcpy(SN,data+8+4,2);
 	int lon_int=sprint_hex_data( SN, 2);
-	while (aux != NULL){
+	char TST_[4];
+	memcpy(TST_,data+8+4+4+8,2);
+	int lon_int2=sprint_hex_data( TST_, 4);
+	while (aux != NULL && i==1){
 		if (memcmp(aux->data.node_id.mac.address,buffer->mac.address,6)==0){
-			if(((aux->data.Sequence_number < lon_int ) &&(lon_int- aux->data.Sequence_number <=65536/2))||((aux->data.Sequence_number > lon_int)&&(-lon_int + aux->data.Sequence_number >65536/2)))
-			{	aux->data.Sequence_number=lon_int;	i=0	;
-			PRF("**************************DUPLICADO*************************** \n");
-			}		  }
-		aux = aux->next;
+			if(((aux->data.tst.tv_sec < lon_int2 ) &&(lon_int2- aux->data.tst.tv_sec<=65536/2))||((aux->data.tst.tv_sec > lon_int2)&&(-lon_int2 + aux->data.tst.tv_sec >65536/2)))
+			{	aux->data.tst.tv_sec=lon_int2;aux->data.Sequence_number=lon_int; }else
+				if(aux->data.tst.tv_sec == lon_int2){
+					if(((aux->data.Sequence_number < lon_int ) &&(lon_int- aux->data.Sequence_number <=65536/2))||((aux->data.Sequence_number > lon_int)&&(-lon_int + aux->data.Sequence_number >65536/2)))
+					{	aux->data.tst.tv_sec=lon_int2;aux->data.Sequence_number=lon_int;	i=0	;}else{
+						PRF("**************************DUPLICADO*************************** \n");	i=0;}
+				}}
+		else
+			aux = aux->next;
 	}
 	free(buffer);
 	PRF("saio de duplicate control\n");
@@ -932,23 +938,22 @@ int duplicate_control2(void * data,List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
 	int i=1;
-	PRF("entro en duplicate control\n");
+	PRF("entro en duplicate control2\n");
 	itsnet_node_id * buffer=NULL;//
 	buffer= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
-	memcpy(buffer,data +8,8); //cambiar
-	char SN[2];
-	memcpy(SN,data+36,2); //cambiar
-	int lon_int=sprint_hex_data( SN, 2);
-	while (aux != NULL){
+	memcpy(buffer,data +8+4+4,8);
+	char TST_[4];
+	memcpy(TST_,data+8+4+4+8,2);
+	int lon_int=sprint_hex_data( TST_, 4);
+	while (aux != NULL && i==1){
 		if (memcmp(aux->data.node_id.mac.address,buffer->mac.address,6)==0){
-			if(((aux->data.Sequence_number < lon_int ) &&(lon_int- aux->data.Sequence_number <=65536/2))||((aux->data.Sequence_number > lon_int)&&(-lon_int + aux->data.Sequence_number >65536/2)))
-			{	aux->data.Sequence_number=lon_int;	i=0	;
-			PRF("**************************DUPLICADO*************************** \n");
-			}		  }
-		aux = aux->next;
+			if(((aux->data.tst.tv_sec < lon_int ) &&(lon_int- aux->data.tst.tv_sec<=65536/2))||((aux->data.tst.tv_sec > lon_int)&&(-lon_int + aux->data.tst.tv_sec >65536/2)))
+			{	aux->data.tst.tv_sec=lon_int;i=0	;}else
+				PRF("**************************DUPLICADO*************************** \n");i=0	;		  }
+		else		aux = aux->next;
 	}
 	free(buffer);
-	PRF("saio de duplicate control\n");
+	PRF("saio de duplicate control2\n");
 
 	return(i);
 }

@@ -90,7 +90,7 @@ struct itsnet_node_//loct entry
 	bool IS_NEIGHBOUR;
 	uint16_t Sequence_number;
 	//struct tq_elem tqe;                    /** Timer queue entry */
-	struct timespec expires;       		/** expire time for message 	*/
+	struct timespec tst;       		/** expire time for message 	*/
 	int pdr; // packet data rate
 	time_t tpdr;
 
