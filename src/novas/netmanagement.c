@@ -204,43 +204,43 @@ int rtx_ls(int num,public_ev_arg_r * arg){
 	}
 	Element_locT *pos_locT=locT_general->init;
 	a=0;	while(pos_locT!=NULL && a==0){
-	if (position->data.payload.itsnet_ls_req.sequencenumber==pos_locT->data.SN1) a=1; else {pos_locT=pos_locT->next;}
+		if (position->data.payload.itsnet_ls_req.sequencenumber==pos_locT->data.SN1) a=1; else {pos_locT=pos_locT->next;}
 	}
 
 	if (pos_locT!=NULL){if(pos_locT->data.LS_PENDING){
-	char h_source[ETH_ALEN];
-	get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
-	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
-	memcpy(tx_frame->buffer.header.type,t07,2);
-	memcpy(tx_frame->buffer.data, (char *) &position->data,sprint_hex_data(position->data.common_header.payload_lenght,2)+52+4+8+4);
-	send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, 52 +sprint_hex_data(position->data.common_header.payload_lenght,2)+14+4+8+4);//==-1){}
-	//	ev_timer_again (l_Beacon,&t_Beacon);
-	pos_time->RTC++;
-	if (pos_time->RTC>=itsGnLocationServiceMaxRetrans){sup_timer(num,3);sup_timer(num,2);
+		char h_source[ETH_ALEN];
+		get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+		ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
+		memcpy(tx_frame->buffer.header.type,t07,2);
+		memcpy(tx_frame->buffer.data, (char *) &position->data,sprint_hex_data(position->data.common_header.payload_lenght,2)+52+4+8+4);
+		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, 52 +sprint_hex_data(position->data.common_header.payload_lenght,2)+14+4+8+4);//==-1){}
+		//	ev_timer_again (l_Beacon,&t_Beacon);
+		pos_time->RTC++;
+		if (pos_time->RTC>=itsGnLocationServiceMaxRetrans){sup_timer(num,3);sup_timer(num,2);
 
-	//search_in_locT_m(position->data.payload.itsnet_ls_req.GN_ADDR.mac,locT_general);
-	Element_lsp * pos_lsp=ls_buffer->init;
-	while(pos_lsp!=NULL){
-		if(memcmp(pos_lsp->data.payload.itsnet_ls_req.GN_ADDR.mac.address,position->data.payload.itsnet_ls_req.GN_ADDR.mac.address,6)==0)
-		{sup_elem_t_lsp(pos_lsp->data.payload.itsnet_ls_req.sequencenumber,3);
+		//search_in_locT_m(position->data.payload.itsnet_ls_req.GN_ADDR.mac,locT_general);
+		Element_lsp * pos_lsp=ls_buffer->init;
+		while(pos_lsp!=NULL){
+			if(memcmp(pos_lsp->data.payload.itsnet_ls_req.GN_ADDR.mac.address,position->data.payload.itsnet_ls_req.GN_ADDR.mac.address,6)==0)
+			{sup_elem_t_lsp(pos_lsp->data.payload.itsnet_ls_req.sequencenumber,3);
+			}
+			pos_lsp=pos_lsp->next;
 		}
-		pos_lsp=pos_lsp->next;
-	}
 
-	Element_locT * pos_locT=locT_general->init;
-	while(pos_locT!=NULL){
-		if(memcmp(pos_locT->data.mac_id.address,position->data.payload.itsnet_ls_req.GN_ADDR.mac.address,6)==0)
-		{
-			int i=1;
-			bool a=taken[i];int aa=1;
-			while(a && aa==0){if(memcmp((void *)mac_list[i],pos_locT->data.mac_id.address,6)==0){aa=0;}else {a=taken[i];i++;}}
+		Element_locT * pos_locT=locT_general->init;
+		while(pos_locT!=NULL){
+			if(memcmp(pos_locT->data.mac_id.address,position->data.payload.itsnet_ls_req.GN_ADDR.mac.address,6)==0)
+			{
+				int i=1;
+				bool a=taken[i];int aa=1;
+				while(a && aa==0){if(memcmp((void *)mac_list[i],pos_locT->data.mac_id.address,6)==0){aa=0;}else {a=taken[i];i++;}}
 
-			sup_elem_locT(i,&pos_locT->data.mac_id,locT_general);
+				sup_elem_locT(i,&pos_locT->data.mac_id,locT_general);
+			}
+			pos_locT=pos_locT->next;
 		}
-		pos_locT=pos_locT->next;
-	}
 
-	}else pos_time->Period=itsGnLocationServiceRetransmitTimer;
+		}else pos_time->Period=itsGnLocationServiceRetransmitTimer;
 	}else{if(pos_time!=NULL){sup_timer(pos_time->TimerId,2);}
 	if (position!=NULL){sup_elem_t_lsp(num,3);}}
 	}	return(a);
@@ -981,4 +981,39 @@ int duplicate_control2(void * data,List_locT * locT){
 	PRF("saio de duplicate control2\n");
 
 	return(i);
+}
+
+int Distance(itsnet_position_vector *lpv_a,itsnet_position_vector *lpv_b){
+	int dist=0;
+	int base=0; int high=0;
+	int aa=lpv_a->latitude;int ab=lpv_b->latitude;
+	int oa=lpv_a->longitude;int ob=lpv_b->longitude;
+
+	if (aa>ab){base=aa-ab;}else{base=ab-aa;}
+	if (oa>ob){high=oa-ob;}else{high=ob-oa;}
+
+	dist=sqrt(pow(base,2)+pow(high,2));
+	return(dist);
+
+}
+
+mac_addr Greedy_Forwarding_UC(itsnet_position_vector *lpv_p){
+	mac_addr NH=0;
+	int dist=0;
+	int MFR= Distance(LPV,lpv_p);
+	Element_locT * pos=locT_general->init;
+	while(pos!=NULL){
+
+		if(pos->data.IS_NEIGHBOUR){
+			dist=Distance(lpv_p, &pos->data.pos_vector);
+			if (dist<MFR){
+				NH=pos->data.mac_id;
+				MFR=dist;
+				pos=pos->next;
+			}
+		}else pos=pos->next;
+
+	}
+	return(NH);
+//si á saida NH É 0 metemolo en UC
 }

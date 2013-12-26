@@ -424,4 +424,6 @@ void thr_h2(void *arg);
 
  */
 int PDR_update(char * data);
+mac_addr Greedy_Forwarding_UC(itsnet_position_vector *lpv_p);
+int Distance(itsnet_position_vector *lpv_a,itsnet_position_vector *lpv_b);
 #endif /* NETMANAGEMENT_H_ */
