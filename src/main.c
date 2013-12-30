@@ -30,9 +30,10 @@ uint16_t SN_g=0;//sequence number
 itsnet_node_id GN_ADDR;
 List_lsp * lsp_bc_g;
 List_lsp * ls_buffer;
- List_lsp * lsp_uc_g;
- time_t PDR=0;
- time_t PDR_ini=0;
+List_lsp * lsp_uc_g;
+List_lsp *lsp_cbf_uc;
+time_t PDR=0;
+time_t PDR_ini=0;
 #if DEBUG_PRINT_ENABLED
 #define PRF printf
 #else
@@ -51,9 +52,9 @@ void *thr_h1(void * arg){
 int main(int argc, char **argv)
 {
 	List_locT * locT_g;
-PDR_ini=time(0);
+	PDR_ini=time(0);
 	pthread_t h1,h3, h_locT,h_lsp;
-PRF(">>> Reading configuration...\n");
+	PRF(">>> Reading configuration...\n");
 	configuration_t *cfg = create_configuration(argc, argv);
 	PRF(">>> Configuration read! Printing data...\n");
 	print_configuration(cfg);
@@ -61,6 +62,7 @@ PRF(">>> Reading configuration...\n");
 	List_lsp *rep_bc_g=init_lsp();
 	locT_g=startup1(cfg);
 	lsp_uc_g=init_lsp();
+	lsp_cbf_uc=init_lsp();
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
@@ -78,7 +80,6 @@ PRF(">>> Reading configuration...\n");
 	t_LPV.data=(void *)h_source;
 	int revents;
 	LPV_update(l_LPV, &t_LPV, revents);
-
 	pthread_create(&h1,NULL, thr_h1, (void *)h_source);
 	pthread_create(&h_locT,NULL,thr_h2,(void *)locT_g);
 	ev_loop(net_events->loop, 0);

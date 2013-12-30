@@ -636,7 +636,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 					memcpy(tx_frame->buffer.header.type,type,2);
 					memcpy(tx_frame->buffer.data, &pos1->data, IEEE_80211_BLEN);
 
-					send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,52+ size+4+8+14+4);//==-1){}
+					send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,48+ size+4+8+14+4);//==-1){}
 					print_hex_data(&tx_frame->buffer,52+ size+4+8);
 					PRF(" paquete enviado a ll despois de ls_buffer \n");free(tx_frame);free(dir);
 
@@ -679,7 +679,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 					memcpy(tx_frame->buffer.header.type,type,2);
 					memcpy(tx_frame->buffer.data, &pos0->data, IEEE_80211_BLEN);
 
-					send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,52+ size+4+8+14+4);//==-1){}
+					send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,48+ size+4+8+14+4);//==-1){}
 					PRF(" paquete enviado a ll despois de ls_buffer \n");free(tx_frame);free(dir);
 
 					lsp_uc_g=sup_elem_t_lsp(sn,4); //igual teño que cambiar esto se pode haber uc para diferentes MAC, usar sup_t_elem_lsp
@@ -965,6 +965,41 @@ int geo_limit(void *HT,itsnet_packet_f *pkt)
 	char distB[2];
 	memcpy(distA,pkt->payload.itsnet_geocast.distanceA,2);
 	memcpy(distB,pkt->payload.itsnet_geocast.distanceB,2);
+	if(memcmp(geobroad0,HT,1)==0){
+		PRF("circular \n");print_hex_data(distA,2);
+		r=sprint_hex_data(distA, 2);
+		total= 1- pow((x/r),2) - pow((y/r),2);
+
+	}else
+		if(memcmp(geobroad1,HT,1)==0){
+			a=sprint_hex_data(distA, 2);
+			b=sprint_hex_data(distB, 2);
+			total= fmin(1- pow((x/a),2) ,1- pow((y/b),2));
+			PRF("rectangular \n");
+		} else
+			if(memcmp(geobroad2,HT,1)==0){
+				a=sprint_hex_data(distA, 2);
+				b=sprint_hex_data(distB, 2);
+				total= 1- pow((x/a),2) - pow((y/b),2);
+				PRF("eliptica \n");
+			}
+	//free(pkt1);pkt1=NULL;
+	return(total);
+}
+
+
+int geo_limit_ll(itsnet_packet *pkt)
+{
+	int x,y,r,total,a,b;
+
+	x=abs(pkt->payload.itsnet_geobroadcast.dest_latitude - LPV->latitude);
+	y=abs(pkt->payload.itsnet_geobroadcast.dest_longitude - LPV->longitude);
+	char distA[2];
+	char distB[2];
+	memcpy(distA,pkt->payload.itsnet_geobroadcast.distanceA,2);
+	memcpy(distB,pkt->payload.itsnet_geobroadcast.distanceB,2);
+	char HT[1];
+	memcpy(HT,pkt->basic_header.version_nh,1);
 	if(memcmp(geobroad0,HT,1)==0){
 		PRF("circular \n");print_hex_data(distA,2);
 		r=sprint_hex_data(distA, 2);

@@ -35,7 +35,7 @@
 #define TIMER_14	        (unsigned short)0x2000
 #define TIMER_15	        (unsigned short)0x4000
 #define TIMER_16	        (unsigned short)0x8000
- #define IEEE_80211_BLEN 		2312	/*!< IEEE 802.11 body length (B). */
+#define IEEE_80211_BLEN 		2312	/*!< IEEE 802.11 body length (B). */
 typedef struct List_locT List_locT;
 typedef struct List_lsp List_lsp;
 typedef struct msghdr msg_header_t;
@@ -48,25 +48,25 @@ struct public_ev_arg
 {
 
 	int socket_fd;                                        /**< Socket file descriptor. */
-	        int port;                                                /**< Port to be used. */
-	        int forwarding_socket_fd;                /**< Socket for message forwarding. */
-	        int net_socket_fd;
-	        int forwarding_port;                        /**< Port for message forwarding. */
-	        int net_port;
-	        sockaddr_in_t *forwarding_addr;        /**< Forwarding address. */
-	        sockaddr_ll_t *forwarding_addr_ll;        /**< Forwarding address. */
-	        sockaddr_in_t *local_addr;                /**< Local address (NOT localhost) */
-	        sockaddr_ll_t *local_addr_ll;                /**< Local address (NOT localhost) */
-	        bool print_forwarding_message;        /**< Flag that enables verbose. */
-	        void *data;                                                /**< Buffer for frames reception. */
-	        int len;                                                /**< Data length within the buffer. */
-	        msg_header_t *msg_header;                /**< Buffer for msg_header reception. */
-	        bool nec_mode;                                        /**< Flag that indicates NEC mode. */
-	        int __test_number;                                /**< For testing, counts no tests. */
-	        List_locT *locT;
-	        List_lsp *lsp;
-	        List_lsp *buffer_ls;
-	        List_lsp *rep;
+	int port;                                                /**< Port to be used. */
+	int forwarding_socket_fd;                /**< Socket for message forwarding. */
+	int net_socket_fd;
+	int forwarding_port;                        /**< Port for message forwarding. */
+	int net_port;
+	sockaddr_in_t *forwarding_addr;        /**< Forwarding address. */
+	sockaddr_ll_t *forwarding_addr_ll;        /**< Forwarding address. */
+	sockaddr_in_t *local_addr;                /**< Local address (NOT localhost) */
+	sockaddr_ll_t *local_addr_ll;                /**< Local address (NOT localhost) */
+	bool print_forwarding_message;        /**< Flag that enables verbose. */
+	void *data;                                                /**< Buffer for frames reception. */
+	int len;                                                /**< Data length within the buffer. */
+	msg_header_t *msg_header;                /**< Buffer for msg_header reception. */
+	bool nec_mode;                                        /**< Flag that indicates NEC mode. */
+	int __test_number;                                /**< For testing, counts no tests. */
+	List_locT *locT;
+	List_lsp *lsp;
+	List_lsp *buffer_ls;
+	List_lsp *rep;
 };
 
 
@@ -78,14 +78,14 @@ typedef struct public_ev_arg public_ev_arg_r;
 	pthread_t thread;		// who queued this task
 	void (*task)(struct tq_elem *);	// pointer to task
 };
-**/
+ **/
 struct itsnet_node_//loct entry
 {
 	itsnet_node_id node_id;			/** node identity		*/
 	mac_addr mac_id;
 	bool itss_type;
 	int version;
-	 struct itsnet_position_vector pos_vector;	/** position vector		*/
+	struct itsnet_position_vector pos_vector;	/** position vector		*/
 	bool LS_PENDING;
 	bool IS_NEIGHBOUR;
 	uint16_t Sequence_number;
@@ -103,8 +103,8 @@ typedef struct itsnet_node_ itsnet_node;
  */
 struct ElementList_locT
 {	itsnet_node data;
-	struct ElementList_locT *next;
-	struct ElementList_locT *before;};
+struct ElementList_locT *next;
+struct ElementList_locT *before;};
 typedef struct ElementList_locT Element_locT;
 /**
  * @struct LT
@@ -121,16 +121,16 @@ typedef struct LT LT_s;
  */
 struct List_locT
 {	Element_locT *init;
-	Element_locT *end;
-	int len;};
+Element_locT *end;
+int len;};
 /**
  * @struct ElementList_lsp
  * @brief Structure for ElementList_lsp, elements of lsp.
  */
 struct ElementList_lsp
 {	itsnet_packet data;
-	struct ElementList_lsp *next;
-	struct ElementList_lsp *before;};
+struct ElementList_lsp *next;
+struct ElementList_lsp *before;};
 typedef struct ElementList_lsp Element_lsp;
 /**
  * @struct List_lsp
@@ -138,9 +138,9 @@ typedef struct ElementList_lsp Element_lsp;
  */
 struct List_lsp
 {	Element_lsp *init;
-	Element_lsp *end;
-	int size;
-	int len;} ;
+Element_lsp *end;
+int size;
+int len;} ;
 /**
  * @struct ieee80211_header
  * @brief Structure for ieee80211_header, macs and type of packet
@@ -148,8 +148,8 @@ struct List_lsp
 
 typedef struct ieee80211_header
 {	unsigned char dest_address[ETH_ALEN];   /*!< Dest MAC address. */
-	unsigned char src_address[ETH_ALEN];	/*!< Source MAC address. */
-	unsigned char type[2];					/*!<0x0707 of GN. */
+unsigned char src_address[ETH_ALEN];	/*!< Source MAC address. */
+unsigned char type[2];					/*!<0x0707 of GN. */
 } ieee80211_header_t ;
 /**
  * @struct ieee80211_frame_buffer
@@ -158,18 +158,18 @@ typedef struct ieee80211_header
 typedef struct ieee80211_frame_buffer
 {
 	ieee80211_header_t header;	/*!< IEEE 802.11 header. */
-    	char data[IEEE_80211_BLEN];	/*!< Data body of the IEEE 802.11 frame. */
+	char data[IEEE_80211_BLEN];	/*!< Data body of the IEEE 802.11 frame. */
 } ieee80211_buffer_t;
 
 typedef struct ll_frame
 {	int frame_type;				/*!< Type of the frame. */
-	int frame_len;				/*!< Length of the total bytes read. */
-	struct timeval timestamp;	/*!< Frame creation timestamp (usecs). */
+int frame_len;				/*!< Length of the total bytes read. */
+struct timeval timestamp;	/*!< Frame creation timestamp (usecs). */
 } ll_frame_t;
 
 typedef struct ieee80211_frame
 {	ll_frame_t info;			/*!< Info relative to frame management. */
-	ieee80211_buffer_t buffer;	/*!< Buffer with frame contents. */
+ieee80211_buffer_t buffer;	/*!< Buffer with frame contents. */
 } ieee80211_frame_t;
 /**
  * @fn sup_elem_locT
@@ -177,7 +177,7 @@ typedef struct ieee80211_frame
  * @param num, we use this to know what element of timer list related with loct list we have to erase
  * @param mac of the element we want to erase
  * @param list where we erase the element
-  */
+ */
 int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);
 /**
  * @fn search_in_locT
@@ -185,7 +185,7 @@ int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);
  * @param data, we use this information (loct block) to make the search
  * @param list where we look for the element
  * @return the number of position in loct list
-  */
+ */
 int search_in_locT (itsnet_node * data, List_locT * locT);
 /**
  * @fn search_in_locT
@@ -193,7 +193,7 @@ int search_in_locT (itsnet_node * data, List_locT * locT);
  * @param data, we use this information (mac address)to make the search
  * @param list where we look for the element
  * @return the number of position in loct list
-  */
+ */
 int search_in_locT_m (mac_addr data, List_locT * locT);
 /**
  * @fn search_in_locT_m_wo_n
@@ -201,30 +201,38 @@ int search_in_locT_m (mac_addr data, List_locT * locT);
  * @param data, we use this information (mac address)to make the search
  * @param list where we look for the element
  * @return the number of position in loct list
-  */
+ */
 int search_in_locT_m_wo_n (mac_addr data, List_locT * locT);
+
+/**
+ * @fn search_in_locT_m_pending
+ * @brief This function search if there are any pending elements with this mac in the locT list
+ * @param data, we use this information (mac address)to make the search
+ * @param list where we look for the element
+ * @return the number of position in loct list or a 0 if there isn't any match.
+ */
+
+int search_in_locT_m_pending (mac_addr data, List_locT * locT);
+;
 /**
  * @fn rtx_ls
  * @brief This function starts when a ls timer expires.
  * @param num
 
-  */
+ */
 int rtx_ls(int num,public_ev_arg_r * arg);
-
-
-
 /**
  * @fn sup_elem_lsp
  * @brief This function erase last element of lsp list.
  * @param num, not necessary
-  */
+ */
 List_lsp * sup_elem_lsp (int num, int type);
 
 /**
  * @fn sup_elem_t_lsp
  * @brief This function erase num element of lsp list.
  * @param num, position of the element we want to erase
-  */
+ */
 
 List_lsp * sup_elem_t_lsp (int num, int type);
 
@@ -233,7 +241,7 @@ List_lsp * sup_elem_t_lsp (int num, int type);
  * @brief This function add an element of loct list.
  * @param list where we put the new element
  * @param data is the information of the new element
-  */
+ */
 
 List_locT * add_end_locT ( List_locT * locT, itsnet_node data);
 /**
@@ -242,7 +250,7 @@ List_locT * add_end_locT ( List_locT * locT, itsnet_node data);
  * @param pos of the mac on the list
  * @param list where we put the new element
  * @param data is the information of the new element
-  */
+ */
 
 List_locT * mod_t_locT ( int val,List_locT * locT, itsnet_node data,int num,itsnet_time_stamp tst);
 /**
@@ -250,14 +258,14 @@ List_locT * mod_t_locT ( int val,List_locT * locT, itsnet_node data,int num,itsn
  * @brief This function add an element of lsp list.
  * @param list where we put the new element
  * @param data is the information of the new element
-  */
+ */
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data, int type);
 /**
  * @fn add_end_rep
  * @brief This function add an element of rep list.
  * @param list where we put the new element
  * @param data is the information of the new element
-  */
+ */
 int add_end_rep ( List_lsp *rep, itsnet_packet data);
 /**
  * @fn view_lsp
@@ -284,25 +292,51 @@ int any_neighbours ();
 int any_ls_proccess();
 
 
+/**
+ * @fn startup1
+ * @brief This function makes the initialization of some lists, including all the timers, and decide about addressing.
+ * @param cfg, the configuration we obtain from execution line.
+ * @result locT, return this list
+ */
 List_locT * startup1(configuration_t *cfg);
 /**
  * @fn LPV_update
  * @brief LPV_update This function is the Callback when LPV timer breaks! use gps information to create
  * new LPV.
-  */
+ */
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents);
 /**
  * @fn Beacon_send
  * @brief Beacon_send This function is the Callback when Beacon timer breaks! we need to send a beacon to
  * announce our mac to the other hosts,so as they can annotate it on their loct.
-  */
+ */
 
 void Beacon_send(EV_P_ ev_timer *w, int revents) ;
+/**
+ * @fn duplicate_control2
+ * @brief Makes duplicate control for shb and beacon
+ * @param data, data of entering pkt
+ * @param locT, locT list
+ * @result, if the result is 0 there is not a duplication error if it is different to 0 there is a duplication error
+ */
+
+
+int duplicate_control2(void * data,List_locT * locT);
+
+/**
+ * @fn duplicate_control
+ * @brief Makes duplicate control for all kinds of packet except shb and beacon
+ * @param data, data of entering pkt
+ * @param locT, locT list
+ * @result, if the result is 0 there is not a duplication error if it is different to 0 there is a duplication error
+ */
+
+
 int duplicate_control(void * data,List_locT * locT);
 /**
  * @fn LS
  * @brief LS hasn't been implemented yet
-  */
+ */
 void LS(int option);
 /**
  * @struct Timer
@@ -338,27 +372,27 @@ typedef struct List_timer List_timer;
  * @param TimerId is the name of timer, sn in case of lsp or number unsigned short in loct case
  * @param type tell us if the element is lsp (2) or loct (1)
  * @return the list pointer
-  */
+ */
 int sup_timer (unsigned short TimerId, int type);
 /**
  * @fn init_lsp
  * @brief This function create a new list of lsp, it's the list where we maintain frames we
  *  didn't send because there aren't neighbours.
  * @return the list pointer
-  */
+ */
 List_lsp * init_lsp ();
 /**
  * @fn init_locT
  * @brief This function create a new list of loct, it's the list where we maintain macs we receive
  * @return the list pointer
-  */
+ */
 List_locT * init_locT ();
 itsnet_position_vector * LPV_ini();
 /**
  * @fn init_timer_list
  * @brief This function create a new list of timers.
  * @return the list pointer
-  */
+ */
 List_timer * init_timer_list ();
 /**
  * @fn AddTimer
@@ -367,7 +401,7 @@ List_timer * init_timer_list ();
  * @param time tell us lifetime of element we will timer
  * @param type tell us if the element is lsp (2) or loct (1)
  * @return if the addition was done correctly
-  */
+ */
 bool AddTimer(unsigned short TimerId, int time, int type);
 /**
  * @fn FindTimer
@@ -376,7 +410,7 @@ bool AddTimer(unsigned short TimerId, int time, int type);
  * @param TimerId is the name of timer, sn in case of lsp or number unsigned short in loct case
  * @param type tell us if the element is lsp (2) or loct (1)
  * @return position of the searched element or NULL in case it doesn't exist
-  */
+ */
 tTimer * FindTimer(unsigned short TimerId, int type);
 /**
  * @fn SystemTickEvent
@@ -402,6 +436,16 @@ void CheckTimerEvent_lsp(EV_P_ ev_timer *w, int revents);
 
  */
 void CheckTimerEvent_uc(EV_P_ ev_timer *w, int revents);
+
+
+/**
+ * @fn CheckTimerEvent_cbf_uc
+ * @brief When one of the timers finishes a signal 48 is rised and
+ * this function is called to call send_bcast_cbf_uc,
+ * to erase the timer of the element we erase and broadcast packet.
+
+ */
+void CheckTimerEvent_cbf_uc(EV_P_ ev_timer *w, int revents);
 /**
  * @fn CheckTimerEvent_lsp
  * @brief When one of the elements of loct finishes its timer a signal SIGUSR1 is rised and
@@ -409,12 +453,28 @@ void CheckTimerEvent_uc(EV_P_ ev_timer *w, int revents);
  */
 
 void CheckTimerEvent(EV_P_ ev_timer *w, int revents);
+
+/**
+ * @fn CheckTimerEvent_ls_rtx
+ * @brief When one of the elements of ls_buffer finishes its timer a signal 45 is rised and
+ * this function is called to call rtx_ls
+ */
+
+void CheckTimerEvent_ls_rtx(EV_P_ ev_timer *w, int revents);
+/**
+ * @fn CheckTimerEvent_ls_buff
+ * @brief When one of the elements of ls_buffer finishes its timer a signal 46 is rised and
+ * this function is called to call sup_elem_t_lsp
+ */
+
+void CheckTimerEvent_ls_buff(EV_P_ ev_timer *w, int revents);
 /**
  * @fn thr_h2
  * @brief This is the thread we use to timer lifetime of locT elements and lsp elements.
  * @param public_arg Public arguments for this callback function.
 
  */
+
 void thr_h2(void *arg);
 
 /**
@@ -424,6 +484,49 @@ void thr_h2(void *arg);
 
  */
 int PDR_update(char * data);
+
+/**
+ * @fn Greedy_Forwarding_UC
+ * @brief This is one of the forwarding algorithm for geounicast packets
+ * @param lpv, location position vector to destination
+ * @result mac direction of forwarding
+ */
+
 mac_addr Greedy_Forwarding_UC(itsnet_position_vector *lpv_p);
+
+/**
+ * @fn Distance
+ * @brief This is function calculates the distance between this lpvs
+ * @param lpv, location position vector to destination
+ * @result distance between lpvs
+ */
+
+
 int Distance(itsnet_position_vector *lpv_a,itsnet_position_vector *lpv_b);
+
+//send_bcast_cbf_uc(gTimer_cbf_uc[i]);
+
+/**
+ * @fn CBF_UC
+ * @brief This is one of the forwarding algorithm for geounicast packets
+ * @param pkt, this is the packet we must forward
+ * @param len, len of pkt
+ * @param lpv_se, location position vector of source
+ * @result 0,-1: (0)the packet if buffered in lsp_cbf_uc, (-1) the packet is discarded
+ */
+
+int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se);
+
+/**
+ * @fn CBF_BC
+ * @brief This is one of the forwarding algorithm for geobroadcast packets
+ * @param pkt, this is the packet we must forward
+ * @param len, len of pkt
+ * @param lpv_se, location position vector of source
+ * @result mac_addr, 0,-1: (0)the packet if buffered in lsp_cbf_uc (ZEROS), (-1) the packet is discarded (TWOS)
+ */
+
+mac_addr CBF_BC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se);
+
+
 #endif /* NETMANAGEMENT_H_ */

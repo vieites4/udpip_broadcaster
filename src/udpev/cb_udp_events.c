@@ -37,6 +37,7 @@ extern const unsigned char ls1[1];
 extern const unsigned char single[1];
 extern const unsigned char ETH_ADDR_BROADCAST[6];
 #include "cb_udp_events.h"
+extern List_lsp *lsp_cbf_uc;
 extern List_locT *locT_general;
 extern time_t PDR;
 extern itsnet_node_id GN_ADDR;
@@ -114,6 +115,11 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			int y =geo_limit(HT,pkt);
 			if (y>=0){
 				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
+		/**	else{
+				if(LPV->pai){
+					mac_addr NH= Greedy_Forwarding_UC(LPV);
+				}else y=0;	}**/
+
 			PRF("saio de geobroadcast_f \n");
 		}		else if(memcmp(HT,beacon,1)==0 ){
 			PRF("entro en beacon\n");
@@ -243,12 +249,18 @@ if((memcmp(HT,tsb0,1)==0)&& (memcmp(HL,single,1)!=0)){
 } else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 	PRF("entro en geobroad\n");
 	pkt = GeoBroadcast(datos,arg->lsp,arg->rep);
+	// elección de algoritmo de forwarding
+
 	PRF("entro en geobroad!\n");
 }else if(memcmp(HT,geounicast,1)==0){
 	PRF("entro en geounicast\n");
+	// elección de algoritmo de forwarding
+
 	pkt = GeoUnicast(datos,arg->lsp,arg->rep);
 }else if(memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){
 	PRF("entro en geoanycast0\n");
+	// elección de algoritmo de forwarding
+
 	pkt = GeoAnycast(datos,arg->lsp,arg->rep);
 }else{}
 // 2) broadcast application level UDP message to network level
@@ -260,10 +272,10 @@ if((memcmp(HT,geobroad0,1)==0)||(memcmp(HT,tsb0,1)==0)||(memcmp(HT,tsb1,1)==0)||
 		//&& (memcmp(HL,single,1)!=0)
 		int header_length=0;
 		if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0 ||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){header_length=44;}
-		else if(memcmp(HT,tsb0,1)==0){header_length=28;}else if(memcmp(HT,geounicast,1)==0){header_length=52;} else if(memcmp(HT,ls0,1)==0){header_length=36;}else if(memcmp(HT,ls0,1)==0){header_length=52;}
+		else if(memcmp(HT,tsb0,1)==0){header_length=28;}else if(memcmp(HT,geounicast,1)==0){header_length=48;} else if(memcmp(HT,ls0,1)==0){header_length=36;}else if(memcmp(HT,ls0,1)==0){header_length=48;}
 		memcpy(tx_frame->buffer.data, (char *) pkt,lon_int+header_length+4+8+4);
 
-		Greedy_Forwarding();
+		//Greedy_Forwarding_UC();
 
 		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4+8+4);//==-1){}
 		if(memcmp(HT,tsb0,1)==0)ev_timer_again (l_Beacon,&t_Beacon);
