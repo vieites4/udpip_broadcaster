@@ -55,7 +55,7 @@ itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep);
  * @return the packet. if it is null the packet was discarded or saved in the buffer
  */
 
-itsnet_packet * GeoUnicast(void *dato,List_lsp *lsp,List_lsp *rep);
+itsnet_packet * GeoUnicast(void *dato,List_lsp *lsp,List_lsp *rep,public_ev_arg_r *arg);
 
 
 itsnet_packet_f * TSB_f(void *data);
