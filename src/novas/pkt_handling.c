@@ -108,7 +108,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);
 		return(pkt1);
 		//buffer in BC AND omit next executions
-	}
+	}else if  (any_neighbours()==0&& ch.traffic_class.scf==0){return(pkt);}
 
 	//REPETITION INTERVAL
 	char REP[4];
@@ -307,7 +307,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 						char type[2]={0x07,0x07};
 						memcpy(tx_frame->buffer.header.type,type,2);
 						memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-						send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,lon_int+ 48+4+8+14+4);free(tx_frame);
+						send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,lon_int+ 48+4+8+14+4);free(tx_frame);return(pkt_lsp);
 					}				}
 				else if(itsGnGeoUnicastForwardingAlgorithm==2){
 					CBF_UC(pkt,lon_int+ 48+4+8+14+4,&position->data.pos_vector);
@@ -381,7 +381,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 	free(lt);return(pkt);
 
 }
-itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
+itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_arg_r *arg){
 
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -419,6 +419,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 	gbc_h.sequencenumber=SN_g;
 	SN_g++; //máximo SN?? % SN_MAX;
 	gbc_h.source_position_vector=* LPV;
+	itsnet_packet * pkt1 = NULL;
 	memset(gbc_h.reserved,0,2);
 	memcpy(gbc_h.dest_latitude,(char *)(buffer) +16,4);
 	memcpy(gbc_h.dest_longitude,(char *)(buffer) +20,4);
@@ -440,7 +441,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer) + 34,2);
 		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp2,info_dest,2);		}
 	if  ((locT_general->len== 0 || any_neighbours()==0) && ch.traffic_class.scf==1){
-		itsnet_packet * pkt1 = NULL;
+
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 		int val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 		//delete old buffered elements if we need more size to add a new one.
@@ -453,6 +454,26 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		return(pkt1);		//buffer in BC AND omit next executions
 	}
 
+
+	if(itsGnGeoBroadcastForwardingAlgorithm==0||itsGnGeoBroadcastForwardingAlgorithm==1){
+						mac_addr nh= Greedy_Forwarding_UC(&position->data.pos_vector);
+						if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt1);}else{
+							char h_source[ETH_ALEN];
+							sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
+							get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+							ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
+							char type[2]={0x07,0x07};
+							memcpy(tx_frame->buffer.header.type,type,2);
+							memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
+							send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,lon_int+ 48+4+8+14+4);free(tx_frame);return(pkt1);
+						}				}
+					else if(itsGnGeoBroadcastForwardingAlgorithm==2){
+						CBF_UC(pkt,lon_int+ 48+4+8+14+4,&position->data.pos_vector);
+						return(pkt1);
+					}	else if(itsGnGeoBroadcastForwardingAlgorithm==3){}
+
+
+
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,(char *)(buffer)  +8,4);
@@ -460,10 +481,6 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
-	//if (itsGnGeoBroadcastForwardingAlgorithm==0 || itsGnGeoBroadcastForwardingAlgorithm==1){
-	//execute simple geobroadcast forwarding algorithm
-	//implement F function to obtain LL_ADDR
-	//}
 	free(lt);return(pkt);
 }
 
@@ -547,10 +564,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
-	//if (itsGnGeoBroadcastForwardingAlgorithm==0 || itsGnGeoBroadcastForwardingAlgorithm==1){
-	//execute simple geobroadcast forwarding algorithm
-	//implement F function to obtain LL_ADDR
-	//}
+
 	free(lt);return(pkt);
 
 }
@@ -792,29 +806,6 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	free(data);data=NULL;
 	return(0);
 	//	PRF("saio de common header processing\n");
-}
-
-
-void determine_nexthop(){
-	//	switch(itsGnGeoUnicastForwardingAlgorithm){
-
-	//						case(0)://unspecified
-	//	case(1)://greedy
-	//						//{
-	//gf algorithm os c2
-	//break;
-	//}
-	//						case(2)://unspecified
-	//{
-	//cbf algorithm os c3 //returns broadcast LL or, in case of no neighbours, 0
-	//break;
-	//}
-	//						default:break;
-	//						}//2º switch
-
-
-	//	return(LL_ADDR_NH);
-
 }
 
 itsnet_packet_f * TSB_f(void *buffer){

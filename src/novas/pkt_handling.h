@@ -36,7 +36,7 @@ itsnet_packet * SHB(void *dato,List_lsp *lsp,List_lsp *rep);
  * @return the packet. if it is null the packet was discarded or saved in the buffer
  */
 
-itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep);
+itsnet_packet * GeoBroadcast(void *dato,List_lsp *lsp,List_lsp *rep,public_ev_arg_r *arg);
 
 /**
  *  @fn TSB_f
