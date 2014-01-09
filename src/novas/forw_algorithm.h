@@ -34,7 +34,7 @@ int Distance(itsnet_position_vector *lpv_a,itsnet_position_vector *lpv_b);
  * @result 0,-1: (0)the packet if buffered in lsp_cbf_uc, (-1) the packet is discarded
  */
 
-int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se,int any);
+int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se);
 
 /**
  * @fn CBF_BC

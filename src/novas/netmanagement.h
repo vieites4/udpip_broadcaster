@@ -348,6 +348,7 @@ struct Timer
 {
 	unsigned short TimerId;
 	int RTC;
+	int Period_rep;
 	int Period;
 	struct Timer *pNext;
 	struct Timer * before;

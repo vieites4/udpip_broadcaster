@@ -308,7 +308,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 						send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,lon_int+ 48+4+8+14+4);free(tx_frame);return(pkt_lsp);
 					}				}
 				else if(itsGnGeoUnicastForwardingAlgorithm==2){
-					CBF_UC(pkt,lon_int+ 48+4+8+14+4,LPV,0);
+					CBF_UC(pkt,lon_int+ 48+4+8+14+4,LPV);
 					return(pkt_lsp);
 				}			}}
 	}else{
@@ -619,7 +619,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 						send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
 					}				}
 				else if(itsGnGeoUnicastForwardingAlgorithm==2){
-					CBF_UC(pkt,lon_int+ 44+4+8+14+4,LPV,0);
+					CBF_UC(pkt,lon_int+ 44+4+8+14+4,LPV);
 					return(pkt1);
 				}
 

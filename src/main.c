@@ -32,6 +32,7 @@ List_lsp * lsp_bc_g;
 List_lsp * ls_buffer;
 List_lsp * lsp_uc_g;
 List_lsp *lsp_cbf_uc;
+List_lsp *lsp_repetition;
 time_t PDR=0;
 time_t PDR_ini=0;
 #if DEBUG_PRINT_ENABLED
@@ -59,19 +60,19 @@ int main(int argc, char **argv)
 	PRF(">>> Configuration read! Printing data...\n");
 	print_configuration(cfg);
 	lsp_bc_g=init_lsp();
-	List_lsp *rep_bc_g=init_lsp();
 	locT_g=startup1(cfg);
 	lsp_uc_g=init_lsp();
 	lsp_cbf_uc=init_lsp();
+	lsp_repetition=init_lsp();
 	// 2) Create UDP socket event managers:
 	udp_events_t *net_events = NULL;
 	udp_events_t *app_events = NULL;
 	PRF(">>> Opening UDP APP RX socket...\n");
-	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,rep_bc_g);//broadcast
+	void * argum=init_app_udp_events(cfg->app_rx_port, cfg->app_address,cfg->if_name, cfg->tx_port	, cb_broadcast_recvfrom,locT_g,lsp_bc_g,lsp_repetition);//broadcast
 	pthread_create(&h3,NULL, thr_h3, argum);	//Beacon_send(arg);
 	PRF(">>> UDP APP RX socket open!\n");
 	PRF(">>> Opening RAW NET RX socket...\n");
-	net_events = init_net_raw_events(cfg->tx_port,cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,rep_bc_g);
+	net_events = init_net_raw_events(cfg->tx_port,cfg->rx_port, cfg->if_name , cfg->app_address, cfg->app_tx_port, cfg->nec_mode , cb_forward_recvfrom,locT_g,lsp_bc_g,lsp_repetition);
 	PRF(">>> raw NET RX socket open!\n");
 	public_ev_arg_r * argument= (public_ev_arg_r *)argum;
 	//if (argument->gn)PRF("sae true\n");

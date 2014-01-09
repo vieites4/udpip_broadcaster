@@ -55,7 +55,7 @@ mac_addr Greedy_Forwarding_UC(itsnet_position_vector *lpv_p){
 }
 
 
-int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se,int any){
+int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se){
 
 	Element_lsp * pos=lsp_cbf_uc->init;
 	while(pos!=NULL){
@@ -80,6 +80,8 @@ int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se,int any){
 			}else{timeout=itsGnGeoUnicastCbfMinTime;}
 			//start timer timeout
 			AddTimer(pkt->payload.itsnet_unicast.sequencenumber,timeout,6);
+
+
 			return(0);
 		}else{			//discard p
 			return(-1);		}
