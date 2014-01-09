@@ -120,7 +120,7 @@ int CommonHeader_processing(public_ev_arg_r *arg);
  * @fn GeoAnycast
  * @brief GeoAnycast no implemented yet
  */
-itsnet_packet * GeoAnycast(void *data,List_lsp *lsp,List_lsp *rep);
+itsnet_packet * GeoAnycast(void *data,List_lsp *lsp,List_lsp *rep,public_ev_arg_r *arg);
 /**
  * @fn determine_nexthop
  * @brief determine_nexthop no implemented yet

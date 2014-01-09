@@ -55,7 +55,7 @@ mac_addr Greedy_Forwarding_UC(itsnet_position_vector *lpv_p){
 }
 
 
-int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se){
+int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se,int any){
 
 	Element_lsp * pos=lsp_cbf_uc->init;
 	while(pos!=NULL){
@@ -171,7 +171,7 @@ mac_addr Advanced_BC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se
 					int dist=Distance(lpv_se, LPV);
 					if (dist<=itsGnGeoUnicastCbfMaxTime){
 						timeout=itsGnGeoUnicastCbfMaxTime +(((itsGnGeoUnicastCbfMinTime-itsGnGeoUnicastCbfMaxTime)/itsGnDefaultMaxCommunicationRange)*dist);
-					}else{timeout=itsGnGeoUnicastCbfMinTime;}
+					}else{timeout=itsGnGeoUnicastCbfMaxTime;}
 					AddTimer(pkt->payload.itsnet_geobroadcast.sequencenumber,timeout,6);
 					counter++;
 				}	}
