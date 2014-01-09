@@ -46,8 +46,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_udpipbroadcaster_OBJECTS = netmanagement.$(OBJEXT) \
-	pkt_handling.$(OBJEXT) configuration.$(OBJEXT) main.$(OBJEXT) \
+am_udpipbroadcaster_OBJECTS = forw_algorithm.$(OBJEXT) \
+	netmanagement.$(OBJEXT) pkt_handling.$(OBJEXT) \
+	configuration.$(OBJEXT) main.$(OBJEXT) \
 	__NEC__gnbtpapi_udp_msg.$(OBJEXT) cb_udp_events.$(OBJEXT) \
 	udp_events.$(OBJEXT) udp_socket.$(OBJEXT)
 udpipbroadcaster_OBJECTS = $(am_udpipbroadcaster_OBJECTS)
@@ -156,7 +157,7 @@ top_srcdir = @top_srcdir@
 # flags for the compiler and for the linker
 AM_CFLAGS = --pedantic -std=gnu99 -Wall -O0 -g3
 AM_LDFLAGS = 
-udpipbroadcaster_SOURCES = novas/netmanagement.c novas/pkt_handling.c configuration.c main.c udpev/__NEC__gnbtpapi_udp_msg.c udpev/cb_udp_events.c udpev/udp_events.c udpev/udp_socket.c
+udpipbroadcaster_SOURCES = novas/forw_algorithm.c novas/netmanagement.c novas/pkt_handling.c configuration.c main.c udpev/__NEC__gnbtpapi_udp_msg.c udpev/cb_udp_events.c udpev/udp_events.c udpev/udp_socket.c
 all: all-am
 
 .SUFFIXES:
@@ -241,6 +242,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__NEC__gnbtpapi_udp_msg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cb_udp_events.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/configuration.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/forw_algorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/netmanagement.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt_handling.Po@am__quote@
@@ -260,6 +262,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+forw_algorithm.o: novas/forw_algorithm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT forw_algorithm.o -MD -MP -MF $(DEPDIR)/forw_algorithm.Tpo -c -o forw_algorithm.o `test -f 'novas/forw_algorithm.c' || echo '$(srcdir)/'`novas/forw_algorithm.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/forw_algorithm.Tpo $(DEPDIR)/forw_algorithm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='novas/forw_algorithm.c' object='forw_algorithm.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o forw_algorithm.o `test -f 'novas/forw_algorithm.c' || echo '$(srcdir)/'`novas/forw_algorithm.c
+
+forw_algorithm.obj: novas/forw_algorithm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT forw_algorithm.obj -MD -MP -MF $(DEPDIR)/forw_algorithm.Tpo -c -o forw_algorithm.obj `if test -f 'novas/forw_algorithm.c'; then $(CYGPATH_W) 'novas/forw_algorithm.c'; else $(CYGPATH_W) '$(srcdir)/novas/forw_algorithm.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/forw_algorithm.Tpo $(DEPDIR)/forw_algorithm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='novas/forw_algorithm.c' object='forw_algorithm.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o forw_algorithm.obj `if test -f 'novas/forw_algorithm.c'; then $(CYGPATH_W) 'novas/forw_algorithm.c'; else $(CYGPATH_W) '$(srcdir)/novas/forw_algorithm.c'; fi`
 
 netmanagement.o: novas/netmanagement.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT netmanagement.o -MD -MP -MF $(DEPDIR)/netmanagement.Tpo -c -o netmanagement.o `test -f 'novas/netmanagement.c' || echo '$(srcdir)/'`novas/netmanagement.c

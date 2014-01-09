@@ -40,8 +40,8 @@
 #define itsGnGeoBroadcastCbfMinTime 1
 #define itsGnGeoUnicastCbfMaxTime 100
 #define itsGnDefaultMaxCommunicationRange 1000
-
-#define itsGnBroadcastCBFDefSectorAngle 30
+#define Pi 3.14159
+#define itsGnBroadcastCBFDefSectorAngle Pi/6 //valor en radianes!! Pi/6=30º
 #define itsGnUnicastCBFDefSectorAngle 30
 
 #define itsGnGeoAreaLineForwarding 0//1 enabled

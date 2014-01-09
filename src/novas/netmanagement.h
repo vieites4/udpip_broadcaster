@@ -485,48 +485,7 @@ void thr_h2(void *arg);
  */
 int PDR_update(char * data);
 
-/**
- * @fn Greedy_Forwarding_UC
- * @brief This is one of the forwarding algorithm for geounicast packets
- * @param lpv, location position vector to destination
- * @result mac direction of forwarding
- */
 
-mac_addr Greedy_Forwarding_UC(itsnet_position_vector *lpv_p);
-
-/**
- * @fn Distance
- * @brief This is function calculates the distance between this lpvs
- * @param lpv, location position vector to destination
- * @result distance between lpvs
- */
-
-
-int Distance(itsnet_position_vector *lpv_a,itsnet_position_vector *lpv_b);
-
-//send_bcast_cbf_uc(gTimer_cbf_uc[i]);
-
-/**
- * @fn CBF_UC
- * @brief This is one of the forwarding algorithm for geounicast packets
- * @param pkt, this is the packet we must forward
- * @param len, len of pkt
- * @param lpv_se, location position vector of source
- * @result 0,-1: (0)the packet if buffered in lsp_cbf_uc, (-1) the packet is discarded
- */
-
-int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se);
-
-/**
- * @fn CBF_BC
- * @brief This is one of the forwarding algorithm for geobroadcast packets
- * @param pkt, this is the packet we must forward
- * @param len, len of pkt
- * @param lpv_se, location position vector of source
- * @result mac_addr, 0,-1: (0)the packet if buffered in lsp_cbf_uc (ZEROS), (-1) the packet is discarded (TWOS)
- */
-
-mac_addr CBF_BC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se);
 
 
 #endif /* NETMANAGEMENT_H_ */

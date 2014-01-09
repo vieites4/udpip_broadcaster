@@ -8,6 +8,7 @@
 #ifndef PKT_HANDLING_H_
 #define PKT_HANDLING_H_
 #include "netmanagement.h"
+#include "forw_algorithm.h"
 /**
  * @fn TSB
  * @brief This function create the tsb packet to send through link layer.
@@ -113,25 +114,7 @@ int BasicHeader_processing(public_ev_arg_r *arg);
 
 int CommonHeader_processing(public_ev_arg_r *arg);
 
-/**
- * @fn geo_limit
- * @brief geo_limit. This function makes the calculate to know if it is into the geographical limits
- * @param HT, to now if it's circular(0), rectangular(1) or elliptical(2).
- * @param pkt,packet we will send to the upper layer if we are into the desired area
- * @return if it is <0 it is out of area.
- */
-int geo_limit(void *HT,itsnet_packet_f *pkt);
 
-
-/**
- * @fn geo_limit_ll
- * @brief geo_limit. This function makes the calculate to know if it is into the geographical limits
- * @param pkt, packet we will send to link layer if we are into the desired area
- * @return if it is <0 it is out of area.
- */
-
-
-int geo_limit_ll(itsnet_packet *pkt);
 
 /**
  * @fn GeoAnycast
