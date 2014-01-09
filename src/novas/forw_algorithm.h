@@ -47,7 +47,7 @@ int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se);
 
 mac_addr CBF_BC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se);
 
-mac_addr Advanced_BC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se);
+mac_addr Advanced_BC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se,mac_addr *PKT_mac,char h_source[ETH_ALEN]);
 int G(itsnet_position_vector * lpv_se,itsnet_position_vector * lpv_f);
 /**
  * @fn geo_limit
@@ -56,7 +56,7 @@ int G(itsnet_position_vector * lpv_se,itsnet_position_vector * lpv_f);
  * @param pkt,packet we will send to the upper layer if we are into the desired area
  * @return if it is <0 it is out of area.
  */
-int geo_limit(void *HT,itsnet_packet_f *pkt);
+int geo_limit(void *HT,itsnet_packet_f *pkt,itsnet_position_vector * lpv_se);
 
 
 /**
@@ -67,5 +67,5 @@ int geo_limit(void *HT,itsnet_packet_f *pkt);
  */
 
 
-int geo_limit_ll(itsnet_packet *pkt);
+int geo_limit_ll(itsnet_packet *pkt,itsnet_position_vector * lpv_se);
 #endif
