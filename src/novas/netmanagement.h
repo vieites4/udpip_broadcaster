@@ -46,7 +46,6 @@ typedef struct sockaddr sockaddr_t;			/*!< Type for sockaddr. */
 
 struct public_ev_arg
 {
-
 	int socket_fd;                                        /**< Socket file descriptor. */
 	int port;                                                /**< Port to be used. */
 	int forwarding_socket_fd;                /**< Socket for message forwarding. */
@@ -71,14 +70,6 @@ struct public_ev_arg
 
 
 typedef struct public_ev_arg public_ev_arg_r;
-/**struct tq_elem
-{
-	struct list_head list;
-	struct timespec expires;       	// expire time for task
-	pthread_t thread;		// who queued this task
-	void (*task)(struct tq_elem *);	// pointer to task
-};
- **/
 struct itsnet_node_//loct entry
 {
 	itsnet_node_id node_id;			/** node identity		*/
@@ -189,7 +180,7 @@ int sup_elem_locT (int num, struct mac_addr *pos,List_locT *locT);
 int search_in_locT (itsnet_node * data, List_locT * locT);
 /**
  * @fn search_in_locT
- * @brief This function search an neighbour of loct list.
+ * @brief This function search an neighbor of loct list.
  * @param data, we use this information (mac address)to make the search
  * @param list where we look for the element
  * @return the number of position in loct list
@@ -217,7 +208,8 @@ int search_in_locT_m_pending (mac_addr data, List_locT * locT);
 /**
  * @fn rtx_ls
  * @brief This function starts when a ls timer expires.
- * @param num
+ * @param num, to recognize the TimeID
+ * @param arg, common parameters
 
  */
 int rtx_ls(int num,public_ev_arg_r * arg);
@@ -225,6 +217,7 @@ int rtx_ls(int num,public_ev_arg_r * arg);
  * @fn sup_elem_lsp
  * @brief This function erase last element of lsp list.
  * @param num, not necessary
+ * @param type of buffer from where we want to erase an element
  */
 List_lsp * sup_elem_lsp (int num, int type);
 
@@ -232,6 +225,7 @@ List_lsp * sup_elem_lsp (int num, int type);
  * @fn sup_elem_t_lsp
  * @brief This function erase num element of lsp list.
  * @param num, position of the element we want to erase
+ * @param type of buffer from where we want to erase an element
  */
 
 List_lsp * sup_elem_t_lsp (int num, int type);
@@ -258,6 +252,7 @@ List_locT * mod_t_locT ( int val,List_locT * locT, itsnet_node data,int num,itsn
  * @brief This function add an element of lsp list.
  * @param list where we put the new element
  * @param data is the information of the new element
+ * @param type of buffer from where we want to add an element
  */
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data, int type);
 /**
@@ -279,7 +274,7 @@ void view_lsp ();
 void view_locT ();
 /**
  * @fn any_neighbours
- * @brief This function say if there are any neighbours in locT.
+ * @brief This function say if there are any neighbors in locT.
  */
 
 int any_neighbours ();
@@ -371,14 +366,14 @@ typedef struct List_timer List_timer;
  * @fn sup_timer
  * @brief This function erase an element of lsp or loct timer list.
  * @param TimerId is the name of timer, sn in case of lsp or number unsigned short in loct case
- * @param type tell us if the element is lsp (2) or loct (1)
+ * @param type of buffer from where we want to erase an element
  * @return the list pointer
  */
 int sup_timer (unsigned short TimerId, int type);
 /**
  * @fn init_lsp
  * @brief This function create a new list of lsp, it's the list where we maintain frames we
- *  didn't send because there aren't neighbours.
+ *  didn't send because there aren't neighbors.
  * @return the list pointer
  */
 List_lsp * init_lsp ();
@@ -400,7 +395,7 @@ List_timer * init_timer_list ();
  * @brief This function create a new element in the list of timers.
  * @param TimerId is the name of timer, sn in case of lsp or number unsigned short in loct case
  * @param time tell us lifetime of element we will timer
- * @param type tell us if the element is lsp (2) or loct (1)
+ * @param type of buffer from where we want to erase an element
  * @return if the addition was done correctly
  */
 bool AddTimer(unsigned short TimerId, int time, int type);
@@ -409,7 +404,7 @@ bool AddTimer(unsigned short TimerId, int time, int type);
  * @brief This function find a timer of an element of lsp or loct to know if it exist and update
  * it or create a new timer in case it don't exist.
  * @param TimerId is the name of timer, sn in case of lsp or number unsigned short in loct case
- * @param type tell us if the element is lsp (2) or loct (1)
+ * @param type of buffer from where we want to erase an element
  * @return position of the searched element or NULL in case it doesn't exist
  */
 tTimer * FindTimer(unsigned short TimerId, int type);
@@ -417,13 +412,13 @@ tTimer * FindTimer(unsigned short TimerId, int type);
  * @fn SystemTickEvent
  * @brief When a second passed this function is called by alarm signal to
  * substract 1 to timers of elements of loct and lsp. If one of them arrive to zero a SIGUSR2
- * or SIGUSR1 is rised to call another function (CheckTimerEvent_lsp or CheckTimerEvent)
+ * or SIGUSR1 is risen to call another function (CheckTimerEvent_lsp or CheckTimerEvent)
 
  */
 void SystemTickEvent(void);
 /**
  * @fn CheckTimerEvent_lsp
- * @brief When one of the elements of lsp finishes its timer a signal SIGUSR2 is rised and
+ * @brief When one of the elements of lsp finishes its timer a signal SIGUSR2 is risen and
  * this function is called to call sup_elem_t_lsp,
  * to erase the timer of the element we erase.
 
@@ -431,7 +426,7 @@ void SystemTickEvent(void);
 void CheckTimerEvent_lsp(EV_P_ ev_timer *w, int revents);
 /**
  * @fn CheckTimerEvent_uc
- * @brief When one of the elements of lsp finishes its timer a signal 47 is rised and
+ * @brief When one of the elements of lsp finishes its timer a signal 47 is risen and
  * this function is called to call sup_elem_t_lsp,
  * to erase the timer of the element we erase.
 
@@ -441,7 +436,7 @@ void CheckTimerEvent_uc(EV_P_ ev_timer *w, int revents);
 
 /**
  * @fn CheckTimerEvent_cbf_uc
- * @brief When one of the timers finishes a signal 48 is rised and
+ * @brief When one of the timers finishes a signal 48 is risen and
  * this function is called to call send_bcast_cbf_uc,
  * to erase the timer of the element we erase and broadcast packet.
 
@@ -449,7 +444,7 @@ void CheckTimerEvent_uc(EV_P_ ev_timer *w, int revents);
 void CheckTimerEvent_cbf_uc(EV_P_ ev_timer *w, int revents);
 /**
  * @fn CheckTimerEvent_lsp
- * @brief When one of the elements of loct finishes its timer a signal SIGUSR1 is rised and
+ * @brief When one of the elements of loct finishes its timer a signal SIGUSR1 is risen and
  * this function is called to call sup_elem_loct
  */
 
@@ -457,18 +452,31 @@ void CheckTimerEvent(EV_P_ ev_timer *w, int revents);
 
 /**
  * @fn CheckTimerEvent_ls_rtx
- * @brief When one of the elements of ls_buffer finishes its timer a signal 45 is rised and
+ * @brief When one of the elements of ls_buffer finishes its timer a signal 45 is risen and
  * this function is called to call rtx_ls
  */
 
 void CheckTimerEvent_ls_rtx(EV_P_ ev_timer *w, int revents);
 /**
  * @fn CheckTimerEvent_ls_buff
- * @brief When one of the elements of ls_buffer finishes its timer a signal 46 is rised and
+ * @brief When one of the elements of ls_buffer finishes its timer a signal 46 is risen and
  * this function is called to call sup_elem_t_lsp
  */
 
 void CheckTimerEvent_ls_buff(EV_P_ ev_timer *w, int revents);
+/**
+ * @fn CheckTimerEvent_repetition
+ * @brief When one of the elements of lsp_repetition finishes its timer a signal 50 is risen and
+ * this function is called to call rtx_repetition
+ */
+void CheckTimerEvent_repetition(EV_P_ ev_timer *w, int revents);
+/**
+ * @fn CheckTimerEvent_repetition_max
+ * @brief When one of the elements of lsp_repetition finishes its timer a signal 49 is risen and
+ * this function is called to call sup_elem_t_lsp to erase the element we have been repeating (lsp_repetition) and also the timer it has just stopped
+ */
+
+void CheckTimerEvent_repetition_max(EV_P_ ev_timer *w, int revents);
 /**
  * @fn thr_h2
  * @brief This is the thread we use to timer lifetime of locT elements and lsp elements.
@@ -480,13 +488,15 @@ void thr_h2(void *arg);
 
 /**
  * @fn PDR_update
- * @brief This is the thread we use to calculate PDR (Packet Data Rate).
+ * @brief This is the thread we use to calculate PDR (Packet Data Rate).It isn't a very exact system because time takes seconds and we can receive packets in less time than a second, in this case we will suppose a second
  * @param pdr. new time it passed since last reception.
 
  */
 int PDR_update(char * data);
 
+void rtx_repetition(int num, int type,public_ev_arg_r * arg );
 
 
+int send_bcast_cbf_uc(int num,public_ev_arg_r *arg);
 
 #endif /* NETMANAGEMENT_H_ */

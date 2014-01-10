@@ -13,7 +13,6 @@ extern int PDR;
 extern uint16_t SN_g;
 itsnet_position_vector * LPV;
 itsnet_position_vector *LPV_old;
-//itsnet_position_vector *LPV_trans;
 ev_timer t_Loct;
 unsigned short dictionary[17]={0x00,0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000,0x2000,0x4000,0x8000};
 mac_addr *mac_list[16];
@@ -65,8 +64,10 @@ int PDR_update(char * data)
 	int same=0;
 	while(same==0 && pos!=NULL){if(memcmp(source,pos->data.mac_id.address,6)){	same=1;}else pos=pos->next;}
 	if(pos==NULL){PDR=PDR_t_new;return(0);}else{
-		if (pos->data.tpdr!=0){pos->data.pdr=(0.5*pos->data.pdr) + (0.5*(1/(PDR_t_new-pos->data.tpdr)));pos->data.tpdr=PDR_t_new;}else{pos->data.pdr=1/(PDR_t_new- PDR_ini);pos->data.tpdr=PDR_t_new;}
-		return(pos->data.pdr);
+		if ((PDR_t_new-pos->data.tpdr) ==0){if (pos->data.tpdr!=0){pos->data.pdr=(0.5*pos->data.pdr) + (0.5);}else{pos->data.pdr=1/(PDR_t_new- PDR_ini);}}else{
+			if (pos->data.tpdr!=0){pos->data.pdr=(0.5*pos->data.pdr) + (0.5*(1/(PDR_t_new-pos->data.tpdr)));}else{pos->data.pdr=1/(PDR_t_new- PDR_ini);}}
+
+		pos->data.tpdr=PDR_t_new;return(pos->data.pdr);
 	}
 }
 
@@ -207,7 +208,7 @@ PRF("CheckTimerEvent_repetition_max fin\n");
 
 void CheckTimerEvent_repetition(EV_P_ ev_timer *w, int revents)
 {	PRF("CheckTimerEvent_repetition 50\n");
-signal(49, CheckTimerEvent_repetition);
+signal(50, CheckTimerEvent_repetition);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
 int aa=0;i=0;public_ev_arg_r * arg=(public_ev_arg_r *)w->data;
@@ -219,31 +220,34 @@ PRF("CheckTimerEvent_repetition fin\n");
 void rtx_repetition(int num, int type,public_ev_arg_r * arg ){
 
 
-	//buscar o pkt1 no lsp_repetition, q pasa se é shb??non ten id!!
-	//poñer a lonxitude axeitada
-
-	//retemporizar!
-
+	//buscar o pkt1 no lsp_repetition, q pasa se é shb??non ten id!!-> idea de solución no 10/1/14
 	int aa=0;
-		Element_lsp * pos=lsp_repetition->init;
-		while(pos!=NULL && aa==0)
-		{		if (pos->data.payload.itsnet_unicast.sequencenumber==num)aa=1;else pos=pos->next;	}
-		itsnet_packet * pkt1=&pos->data;
-		int lon_int =sprint_hex_data(pkt1->common_header.payload_lenght,2);
-
-
+	Element_lsp * pos=lsp_repetition->init;
+	while(pos!=NULL && aa==0)
+	{		if (pos->data.payload.itsnet_unicast.sequencenumber==num)aa=1;else pos=pos->next;	}
+	itsnet_packet * pkt1=&pos->data;
+	int lon_int =sprint_hex_data(pkt1->common_header.payload_lenght,2);
 	char h_source2[ETH_ALEN];
-								get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source2) ;
-								ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source2);
-								memcpy(tx_frame1->buffer.header.type,type07,2);
-								memcpy(tx_frame1->buffer.data,(char *)  pkt1, arg->len);
-								sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-								send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, arg->len);
-								free(pkt1);pkt1=NULL;free(tx_frame1);
+	get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source2) ;
+	ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_BROAD,h_source2);
+	memcpy(tx_frame1->buffer.header.type,t07,2);
+	int header_length=0;
+	char HT[1];
+	memcmp(HT,(char *)&pkt1->common_header.HT_HST,1);
+	if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0 ||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){header_length=44;}
+	else if(memcmp(HT,tsb0,1)==0){header_length=28;}else if(memcmp(HT,geounicast,1)==0){header_length=48;} else if(memcmp(HT,ls0,1)==0){header_length=36;}else if(memcmp(HT,ls0,1)==0){header_length=48;}
+	memcpy(tx_frame1->buffer.data,(char *)  pkt1,  header_length +lon_int+4+8+4);
+	sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
+	send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, header_length +lon_int+14+4+8+4);
+	free(pkt1);pkt1=NULL;free(tx_frame1);int e=0;
+	tTimer * pos_time= mpTimerList_repetition->init;
+	while(pos_time!=NULL && e==0){
+		if (pos_time->TimerId==num) {pos_time->Period=pos_time->Period_rep;e=1;} else{
+			pos_time=pos_time->pNext;}	}
 }
 int rtx_ls(int num,public_ev_arg_r * arg){
-	int e=0;
-	Element_lsp *position=ls_buffer->init;
+
+	Element_lsp *position=ls_buffer->init;int e=0;
 	tTimer * pos_time= mpTimerList_ls_rtx->init;
 	while(pos_time!=NULL && e==0){
 		if (pos_time->TimerId==num) e=1; else{
@@ -322,7 +326,7 @@ void SystemTickEvent(void)
 {alarm(1);
 signal(SIGALRM, SystemTickEvent);
 tTimer *pTimer;i=0;
-while(i<1000){	gTimer_lsp[i++]=0;	gTimer_ls_rtx[i++]=0;gTimer_ls_buff[i++]=0; if(i<100){gTimer_uc[i++]=0;}}
+while(i<1000){gTimer_lsp[i++]=0;	gTimer_ls_rtx[i++]=0;gTimer_ls_buff[i++]=0; if(i<100){gTimer_uc[i++]=0;	gTimer_repetition_max[i++]=0;gTimer_repetition[i++]=0;}}
 // Update the timers
 pTimer = mpTimerList->init;
 while(pTimer != NULL)
@@ -400,7 +404,7 @@ if(pTimer1->Period == 0)
 pTimer1 = pTimer1->pNext;
 }
 i=0;int aa3=0;
-while(i<1000 && aa3==0){if (gTimer_uc[i++]!=0) aa3=1;}
+while(i<100 && aa3==0){if (gTimer_uc[i++]!=0) aa3=1;}
 if (aa3!=0){raise(47);}
 // Update the timers
 pTimer1 = mpTimerList_cbf_uc->init;
@@ -416,9 +420,11 @@ if(pTimer1->Period == 0)
 pTimer1 = pTimer1->pNext;
 }
 i=0;aa3=0;
-while(i<1000 && aa3==0){if (gTimer_uc[i++]!=0) aa3=1;}
+while(i<100 && aa3==0){if (gTimer_cbf_uc[i++]!=0) aa3=1;}
 if (aa3!=0){raise(47);}
 // Update the timers
+
+
 pTimer1 = mpTimerList_repetition_max->init;
 count2=0;
 while(pTimer1 != NULL)
@@ -432,7 +438,7 @@ if(pTimer1->Period == 0)
 pTimer1 = pTimer1->pNext;
 }
 i=0;aa3=0;
-while(i<1000 && aa3==0){if (gTimer_uc[i++]!=0) aa3=1;}
+while(i<100 && aa3==0){if (gTimer_repetition_max[i++]!=0) aa3=1;}
 if (aa3!=0){raise(49);}
 
 // Update the timers
@@ -449,7 +455,7 @@ if(pTimer1->Period == 0)
 pTimer1 = pTimer1->pNext;
 }
 i=0;aa3=0;
-while(i<1000 && aa3==0){if (gTimer_repetition[i++]!=0) aa3=1;}
+while(i<100 && aa3==0){if (gTimer_repetition[i++]!=0) aa3=1;}
 if (aa3!=0){raise(50);}
 }
 
@@ -832,33 +838,33 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 	if(i==1){
 		while ((i<17) &&(a==0)&& (e<17))
 		{			if (taken[i]==true){
-				//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
-				if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}else{ e++;i++;}}
-			else i++;		}	}
+			//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
+			if(memcmp(data->mac_id.address,mac_list[i]->address,6)==0) {a=1;}else{ e++;i++;}}
+		else i++;		}	}
 	return(e);
 }
 
 
 int search_in_locT_m (mac_addr data, List_locT * locT){
 	Element_locT *aux;	aux = locT->init;
-	int e=1;
-	while ((aux!=NULL) &&(a==0)&& (e<17))
+	int e=1;i=0;
+	while ((i<17) &&(aux!=NULL) &&(a==0)&& (e<17))
 	{
 		if (taken[i]==true){
-				if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.IS_NEIGHBOUR ) {a=1;}else{ e++;aux=aux->next;}}
-		else aux=aux->next;		}
+			if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.IS_NEIGHBOUR ) {a=1;}else{ e++;i++;aux=aux->next;}}
+		else {aux=aux->next;	i++;}	}
 	if (a==0) return (0); else return(e);
 }
 
 int search_in_locT_m_wo_n (mac_addr data, List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
-	int e=1;
-	while ((aux!=NULL) &&(a==0)&& (e<17))
+	int e=1;i=0;
+	while ((i<17) &&(aux!=NULL) &&(a==0)&& (e<17))
 	{
 		if (taken[i]==true){
-			if(memcmp(data.address,aux->data.mac_id.address,6)==0 ) {a=1;}else{ e++;aux=aux->next;}}
-		else aux=aux->next;		}
+			if(memcmp(data.address,aux->data.mac_id.address,6)==0 ) {a=1;}else{ e++;i++;aux=aux->next;}}
+		else {aux=aux->next;	i++;}	}
 	if (a==0) return (0); else return(e);
 }
 
@@ -867,13 +873,13 @@ int search_in_locT_m_pending (mac_addr data, List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
 	int e=1;
-	int aa=0;
-	while ((aux!=NULL) &&(aa==0)&& (e<17))
+	int aa=0;i=0;
+	while ((i<17) &&(aux!=NULL) &&(aa==0)&& (e<17))
 	{
 		if (taken[i]==true){
 			//print_hex_data(mac_list[i]->address,6);PRF("\n");print_hex_data(data->mac_id.address,6);	PRF(" esta é a que busco\n");
-			if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.LS_PENDING) {aa=1;}else{ e++;aux=aux->next;}}
-		else aux=aux->next;		}
+			if(memcmp(data.address,aux->data.mac_id.address,6)==0 && aux->data.LS_PENDING) {aa=1;}else{ e++;i++;aux=aux->next;}}
+		else {aux=aux->next;	i++;}	}
 	if (aa==0) return (0); else return(e);
 }
 List_lsp * init_lsp ()

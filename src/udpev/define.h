@@ -7,8 +7,6 @@
 
 #ifndef DEFINE_H_
 #define DEFINE_H_
-
-
 #define itsGnLocalAddrConfMethod  0//Managed(1) Auto (0)
 #define itsGnLocalGnAddr 1
 #define itsGnProtocolVersion 0
@@ -34,7 +32,7 @@
 #define itsGnMaxPacketDataRate 100
 #define itsGnMaxGeoAreaSize 10
 #define itsGnGeoUnicastForwardingAlgorithm 0//unspecified 0, greedy 1, cbf 2
-#define itsGnGeoBroadcastForwardingAlgorithm 0 //1 simple
+#define itsGnGeoBroadcastForwardingAlgorithm 3 //1 simple
 #define itsGnGeoUnicastCbfMinTime 1
 #define itsGnGeoBroadcastCbfMaxTime 100
 #define itsGnGeoBroadcastCbfMinTime 1
