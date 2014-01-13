@@ -162,8 +162,8 @@ void CheckTimerEvent_cbf_uc(EV_P_ ev_timer *w, int revents)
 signal(48, CheckTimerEvent_cbf_uc);
 unsigned short nTimer;
 // Read the global variable gTimer and reset the value
-int aa=0;i=0;
-while (aa==0){  if(gTimer_cbf_uc[i]==0){ aa=1;} else {send_bcast_cbf_uc(gTimer_cbf_uc[i]);i++; }
+int aa=0;i=0;public_ev_arg_r * arg=(public_ev_arg_r *)w->data;
+while (aa==0){  if(gTimer_cbf_uc[i]==0){ aa=1;} else {send_bcast_cbf_uc(gTimer_cbf_uc[i],arg);i++; }
 PRF("CheckTimerEvent_cbf_uc 48 fin\n");
 }}
 void CheckTimerEvent_uc(EV_P_ ev_timer *w, int revents)

@@ -453,13 +453,34 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 
 	if(itsGnGeoBroadcastForwardingAlgorithm==0||itsGnGeoBroadcastForwardingAlgorithm==1){
 		memcpy(nh.address,BROADCAST,6);
+		int f=geo_limit_ll(pkt,LPV);
+		if (f>=0){
 		get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
 		ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 		char type[2]={0x07,0x07};// si que funciona nh print_hex_data(nh.address,6);printf("\n");
 		memcpy(tx_frame->buffer.header.type,type,2);
 		memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-		send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
-	}
+		send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);}
+		else{
+			if(LPV->pai==1){
+			int f1=geo_limit_ll(pkt,LPV);
+			if (f1>=0){
+				itsnet_position_vector A;
+						A.latitude=pkt->payload.itsnet_geobroadcast.dest_latitude;
+						A.longitude=pkt->payload.itsnet_geobroadcast.dest_longitude;
+						mac_addr NH=Greedy_Forwarding_UC(&A);
+						if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt1);}else{
+							ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
+							char type[2]={0x07,0x07};
+							memcpy(tx_frame->buffer.header.type,type,2);
+							memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
+							send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
+							return(pkt1);				//greedy
+			}}else{
+				//discard
+				return(pkt1);	}			}else{
+				return(pkt); //broadcast
+				}		}	}
 	else if(itsGnGeoBroadcastForwardingAlgorithm==2){
 
 		nh=CBF_BC(pkt,lon_int+ 44+4+8+14+4,LPV); //first send PV_SE is LPV
