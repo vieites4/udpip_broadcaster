@@ -80,7 +80,6 @@ struct itsnet_node_//loct entry
 	bool LS_PENDING;
 	bool IS_NEIGHBOUR;
 	uint16_t Sequence_number;
-	//struct tq_elem tqe;                    /** Timer queue entry */
 	struct timespec tst;       		/** expire time for message 	*/
 	int pdr; // packet data rate
 	time_t tpdr;
@@ -246,7 +245,7 @@ List_locT * add_end_locT ( List_locT * locT, itsnet_node data);
  * @param data is the information of the new element
  */
 
-List_locT * mod_t_locT ( int val,List_locT * locT, itsnet_node data,int num,itsnet_time_stamp tst);
+List_locT * mod_t_locT ( int val,List_locT * locT, itsnet_node *data,int num,itsnet_time_stamp tst);
 /**
  * @fn add_end_lsp
  * @brief This function add an element of lsp list.
@@ -477,6 +476,15 @@ void CheckTimerEvent_repetition(EV_P_ ev_timer *w, int revents);
  */
 
 void CheckTimerEvent_repetition_max(EV_P_ ev_timer *w, int revents);
+
+
+/**
+ * @fn CheckTimerEvent_pending
+ * @brief When one of the elements of lsp_pending finishes its timer a signal 51 is risen and
+ * this function is called to call sup_timer for timer which has stopped and change_pending
+ */
+
+void CheckTimerEvent_pending(EV_P_ ev_timer *w, int revents);
 /**
  * @fn thr_h2
  * @brief This is the thread we use to timer lifetime of locT elements and lsp elements.
@@ -494,7 +502,22 @@ void thr_h2(void *arg);
  */
 int PDR_update(char * data);
 
+/**
+ * @fn rtx_repetition
+ * @brief produces the retransmission produced by the repetition when time between repetitions passes
+ * @param num, timeId of the element we have to repeat.
+ * @param arg, common parameters
+ */
+
 void rtx_repetition(int num, int type,public_ev_arg_r * arg );
+
+/**
+ * @fn change_pending
+ * @brief unset LS_pending in LocT if it passes 3*itsGnBeaconServiceRetransmitTimer
+ * @param TimeId we used in AddTimer (SN1 of LocT element).
+
+ */
+void change_pending(int TimeId);
 
 
 int send_bcast_cbf_uc(int num,public_ev_arg_r *arg);

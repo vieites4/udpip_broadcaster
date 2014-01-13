@@ -21,6 +21,7 @@ bool taken[17]={false,false,false,false,false,false,false,false,false,false,fals
 List_timer *mpTimerList;
 List_timer *mpTimerList_repetition_max;
 List_timer *mpTimerList_repetition;
+List_timer *mpTimerList_pending;
 List_timer *mpTimerList_uc;
 List_timer *mpTimerList_lsp;
 List_timer *mpTimerList_ls_rtx;
@@ -43,6 +44,7 @@ int i=0;
 static int gTimer_lsp[1000];
 static int gTimer_ls_rtx[1000];
 static int gTimer_uc[100];
+static int gTimer_pending[100];
 static int gTimer_repetition_max[100];
 static int gTimer_cbf_uc[100];
 static int gTimer_repetition[100];
@@ -63,7 +65,7 @@ int PDR_update(char * data)
 	Element_locT * pos=locT_general->init;
 	int same=0;
 	while(same==0 && pos!=NULL){if(memcmp(source,pos->data.mac_id.address,6)){	same=1;}else pos=pos->next;}
-	if(pos==NULL){PDR=PDR_t_new;return(0);}else{
+	if(pos==NULL){PDR=PDR_t_new;return(0);}else{PDR=PDR_t_new;
 		if ((PDR_t_new-pos->data.tpdr) ==0){if (pos->data.tpdr!=0){pos->data.pdr=(0.5*pos->data.pdr) + (0.5);}else{pos->data.pdr=1/(PDR_t_new- PDR_ini);}}else{
 			if (pos->data.tpdr!=0){pos->data.pdr=(0.5*pos->data.pdr) + (0.5*(1/(PDR_t_new-pos->data.tpdr)));}else{pos->data.pdr=1/(PDR_t_new- PDR_ini);}}
 
@@ -74,7 +76,7 @@ int PDR_update(char * data)
 tTimer * FindTimer(unsigned short TimerId,int type)
 {
 	List_timer * list= NULL;
-	if (type==0){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if(type==4){list=mpTimerList_uc;}else if (type==2){list=mpTimerList_ls_rtx;}else if (type==3){list=mpTimerList_ls_buff;}else if (type==6){list=mpTimerList_cbf_uc;}else if (type==7){list=mpTimerList_repetition_max;}else if (type==9){list=mpTimerList_repetition;}
+	if (type==0){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if(type==4){list=mpTimerList_uc;}else if(type==5){list=mpTimerList_pending;}else if (type==2){list=mpTimerList_ls_rtx;}else if (type==3){list=mpTimerList_ls_buff;}else if (type==6){list=mpTimerList_cbf_uc;}else if (type==7){list=mpTimerList_repetition_max;}else if (type==9){list=mpTimerList_repetition;}
 
 	tTimer *pTimer=list->init;
 	tTimer *pTimerC=NULL;
@@ -93,7 +95,7 @@ bool AddTimer(unsigned short TimerId, int period, int type)
 
 {
 	List_timer * list= NULL;
-	if (type==0){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if(type==4){list=mpTimerList_uc;}else if (type==2){list=mpTimerList_ls_rtx;}else if (type==3){list=mpTimerList_ls_buff;}else if (type==6){list=mpTimerList_cbf_uc;}else if (type==7){list=mpTimerList_repetition_max;}else if (type==9){list=mpTimerList_repetition;}
+	if (type==0){list= mpTimerList_lsp;}else if(type==1){list=mpTimerList;}else if(type==4){list=mpTimerList_uc;}else if (type==2){list=mpTimerList_ls_rtx;}else if (type==3){list=mpTimerList_ls_buff;}else if (type==6){list=mpTimerList_cbf_uc;}else if (type==7){list=mpTimerList_repetition_max;}else if (type==9){list=mpTimerList_repetition;}else if (type==5){list=mpTimerList_pending;}
 	tTimer *pTimer;
 	tTimer *new_element = NULL;
 	bool ReturnValue = false;
@@ -117,7 +119,7 @@ bool AddTimer(unsigned short TimerId, int period, int type)
 	}else	{	// Set the timer interval
 		pTimer->Period = period;
 		ReturnValue = true;    }
-	if (type==0){mpTimerList_lsp=list;}else if(type==1){mpTimerList=list;}else if (type==2){mpTimerList_ls_rtx=list;}else if (type==3){mpTimerList_ls_buff=list;}else if(type==4){mpTimerList_uc=list;} else if(type==6){mpTimerList_cbf_uc=list;}else if (type==7){mpTimerList_repetition_max=list;}else if (type==9){list=mpTimerList_repetition=list;}
+	if (type==0){mpTimerList_lsp=list;}else if(type==1){mpTimerList=list;}else if (type==2){mpTimerList_ls_rtx=list;}else if (type==3){mpTimerList_ls_buff=list;}else if(type==4){mpTimerList_uc=list;} else if(type==6){mpTimerList_cbf_uc=list;}else if (type==7){mpTimerList_repetition_max=list;}else if (type==9){mpTimerList_repetition=list;}else if (type==5){mpTimerList_pending=list;}
 	return ReturnValue;
 }
 
@@ -176,6 +178,17 @@ while (aa==0){  if(gTimer_uc[i]==0){ aa=1;} else {sup_elem_t_lsp(gTimer_uc[i],4)
 PRF("CheckTimerEvent_uc 47 fin\n");
 }}
 
+void CheckTimerEvent_pending(EV_P_ ev_timer *w, int revents)
+{	PRF("CheckTimerEvent_pending 51\n");
+signal(51, CheckTimerEvent_pending);
+unsigned short nTimer;
+// Read the global variable gTimer and reset the value
+int aa=0;i=0;
+while (aa==0){  if(gTimer_pending[i]==0){ aa=1;} else {sup_timer(gTimer_pending[i],5);change_pending(gTimer_pending[i]);i++; }
+PRF("CheckTimerEvent_pending 51 fin\n");
+}}
+
+
 void CheckTimerEvent_ls_rtx(EV_P_ ev_timer *w, int revents)
 {	PRF("CheckTimerEvent_ls_rtx 45\n");
 signal(45, CheckTimerEvent_ls_rtx);
@@ -216,7 +229,13 @@ while (aa==0){  if(gTimer_repetition[i]==0){ aa=1;} else {rtx_repetition(gTimer_
 PRF("CheckTimerEvent_repetition fin\n");
 }}
 
+void change_pending(int TimeId){
 
+	Element_locT *aux;	aux = locT_general->init;
+	while(aux!=NULL)	{if(TimeId==aux->data.SN1) {aux->data.LS_PENDING=false;}else{ aux=aux->next;}}
+
+
+}
 void rtx_repetition(int num, int type,public_ev_arg_r * arg ){
 
 
@@ -326,7 +345,7 @@ void SystemTickEvent(void)
 {alarm(1);
 signal(SIGALRM, SystemTickEvent);
 tTimer *pTimer;i=0;
-while(i<1000){gTimer_lsp[i++]=0;	gTimer_ls_rtx[i++]=0;gTimer_ls_buff[i++]=0; if(i<100){gTimer_uc[i++]=0;	gTimer_repetition_max[i++]=0;gTimer_repetition[i++]=0;}}
+while(i<1000){gTimer_lsp[i++]=0;	gTimer_ls_rtx[i++]=0;gTimer_ls_buff[i++]=0; if(i<100){gTimer_pending[i++]=0;gTimer_uc[i++]=0;	gTimer_repetition_max[i++]=0;gTimer_repetition[i++]=0;}}
 // Update the timers
 pTimer = mpTimerList->init;
 while(pTimer != NULL)
@@ -457,6 +476,27 @@ pTimer1 = pTimer1->pNext;
 i=0;aa3=0;
 while(i<100 && aa3==0){if (gTimer_repetition[i++]!=0) aa3=1;}
 if (aa3!=0){raise(50);}
+
+
+// Update the timers
+pTimer1 = mpTimerList_pending->init;
+count2=0;
+while(pTimer1 != NULL)
+{ 	if(pTimer1->Period != 0)
+{  	pTimer1->Period--;
+if(pTimer1->Period == 0)
+{ 		// Set the corresponding bit when the timer reaches zero
+	gTimer_pending[count2] = pTimer1->TimerId;	count2++;
+}        }
+// Move to the next timer in the list
+pTimer1 = pTimer1->pNext;
+}
+i=0;aa3=0;
+while(i<100 && aa3==0){if (gTimer_pending[i++]!=0) aa3=1;}
+if (aa3!=0){raise(51);}
+
+
+
 }
 
 void thr_h2(void *arg){
@@ -488,6 +528,7 @@ List_locT * startup1(configuration_t *cfg)
 	ls_buffer= init_lsp();
 	mpTimerList= init_timer_list();
 	mpTimerList_lsp= init_timer_list();
+	mpTimerList_pending= init_timer_list();
 	mpTimerList_ls_rtx= init_timer_list();
 	mpTimerList_ls_buff=init_timer_list();
 	mpTimerList_uc=init_timer_list();
@@ -547,14 +588,14 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					LPV->speed1=speed1;
 					LPV->speed2=speed2; //recibe metros por segundo e quere 1/100 m/s
 					memcpy(LPV->node_id.mac.address,h_source,6);
-					i=100;				} } }else {if (a==1)memcpy(LPV,LPV_old,24);    }}
+					i=100;				} } }else {if (a==1) LPV=LPV_old;    }}
 	gps_close (&gpsdata);
 	return(LPV);
 }
 
 itsnet_position_vector * LPV_ini(){ //non se está executando nunca
 	itsnet_position_vector * LPV;
-	LPV->longitude=0;	LPV->latitude=0;	LPV->time_stamp=0;	LPV->speed1=0;LPV->speed2=0;	LPV->heading=0;	memcpy(&LPV->node_id,&GN_ADDR,8);
+	LPV->longitude=0;	LPV->latitude=0;	LPV->time_stamp=0;	LPV->speed1=0;LPV->speed2=0;	LPV->heading=0;	memcpy((void *)&LPV->node_id,(void *)&GN_ADDR,8);
 	return(LPV);}
 
 void Beacon_send(EV_P_ ev_timer *w, int revents) {
@@ -584,7 +625,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	pkt->common_header.HT_HST.HST=0;
 	memset(flags,0,1);
 	flags->itsStation=itsGnStationType;
-	memcpy(pkt->common_header.flags,flags,1);
+	memcpy(pkt->common_header.flags,(void *)flags,1);
 	memset(pkt->common_header.payload_lenght,0,1);
 	memset(pkt->common_header.reserved,0,1);
 	memset(pkt->common_header.mhl,1,1);
@@ -593,7 +634,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	tc->scf=0;
 	tc->tc_id=itsGnDefaultTrafficClass;
 	memset(&pkt->common_header.traffic_class,tc,1);
-	char* num1[2];char* num2[2];
+	char* num1[2];char* num2[2];// hai que manter estes asteriscos
 	sprintf(num1,"%02X",(unsigned int)arg->port);	sprintf(num2,"%02X",(unsigned int)arg->forwarding_port);
 	memcpy(pkt->payload.itsnet_beacon.payload.btp1,num1,2);	memcpy(pkt->payload.itsnet_beacon.payload.btp2,num2,2);
 	memcpy(tx_frame->buffer.data, (char *) pkt,8+4+24);
@@ -653,14 +694,20 @@ List_locT * add_end_locT ( List_locT * locT, itsnet_node data){
 }
 
 /*modificate locT  */
-List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node data,int num,itsnet_time_stamp tst){
+List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node *data,int num,itsnet_time_stamp tst){
 	Element_locT *pos=locT->init;	int aa=0;
-	while (pos!=NULL && aa<val) {
+	while (pos!=NULL && aa<val) {aa++;
 		pos=pos->next;
-	}
-	pos->data.pdr=data.pdr;
+	}//PRF("%d\n",data->pdr);
+	if (pos!=NULL){PRF("two\n");
+	PRF("%d\n",pos->data.tpdr);
+	PRF("%d\n",data->tpdr);
+	pos->data.pdr= 1/(data->tpdr-pos->data.tpdr);}else
+	{PRF("one\n");
+	PRF("%d\n",data->tpdr);	PRF("%d\n",PDR_ini);
+	pos->data.pdr=1/(data->tpdr-PDR_ini);}
 	if(((pos->data.tst.tv_sec < tst ) &&(tst- pos->data.tst.tv_sec<=65536/2))||((pos->data.tst.tv_sec > tst)&&(-tst + pos->data.tst.tv_sec >65536/2)))
-	{	pos->data.pos_vector=data.pos_vector;}
+	{	pos->data.pos_vector=data->pos_vector;}
 	if (num!=0)pos->data.Sequence_number=num;
 	pos->data.tst.tv_sec=tst;
 	locT_general=locT;
@@ -672,7 +719,7 @@ int sup_timer (unsigned short TimerId, int num)
 	tTimer * position=NULL;
 	tTimer * to_erase=NULL;
 	List_timer *list;
-	if (num==0){list= mpTimerList_lsp;}else if(num==1){list=mpTimerList;}else if(num==2){list=mpTimerList_ls_rtx;}else if (num==3){list=mpTimerList_ls_buff;}else if (num==6){list=mpTimerList_cbf_uc;}else if (num==7){list=mpTimerList_repetition_max;}else if (num==9){list=mpTimerList_repetition;}
+	if (num==0){list= mpTimerList_lsp;}else if(num==1){list=mpTimerList;}else if(num==2){list=mpTimerList_ls_rtx;}else if (num==3){list=mpTimerList_ls_buff;}else if (num==5){list=mpTimerList_pending;}else if (num==6){list=mpTimerList_cbf_uc;}else if (num==7){list=mpTimerList_repetition_max;}else if (num==9){list=mpTimerList_repetition;}
 	position = FindTimer(TimerId,num);
 	if (position==NULL){
 		PRF("null en sup_timer\n");	}
@@ -694,7 +741,7 @@ int sup_timer (unsigned short TimerId, int num)
 			position->pNext->before=position->before;
 			free(to_erase);list->len--;
 		}
-		if (num==0){ mpTimerList_lsp=list;}else if(num==1){mpTimerList=list;}else if (num==2){mpTimerList_ls_rtx=list;}else if (num==3){mpTimerList_ls_buff=list;}else if (num==6){mpTimerList_cbf_uc=list;}else if (num==7){mpTimerList_repetition_max=list;}else if (num==9){mpTimerList_repetition=list;}}
+		if (num==0){ mpTimerList_lsp=list;}else if(num==1){mpTimerList=list;}else if (num==2){mpTimerList_ls_rtx=list;}else if (num==3){mpTimerList_ls_buff=list;}else if (num==5){mpTimerList_pending=list;}else if (num==6){mpTimerList_cbf_uc=list;}else if (num==7){mpTimerList_repetition_max=list;}else if (num==9){mpTimerList_repetition=list;}}
 	return 0;
 }
 /* erase after a position */
@@ -736,7 +783,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 		}
 		sup_timer(dictionary[num],1);
 		locT_general=locT;
-		memcpy(mac_list[num],ZEROS,6);
+		memcpy(mac_list[num]->address,ZEROS,6);
 		taken[num]=false;}
 	return 0;
 }
@@ -988,7 +1035,7 @@ int duplicate_control(void * data,List_locT * locT){
 	memcpy(SN,data+8+4,2);
 	int lon_int=sprint_hex_data( SN, 2);
 	char TST_[4];
-	memcpy(TST_,data+8+4+4+8,2);
+	memcpy(TST_,data+8+4+4+8,4);
 	int lon_int2=sprint_hex_data( TST_, 4);
 	while (aux != NULL && i==1){
 		if (memcmp(aux->data.node_id.mac.address,buffer->mac.address,6)==0){
@@ -1014,7 +1061,7 @@ int duplicate_control2(void * data,List_locT * locT){
 	buffer= (itsnet_node_id *)malloc(sizeof(itsnet_node_id));
 	memcpy(buffer,data +8+4+4,8);
 	char TST_[4];
-	memcpy(TST_,data+8+4+4+8,2);
+	memcpy(TST_,data+8+4+4+8,4);
 	int lon_int=sprint_hex_data( TST_, 4);
 	while (aux != NULL && i==1){
 		if (memcmp(aux->data.node_id.mac.address,buffer->mac.address,6)==0){

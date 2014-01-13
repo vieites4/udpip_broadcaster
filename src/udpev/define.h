@@ -32,7 +32,7 @@
 #define itsGnMaxPacketDataRate 100
 #define itsGnMaxGeoAreaSize 10
 #define itsGnGeoUnicastForwardingAlgorithm 0//unspecified 0, greedy 1, cbf 2
-#define itsGnGeoBroadcastForwardingAlgorithm 3 //1 simple
+#define itsGnGeoBroadcastForwardingAlgorithm 0 //2 simple
 #define itsGnGeoUnicastCbfMinTime 1
 #define itsGnGeoBroadcastCbfMaxTime 100
 #define itsGnGeoBroadcastCbfMinTime 1
