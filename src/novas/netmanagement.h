@@ -500,7 +500,7 @@ void thr_h2(void *arg);
  * @param pdr. new time it passed since last reception.
 
  */
-int PDR_update(char * data);
+int PDR_update(void * data);
 
 /**
  * @fn rtx_repetition

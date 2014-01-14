@@ -57,7 +57,7 @@ extern  time_t PDR_ini;
 #else
 #define PRF(format, args...) ((void)0)
 #endif
-int PDR_update(char * data)
+int PDR_update(void * data)
 {
 	char source[6];
 	memcpy(source, data, 6);
@@ -80,15 +80,15 @@ tTimer * FindTimer(unsigned short TimerId,int type)
 
 	tTimer *pTimer=list->init;
 	tTimer *pTimerC=NULL;
-	PRF("FINDTIMER %d\n",TimerId);
+	//PRF("FINDTIMER %d\n",TimerId);
 	if(pTimer != NULL)
 	{        // Move through the list until the timer id is found
 		while((pTimer!= NULL) )
 		{            // Timer ids - not match, Move onto the next timer
-			if (pTimer->TimerId == TimerId){PRF("COINCIDENCIA!!!\n");
+			if (pTimer->TimerId == TimerId){//PRF("COINCIDENCIA!!!\n");
 			pTimerC=pTimer;}
 			pTimer = pTimer->pNext;        }    }
-	PRF("saio de find timer\n");
+	//PRF("saio de find timer\n");
 	return (pTimerC);}
 
 bool AddTimer(unsigned short TimerId, int period, int type)
@@ -103,7 +103,7 @@ bool AddTimer(unsigned short TimerId, int period, int type)
 	pTimer = FindTimer(TimerId,type);
 	// Check if the timer was found
 	if((pTimer == NULL) ){
-		PRF("esto si non atopa co find timer, crea un timer novo\n");
+		//PRF("esto si non atopa co find timer, crea un timer novo\n");
 		new_element = (tTimer *) malloc(sizeof(tTimer));
 		new_element->TimerId = TimerId;
 		new_element->pNext = NULL;
@@ -549,7 +549,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	int timer;
 	if (a==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	timer=50000;}else timer=5000;
-	if (a==1) {memcpy(LPV_old,LPV,24);}
+	if (a==1) {memcpy((void *)LPV_old,(void *)LPV,24);}
 	if (a==0)	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	a=1;
 	if( gps_open("localhost","2947",&gpsdata)!=0){
@@ -576,7 +576,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					sprintf(str8, "%08X",(uint32_t)  num00);
 					sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
 					int num1=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
-					print_hex_data(str7,4);printf(" longitud\n");
+				//	print_hex_data(str7,4);printf(" longitud\n");
 					num6=strtol(str6,NULL,16);
 					num7=strtol(str7,NULL,16);
 					num10=strtol(str10,NULL,16);
@@ -695,17 +695,16 @@ List_locT * add_end_locT ( List_locT * locT, itsnet_node data){
 
 /*modificate locT  */
 List_locT * mod_t_locT (int val, List_locT * locT, itsnet_node *data,int num,itsnet_time_stamp tst){
-	Element_locT *pos=locT->init;	int aa=0;
+	Element_locT *pos=locT->init;	int aa=1;
 	while (pos!=NULL && aa<val) {aa++;
 		pos=pos->next;
 	}//PRF("%d\n",data->pdr);
-	if (pos!=NULL){PRF("two\n");
-	PRF("%d\n",pos->data.tpdr);
-	PRF("%d\n",data->tpdr);
-	pos->data.pdr= 1/(data->tpdr-pos->data.tpdr);}else
-	{PRF("one\n");
-	PRF("%d\n",data->tpdr);	PRF("%d\n",PDR_ini);
-	pos->data.pdr=1/(data->tpdr-PDR_ini);}
+	if (pos!=NULL){	if(data->tpdr==pos->data.tpdr)pos->data.pdr= pos->data.pdr++;else pos->data.pdr= 1/((data->tpdr)-pos->data.tpdr); }
+	//else
+	//{PRF("one\n");
+	//PRF("%d\n",data->tpdr);	PRF("%d %d\n",data->tpdr-PDR_ini,PDR_ini);
+	//PRF("%d \n",1/(data->tpdr-PDR_ini));
+	//pos->data.pdr=1/((int)(data->tpdr)-(int)(PDR_ini));}
 	if(((pos->data.tst.tv_sec < tst ) &&(tst- pos->data.tst.tv_sec<=65536/2))||((pos->data.tst.tv_sec > tst)&&(-tst + pos->data.tst.tv_sec >65536/2)))
 	{	pos->data.pos_vector=data->pos_vector;}
 	if (num!=0)pos->data.Sequence_number=num;
@@ -727,7 +726,7 @@ int sup_timer (unsigned short TimerId, int num)
 		if(position->before==NULL){
 			to_erase=list->init;
 			list->init=list->init->pNext;
-			if(list->len==1){list->end=NULL;   PRF("eliminamos o unico timer \n");
+			if(list->len==1){list->end=NULL;  // PRF("eliminamos o unico timer \n");
 			}else{list->init->before=NULL;}
 			free(to_erase);list->len--;
 		}else if (position->pNext==NULL){
@@ -758,7 +757,7 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 	int a=search_in_locT(data,locT);
 	free(data);data=NULL;
 	if (position==NULL) PRF("a posición inicial é  null\n");
-	while (in<(a))
+	while (in<(a) && position!=NULL)
 	{in++;position = position->next;//print_hex_data(position->data.mac_id.address,6);PRF(" \n");
 	}
 	if (position==NULL) PRF("a posición é null\n"); else{//print_hex_data(position->data.mac_id.address,6);PRF(" elimino este en loct\n");
@@ -767,9 +766,9 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 			to_erase=locT->init;
 			locT->init=locT->init->next;
 			free(to_erase);
-			if(locT->len==1){locT->end=NULL; PRF("eliminamos o unico de loct\n");
+			if(locT->len==1){locT->end=NULL;// PRF("eliminamos o unico de loct\n");
 			}else{locT->init->before=NULL;}locT->len--;
-		}else if (position->next==NULL){    PRF("eliminamos o ultimo de loct \n");
+		}else if (position->next==NULL){ //   PRF("eliminamos o ultimo de loct \n");
 		to_erase=locT->end;
 		locT->end->before->next=NULL;
 		locT->end=locT->end->before;
@@ -801,7 +800,7 @@ List_lsp * sup_elem_t_lsp (int num,int type)
 		int in=0;
 		char SN[2];char HT[1];
 		int head=0;
-		memcpy(HT,&position->data.common_header.HT_HST,1);
+		memcpy(HT,(void *)&position->data.common_header.HT_HST,1);
 		if (memcmp(HT,tsb0,1)==0 || memcmp(HT,tsb1,1)==0)head=28;else if (memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0)head=48;
 		while (in==0 && position!=NULL)
 		{
@@ -953,9 +952,9 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data, int type){
 	PRF("AQUI en engadir en lsp! %d \n",lsp->len);
 	uint16_t sn;	LT_s *temp;
 	char HT[1];	char HL[1];
-	memcpy(HL,&data.common_header.mhl,1);
+	memcpy(HL,data.common_header.mhl,1);
 	int lon_int=sprint_hex_data( HL, 1);
-	memcpy(HT,&data.common_header.HT_HST,1);
+	memcpy(HT,(void *)&data.common_header.HT_HST,1);
 	if((memcmp(HT,tsb0,1)==0) && (lon_int>1)){
 		temp = (LT_s *) data.basic_header.lt;		sn = data.payload.itsnet_tsb.sequencenumber;
 	}else if(memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0||memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0 ||memcmp(HT,geoanycast2,1)==0){
@@ -990,11 +989,11 @@ List_lsp * sup_elem_lsp (int num, int type){
 	PRF("eliminamos o primeiro de lsp \n");
 	if (lsp->init!=NULL){
 		lsp->init=lsp->init->next;
-		if(lsp->len==1){lsp->end=NULL;    PRF("eliminamos o unico de lsp\n");
+		if(lsp->len==1){lsp->end=NULL;  //  PRF("eliminamos o unico de lsp\n");
 		}else{lsp->init->before=NULL;}
 		free(to_erase);		lsp->len--;
 		char HT[1];uint16_t sn;char HL[1];
-		memcpy(HT,&pos->data.common_header.HT_HST,1);
+		memcpy(HT,(void *)&pos->data.common_header.HT_HST,1);
 		memcpy(HL,pos->data.common_header.mhl,1);
 		int head=28;
 		int lon_int=sprint_hex_data( HL, 1);

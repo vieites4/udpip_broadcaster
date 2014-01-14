@@ -223,7 +223,7 @@ int geo_limit(void *HT,itsnet_packet_f *pkt,itsnet_position_vector * lpv_se)
 	memcpy(distA,pkt->payload.itsnet_geocast.distanceA,2);
 	memcpy(distB,pkt->payload.itsnet_geocast.distanceB,2);
 	if(memcmp(geobroad0,HT,1)==0){
-		PRF("circular \n");print_hex_data(distA,2);
+		//PRF("circular \n");print_hex_data(distA,2);
 		r=sprint_hex_data(distA, 2);
 		total= 1- pow((x/r),2) - pow((y/r),2);
 	}else
@@ -254,9 +254,9 @@ int geo_limit_ll(itsnet_packet *pkt,itsnet_position_vector * lpv_se)
 	memcpy(distA,pkt->payload.itsnet_geobroadcast.distanceA,2);
 	memcpy(distB,pkt->payload.itsnet_geobroadcast.distanceB,2);
 	char HT[1];
-	memcpy(HT,&pkt->basic_header.version_nh,1);
+	memcpy(HT,(void *)&pkt->basic_header.version_nh,1);
 	if(memcmp(geobroad0,HT,1)==0){
-		PRF("circular \n");print_hex_data(distA,2);
+		//PRF("circular \n");print_hex_data(distA,2);
 		r=sprint_hex_data(distA, 2);
 		total= 1- pow((x/r),2) - pow((y/r),2);
 	}else
