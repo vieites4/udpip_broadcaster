@@ -537,21 +537,21 @@ List_locT * startup1(configuration_t *cfg)
 	mpTimerList_repetition_max=init_timer_list();
 	return (locT_general);
 }
-int a;
+int first;
 
 gps_data_t * gpsdata_p=NULL;
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	char * h_source= (char *)w->data;
 	gps_data_t gpsdata;
-	if (a==0)gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
+	if (first==0)gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
 	gpsdata=*gpsdata_p;
 	PRF ("ENTRO NO DO LPV_update\n");
 	int timer;
-	if (a==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	if (first==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	timer=50000;}else timer=5000;
-	if (a==1) {memcpy((void *)LPV_old,(void *)LPV,24);}
-	if (a==0)	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
-	a=1;
+	if (first==1) {memcpy((void *)LPV_old,(void *)LPV,24);}
+	if (first==0)	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	first=1;
 	if( gps_open("localhost","2947",&gpsdata)!=0){
 		return(LPV);
 	}
@@ -588,7 +588,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					LPV->speed1=speed1;
 					LPV->speed2=speed2; //recibe metros por segundo e quere 1/100 m/s
 					memcpy(LPV->node_id.mac.address,h_source,6);
-					i=100;				} } }else {if (a==1) LPV=LPV_old;    }}
+					i=100;				} } }else {if (first==1) LPV=LPV_old;    }}
 	gps_close (&gpsdata);
 	return(LPV);
 }
@@ -640,9 +640,9 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	memcpy(tx_frame->buffer.data, (char *) pkt,8+4+24);
 	// 2) broadcast application level UDP message to network level
 	//while(
-	free(tc);free(flags);free(res);free(pkt);
+
 	send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer,24+8+4+14);//==-1){}
-	free(tx_frame);
+	free(tc);free(flags);free(res);free(pkt);free(tx_frame);
 	PRF("beacon enviada\n");
 
 }
@@ -681,7 +681,7 @@ List_locT * add_end_locT ( List_locT * locT, itsnet_node data){
 		locT->end->next = new_element;	}
 	locT->end = new_element;
 	locT ->len++;
-	int num2=0;a=0;
+	int num2=0;int a=0;
 	unsigned short num=0;
 	while(a==0 && num2<16){
 		num2=num2 +1;
@@ -893,7 +893,7 @@ int search_in_locT (itsnet_node * data, List_locT * locT){
 
 int search_in_locT_m (mac_addr data, List_locT * locT){
 	Element_locT *aux;	aux = locT->init;
-	int e=1;i=0;
+	int e=1;i=0;int a=0;
 	while ((i<17) &&(aux!=NULL) &&(a==0)&& (e<17))
 	{
 		if (taken[i]==true){
@@ -905,7 +905,7 @@ int search_in_locT_m (mac_addr data, List_locT * locT){
 int search_in_locT_m_wo_n (mac_addr data, List_locT * locT){
 	Element_locT *aux;
 	aux = locT->init;
-	int e=1;i=0;
+	int e=1;i=0;int a=0;
 	while ((i<17) &&(aux!=NULL) &&(a==0)&& (e<17))
 	{
 		if (taken[i]==true){

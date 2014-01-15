@@ -46,9 +46,9 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	itsnet_common_header *ch=NULL;
-		itsnet_basic_header *bh=NULL;
-		ch=(itsnet_common_header *)malloc(sizeof(itsnet_common_header));
-		bh=(itsnet_basic_header *)malloc(sizeof(itsnet_basic_header));
+	itsnet_basic_header *bh=NULL;
+	ch=(itsnet_common_header *)malloc(sizeof(itsnet_common_header));
+	bh=(itsnet_basic_header *)malloc(sizeof(itsnet_basic_header));
 	memcpy(ch->payload_lenght,(char *)(buffer) +4,2);
 	int lon_int=sprint_hex_data( (char *)(buffer) +4, 2);
 	memcpy((void *)&ch->traffic_class,(char *)(buffer) +6,1);
@@ -87,7 +87,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	memcpy(tsb_h.payload.payload,(char *)(buffer) +20,lon_int);
 	pkt->payload.itsnet_tsb=tsb_h;//print_hex_data(pkt->payload.itsnet_tsb.payload.payload,lon_int);printf(" .\n");
 	pkt->common_header=*ch;
-	pkt->basic_header=*bh;
+	pkt->basic_header=*bh;free(ch);free(bh);
 	//NEIGHBOURS.
 	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 	{		memcpy(pkt->payload.itsnet_tsb.payload.btp1,(char *)(buffer) + 18,2);
@@ -127,9 +127,9 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	itsnet_common_header *ch=NULL;
-		itsnet_basic_header *bh=NULL;
-		ch=(itsnet_common_header *)malloc(sizeof(itsnet_common_header));
-		bh=(itsnet_basic_header *)malloc(sizeof(itsnet_basic_header));
+	itsnet_basic_header *bh=NULL;
+	ch=(itsnet_common_header *)malloc(sizeof(itsnet_common_header));
+	bh=(itsnet_basic_header *)malloc(sizeof(itsnet_basic_header));
 	memcpy(ch->payload_lenght,(char *)(buffer) +4,2);
 	int lon_int=sprint_hex_data( (char *)(buffer) +4, 2);
 	memcpy((void *)&ch->traffic_class,(char *)(buffer) +6,1);
@@ -165,7 +165,7 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	memcpy(shb_h.payload.payload,(char *)(buffer) +20,lon_int);
 	pkt->payload.itsnet_shb=shb_h;//print_hex_data(pkt->payload.itsnet_shb.payload.payload,lon_int);printf(" .\n");
 	pkt->common_header=*ch;
-	pkt->basic_header=*bh;
+	pkt->basic_header=*bh;free(ch);free(bh);
 	//NEIGHBOURS.
 	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 	{		memcpy(pkt->payload.itsnet_shb.payload.btp1,(char *)(buffer) + 18,2);
@@ -202,9 +202,9 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
 	itsnet_common_header *ch=NULL;
-		itsnet_basic_header *bh=NULL;
-		ch=(itsnet_common_header *)malloc(sizeof(itsnet_common_header));
-		bh=(itsnet_basic_header *)malloc(sizeof(itsnet_basic_header));
+	itsnet_basic_header *bh=NULL;
+	ch=(itsnet_common_header *)malloc(sizeof(itsnet_common_header));
+	bh=(itsnet_basic_header *)malloc(sizeof(itsnet_basic_header));
 	memcpy(ch->payload_lenght,(char *)(buffer) +4,2);
 	int lon_int=sprint_hex_data( (char *)(buffer) +4, 2);
 	memcpy((void *)&ch->traffic_class,(char *)(buffer) +6,1);
@@ -245,7 +245,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 	memcpy(un_h.payload.payload,(char *)(buffer) +28,lon_int);
 	pkt->payload.itsnet_unicast=un_h;//print_hex_data(pkt->payload.itsnet_tsb.payload.payload,lon_int);printf(" .\n");
 	pkt->common_header=*ch;
-	pkt->basic_header=*bh;
+	pkt->basic_header=*bh;free(ch);free(bh);
 	//NEIGHBOURS.
 	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 	{		memcpy(pkt->payload.itsnet_tsb.payload.btp1,(char *)(buffer) + 26,2);
@@ -271,7 +271,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 				val=ls_buffer->size+4+8+52+4+sprint_hex_data((char *)(buffer) +4,2);
 				PRF("aqui podo liala porque non se actualice ls_buffer");
 			}
-			int i =add_end_lsp(ls_buffer, *pkt,3);free(pkt);
+			int i =add_end_lsp(ls_buffer, *pkt,3);free(pkt);	free(LPV_dest);free(lt);
 			return(pkt1);
 		}else{
 			int pos_loct=search_in_locT_m(LPV_dest->node_id.mac,locT_general);
@@ -283,11 +283,11 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 					val=lsp_uc_g->size+4+8+52+4+sprint_hex_data((char *)(buffer) +4,2);
 					PRF("aqui podo liala porque non se actualice lsp_uc_g a tempo");
 				}
-				int i =add_end_lsp(lsp_uc_g, *pkt,4);free(pkt);
+				int i =add_end_lsp(lsp_uc_g, *pkt,4);free(pkt);	free(LPV_dest);free(lt);
 				return(pkt_lsp);
 				//buffer in BC AND omit next executions
 			} else if (pos_loct==0 &&ch->traffic_class.scf==0){
-
+				free(LPV_dest);free(lt);
 				return(pkt);
 				//broadcast, no more
 			} else if(pos_loct!=0) {
@@ -301,7 +301,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 
 				if(itsGnGeoUnicastForwardingAlgorithm==0||itsGnGeoUnicastForwardingAlgorithm==1){
 					mac_addr nh= Greedy_Forwarding_UC(&position->data.pos_vector);
-					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt_lsp);}else{
+					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){	free(pkt);free(LPV_dest);free(lt);return(pkt_lsp);}else{
 						char h_source[ETH_ALEN];
 						sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 						get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
@@ -309,10 +309,10 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 						char type[2]={0x07,0x07};
 						memcpy(tx_frame->buffer.header.type,type,2);
 						memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-						send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 48+4+8+14+4);free(tx_frame);return(pkt_lsp);
+						send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 48+4+8+14+4);free(tx_frame);free(pkt);free(LPV_dest);free(lt);return(pkt_lsp);
 					}				}
 				else if(itsGnGeoUnicastForwardingAlgorithm==2){
-					CBF_UC(pkt,lon_int+ 48+4+8+14+4,LPV);
+					CBF_UC(pkt,lon_int+ 48+4+8+14+4,LPV);	free(LPV_dest);free(lt);free(pkt);
 					return(pkt_lsp);
 				}			}}
 	}else{
@@ -369,7 +369,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 			val1=ls_buffer->size+4+8+52+4+sprint_hex_data((char *)(pkt->common_header.payload_lenght),2);
 			PRF("aqui podo liala porque non se actualice ls_buffer");
 		}		add_end_lsp(ls_buffer, *pkt,3);	}
-	free(LPV_dest);
+
 	//REPETITION INTERVAL
 	char REP[4];
 	memcpy(REP,buffer +8,4);
@@ -378,7 +378,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
 	//PRF("saio de tsb\n");
-	free(lt);return(pkt);
+	free(LPV_dest);free(lt);return(pkt);
 
 }
 itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_arg_r *arg){
@@ -415,7 +415,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
 	//char *str3[9] = {'\0'};
 	//sprintf(str3,"%08X",hl_int-1);
-	memcpy(bh->rhl,ch->mhl,1);print_hex_data(bh->rhl,1);printf(" rHL dentro de geobroad\n");
+	memcpy(bh->rhl,ch->mhl,1);print_hex_data(bh->rhl,1);PRF(" rHL dentro de geobroad\n");
 	itsnet_geobroadcast_t gbc_h;
 	gbc_h.sequencenumber=SN_g;
 	SN_g++; //máximo SN?? % SN_MAX;
@@ -451,7 +451,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 			val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
-		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);
+		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);free(lt);
 		return(pkt1);		//buffer in BC AND omit next executions
 	}
 	mac_addr nh;
@@ -462,58 +462,57 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 		memcpy(nh.address,BROADCAST,6);
 		int f=geo_limit_ll(pkt,LPV);
 		if (f>=0){
-		get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
-		ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
-		char type[2]={0x07,0x07};// si que funciona nh print_hex_data(nh.address,6);printf("\n");
-		memcpy(tx_frame->buffer.header.type,type,2);
-		memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-		send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);
-		//print_hex_data(&pkt->payload.itsnet_geobroadcast.payload,lon_int+4);PRF("\n");
-		free(tx_frame);return(pkt1);}
+			get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
+			char type[2]={0x07,0x07};// si que funciona nh print_hex_data(nh.address,6);printf("\n");
+			memcpy(tx_frame->buffer.header.type,type,2);
+			memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
+			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);
+			//print_hex_data(&pkt->payload.itsnet_geobroadcast.payload,lon_int+4);PRF("\n");
+			free(lt);free(pkt);free(tx_frame);return(pkt1);}
 
 		else{PRF("ESTÁ MUY LEJOS!!\n");
-			if(LPV->pai==1){
+		if(LPV->pai==1){
 			int f1=geo_limit_ll(pkt,LPV);
 			if (f1>=0){
 				itsnet_position_vector A;
-						A.latitude=pkt->payload.itsnet_geobroadcast.dest_latitude;
-						A.longitude=pkt->payload.itsnet_geobroadcast.dest_longitude;
-						mac_addr NH=Greedy_Forwarding_UC(&A);
-						if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt1);}else{
-							ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
-							char type[2]={0x07,0x07};
-							memcpy(tx_frame->buffer.header.type,type,2);
-							memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-							send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
-							//print_hex_data(&tx_frame->buffer,lon_int+ 44+4+8+4);PRF("\n");
-							return(pkt1);				//greedy
-			}}else{
-				//discard
-				return(pkt1);	}			}else{
-				return(pkt); //broadcast
-				}		}	}
+				A.latitude=pkt->payload.itsnet_geobroadcast.dest_latitude;
+				A.longitude=pkt->payload.itsnet_geobroadcast.dest_longitude;
+				mac_addr NH=Greedy_Forwarding_UC(&A);
+				if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
+					ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
+					char type[2]={0x07,0x07};
+					memcpy(tx_frame->buffer.header.type,type,2);
+					memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
+					send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
+					//print_hex_data(&tx_frame->buffer,lon_int+ 44+4+8+4);PRF("\n");
+				}}else{
+					//discard
+					free(lt);free(pkt);
+					return(pkt1);	}			}else{free(lt);
+					return(pkt); //broadcast
+					}		}	}
 	else if(itsGnGeoBroadcastForwardingAlgorithm==2){
 
 		nh=CBF_BC(pkt,lon_int+ 44+4+8+14+4,LPV); //first send PV_SE is LPV
-		if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt1);}else{
+		if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
 
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);
 			memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
-//print_hex_data(&tx_frame->buffer,lon_int+ 44+4+8+4);PRF("\n");
+			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
+			//print_hex_data(&tx_frame->buffer,lon_int+ 44+4+8+4);PRF("\n");
 			return(pkt1);}
 	}	else if(itsGnGeoBroadcastForwardingAlgorithm==3){
 		nh=	Advanced_BC(pkt,lon_int+ 44+4+8+14+4,LPV,NULL,h_source);
-		if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt1);}else{
+		if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
 
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);
 			memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
-			return(pkt1);
+			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
 		}}
 	//REPETITION INTERVAL
 	char REP[4];
@@ -574,7 +573,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 	memcpy(gbc_h.payload.payload,(char *)(buffer) +36,lon_int);
 	pkt->payload.itsnet_geobroadcast=gbc_h;//print_hex_data(pkt->payload.itsnet_geobroadcast.payload.payload,lon_int);printf(" .\n");
 	pkt->common_header=*ch;
-	pkt->basic_header=*bh;
+	pkt->basic_header=*bh;free(ch);free(bh);
 	//NEIGHBOURS.
 	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 	{		memcpy(pkt->payload.itsnet_geobroadcast.payload.btp1,(char *)(buffer) + 34,2);
@@ -594,7 +593,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 			val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
-		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);
+		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(lt);free(pkt);
 		return(pkt1);		//buffer in BC AND omit next executions
 	}
 	mac_addr nh;
@@ -610,30 +609,27 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);
 			memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
+			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
 		}
 		else if(itsGnGeoBroadcastForwardingAlgorithm==2){
 
 			nh=CBF_BC(pkt,lon_int+ 44+4+8+14+4,LPV); //first send PV_SE is LPV
-			if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt1);}else{
+			if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
 
 				ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 				char type[2]={0x07,0x07};
 				memcpy(tx_frame->buffer.header.type,type,2);
 				memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-				send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
-
-				return(pkt1);}
+				send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);}
 		}	else if(itsGnGeoBroadcastForwardingAlgorithm==3){
 			nh=	Advanced_BC(pkt,lon_int+ 44+4+8+14+4,LPV,NULL,h_source);
-			if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt1);}else{
+			if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
 
 				ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 				char type[2]={0x07,0x07};
 				memcpy(tx_frame->buffer.header.type,type,2);
 				memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-				send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
-				return(pkt1);
+				send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
 			}}}else if(y<0 && itsGnGeoAreaLineForwarding==true){
 
 				if(itsGnGeoUnicastForwardingAlgorithm==0||itsGnGeoUnicastForwardingAlgorithm==1){
@@ -642,7 +638,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 					A.latitude=pkt->payload.itsnet_geobroadcast.dest_latitude;
 					A.longitude=pkt->payload.itsnet_geobroadcast.dest_longitude;
 					mac_addr nh= Greedy_Forwarding_UC(&A);
-					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return(pkt1);}else{
+					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
 						char h_source[ETH_ALEN];
 						sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 						get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
@@ -650,7 +646,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 						char type[2]={0x07,0x07};
 						memcpy(tx_frame->buffer.header.type,type,2);
 						memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-						send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);return(pkt1);
+						send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
 					}				}
 				else if(itsGnGeoUnicastForwardingAlgorithm==2){
 					CBF_UC(pkt,lon_int+ 44+4+8+14+4,LPV);
@@ -691,7 +687,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	int mhl=sprint_hex_data( HL, 1);
 	memcpy(HL2,buffer+14+3,1);
 	int rhl=sprint_hex_data( HL2, 1);
-	//if (rhl>mhl){return(1);} //poñer unha solucion a esto!
+	if (rhl>mhl){return(1);} //poñer unha solucion a esto!
 	memcpy(HT1,(char *)(buffer)+14+1+4,1);
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
@@ -749,7 +745,9 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 				{in++;position = position->next;//print_hex_data(position->data.mac_id.address,6);PRF(" \n");
 				}
 				memset(&position->data.pos_vector,0,24);
-				memcpy((void *)&position->data.pos_vector,DE_LPV,20);	}		}	}
+				memcpy((void *)&position->data.pos_vector,DE_LPV,20);	}
+			free(data1);
+		}	}
 	int val=search_in_locT(data,locT_general);
 	if(val==0){locT_general=add_end_locT (locT_general,*data);}else{
 		locT_general=mod_t_locT (val,locT_general,data,lon_int,tst);
@@ -1052,13 +1050,15 @@ itsnet_packet * LS_req_f(void *buffer){
 
 	itsnet_packet * pkt = NULL;
 	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
-	itsnet_common_header ch;
-	itsnet_basic_header bh;
-	memcpy((void *)&bh,(char *)(buffer),4);
-	memcpy((void *)&ch,(char *)(buffer) +4,8);
-	memset(ch.mhl,0,1);
-	ch.HT_HST.HT=2;
-	ch.HT_HST.HST=1;
+	itsnet_common_header *ch=NULL;
+	itsnet_basic_header *bh=NULL;
+	ch=(itsnet_common_header *)malloc(sizeof(itsnet_common_header));
+	bh=(itsnet_basic_header *)malloc(sizeof(itsnet_basic_header));
+	memcpy((void *)bh,(char *)(buffer),4);
+	memcpy((void *)ch,(char *)(buffer) +4,8);
+	memset(ch->mhl,0,1);
+	ch->HT_HST.HT=2;
+	ch->HT_HST.HST=1;
 	int ts_num=itsGnMaxPacketLifeTime; //tamén podería usar o Default en vez do Max
 	int base=0;int mult=0;int num4=0;int num3=0;
 	LT_s *lt;lt=(LT_s *)malloc(sizeof(LT_s));char str1[2] = {'\0'};	char str2[6] = {'\0'};
@@ -1068,10 +1068,10 @@ itsnet_packet * LS_req_f(void *buffer){
 	num4=strtol(str2,NULL,16);
 	num3=strtol(str1,NULL,16);
 	lt->base=num3;lt->multiple=num4;
-	memcpy(bh.lt,(void *)lt,1);
-	memset(bh.reserved,0,1);
-	bh.version_nh.HT=itsGnProtocolVersion;
-	if (itsGnSecurity==1)bh.version_nh.HST=2;else bh.version_nh.HST=1;
+	memcpy(bh->lt,(void *)lt,1);
+	memset(bh->reserved,0,1);
+	bh->version_nh.HT=itsGnProtocolVersion;
+	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
 	itsnet_unicast_t un_h;
 	un_h.sequencenumber=SN_g;
 	//PRF("SN %d\n",tsb_h.sequencenumber);
@@ -1082,8 +1082,9 @@ itsnet_packet * LS_req_f(void *buffer){
 	un_h.source_position_vector=* LPV_so;
 	memset(un_h.reserved,0,2);
 	pkt->payload.itsnet_unicast=un_h;//print_hex_data(pkt->payload.itsnet_tsb.payload.payload,lon_int);printf(" .\n");
-	pkt->common_header=ch;
-	pkt->basic_header=bh;
+	pkt->common_header=*ch;
+	pkt->basic_header=*bh;free(bh);free(ch);free(LPV_so);free(lt);
+
 	return(pkt);
 
 }
