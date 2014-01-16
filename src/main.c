@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 	public_ev_arg_r * argument= (public_ev_arg_r *)argum;
 	//if (argument->gn)PRF("sae true\n");
 	char h_source[ETH_ALEN];
-	get_mac_address(argument->forwarding_socket_fd, "wifi1", (unsigned char *) h_source) ;
+	get_mac_address(argument->forwarding_socket_fd, net_name, (unsigned char *) h_source) ;
 	t_LPV.data=(void *)h_source;
 	int revents;
 	LPV_update(l_LPV, &t_LPV, revents);

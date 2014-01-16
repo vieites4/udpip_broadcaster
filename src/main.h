@@ -42,7 +42,7 @@
 //#define itsGnLocalGnAddr GNAD;// {"0x14","0x00","0x00","0x00","0x00","0x00","0x00","0x00"} //é do tipo itnet_node_id
 
 
-
+#include "udpev/define.h"
 #include "udpev/udp_events.h"
 #include "udpev/cb_udp_events.h"
 #include "novas/netmanagement.h"

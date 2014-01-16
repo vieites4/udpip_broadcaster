@@ -247,7 +247,7 @@ void rtx_repetition(int num, int type,public_ev_arg_r * arg ){
 	itsnet_packet * pkt1=&pos->data;
 	int lon_int =sprint_hex_data(pkt1->common_header.payload_lenght,2);
 	char h_source2[ETH_ALEN];
-	get_mac_address(arg->net_socket_fd, "wifi1",(unsigned char *) h_source2) ;
+	get_mac_address(arg->net_socket_fd, net_name,(unsigned char *) h_source2) ;
 	ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_BROAD,h_source2);
 	memcpy(tx_frame1->buffer.header.type,t07,2);
 	int header_length=0;
@@ -282,7 +282,7 @@ int rtx_ls(int num,public_ev_arg_r * arg){
 
 	if (pos_locT!=NULL){if(pos_locT->data.LS_PENDING){
 		char h_source[ETH_ALEN];
-		get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
+		get_mac_address(arg->socket_fd, net_name, (unsigned char *) h_source) ;
 		ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 		memcpy(tx_frame->buffer.header.type,t07,2);
 		position->data.payload.itsnet_ls_req.sequencenumber=SN_g++;
@@ -330,7 +330,7 @@ int send_bcast_cbf_uc(int num,public_ev_arg_r *arg){
 	sup_elem_t_lsp(num,6);
 	int lon_int =sprint_hex_data(pkt->common_header.payload_lenght,2);
 	char h_source[ETH_ALEN];
-	get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
+	get_mac_address(arg->socket_fd, net_name, (unsigned char *) h_source) ;
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 	memcpy(tx_frame->buffer.header.type,t07,2);
 	int length_header=0;
@@ -602,7 +602,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	PRF("teño que enviar unha Beacon\n");
 	char h_source[ETH_ALEN];
 	public_ev_arg_r * arg=(public_ev_arg_r *)w->data;
-	get_mac_address(arg->socket_fd, "wifi1",(unsigned char *) h_source) ;
+	get_mac_address(arg->socket_fd, net_name,(unsigned char *) h_source) ;
 	ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_BROAD,h_source);
 	memcpy(tx_frame->buffer.header.type,t07,2);
 	version_nh * res=NULL;

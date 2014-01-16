@@ -56,6 +56,6 @@
 //#define ETH_FRAME_LEN	1514
 #define DEBUG_PRINT_ENABLED 1  // uncomment to enable DEBUG statements
 #define ITSNET_DATA_SIZE 1500
-
+#define net_name "wlan0"
 #endif /* DEFINE_H_ */
 

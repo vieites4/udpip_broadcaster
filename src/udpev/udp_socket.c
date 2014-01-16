@@ -173,7 +173,7 @@ sockaddr_ll_t *init_broadcast_sockaddr_ll(const int port)
 
 	sockaddr_ll_t *s = new_sockaddr_ll();
 	s->sll_family = PF_PACKET;
-	s->sll_ifindex = if_nametoindex("wifi1");
+	s->sll_ifindex = if_nametoindex(net_name);
 	memcpy(s->sll_addr,ETH_ADDR_BROADCAST , ETH_ALEN);
 	s->sll_protocol=htons(0x0707);
 	return(s);
@@ -196,7 +196,7 @@ sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 
 	sockaddr_ll_t *s = new_sockaddr_ll();
 	s->sll_family = PF_PACKET;
-	s->sll_ifindex = if_nametoindex("wifi1");//?? //(in_port_t)htons(port);
+	s->sll_ifindex = if_nametoindex(net_name);//?? //(in_port_t)htons(port);
 	//memcpy(s->sll_addr,ETH_ADDR_ANY , ETH_ALEN);
 	s->sll_halen = ETH_ALEN;
 	s->sll_protocol = htons(ETH_P_ALL); // se poño htons entra todo.//htons(0x0707);//
@@ -215,7 +215,7 @@ sockaddr_ll_t *init_sockaddr_ll( const int port)
 	s->sll_halen = ETH_ALEN;
 	//memset(s->sll_addr, 0xff, ETH_ALEN);
 	//s->sin_port = (in_port_t)htons(port);
-	s->sll_ifindex =if_nametoindex("wifi1");//if_index; -> FALTA DAR ESTA INFO
+	s->sll_ifindex =if_nametoindex(net_name);//if_index; -> FALTA DAR ESTA INFO
 	//s->sll_protocol=htons(port);
 	s->sll_protocol =  htons(0x0707);//engadido//htons(ETH_P_ALL);	//
 	//memset(s->sll_addr,address,ETH_ALEN);
