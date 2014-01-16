@@ -154,9 +154,12 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	lt->base=num3;lt->multiple=num4;
 	memcpy(bh->lt,(void *)lt,1);
 	memset(bh->reserved,0,1);
-	bh->version_nh.HT=itsGnProtocolVersion;
-	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
+	bh->version_nh.HST=itsGnProtocolVersion;
+	if (itsGnSecurity==1)bh->version_nh.HT=2;else bh->version_nh.HT=1;
+
 	memset(bh->rhl,1,1);
+
+	print_hex_data(&bh->version_nh,1);PRF("\n");
 	itsnet_shb_t shb_h;
 	//tsb_h.sequencenumber=SN_g;	//PRF("SN %d\n",tsb_h.sequencenumber);
 	SN_g++; //máximo SN?? % SN_MAX;
@@ -905,7 +908,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 
 itsnet_packet_f * TSB_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
-	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
+	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	memcpy(&pkt->common_header.btp,(char *)(buffer)+4,1);
 	pkt->common_header.btp.HST=pkt->common_header.btp.HT;
 	itsnet_position_vector * PV=NULL;//
@@ -929,9 +932,11 @@ itsnet_packet_f * TSB_f(void *buffer){
 itsnet_packet_f * SHB_f(void *buffer){
 
 	itsnet_packet_f * pkt = NULL;
-	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
-	memcpy(&pkt->common_header.btp,(char *)(buffer)+4,1);
-	pkt->common_header.btp.HST=pkt->common_header.btp.HT;
+	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
+	memcpy(&pkt->common_header.btp,(char *)(buffer),1);
+	//pkt->common_header.btp.HST=pkt->common_header.btp.HT;
+
+	print_hex_data(&pkt->common_header.btp,1);printf(" o do btp\n");
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +4+8,24);
@@ -965,7 +970,7 @@ itsnet_packet_f * SHB_f(void *buffer){
 itsnet_packet_f * GeoUnicast_f(void *buffer){
 	//	Create common header
 	itsnet_packet_f * pkt = NULL;
-	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_uni_t)+ sizeof(itsnet_common));
+	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	memcpy((void *)&pkt->common_header.btp,(char *)(buffer)+4,1);
 	pkt->common_header.btp.HST=pkt->common_header.btp.HT;
 	itsnet_position_vector * PV=NULL;//
@@ -989,7 +994,7 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 
 itsnet_packet_f * GeoBroadcast_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
-	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_geo_t)+ sizeof(itsnet_common));
+	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	memcpy((void *)&pkt->common_header.btp,(char *)(buffer)+4,1);
 	pkt->common_header.btp.HST=pkt->common_header.btp.HT;
 	itsnet_position_vector * PV=NULL;//
@@ -1003,11 +1008,11 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer){
 	memcpy(pkt->payload.itsnet_geocast.angle,(char *)(buffer)+8+4+4+24+12,2);
 	memcpy(pkt->payload.itsnet_geocast.distanceA,(char *)(buffer)+8+4+4+24+8,2);
 	memcpy(pkt->payload.itsnet_geocast.distanceB,(char *)(buffer)+8+4+4+24+10,2);
-	//		memcpy(pkt->payload.itsnet_geocast.repetitionInterval,(char *)(buffer)+8,4); //non se establece en ningun sitio
-	//memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4); //convertir o valor a 4 bytes outra vez
+			memcpy(pkt->payload.itsnet_geocast.repetitionInterval,(char *)(buffer)+8,4); //non se establece en ningun sitio
+	memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4); //convertir o valor a 4 bytes outra vez
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+3,1);   //rhl
-	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+4+24+8+16,lon_int+4);
+	memcpy(pkt->payload.itsnet_geocast.payload,(char *)(buffer)+4+4+24+8+16,lon_int+4);
 	memcpy((void *)&pkt->common_header.pkt_type,(char *)(buffer)+1+4,1);
 	pkt->common_header.pkt_type.HST=0;
 	memcpy((void *)&pkt->common_header.pkt_stype,(char *)(buffer)+1+4,1);
