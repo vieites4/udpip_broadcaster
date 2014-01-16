@@ -304,7 +304,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){	free(pkt);free(LPV_dest);free(lt);return(pkt_lsp);}else{
 						char h_source[ETH_ALEN];
 						sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-						get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+						get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 						ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 						char type[2]={0x07,0x07};
 						memcpy(tx_frame->buffer.header.type,type,2);
@@ -462,7 +462,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 		memcpy(nh.address,BROADCAST,6);
 		int f=geo_limit_ll(pkt,LPV);
 		if (f>=0){
-			get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+			get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 			char type[2]={0x07,0x07};// si que funciona nh print_hex_data(nh.address,6);printf("\n");
 			memcpy(tx_frame->buffer.header.type,type,2);
@@ -604,7 +604,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 	if(y>=0){
 		if(itsGnGeoBroadcastForwardingAlgorithm==0||itsGnGeoBroadcastForwardingAlgorithm==1){
 			memcpy(nh.address,BROADCAST,6); //first send is broadcast
-			get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+			get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);
@@ -641,7 +641,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
 						char h_source[ETH_ALEN];
 						sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-						get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+						get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 						ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 						char type[2]={0x07,0x07};
 						memcpy(tx_frame->buffer.header.type,type,2);
@@ -729,7 +729,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 	ht_hst_t *NH;
 	NH= (ht_hst_t *)malloc(sizeof(ht_hst_t));
 	memcpy((void *)NH,buffer+14,1);
-	get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
+	get_mac_address(arg->socket_fd, "wifi1",(unsigned char *) h_source) ;
 	if(memcmp(HT1,geounicast,1)==0 && memcmp(DE_LPV+2,h_source,6)!=0){
 		if(NH->HST==0 ||NH->HST==1 ){
 			itsnet_node * data1=NULL;//
@@ -784,7 +784,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 					free(lt);lt=NULL;
 					char h_source[ETH_ALEN];
 					sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-					get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+					get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 					ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, BROADCAST,h_source);
 					char type[2]={0x07,0x07};
 					memcpy(tx_frame->buffer.header.type,type,2);
@@ -827,7 +827,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 					free(lt);lt=NULL;
 					char h_source[ETH_ALEN];
 					sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-					get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+					get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 					ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, data->mac_id.address,h_source);
 					char type[2]={0x07,0x07};
 					memcpy(tx_frame->buffer.header.type,type,2);
@@ -881,7 +881,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 			free(lt);lt=NULL;
 			char h_source[ETH_ALEN];
 			sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-			get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+			get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, BROADCAST,h_source);
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);

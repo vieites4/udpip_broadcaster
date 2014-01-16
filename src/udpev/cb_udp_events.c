@@ -81,7 +81,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	if (memcmp((void *)type07,data+12,2)==0){
 		PDR_update(data);
 		char h_source[ETH_ALEN];
-		get_mac_address(arg->socket_fd, "wlan0",(unsigned char *) h_source) ;
+		get_mac_address(arg->socket_fd, "wifi1",(unsigned char *) h_source) ;
 		/**if(memcmp((void *)data +6,h_source,6)==0){
 		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");
 		return;	}**/
@@ -150,7 +150,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				itsnet_packet * pkt1=NULL;
 				pkt1 = LS_req_f(datos);
 				char h_source2[ETH_ALEN];
-				get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source2) ;
+				get_mac_address(arg->net_socket_fd, "wifi1",(unsigned char *) h_source2) ;
 				ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source2);
 				memcpy(tx_frame1->buffer.header.type,type07,2);
 				memcpy(tx_frame1->buffer.data,(char *)  pkt1, 60);
@@ -240,7 +240,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 													return;
 												}}else{	//discard
 													return;	}			}else{	}		}
-									get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+									get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 									ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 									sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 									memcpy(tx_frame->buffer.header.type,type07,2);
@@ -308,7 +308,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 												return;}else{
 													char h_source[ETH_ALEN];
 													sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-													get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+													get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 													ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 													char type[2]={0x07,0x07};
 													memcpy(tx_frame->buffer.header.type,type,2);
@@ -330,7 +330,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 										}			}
 									if(memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){return;}else{
 										char h_source2[ETH_ALEN];
-										get_mac_address(arg->net_socket_fd, "wlan0",(unsigned char *) h_source2) ;
+										get_mac_address(arg->net_socket_fd, "wifi1",(unsigned char *) h_source2) ;
 										ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source2);
 										memcpy(tx_frame1->buffer.header.type,type07,2);
 										memcpy(tx_frame1->buffer.data,(char *)  pkt1, arg->len);
@@ -357,7 +357,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			PRF("cb_broadcast_recvfrom: <recv_msg> Could not receive message.\n");
 			return;		}
 		char h_source[ETH_ALEN];
-		get_mac_address(arg->socket_fd, "wlan0", (unsigned char *) h_source) ;
+		get_mac_address(arg->socket_fd, "wifi1", (unsigned char *) h_source) ;
 		ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, ETH_ADDR_BROADCAST,h_source);
 		memcpy(tx_frame->buffer.header.type,type07,2);
 		char datos[arg->len];
