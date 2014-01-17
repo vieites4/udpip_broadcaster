@@ -113,7 +113,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			PRF("entro en shb\n");
 			pkt = SHB_f(datos);
 			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40);//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
-			print_hex_data(pkt, lon_in +40);PRF(" envio shb cara arriba");
+			print_hex_data(pkt, lon_in +40);PRF(" envio shb cara arriba\n");
 			PRF("envio realizado\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			PRF("entro en geobroadcast \n");PRF(" longitud %d\n",lon_in);

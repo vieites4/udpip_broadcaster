@@ -156,8 +156,8 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	lt->base=num3;lt->multiple=num4;
 	memcpy(bh->lt,(void *)lt,1);
 	memset(bh->reserved,0,1);
-	bh->version_nh.HST=itsGnProtocolVersion;
-	if (itsGnSecurity==1)bh->version_nh.HT=2;else bh->version_nh.HT=1;
+	bh->version_nh.HT=itsGnProtocolVersion;
+	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
 
 	memset(bh->rhl,1,1);
 
@@ -898,8 +898,8 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 
 			int header_length=0;
 			if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0){header_length=44;} //cambiar esto por datos novos
-			else if(memcmp(HT,tsb0,1)==0){header_length=28;}
-			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,header_length+ size+4+8+14+4);//==-1){}
+			else if(memcmp(HT,tsb0,1)==0){header_length=28+6;}
+			send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,header_length+ size+2+8+14+4);//==-1){}
 			//print_hex_data(&tx_frame->buffer,header_length+ size+4+8);
 			PRF(" paquete enviado a ll despois de lsp \n");free(tx_frame);free(dir);
 			if(memcmp(HT,tsb0,1)==0)ev_timer_again (l_Beacon,&t_Beacon);
@@ -966,7 +966,8 @@ itsnet_packet_f * SHB_f(void *buffer){
 		}**/
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+3,1);
-	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+4+24+8,lon_int+4);
+	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+4+24+8+4,lon_int+4);
+	print_hex_data(pkt->payload.itsnet_unicast.payload,lon_int+4);PRF(" payload\n");
 	memcpy((void *)&pkt->common_header.pkt_type,(char *)(buffer)+1+4,1);
 	pkt->common_header.pkt_type.HST=0;
 	memcpy((void *)&pkt->common_header.pkt_stype,(char *)(buffer)+1+4,1);
