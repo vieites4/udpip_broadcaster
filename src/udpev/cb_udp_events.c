@@ -87,7 +87,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		return;	}**/
 		PRF("cb_forward_recv \n");
 		memcpy(arg->data,data,arg->len);
-		print_hex_data((char *)data,arg->len);PRF(" cara arriba \n");
+		print_hex_data((char *)data,arg->len);PRF(" o paquete que chega \n");
 		char datos[arg->len];
 		memcpy(datos,data +14,arg->len);
 		char HT[1];char HL[1];char LEN[2];
@@ -108,12 +108,12 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			pkt = TSB_f(datos);aa=1;
 			//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
 			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40	);
-			PRF("saio de tsb_f \n");print_hex_data(pkt, lon_in +40);PRF(" longitud %d\n",lon_in);
+			PRF("saio de tsb_f \n");print_hex_data(pkt, lon_in +40);PRF(" envio tsb cara arriba\n");
 		} else if(memcmp(HT,tsb0,1)==0){
 			PRF("entro en shb\n");
 			pkt = SHB_f(datos);
 			send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +40);//	print_hex_data((char *)pkt,lon_in +20);PRF(" cara arriba \n");
-			print_hex_data(pkt, lon_in +40);PRF(" longitud %d\n",lon_in);
+			print_hex_data(pkt, lon_in +40);PRF(" envio shb cara arriba");
 			PRF("envio realizado\n");
 		} else if(memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0){
 			PRF("entro en geobroadcast \n");PRF(" longitud %d\n",lon_in);
@@ -122,7 +122,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			int y =geo_limit(HT,pkt,LPV);PRF("geo_limit: %d\n",y);
 			if (y>=0){
 				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
-			PRF("saio de geobroadcast_f \n");print_hex_data(pkt, lon_in +56);PRF("\n");
+			PRF("saio de geobroadcast_f \n");print_hex_data(pkt, lon_in +56);PRF(" envio geo cara arriba\n");
 		}		else if(memcmp(HT,beacon,1)==0 ){
 			PRF("entro en beacon\n");
 		}else if(memcmp(HT,geounicast,1)==0 ){
@@ -192,7 +192,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 		if((memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0||memcmp(HT,tsb1,1)==0||memcmp(HT,tsb0,1)==0||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0) ){
 			free(pkt);pkt=NULL;}
-		if (aa==1 && PDR_int<= itsGnMaxPacketDataRate){
+		if (aa==7 && PDR_int<= itsGnMaxPacketDataRate){
 			if (memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0|| memcmp(HT,tsb0,1)==0 ||memcmp(HT,geobroad0,1)==0 || memcmp(HT,geobroad1,1)==0 || memcmp(HT,geobroad2,1)==0||memcmp(HT,geounicast,1)==0||ae==1 ){
 				PRF("entro no envio do enlace cara o enlace \n");
 				if (hl_int>1){
@@ -397,10 +397,10 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				//&& (memcmp(HL,single,1)!=0)
 				int header_length=0;
 				if(memcmp(HT,geobroad0,1)==0||memcmp(HT,geobroad1,1)==0||memcmp(HT,geobroad2,1)==0 ||memcmp(HT,geoanycast0,1)==0||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){header_length=44;}
-				else if(memcmp(HT,tsb0,1)==0){header_length=28;}else if(memcmp(HT,geounicast,1)==0){header_length=48;} else if(memcmp(HT,ls0,1)==0){header_length=36;}else if(memcmp(HT,ls0,1)==0){header_length=48;}
+				else if(memcmp(HT,tsb0,1)==0){header_length=28+6;}else if(memcmp(HT,geounicast,1)==0){header_length=48;} else if(memcmp(HT,ls0,1)==0){header_length=36;}else if(memcmp(HT,ls0,1)==0){header_length=48;}
 				memcpy(tx_frame->buffer.data, (char *) pkt,lon_int+header_length+4+8+4);
-				send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4+8+4);//==-1){}
-				//print_hex_data(&tx_frame->buffer,lon_int+ 44+4+8+4);PRF("\n");
+				send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4+8+2);//==-1){}
+				//print_hex_data(pkt, header_length +lon_int+4+8+2+6);PRF(" o paquete que metín!\n");
 				if(memcmp(HT,tsb0,1)==0)ev_timer_again (l_Beacon,&t_Beacon);
 				//print_hex_data(&tx_frame->buffer,header_length+ lon_int+4+8);
 				PRF(" paquete enviado directo \n");
