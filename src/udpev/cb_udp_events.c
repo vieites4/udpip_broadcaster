@@ -78,18 +78,18 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 	if ( ( arg->len = recv_message(arg->socket_fd,data))<0)
 	{PRF("cb_forward_recvfrom: <recv_msg>  Could not receive message.\n");	return;}
 	//		(self-broadcast messages are not received)
-	if (memcmp((void *)type07,data+12,2)==0){
+	if (memcmp((void *)type07,data+12,2)==0){		PRF("cb_forward_recv \n");
 		PDR_update(data);
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, net_name,(unsigned char *) h_source) ;
-		/**if(memcmp((void *)data +6,h_source,6)==0){
+		if(memcmp((void *)data +6,h_source,6)==0){
 		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");
-		return;	}**/
-		PRF("cb_forward_recv \n");
+		return;	}
+
 		memcpy(arg->data,data,arg->len);
 		print_hex_data((char *)data,arg->len);PRF(" o paquete que chega \n");
 		char datos[arg->len];
-		memcpy(datos,data +14,arg->len);
+		memcpy(datos,(void *)(data) +14,arg->len);
 		char HT[1];char HL[1];char LEN[2];
 		memcpy(HT,(char *)(datos)+4 +1,1);
 		itsnet_packet_f * pkt=NULL;
@@ -168,7 +168,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			if(memcmp(ADDR,(char *)&GN_ADDR,8)==0){
 				itsnet_packet * pkt1=NULL;
 				mac_addr package;
-				memcpy(package.address,ADDR,6);
+				memcpy(package.address,ADDR+2,6);
 				int pos=search_in_locT_m_pending(package,locT_general);
 				Element_locT * position=locT_general->init;
 				int cont=1;
@@ -202,7 +202,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 					memcpy(pkt1, data +14 ,arg->len);
 					byte_struct *number;
 					itsnet_position_vector *LPV_se= &pkt1->payload.itsnet_geobroadcast.source_position_vector;
-					number=(byte_struct *)hl_int -1;
+					number=hl_int -1;print_hex_data(&number,1);PRF(" o number\n");
 					memcpy(pkt1->basic_header.rhl,&number,1);
 					if (memcmp(HT,tsb1,1)==0 || at==1){pkt1->payload.itsnet_tsb.source_position_vector=* LPV;}else {pkt1->payload.itsnet_geobroadcast.source_position_vector=* LPV;}
 					itsnet_common_header *ch=NULL;
@@ -235,7 +235,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 												if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(pkt1);free(ch);return;}else{
 													ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 													sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-													memcpy(tx_frame->buffer.header.type,type07,2);
+													memcpy(tx_frame->buffer.header.type,type07,2);PRF("fallo despois desto?\n");
 													memcpy(tx_frame->buffer.data, pkt1, IEEE_80211_BLEN);
 													send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,sprint_hex_data(pkt1->common_header.payload_lenght,2)+ 44+4+8+14+4);free(tx_frame);free(pkt1);free(ch);return;
 													return;
@@ -244,7 +244,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 									get_mac_address(arg->socket_fd, net_name, (unsigned char *) h_source) ;
 									ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 									sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-									memcpy(tx_frame->buffer.header.type,type07,2);
+									memcpy(tx_frame->buffer.header.type,type07,2);PRF("fallo despois desto?\n");
 									memcpy(tx_frame->buffer.data, pkt1, IEEE_80211_BLEN);
 									send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sprint_hex_data((char *)(datos)+4 +4,2)+ 44+4+8+14+4);free(dir);free(pkt1);free(tx_frame);return;
 								}
@@ -254,7 +254,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 									if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return;}else{
 										ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 										sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-										memcpy(tx_frame->buffer.header.type,type07,2);
+										memcpy(tx_frame->buffer.header.type,type07,2);PRF("fallo despois desto?\n");
 										memcpy(tx_frame->buffer.data, pkt1, IEEE_80211_BLEN);
 										send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sprint_hex_data((char *)(datos)+4 +4,2)+ 44+4+8+14+4);free(tx_frame);free(dir);free(pkt1);free(ch);return;}
 								}	else if(itsGnGeoBroadcastForwardingAlgorithm==3){
@@ -263,7 +263,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 
 										ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 										sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
-										memcpy(tx_frame->buffer.header.type,type07,2);
+										memcpy(tx_frame->buffer.header.type,type07,2);PRF("fallo despois desto?\n");
 										memcpy(tx_frame->buffer.data, pkt1, IEEE_80211_BLEN);
 										send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sprint_hex_data((char *)(datos)+4 +4,2)+ 44+4+8+14+4);free(tx_frame);free(dir);free(pkt1);free(ch);return;}
 
@@ -312,7 +312,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 													get_mac_address(arg->socket_fd, net_name, (unsigned char *) h_source) ;
 													ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 													char type[2]={0x07,0x07};
-													memcpy(tx_frame->buffer.header.type,type,2);
+													memcpy(tx_frame->buffer.header.type,type,2);PRF("fallo despois desto?\n");
 													memcpy(tx_frame->buffer.data, pkt1, IEEE_80211_BLEN);
 													send_message(	(sockaddr_t *)dir,arg->net_socket_fd,&tx_frame->buffer,sprint_hex_data((char *)(datos)+4 +4,2)+ 48+4+8+14+4);free(tx_frame);
 													free(pkt1);free(ch);pkt1=NULL;free(dir);return;}				}

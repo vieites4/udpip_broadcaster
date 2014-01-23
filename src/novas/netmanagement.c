@@ -539,34 +539,43 @@ List_locT * startup1(configuration_t *cfg)
 }
 int first;
 
-gps_data_t * gpsdata_p=NULL;
+
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	char * h_source= (char *)w->data;
+
+	gps_data_t * gpsdata_p=NULL;
+	if (first==1) free(gpsdata_p);
 	gps_data_t gpsdata;
-	if (first==0)gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
+	//if (first==0)
+		gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
 	gpsdata=*gpsdata_p;
 	PRF ("ENTRO NO DO LPV_update\n");
 	int timer;
 	if (first==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	timer=50000;}else timer=5000;
 	if (first==1) {memcpy((void *)LPV_old,(void *)LPV,24);}
-	if (first==0)	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	if (first==1)free(LPV);
+
 	first=1;
+	LPV=NULL;
+	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	if( gps_open("localhost","2947",&gpsdata)!=0){
 		return(LPV);
 	}
 	if (&gpsdata == NULL) {		PRF("Could not connect to gpsd!\n");	}
 	(void) gps_stream(&gpsdata, WATCH_ENABLE, NULL);//gpsdata.dev);
 	/* Put this in a loop with a call to a high resolution sleep () in it. */
-	int i=0;
+	int i=0;PRF ("ENTRO NO DO LPV_update\n");
 	for(i = 0; i < 100; i++){
 		if (gps_waiting (&gpsdata, timer)) //wait 5 seconds
 		{
-			if (gps_read (&gpsdata) == -1) {
+			if (gps_read (&gpsdata) == -1) {PRF ("ENTRO NO -1\n");
 			} else {
+				PRF ("ENTRO NO gpsdata\n");
 				/* Display data from the GPS receiver. */
 				if (gpsdata.fix.mode>=2 && 	(gpsdata.fix.epx>=0 && gpsdata.fix.epx<366) && 	(gpsdata.fix.epy>=0 && gpsdata.fix.epy<366) && 	(gpsdata.fix.epv>=0 && gpsdata.fix.epv<366)){
-					LPV->node_id=GN_ADDR;
+
+					memcpy((void *)&LPV->node_id,(void *)&GN_ADDR,8);PRF ("ENTRO NO DO LPV_update\n");
 					LPV->heading=gpsdata.fix.track *10; //necesitoo en 1/10 degrees e danmo en degrees.
 					char str6[9] = {'\0'};	char str7[9] = {'\0'};	char str8[9] = {'\0'};	char str10[5] = {'\0'};
 					if(gpsdata.fix.latitude<0){sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.latitude * -10000000));}else{sprintf(str6, "%08X",(signed int) ceil(gpsdata.fix.latitude * 10000000));}
@@ -577,7 +586,7 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					sprintf(str10, "%04X",(int)ceil(gpsdata.fix.speed *100));
 					int num1=0;int num6=0;signed int num7=0;signed int num8=0;int num9=0;int num10=0;
 				//	print_hex_data(str7,4);printf(" longitud\n");
-					num6=strtol(str6,NULL,16);
+					num6=strtol(str6,NULL,16);PRF ("ENTRO NO DO LPV_update\n");
 					num7=strtol(str7,NULL,16);
 					num10=strtol(str10,NULL,16);
 					if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
@@ -587,9 +596,10 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					int speed2=num10%128;
 					LPV->speed1=speed1;
 					LPV->speed2=speed2; //recibe metros por segundo e quere 1/100 m/s
+					print_hex_data(h_source,6);PRF( "MAC \n");
 					memcpy(LPV->node_id.mac.address,h_source,6);
-					i=100;				} } }else {if (first==1) LPV=LPV_old;    }}
-	gps_close (&gpsdata);
+					i=100;				} } }else {if (first==1) memcpy(LPV,LPV_old,24);    }}
+	gps_close (&gpsdata);PRF("saio do lpv_update\n");
 	return(LPV);
 }
 
