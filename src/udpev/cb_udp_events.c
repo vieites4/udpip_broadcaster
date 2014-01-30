@@ -238,8 +238,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 													memcpy(tx_frame->buffer.header.type,type07,2);PRF("fallo despois desto?\n");
 													memcpy(tx_frame->buffer.data, pkt1, IEEE_80211_BLEN);
 													send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,sprint_hex_data(pkt1->common_header.payload_lenght,2)+ 44+4+8+14+4);free(tx_frame);free(pkt1);free(ch);return;
-													return;
+
 												}}else{	//discard
+													free(pkt1);free(ch);
 													return;	}			}else{	}		}
 									get_mac_address(arg->socket_fd, net_name, (unsigned char *) h_source) ;
 									ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
@@ -251,7 +252,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 								else if(itsGnGeoBroadcastForwardingAlgorithm==2){
 
 									nh=CBF_BC(pkt1,sprint_hex_data((char *)(datos)+4 +4,2)+ 44+4+8+14+4,LPV); //first send PV_SE is LPV
-									if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){return;}else{
+									if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(pkt1);free(ch);return;}else{
 										ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 										sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 										memcpy(tx_frame->buffer.header.type,type07,2);PRF("fallo despois desto?\n");
@@ -329,7 +330,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 											free(pkt1);free(ch);
 											return;
 										}			}
-									if(memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){return;}else{
+									if(memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0||memcmp(HT,geoanycast2,1)==0){free(pkt1);free(ch);return;}else{
 										char h_source2[ETH_ALEN];
 										get_mac_address(arg->net_socket_fd, net_name,(unsigned char *) h_source2) ;
 										ieee80211_frame_t *tx_frame1 = init_ieee80211_frame(arg->net_port, ETH_ADDR_BROADCAST,h_source2);

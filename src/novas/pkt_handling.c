@@ -71,7 +71,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	num4=strtol(str2,NULL,16);
 	num3=strtol(str1,NULL,16);
 	lt->base=num3;lt->multiple=num4;
-	memcpy(bh->lt,(void *)lt,1);
+	memcpy(bh->lt,(void *)lt,1);free(lt);
 	memset(bh->reserved,0,1);
 	bh->version_nh.HT=itsGnProtocolVersion;
 	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
@@ -98,7 +98,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		memset(info_dest,0,2);
 		memcpy(tsb_h->payload.btp1,(char *)(buffer) + 18,2);
 		memcpy(tsb_h->payload.btp2,info_dest,2);}
-	pkt->payload.itsnet_tsb=*tsb_h;
+	pkt->payload.itsnet_tsb=*tsb_h;free(tsb_h);
 	if  ((locT_general->len== 0 || any_neighbours()==0)&& ch->traffic_class.scf==1){
 		itsnet_packet * pkt1 = NULL;
 		int val=lsp_bc_g->size+8+4+28+4+sprint_hex_data((char *)(buffer) +4,2);
@@ -121,7 +121,7 @@ itsnet_packet * TSB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
 	//PRF("saio de tsb\n");
-	free(lt);return(pkt);
+	return(pkt);
 }
 
 itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
@@ -154,7 +154,7 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 	num4=strtol(str2,NULL,16);
 	num3=strtol(str1,NULL,16);
 	lt->base=num3;lt->multiple=num4;
-	memcpy(bh->lt,(void *)lt,1);
+	memcpy(bh->lt,(void *)lt,1);free(lt);
 	memset(bh->reserved,0,1);
 	bh->version_nh.HT=itsGnProtocolVersion;
 	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
@@ -181,7 +181,7 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		memset(info_dest,0,2);
 		memcpy(shb_h->payload.btp1,(char *)(buffer) + 18,2);
 		memcpy(shb_h->payload.btp2,info_dest,2);		}
-	pkt->payload.itsnet_shb=*shb_h;
+	pkt->payload.itsnet_shb=*shb_h;free(shb_h);
 	if  ((locT_general->len== 0 || any_neighbours()==0)&& ch->traffic_class.scf==1){
 		itsnet_packet * pkt1 = NULL;
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -203,7 +203,7 @@ itsnet_packet * SHB(void *buffer, List_lsp *lsp, List_lsp *rep){
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
-	free(lt);return(pkt);}
+	return(pkt);}
 itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_arg_r *arg){
 
 	itsnet_packet * pkt = NULL;
@@ -234,7 +234,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 	num4=strtol(str2,NULL,16);
 	num3=strtol(str1,NULL,16);
 	lt->base=num3;lt->multiple=num4;
-	memcpy(bh->lt,(void *)lt,1);
+	memcpy(bh->lt,(void *)lt,1);free(lt);
 	memset(bh->reserved,0,1);
 	bh->version_nh.HT=itsGnProtocolVersion;
 	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
@@ -278,10 +278,10 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 				val=ls_buffer->size+4+8+52+4+sprint_hex_data((char *)(buffer) +4,2);
 				PRF("aqui podo liala porque non se actualice ls_buffer");
 			}
-			int i =add_end_lsp(ls_buffer, *pkt,3);free(pkt);	free(LPV_dest);free(lt);
+			int i =add_end_lsp(ls_buffer, *pkt,3);free(pkt);	free(LPV_dest);
 			return(pkt1);
 		}else{
-			int pos_loct=search_in_locT_m(LPV_dest->node_id.mac,locT_general);
+			int pos_loct=search_in_locT_m(LPV_dest->node_id.mac,locT_general);free(LPV_dest);
 			if ( pos_loct==0 && ch->traffic_class.scf==1){
 				int val=lsp_uc_g->size+8+4+52+4+sprint_hex_data((char *)(buffer) +4,2);
 				//delete old buffered elements if we need more size to add a new one.
@@ -290,11 +290,11 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 					val=lsp_uc_g->size+4+8+52+4+sprint_hex_data((char *)(buffer) +4,2);
 					PRF("aqui podo liala porque non se actualice lsp_uc_g a tempo");
 				}
-				int i =add_end_lsp(lsp_uc_g, *pkt,4);free(pkt);	free(LPV_dest);free(lt);
+				int i =add_end_lsp(lsp_uc_g, *pkt,4);free(pkt);
 				return(pkt_lsp);
 				//buffer in BC AND omit next executions
 			} else if (pos_loct==0 &&ch->traffic_class.scf==0){
-				free(LPV_dest);free(lt);
+
 				return(pkt);
 				//broadcast, no more
 			} else if(pos_loct!=0) {
@@ -308,7 +308,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 
 				if(itsGnGeoUnicastForwardingAlgorithm==0||itsGnGeoUnicastForwardingAlgorithm==1){
 					mac_addr nh= Greedy_Forwarding_UC(&position->data.pos_vector);
-					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){	free(pkt);free(LPV_dest);free(lt);return(pkt_lsp);}else{
+					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){	free(pkt);return(pkt_lsp);}else{
 						char h_source[ETH_ALEN];
 						sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 						get_mac_address(arg->socket_fd, net_name, (unsigned char *) h_source) ;
@@ -316,13 +316,14 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 						char type[2]={0x07,0x07};
 						memcpy(tx_frame->buffer.header.type,type,2);
 						memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-						send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 48+4+8+14+4);free(tx_frame);free(pkt);free(LPV_dest);free(lt);return(pkt_lsp);
+						send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 48+4+8+14+4);free(tx_frame);free(pkt);return(pkt_lsp);
 					}				}
 				else if(itsGnGeoUnicastForwardingAlgorithm==2){
-					CBF_UC(pkt,lon_int+ 48+4+8+14+4,LPV);	free(LPV_dest);free(lt);free(pkt);
+					CBF_UC(pkt,lon_int+ 48+4+8+14+4,LPV);	free(pkt);
 					return(pkt_lsp);
 				}			}}
 	}else{
+		free(LPV_dest);
 		PRF("LOCATION SERVICE\n");
 		if (itsGnSecurity==1){PRF("Security en ls\n");}
 		itsnet_packet * pkt_ls = NULL;
@@ -358,7 +359,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 		data->LS_PENDING=true;
 		AddTimer(ls_req.sequencenumber,3*itsGnBeaconServiceRetransmitTimer,5);
 		data->SN1=ls_req.sequencenumber;
-		add_end_locT(locT_general,*data);
+		add_end_locT(locT_general,*data);free(data);
 		//ls retransmisor
 		AddTimer(ls_req.sequencenumber,itsGnLocationServiceRetransmitTimer,2);//antes poñía ls_req.sequencenumber pero penso que é mellor que leve o sn do unicast, q non cambia con cada paso
 
@@ -375,7 +376,8 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 			ls_buffer=sup_elem_lsp(0xffff,3);
 			val1=ls_buffer->size+4+8+52+4+sprint_hex_data((char *)(pkt->common_header.payload_lenght),2);
 			PRF("aqui podo liala porque non se actualice ls_buffer");
-		}		add_end_lsp(ls_buffer, *pkt,3);	}
+		}
+		add_end_lsp(ls_buffer, *pkt,3);free(pkt_ls);	}
 
 	//REPETITION INTERVAL
 	char REP[4];
@@ -384,8 +386,7 @@ itsnet_packet * GeoUnicast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
-	//PRF("saio de tsb\n");
-	free(LPV_dest);free(lt);return(pkt);
+	return(pkt);
 
 }
 itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_arg_r *arg){
@@ -416,7 +417,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 	num4=strtol(str2,NULL,16);
 	num3=strtol(str1,NULL,16);
 	lt->base=num3;lt->multiple=num4;
-	memcpy(bh->lt,(void *)lt,1);
+	memcpy(bh->lt,(void *)lt,1);free(lt);
 	memset(bh->reserved,0,1);
 	bh->version_nh.HT=itsGnProtocolVersion;
 	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
@@ -439,7 +440,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 	memcpy(gbc_h->payload.payload,(char *)(buffer) +36,lon_int);
 	//print_hex_data(pkt->payload.itsnet_geobroadcast.payload.payload,lon_int);printf(" .\n");
 	pkt->common_header=*ch;
-	pkt->basic_header=*bh;
+	pkt->basic_header=*bh;free(bh);
 	//NEIGHBOURS.
 	if (memcmp((char *)(buffer) +7,tipoa,1)==0)
 	{		memcpy(gbc_h->payload.btp1,(char *)(buffer) + 34,2);
@@ -449,7 +450,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 		memset(info_dest,0,2);
 		memcpy(gbc_h->payload.btp1,(char *)(buffer) + 34,2);
 		memcpy(gbc_h->payload.btp2,info_dest,2);		}
-	pkt->payload.itsnet_geobroadcast=*gbc_h;
+	pkt->payload.itsnet_geobroadcast=*gbc_h;free(gbc_h);
 	if  ((locT_general->len== 0 || any_neighbours()==0) && ch->traffic_class.scf==1){
 
 		//pkt1=(itsnet_packet *)malloc(sizeof(itsnet_packet));
@@ -460,9 +461,10 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 			val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
-		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);free(lt);
+		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);free(ch);
 		return(pkt1);		//buffer in BC AND omit next executions
 	}
+	free(ch);
 	mac_addr nh;
 	char h_source[ETH_ALEN];
 	sockaddr_ll_t * dir= init_sockaddr_ll(arg->forwarding_port);
@@ -478,7 +480,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 			memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
 			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4+4);
 			//print_hex_data(&pkt->payload.itsnet_geobroadcast.payload,lon_int+4);PRF("\n");
-			free(lt);free(pkt);free(tx_frame);return(pkt1);}
+			free(pkt);free(tx_frame);return(pkt1);}
 
 		else{PRF("ESTÁ MUY LEJOS!!\n");
 		if(LPV->pai==1){
@@ -488,40 +490,40 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 				A.latitude=pkt->payload.itsnet_geobroadcast.dest_latitude;
 				A.longitude=pkt->payload.itsnet_geobroadcast.dest_longitude;
 				mac_addr NH=Greedy_Forwarding_UC(&A);
-				if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
+				if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(pkt);return(pkt1);}else{
 					ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 					char type[2]={0x07,0x07};
 					memcpy(tx_frame->buffer.header.type,type,2);
 					memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-					send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
+					send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(pkt);return(pkt1);
 					//print_hex_data(&tx_frame->buffer,lon_int+ 44+4+8+4);PRF("\n");
 				}}else{
 					//discard
-					free(lt);free(pkt);
-					return(pkt1);	}			}else{free(lt);
-					return(pkt); //broadcast
+					free(pkt);
+					return(pkt1);	}			}else{
+						return(pkt); //broadcast
 					}		}	}
 	else if(itsGnGeoBroadcastForwardingAlgorithm==2){
 
 		nh=CBF_BC(pkt,lon_int+ 44+4+8+14+4,LPV); //first send PV_SE is LPV
-		if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
+		if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(pkt);return(pkt1);}else{
 
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);
 			memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
+			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(pkt);return(pkt1);
 			//print_hex_data(&tx_frame->buffer,lon_int+ 44+4+8+4);PRF("\n");
-			return(pkt1);}
+		}
 	}	else if(itsGnGeoBroadcastForwardingAlgorithm==3){
 		nh=	Advanced_BC(pkt,lon_int+ 44+4+8+14+4,LPV,NULL,h_source);
-		if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
+		if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(pkt);return(pkt1);}else{
 
 			ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);
 			memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
+			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(pkt);return(pkt1);
 		}}
 	//REPETITION INTERVAL
 	char REP[4];
@@ -530,7 +532,7 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
-	free(lt);return(pkt);}
+	return(pkt);}
 
 itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev_arg_r *arg){
 	itsnet_packet * pkt = NULL;
@@ -560,7 +562,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 	num4=strtol(str2,NULL,16);
 	num3=strtol(str1,NULL,16);
 	lt->base=num3;lt->multiple=num4;
-	memcpy(bh->lt,(void *)lt,1);
+	memcpy(bh->lt,(void *)lt,1);free(lt);
 	memset(bh->reserved,0,1);
 	bh->version_nh.HT=itsGnProtocolVersion;
 	if (itsGnSecurity==1)bh->version_nh.HST=2;else bh->version_nh.HST=1;
@@ -602,7 +604,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 			val=lsp_bc_g->size+8+4+48+4+sprint_hex_data((char *)(buffer) +4,2);
 			PRF("aqui podo liala porque non se actualice lsp_bc_g a tempo");
 		}
-		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(lt);free(pkt);
+		int i =add_end_lsp(lsp_bc_g, *pkt,0);free(pkt);
 		return(pkt1);		//buffer in BC AND omit next executions
 	}
 	mac_addr nh;
@@ -618,27 +620,27 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 			char type[2]={0x07,0x07};
 			memcpy(tx_frame->buffer.header.type,type,2);
 			memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
+			send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(pkt);return(pkt1);
 		}
 		else if(itsGnGeoBroadcastForwardingAlgorithm==2){
 
 			nh=CBF_BC(pkt,lon_int+ 44+4+8+14+4,LPV); //first send PV_SE is LPV
-			if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
+			if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(pkt);return(pkt1);}else{
 
 				ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 				char type[2]={0x07,0x07};
 				memcpy(tx_frame->buffer.header.type,type,2);
 				memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-				send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);}
+				send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(pkt);return(pkt1);}
 		}	else if(itsGnGeoBroadcastForwardingAlgorithm==3){
 			nh=	Advanced_BC(pkt,lon_int+ 44+4+8+14+4,LPV,NULL,h_source);
-			if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
+			if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(pkt);return(pkt1);}else{
 
 				ieee80211_frame_t *tx_frame = init_ieee80211_frame(arg->forwarding_port, nh.address,h_source);
 				char type[2]={0x07,0x07};
 				memcpy(tx_frame->buffer.header.type,type,2);
 				memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-				send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
+				send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(pkt);return(pkt1);
 			}}}else if(y<0 && itsGnGeoAreaLineForwarding==true){
 
 				if(itsGnGeoUnicastForwardingAlgorithm==0||itsGnGeoUnicastForwardingAlgorithm==1){
@@ -647,7 +649,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 					A.latitude=pkt->payload.itsnet_geobroadcast.dest_latitude;
 					A.longitude=pkt->payload.itsnet_geobroadcast.dest_longitude;
 					mac_addr nh= Greedy_Forwarding_UC(&A);
-					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(lt);free(pkt);return(pkt1);}else{
+					if (memcmp(nh.address,TWOS,6)==0 ||memcmp(nh.address,ZEROS,6)==0){free(pkt);return(pkt1);}else{
 						char h_source[ETH_ALEN];
 						sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 						get_mac_address(arg->socket_fd, net_name, (unsigned char *) h_source) ;
@@ -655,7 +657,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 						char type[2]={0x07,0x07};
 						memcpy(tx_frame->buffer.header.type,type,2);
 						memcpy(tx_frame->buffer.data, pkt, IEEE_80211_BLEN);
-						send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(lt);free(pkt);return(pkt1);
+						send_message(	(sockaddr_t *)dir,arg->forwarding_socket_fd,&tx_frame->buffer,lon_int+ 44+4+8+14+4);free(tx_frame);free(pkt);return(pkt1);
 					}				}
 				else if(itsGnGeoUnicastForwardingAlgorithm==2){
 					CBF_UC(pkt,lon_int+ 44+4+8+14+4,LPV);
@@ -670,7 +672,7 @@ itsnet_packet *  GeoAnycast(void *buffer, List_lsp *lsp, List_lsp *rep,public_ev
 		//GARDAR O PAQUETE
 		//RTX THE PACKET WITH PERIOD SPECIFIED IN REP UNTIL HL.
 	}
-	free(lt);return(pkt);}
+	return(pkt);}
 
 
 int BasicHeader_processing(public_ev_arg_r *arg){
@@ -788,7 +790,7 @@ int CommonHeader_processing(public_ev_arg_r *arg){
 					num4=strtol(str2,NULL,16);//PRF("%d\n", num4);
 					num3=strtol(str1,NULL,16);//PRF("%d\n", num3);
 					lt->base=num3;lt->multiple=num4;
-					memcpy(pos1->data.basic_header.lt,(void *)lt,1);
+					memcpy(pos1->data.basic_header.lt,(void *)lt,1);free(lt);
 					pos1->data.payload.itsnet_unicast.source_position_vector=* LPV;
 					free(lt);lt=NULL;
 					char h_source[ETH_ALEN];
@@ -916,8 +918,8 @@ itsnet_packet_f * TSB_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	memcpy((void *)&pkt->common_header.btp,(char *)(buffer),1);
-		pkt->common_header.btp.HT=pkt->common_header.btp.HST;
-		pkt->common_header.btp.HST=0;
+	pkt->common_header.btp.HT=pkt->common_header.btp.HST;
+	pkt->common_header.btp.HST=0;
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +4+4+8,24);
@@ -941,8 +943,8 @@ itsnet_packet_f * SHB_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	memcpy((void *)&pkt->common_header.btp,(char *)(buffer),1);
-		pkt->common_header.btp.HT=pkt->common_header.btp.HST;
-		pkt->common_header.btp.HST=0;
+	pkt->common_header.btp.HT=pkt->common_header.btp.HST;
+	pkt->common_header.btp.HST=0;
 	print_hex_data(&pkt->common_header.btp,1);printf(" o do btp\n");
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
@@ -980,8 +982,8 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	memcpy((void *)&pkt->common_header.btp,(char *)(buffer),1);
-		pkt->common_header.btp.HT=pkt->common_header.btp.HST;
-		pkt->common_header.btp.HST=0;
+	pkt->common_header.btp.HT=pkt->common_header.btp.HST;
+	pkt->common_header.btp.HST=0;
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer) +4+4+8+24,24);
@@ -1036,8 +1038,8 @@ itsnet_packet_f * GeoAnycast_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_geo_t)+ sizeof(itsnet_common));
 	memcpy((void *)&pkt->common_header.btp,(char *)(buffer),1);
-		pkt->common_header.btp.HT=pkt->common_header.btp.HST;
-		pkt->common_header.btp.HST=0;
+	pkt->common_header.btp.HT=pkt->common_header.btp.HST;
+	pkt->common_header.btp.HST=0;
 	itsnet_position_vector * PV=NULL;//
 	PV= (itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
 	memcpy(PV,(char *)(buffer)+ 4+4+8,24);
