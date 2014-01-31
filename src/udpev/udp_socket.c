@@ -62,6 +62,7 @@ ifreq_t *new_ifreq()
 {
 	ifreq_t *s = NULL;
 	//	if (a>0){free(s); s=NULL;}	a=1;
+	//printf("ifreq \n");
 	if ( ( s = (ifreq_t *)malloc(LEN__IFREQ ) ) == NULL )	{ handle_sys_error("new_ifreq: <malloc> returns NULL.\n"); }
 	if ( memset(s, 0, LEN__IFREQ) == NULL )	{ handle_sys_error("new_ifreq: <memset> returns NULL.\n"); }
 	return(s);
@@ -100,6 +101,7 @@ sockaddr_in_t *new_sockaddr_in()
 	sockaddr_in_t *s = NULL;
 	if ( ( s = (sockaddr_in_t *)malloc(LEN__SOCKADDR_IN) ) == NULL )	{ handle_sys_error("new_sockaddr_in: <malloc> returns NULL.\n"); }
 	if ( memset(s, 0, LEN__SOCKADDR) == NULL )	{ handle_sys_error("new_sockaddr_in: <memset> returns NULL.\n"); }
+	printf("sockaddr_in_t \n");
 	return(s);
 
 }
@@ -108,7 +110,7 @@ sockaddr_in_t *new_sockaddr_in()
 sockaddr_ll_t *new_sockaddr_ll()
 {
 	sockaddr_ll_t *buffer = NULL;
-	buffer = (sockaddr_ll_t *)malloc(LEN__SOCKADDR_LL);
+	buffer = (sockaddr_ll_t *)malloc(LEN__SOCKADDR_LL);printf("new_sockaddr_ll\n");
 	memset(buffer, 0, LEN__SOCKADDR_LL);
 	return(buffer);
 }
@@ -119,6 +121,7 @@ iovec_t *new_iovec()
 	iovec_t *s = NULL;
 	if ( ( s = (iovec_t *)malloc(LEN__IOVEC) ) == NULL )	{ handle_sys_error("new_iovec: <malloc> returns NULL.\n"); }
 	if ( memset(s, 0, LEN__IOVEC) == NULL )	{ handle_sys_error("new_iovec: <memset> returns NULL.\n"); }
+	printf("new_iovec \n");
 	return(s);
 
 }
@@ -138,7 +141,7 @@ msg_header_t *new_msg_header()
 	s->msg_namelen = LEN__SOCKADDR_IN;
 	s->msg_iov = new_iovec();
 	s->msg_iovlen = 0;
-
+	printf("new_msg_header \n");
 	return(s);
 
 }
@@ -167,7 +170,7 @@ sockaddr_in_t *init_sockaddr_in(const int port,in_addr_t addr)
 	return(s);
 }
 
-
+/**
 sockaddr_ll_t *init_broadcast_sockaddr_ll(const int port)
 {
 
@@ -178,7 +181,7 @@ sockaddr_ll_t *init_broadcast_sockaddr_ll(const int port)
 	s->sll_protocol=htons(0x0707);
 	return(s);
 
-}
+}**/
 /* init_any_sockaddr_in */
 sockaddr_in_t *init_any_sockaddr_in(const int port)
 {
@@ -186,7 +189,6 @@ sockaddr_in_t *init_any_sockaddr_in(const int port)
 	s->sin_family = AF_INET;
 	s->sin_port = (in_port_t)htons(port);
 	s->sin_addr.s_addr = htons(INADDR_ANY);
-
 	return(s);
 
 }
@@ -194,7 +196,7 @@ sockaddr_in_t *init_any_sockaddr_in(const int port)
 sockaddr_ll_t *init_any_sockaddr_ll(const int port) //af inet? no creo
 {
 
-	sockaddr_ll_t *s = new_sockaddr_ll();
+	sockaddr_ll_t *s = new_sockaddr_ll();printf("any \n");
 	s->sll_family = PF_PACKET;
 	s->sll_ifindex = if_nametoindex(net_name);//?? //(in_port_t)htons(port);
 	//memcpy(s->sll_addr,ETH_ADDR_ANY , ETH_ALEN);
@@ -210,7 +212,7 @@ sockaddr_ll_t *init_sockaddr_ll( const int port)
 
 
 	//	s.sll_ifindex  = if_index;//if_nametoindex(if_index);
-	sockaddr_ll_t *s = new_sockaddr_ll();
+	sockaddr_ll_t *s = new_sockaddr_ll();printf("init_sockaddr_ll \n");
 	s->sll_family = PF_PACKET;
 	s->sll_halen = ETH_ALEN;
 	//memset(s->sll_addr, 0xff, ETH_ALEN);

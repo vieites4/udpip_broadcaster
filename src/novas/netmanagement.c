@@ -11,6 +11,7 @@ extern List_lsp * ls_buffer;
 extern itsnet_node_id GN_ADDR;
 extern int PDR;
 extern uint16_t SN_g;
+int addtimernum=0;int gpsdatatnum=0;int LPV_oldnum=0;int LPVnum=0;int locTelementnum=0;int lspnum=0;
 itsnet_position_vector * LPV;
 itsnet_position_vector *LPV_old;
 ev_timer t_Loct;
@@ -104,7 +105,7 @@ bool AddTimer(unsigned short TimerId, int period, int type)
 	// Check if the timer was found
 	if((pTimer == NULL) ){
 		//PRF("esto si non atopa co find timer, crea un timer novo\n");
-		new_element = (tTimer *) malloc(sizeof(tTimer));
+		new_element = (tTimer *) malloc(sizeof(tTimer));printf("addtimernum: %d\n",addtimernum);addtimernum++;
 		new_element->TimerId = TimerId;
 		new_element->pNext = NULL;
 		new_element->Period = period;
@@ -258,7 +259,7 @@ void rtx_repetition(int num, int type,public_ev_arg_r * arg ){
 	memcpy(tx_frame1->buffer.data,(char *)  pkt1,  header_length +lon_int+4+8+4);
 	sockaddr_ll_t * dir= init_sockaddr_ll(arg->port);
 	send_message((sockaddr_t *)dir,arg->net_socket_fd,&tx_frame1->buffer, header_length +lon_int+14+4+8+4);
-	free(pkt1);pkt1=NULL;free(tx_frame1);int e=0;
+	free(pkt1);pkt1=NULL;free(tx_frame1);int e=0;free(dir);
 	tTimer * pos_time= mpTimerList_repetition->init;
 	while(pos_time!=NULL && e==0){
 		if (pos_time->TimerId==num) {pos_time->Period=pos_time->Period_rep;e=1;} else{
@@ -290,7 +291,7 @@ int rtx_ls(int num,public_ev_arg_r * arg){
 		memcpy(tx_frame->buffer.data, (char *) &position->data,sprint_hex_data(position->data.common_header.payload_lenght,2)+52+4+8+4);
 		send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, 52 +sprint_hex_data(position->data.common_header.payload_lenght,2)+14+4+8+4);//==-1){}
 		//	ev_timer_again (l_Beacon,&t_Beacon);
-		pos_time->RTC++;
+		pos_time->RTC++;free(tx_frame);
 		if (pos_time->RTC>=itsGnLocationServiceMaxRetrans){
 			//sup_timer(num,3);//xa se fai mais adiante
 			sup_timer(num,2);
@@ -494,9 +495,6 @@ pTimer1 = pTimer1->pNext;
 i=0;aa3=0;
 while(i<100 && aa3==0){if (gTimer_pending[i++]!=0) aa3=1;}
 if (aa3!=0){raise(51);}
-
-
-
 }
 
 void thr_h2(void *arg){
@@ -537,28 +535,30 @@ List_locT * startup1(configuration_t *cfg)
 	mpTimerList_repetition_max=init_timer_list();
 	return (locT_general);
 }
-int first;
+int first=0;
 
 
 itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	char * h_source= (char *)w->data;
-
 	gps_data_t * gpsdata_p=NULL;
-	if (first==1) free(gpsdata_p);
+	if (first==1) {free(gpsdata_p);gpsdatatnum--;}
 	gps_data_t gpsdata;
-	//if (first==0)
-		gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));
+	if (first==0){printf("entro no first==0\n");}
+		gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));gpsdatatnum=gpsdatatnum+1;printf("gps_data_t %d \n",gpsdatatnum);
 	gpsdata=*gpsdata_p;
 	PRF ("ENTRO NO DO LPV_update\n");
 	int timer;
 	if (first==0){LPV_old=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
-	timer=50000;}else timer=5000;
+	timer=50000;
+	printf("LPV_old %d",LPV_oldnum);LPV_oldnum++;
+
+	}else timer=5000;
 	if (first==1) {memcpy((void *)LPV_old,(void *)LPV,24);}
-	if (first==1)free(LPV);
+	if (first==1){free(LPV);LPVnum--;}
 
 	first=1;
 	LPV=NULL;
-	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));
+	LPV=(itsnet_position_vector *)malloc(sizeof(itsnet_position_vector));printf("LPV %d",LPVnum);LPVnum++;
 	if( gps_open("localhost","2947",&gpsdata)!=0){
 		return(LPV);
 	}
@@ -622,7 +622,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 	res= (version_nh *)malloc(1);
 	flags_t * flags=NULL;
 	flags= (flags_t *)malloc(1);
-	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));
+	pkt=(itsnet_packet *)malloc(sizeof(itsnet_packet));//printf("pkt %d",pktnum);pktnum++;
 	pkt->basic_header.version_nh.HST=1;
 	pkt->basic_header.version_nh.HT=itsGnProtocolVersion;
 	char res_char[1];
@@ -659,7 +659,7 @@ void Beacon_send(EV_P_ ev_timer *w, int revents) {
 List_locT * init_locT ()
 {
 	List_locT * locTi=NULL;
-	locTi = (List_locT *) malloc (sizeof (List_locT));
+	locTi = (List_locT *) malloc (sizeof (List_locT));//printf("locTi %d",loctinum);loctinum++;
 	locTi->init = NULL;
 	locTi->end = NULL;
 	locTi ->len = 0;
@@ -669,7 +669,7 @@ List_locT * init_locT ()
 List_timer * init_timer_list ()
 {
 	List_timer * list=NULL;
-	list = (List_timer *) malloc (sizeof (List_timer));
+	list = (List_timer *) malloc (sizeof (List_timer));//printf("init_timer_list %d",init_timer_listnum);init_timer_listnum++;
 	list->init= NULL;
 	list->end=NULL;
 	list->len=0;
@@ -679,7 +679,8 @@ List_timer * init_timer_list ()
 /*add at list end  */
 List_locT * add_end_locT ( List_locT * locT, itsnet_node data){
 	Element_locT *new_element=NULL;
-	new_element = (Element_locT *) malloc (sizeof (Element_locT));
+	new_element = (Element_locT *) malloc (sizeof (Element_locT));printf("locTelement %d\n",locTelementnum);locTelementnum++;
+
 	new_element->data= data;
 	new_element->next = NULL;
 	new_element->before = NULL;
@@ -738,17 +739,17 @@ int sup_timer (unsigned short TimerId, int num)
 			list->init=list->init->pNext;
 			if(list->len==1){list->end=NULL;  // PRF("eliminamos o unico timer \n");
 			}else{list->init->before=NULL;}
-			free(to_erase);list->len--;
+			free(to_erase);list->len--;addtimernum--;printf("addtimernum: %d \n",addtimernum);
 		}else if (position->pNext==NULL){
 			to_erase=list->end;
 			list->end->before->pNext=NULL;
 			list->end=list->end->before;
-			free(to_erase);list->len--;
+			free(to_erase);list->len--;addtimernum--;printf("addtimernum: %d \n",addtimernum);
 		}else{
 			to_erase=position;
 			position->before->pNext=position->pNext;
 			position->pNext->before=position->before;
-			free(to_erase);list->len--;
+			free(to_erase);list->len--;addtimernum--;printf("addtimernum: %d \n",addtimernum);
 		}
 		if (num==0){ mpTimerList_lsp=list;}else if(num==1){mpTimerList=list;}else if (num==2){mpTimerList_ls_rtx=list;}else if (num==3){mpTimerList_ls_buff=list;}else if (num==5){mpTimerList_pending=list;}else if (num==6){mpTimerList_cbf_uc=list;}else if (num==7){mpTimerList_repetition_max=list;}else if (num==9){mpTimerList_repetition=list;}}
 	return 0;
@@ -775,20 +776,20 @@ int sup_elem_locT (int num,mac_addr *pos,List_locT *locT)
 			PRF("eliminamos o primeiro de loct\n");
 			to_erase=locT->init;
 			locT->init=locT->init->next;
-			free(to_erase);
+			free(to_erase);locTelementnum--;printf("locTelementnum: %d \n",locTelementnum);
 			if(locT->len==1){locT->end=NULL;// PRF("eliminamos o unico de loct\n");
 			}else{locT->init->before=NULL;}locT->len--;
 		}else if (position->next==NULL){ //   PRF("eliminamos o ultimo de loct \n");
 		to_erase=locT->end;
 		locT->end->before->next=NULL;
 		locT->end=locT->end->before;
-		free((void *)to_erase);locT->len--;
+		free((void *)to_erase);locT->len--;locTelementnum--;printf("locTelementnum: %d \n",locTelementnum);
 		}else{
 			to_erase=position;
 			PRF("eliminamos outro de loct\n");
 			position->before->next=position->next;
 			position->next->before=position->before;
-			free(to_erase);locT->len--;
+			free(to_erase);locT->len--;locTelementnum--;printf("locTelementnum: %d \n",locTelementnum);
 		}
 		sup_timer(dictionary[num],1);
 		locT_general=locT;
@@ -817,24 +818,24 @@ List_lsp * sup_elem_t_lsp (int num,int type)
 			memcpy(SN,(char*)(&position->data.payload),2);
 			int num0=sprint_hex_data(SN,2);
 			if(num0==num)in=1; else position = position->next;}
-		if (position==NULL) {printf("son null, no sup_elem_t_lsp\n");}else{
+		if (position==NULL) {PRF("son null, no sup_elem_t_lsp\n");}else{
 			if(position->before==NULL){
 				to_erase=lsp->init;
 				//PRF("eliminamos o primeiro de lsp\n");
 				lsp->init=lsp->init->next;
 				if(lsp->len==1){lsp->end=NULL;    //	PRF("eliminamos o unico \n");
 				}else{lsp_bc_g->init->before=NULL;}
-				free(to_erase);lsp->len--;
+				free(to_erase);lsp->len--;lspnum--;printf("locTelementnum: %d \n",lspnum);
 			}else if (position->next==NULL){    	//PRF("eliminamos o ultimo de lsp \n");
 				to_erase=lsp->end;
 				lsp->end->before->next=NULL;
-				lsp->end=lsp->end->before;free(to_erase);lsp->len--;
+				lsp->end=lsp->end->before;free(to_erase);lsp->len--;lspnum--;printf("lspnum: %d \n",lspnum);
 			}else{
 				//PRF("eliminamos outro de lsp\n");
 				to_erase=position;
 				position->before->next=position->next;
 				position->next->before=position->before;
-				free(to_erase);lsp->len--;
+				free(to_erase);lsp->len--;lspnum--;printf("lspnum: %d \n",lspnum);
 			}
 			//free(SN);SN=NULL;
 			sup_timer(num,type);
@@ -948,7 +949,7 @@ return(lsp);}
 int add_end_lsp ( List_lsp * lsp, itsnet_packet data, int type){
 
 	Element_lsp *new_element=NULL;
-	new_element = (Element_lsp *) malloc (sizeof (Element_lsp));
+	new_element = (Element_lsp *) malloc (sizeof (Element_lsp));lspnum++;printf("lspnum: %d \n",lspnum);
 	new_element->data= data;
 	new_element->next = NULL;
 	new_element->before = NULL;
@@ -974,13 +975,15 @@ int add_end_lsp ( List_lsp * lsp, itsnet_packet data, int type){
 	else if(memcmp(HT,ls0,1)==0 ){
 		sn = data.payload.itsnet_ls_req.sequencenumber;		temp = (LT_s *) data.basic_header.lt;
 	}					else{sn=0;}
-	if(type!=6){
+	if(type!=6){printf("type!=6\n");
+	if (memcmp(HT,tsb0,1)==0 && lon_int<=1){printf("non paso!\n");}
 		if(memcmp(HT,tsb1,1)==0 ||(memcmp(HT,tsb0,1)==0 && lon_int>1)||memcmp(HT,geobroad0,1)==0 ||memcmp(HT,geobroad1,1)==0 ||memcmp(HT,geobroad2,1)==0||memcmp(HT,ls0,1)==0||memcmp(HT,geounicast,1)==0||memcmp(HT,geoanycast0,1)==0 ||memcmp(HT,geoanycast1,1)==0 ||memcmp(HT,geoanycast2,1)==0){
+			printf("paso!\n");
 			int str2=temp->multiple;	int str1=temp->base;int num0;
 			if (str1==0){num0=50;}else if(str1==1){num0=100;}else if(str1==2){num0=1000;}else num0=10000;
 			int lt=num0*str2 /100; //lt in seconds
 			PRF("SEQUENCE NUMBER! %d\n",sn);
-			if (lt>0) AddTimer(sn,lt,type);
+			if (lt>0) {printf("paso!\n");AddTimer(sn,lt,type);}
 		}
 	}
 	if (type==0)lsp_bc_g=lsp; else if (type==4)lsp_uc_g=lsp; else if (type==3)ls_buffer=lsp;else if (type==6)lsp_cbf_uc=lsp;else if (type==9)lsp_repetition=lsp;
@@ -1001,7 +1004,7 @@ List_lsp * sup_elem_lsp (int num, int type){
 		lsp->init=lsp->init->next;
 		if(lsp->len==1){lsp->end=NULL;  //  PRF("eliminamos o unico de lsp\n");
 		}else{lsp->init->before=NULL;}
-		free(to_erase);		lsp->len--;
+		free(to_erase);		lsp->len--;lspnum--;printf("lspnum: %d \n",lspnum);
 		char HT[1];uint16_t sn;char HL[1];
 		memcpy(HT,(void *)&pos->data.common_header.HT_HST,1);
 		memcpy(HL,pos->data.common_header.mhl,1);

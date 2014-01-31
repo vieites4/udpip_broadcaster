@@ -39,6 +39,7 @@ udp_events_t *new_udp_events()
 }
 
 /* init_tx_udp_events */
+/**
 udp_events_t *init_tx_udp_events
 (const char* if_name, const int port, in_addr_t addr, const ev_cb_t callback, const bool broadcast)
 {
@@ -56,9 +57,9 @@ udp_events_t *init_tx_udp_events
 	arg->public_arg.__test_number = 0;
 	return(s);
 
-}
+}**/
 
-
+/**
 udp_events_t *init_tx_raw_events
 (const char* if_name, const int port, const ev_cb_t callback, const bool broadcast)
 {
@@ -77,7 +78,7 @@ udp_events_t *init_tx_raw_events
 	arg->public_arg.__test_number = 0;
 	return(s);
 
-}
+}**/
 
 /* init_rx_udp_events */
 udp_events_t *init_rx_udp_events(const int port, const char* if_name, const ev_cb_t callback)
@@ -95,7 +96,7 @@ udp_events_t *init_rx_raw_events(const int port, const char* if_name, const ev_c
 {
 
 	udp_events_t *s = new_udp_events();
-	s->socket_fd = open_receiver_raw_socket(port);
+	s->socket_fd = open_receiver_raw_socket(port);printf("entro eninit_rx_raw_events \n ");
 	if ( init_watcher_raw(s, callback, EV_READ, port, if_name,(in_addr_t) NULL) < 0 )	{ handle_app_error("init_rx_udp_events: <init_watcher> error.\n"); }
 	return(s);
 
@@ -186,6 +187,7 @@ int init_watcher(udp_events_t *m, const ev_cb_t callback, const int events, cons
 	com_cb = (ev_cb_t)&cb_common;
 	ev_io_init(	m->watcher, com_cb,	m->socket_fd, EV_READ	);
 	ev_io_start(m->loop, m->watcher);
+	//free(arg);
 	return(EX_OK);
 
 }
@@ -200,6 +202,7 @@ int init_watcher_raw(udp_events_t *m, const ev_cb_t callback, const int events, 
 	com_cb = (ev_cb_t)&cb_common;
 	ev_io_init(	m->watcher, com_cb,	m->socket_fd, EV_READ	);
 	ev_io_start(m->loop, m->watcher);
+	//free(arg);
 	return(EX_OK);
 
 }
@@ -208,7 +211,6 @@ int init_watcher_raw(udp_events_t *m, const ev_cb_t callback, const int events, 
 ev_io_arg_t *init_ev_io_arg(const udp_events_t *m, const ev_cb_t callback, const int port, const char* if_name)
 {
 	ev_io_arg_t *s = new_ev_io_arg();
-
 	// 1) private data initialization
 	s->cb_specfic = callback;
 	// 2) public data initialization
