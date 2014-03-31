@@ -82,12 +82,10 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		PDR_update(data);
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, net_name,(unsigned char *) h_source) ;
-		if(memcmp((void *)data +6,h_source,6)==0){
-		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");
-		return;	}
+//		if(memcmp((void *)data +6,h_source,6)==0){		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");return;	}
 
 		memcpy(arg->data,data,arg->len);
-		print_hex_data((char *)data,arg->len);PRF(" o paquete que chega \n");
+		print_hex_data((char *)data,arg->len);printf(" o paquete que chega \n");
 		char datos[arg->len];
 		memcpy(datos,(void *)(data) +14,arg->len);
 		char HT[1];char HL[1];char LEN[2];
@@ -368,7 +366,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		memcpy(tx_frame->buffer.header.type,type07,2);
 		char datos[arg->len];
 		memcpy(datos,arg->data,arg->len);//+4
-		//print_hex_data(datos,arg->len);PRF(" datos\n");
+		print_hex_data(datos,arg->len);printf(" datos\n");
 		char HT[2];char LEN[2] ;char HL[1];
 		memcpy(HT,arg->data,2);
 		itsnet_packet * pkt=NULL;
