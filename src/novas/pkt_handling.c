@@ -475,7 +475,6 @@ itsnet_packet * GeoBroadcast(void *buffer, List_lsp *lsp, List_lsp *rep,public_e
 	sockaddr_ll_t * dir= init_sockaddr_ll(arg->forwarding_port);
 //	memset(pkt->payload.itsnet_geobroadcast.reserved,0,2);//(char *)(buffer) +30
 
-	printf(" ------------------------------------- ");print_hex_data (pkt, lon_int);printf(" -------------------------------------\n");
 
 	if(itsGnGeoBroadcastForwardingAlgorithm==0||itsGnGeoBroadcastForwardingAlgorithm==1){
 		memcpy(nh.address,BROADCAST,6);
@@ -975,7 +974,7 @@ itsnet_packet_f * SHB_f(void *buffer){
 		}**/
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+3,1);
-	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+4+24+8+4,lon_int+4);
+	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+24+8+4,lon_int+4);
 	//print_hex_data(pkt->payload.itsnet_unicast.payload,lon_int+4);PRF(" payload\n");
 	memcpy((void *)&pkt->common_header.pkt_type,(char *)(buffer)+1+4,1);
 	pkt->common_header.pkt_type.HST=0;
@@ -1001,7 +1000,7 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 	pkt->common_header.pv=*PV;
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+3,1);
-	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+4+24+8,lon_int+4);
+	memcpy(pkt->payload.itsnet_unicast.payload,(char *)(buffer)+4+4+24+8+20,lon_int+4);
 	memcpy((void *)&pkt->common_header.pkt_type,(char *)(buffer)+1+4,1);
 	pkt->common_header.pkt_type.HST=0;
 	memcpy((void *)&pkt->common_header.pkt_stype,(char *)(buffer)+1+4,1);
@@ -1012,7 +1011,6 @@ itsnet_packet_f * GeoUnicast_f(void *buffer){
 
 itsnet_packet_f * GeoBroadcast_f(void *buffer){
 	itsnet_packet_f * pkt = NULL;
-	print_hex_data(buffer,4+8+24+16+8);printf("**********************payload\n");
 
 	pkt=(itsnet_packet_f *)malloc(sizeof(itsnet_packet_f));
 	memcpy((void *)&pkt->common_header.btp,(char *)(buffer),1);
@@ -1035,7 +1033,7 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer){
 	memcpy(pkt->payload.itsnet_geocast.lt,(char *)(buffer)+38,4); //convertir o valor a 4 bytes outra vez
 	memcpy(pkt->common_header.flags,(char *)(buffer) +3+4,1);
 	memcpy(pkt->common_header.hop_limit,(char *)(buffer)+3,1);   //rhl
-	memcpy(pkt->payload.itsnet_geocast.payload,(char *)(buffer)+4+24+8+16+8,lon_int+4);
+	memcpy(pkt->payload.itsnet_geocast.payload,(char *)(buffer)+4+24+8+16+4,lon_int+4);
 	//
 	memcpy((void *)&pkt->common_header.pkt_type,(char *)(buffer)+1+4,1);
 	pkt->common_header.pkt_type.HST=0;
