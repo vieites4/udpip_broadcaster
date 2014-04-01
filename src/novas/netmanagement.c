@@ -105,7 +105,7 @@ bool AddTimer(unsigned short TimerId, int period, int type)
 	// Check if the timer was found
 	if((pTimer == NULL) ){
 		//PRF("esto si non atopa co find timer, crea un timer novo\n");
-		new_element = (tTimer *) malloc(sizeof(tTimer));printf("addtimernum: %d\n",addtimernum);addtimernum++;
+		new_element = (tTimer *) malloc(sizeof(tTimer));PRF("addtimernum: %d\n",addtimernum);addtimernum++;
 		new_element->TimerId = TimerId;
 		new_element->pNext = NULL;
 		new_element->Period = period;
@@ -543,8 +543,8 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 	gps_data_t * gpsdata_p=NULL;
 	if (first==1) {free(gpsdata_p);gpsdatatnum--;}
 	gps_data_t gpsdata;
-	if (first==0){printf("entro no first==0\n");}
-		gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));gpsdatatnum=gpsdatatnum+1;printf("gps_data_t %d \n",gpsdatatnum);
+	if (first==0){PRF("entro no first==0\n");}
+		gpsdata_p=(gps_data_t*)malloc(sizeof(gps_data_t));gpsdatatnum=gpsdatatnum+1;PRF("gps_data_t %d \n",gpsdatatnum);
 	gpsdata=*gpsdata_p;
 	PRF ("ENTRO NO DO LPV_update\n");
 	int timer;
@@ -592,10 +592,10 @@ itsnet_position_vector * LPV_update(EV_P_ ev_timer *w, int revents){
 					if(gpsdata.fix.latitude<0){LPV->latitude=0xffff-num6;}else{LPV->latitude=num6;}
 					if(gpsdata.fix.longitude<0){LPV->longitude=0xffff-num7;}else{LPV->longitude=num7;}
 					LPV->time_stamp=num00;// recibe Unix time in seconds with fractional part  e quere miliseconds
-					int speed1=floor(num10/128); //división entera
-					int speed2=num10%128;
-					LPV->speed1=speed1;
-					LPV->speed2=speed2; //recibe metros por segundo e quere 1/100 m/s
+					int speed1=floor(num10/256); //división entera
+					int speed2=num10%255;
+					LPV->speed1=speed2;
+					LPV->speed2=speed1; //recibe metros por segundo e quere 1/100 m/s
 					print_hex_data(h_source,6);PRF( "MAC \n");
 					memcpy(LPV->node_id.mac.address,h_source,6);
 					i=100;				} } }else {if (first==1) memcpy(LPV,LPV_old,24);    }}

@@ -71,7 +71,8 @@ int CBF_UC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se){
 		if(cont==pos_locT){aa=1;}else{cont++;p_locT=p_locT->next;}	}
 	int prog=0;int timeout=0;
 	if(pos_locT>0 && p_locT->data.pos_vector.pai==1){
-		prog=distance(pkt->payload.itsnet_unicast.dest_position_vector,p_locT->data.pos_vector)-distance(pkt->payload.itsnet_unicast.dest_position_vector,LPV);
+		prog=0;
+		//prog=distance(pkt->payload.itsnet_unicast.dest_position_vector,p_locT->data.pos_vector)-distance(pkt->payload.itsnet_unicast.dest_position_vector,LPV);
 		if (prog>0){
 			add_end_lsp(lsp_cbf_uc,*pkt,6);
 			//set time out

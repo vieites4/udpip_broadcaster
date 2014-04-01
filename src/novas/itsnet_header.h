@@ -112,9 +112,10 @@ struct itsnet_position_vector
 	itsnet_time_stamp time_stamp;   /** UTC time in seconds, when the GPS data was calculated,NOT the time this message was generated */
 	itsnet_latitude latitude;  /** the latitude of the global position in 1/8 microdegree */
 	itsnet_longitude longitude;  /** the longitude of the global position in 1/8 microdegree*/
-	char pai:1;
-	itsnet_speed speed1;  /** current speed in 0.01 meters per second*/
+	unsigned char pai:1; // pai & speed2 in this order because it is neccesary not to duplicate bytes.
 	unsigned char speed2:7;
+	itsnet_speed speed1;  /** current speed in 0.01 meters per second*/
+
 	itsnet_heading heading;  /** current curse in 0.005493247 degrees*/
 	//itsnet_altitude altitude;    /** the altitude (meter over mean sea level)*/
 	//itsnet_accuracy accuracy;
@@ -191,6 +192,8 @@ struct itsnet_common
 	//itsnet_longitude longitude;
 	//itsnet_latitude latitude;
 	itsnet_position_vector pv;
+	unsigned char altitude[2];
+	unsigned char accuracies[2];
 };
 
 typedef struct itsnet_common itsnet_common;
@@ -271,6 +274,8 @@ struct itsnet_geo_t
 	unsigned char distanceB[2];// radius/height,latitude and longitude (geo-area destination)   itsnet_radius
 	unsigned char angle[2]; //orientation //itsnet_radius
 	unsigned char reserved[2];
+	//unsigned char dest[2];
+	//unsigned char source[2];
 	short payload[ITSNET_DATA_SIZE];
 };
 
