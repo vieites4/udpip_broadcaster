@@ -82,12 +82,10 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		PDR_update(data);
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, net_name,(unsigned char *) h_source) ;
-		if(memcmp((void *)data +6,h_source,6)==0){
-		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");
-		return;	}
+	//	if(memcmp((void *)data +6,h_source,6)==0){		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");		return;	}
 
 		memcpy(arg->data,data,arg->len);
-		print_hex_data((char *)data,arg->len);PRF(" o paquete que chega \n");
+		printf("\n???????????????");print_hex_data((char *)data,arg->len);printf("??????????????? o paquete que chega \n");
 		char datos[arg->len];
 		memcpy(datos,(void *)(data) +14,arg->len);
 		char HT[1];char HL[1];char LEN[2];
@@ -122,7 +120,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 			int y =geo_limit(HT,pkt,LPV);PRF("geo_limit: %d\n",y);
 			if (y>=0){
 				send_message(	(sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,pkt, lon_in +56	);}
-			PRF("saio de geobroadcast_f \n");print_hex_data(pkt, lon_in +56);PRF(" envio geo cara arriba\n");
+			printf("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! \n");print_hex_data(pkt, lon_in +56);printf(" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! envio geo cara arriba\n");
 		}		else if(memcmp(HT,beacon,1)==0 ){
 			PRF("entro en beacon\n");
 		}else if(memcmp(HT,geounicast,1)==0 ){
@@ -368,7 +366,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		memcpy(tx_frame->buffer.header.type,type07,2);
 		char datos[arg->len];
 		memcpy(datos,arg->data,arg->len);//+4
-		//print_hex_data(datos,arg->len);PRF(" datos\n");
+		printf("\n***************************************************+");print_hex_data(datos,arg->len);printf("********************** datos que veñen das facilities\n");
 		char HT[2];char LEN[2] ;char HL[1];
 		memcpy(HT,arg->data,2);
 		itsnet_packet * pkt=NULL;
@@ -405,7 +403,7 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 				else if(memcmp(HT,tsb0,1)==0){header_length=28+6;}else if(memcmp(HT,geounicast,1)==0){header_length=48;} else if(memcmp(HT,ls0,1)==0){header_length=36;}else if(memcmp(HT,ls0,1)==0){header_length=48;}
 				memcpy(tx_frame->buffer.data, (char *) pkt,lon_int+header_length+4+8+4);
 				send_message((sockaddr_t *)arg->forwarding_addr,arg->forwarding_socket_fd,&tx_frame->buffer, header_length +lon_int+14+4+8+2);//==-1){}
-				//print_hex_data(pkt, header_length +lon_int+4+8+2+6);PRF(" o paquete que metín!\n");
+				printf("\n^^^^^^^^^^^^^^^^^^^^^^^^ ");print_hex_data(pkt, header_length +lon_int+4+8+2+6);printf("^^^^^^^^^^^^^^^^^^^^^^^^ o paquete que mando pola rede\n");
 				if(memcmp(HT,tsb0,1)==0)ev_timer_again (l_Beacon,&t_Beacon);
 				//print_hex_data(&tx_frame->buffer,header_length+ lon_int+4+8);
 				PRF(" paquete enviado directo \n");

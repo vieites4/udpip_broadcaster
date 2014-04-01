@@ -626,8 +626,8 @@ int print_hex_data(const char *buffer, const int len)
 
 	for ( int i = 0; i < len; i++ )
 	{
-		PRF("%02X", 0xFF & ( int)buffer[i]);
-		if ( i < last_byte ) { PRF(":"); }
+		printf("%02X", 0xFF & ( int)buffer[i]);
+		if ( i < last_byte ) { printf(":"); }
 	}
 
 	return(EX_OK);
