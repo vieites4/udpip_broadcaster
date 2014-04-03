@@ -1026,21 +1026,25 @@ itsnet_packet_f * GeoBroadcast_f(void *buffer){
 	int lon_int=sprint_hex_data( LEN, 2);
 	memcpy(pkt->common_header.payload_lenght,LEN,2);
 	pkt->common_header.pv=*PV;
-
-	//print_hex_data(LAT,4);printf("latitude ... %d \n",sprint_hex_data( LAT, 4));
-
-	//memcpy(pkt->common_header.pv.latitude,(char *)(buffer)+8+24+8,4);
-	//memcpy(pkt->common_header.pv.longitude,(char *)(buffer)+8+4+24+8,4);
 	char LAT[4];memcpy(LAT,(char *)(buffer)+8+24+8,4);
-	char LON[4];memcpy(LON,(char *)(buffer)+8+24+8+4,4);
-	char LAT_F[4];
+	char LON[4];memcpy(LON,(char *)(buffer)+8+24+8+4,4);	char LAT_F[4];char LON_F[4];
+	int lon_b=0;
+	int lat_b=0;
+if(LAT[0]>0xaf){
+lat_b=1;//printf("\n =========entro====== \n");
 	LAT_F[0]=0xff-LAT[0];
 	LAT_F[1]=0xff-LAT[1];
 	LAT_F[2]=0xff-LAT[2];
-	LAT_F[3]=0xff-LAT[3];
+	LAT_F[3]=0xff-LAT[3];}
+if(LON[0]>0xaf){
+lon_b=1;
+	LON_F[0]=0xff-LON[0];
+	LON_F[1]=0xff-LON[1];
+	LON_F[2]=0xff-LON[2];
+	LON_F[3]=0xff-LON[3];}//else printf("\n =========entro999====== \n");
 
-	pkt->common_header.pv.latitude=sprint_hex_data( LAT_F, 4);
-pkt->common_header.pv.longitude=sprint_hex_data( LON, 4);
+if(lat_b==0)pkt->common_header.pv.latitude=sprint_hex_data( LAT, 4);else	pkt->common_header.pv.latitude=sprint_hex_data( LAT_F, 4);
+if(lon_b==0)pkt->common_header.pv.longitude=sprint_hex_data( LON, 4);else	pkt->common_header.pv.latitude=sprint_hex_data( LON_F, 4);
 	printf("%d latitude",sprint_hex_data( LAT_F, 4));
 	printf("%d longitude",pkt->common_header.pv.longitude);
 	memcpy(pkt->payload.itsnet_geocast.angle,(char *)(buffer)+8+4+4+24+12,2);

@@ -217,8 +217,8 @@ mac_addr Advanced_BC(itsnet_packet * pkt,int len,itsnet_position_vector * lpv_se
 int geo_limit(void *HT,itsnet_packet_f *pkt,itsnet_position_vector * lpv_se)
 {
 	int x,y,r,total,a,b;
-	x=abs(pkt->common_header.pv.latitude - lpv_se->latitude);
-	y=abs(pkt->common_header.pv.longitude - lpv_se->longitude);
+	x=abs(pkt->common_header.pv.latitude - lpv_se->latitude)/111;
+	y=abs(pkt->common_header.pv.longitude - lpv_se->longitude)/111;
 	char distA[2];
 	char distB[2];
 	memcpy(distA,pkt->payload.itsnet_geocast.distanceA,2);

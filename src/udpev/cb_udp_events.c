@@ -83,7 +83,9 @@ void cb_forward_recvfrom(public_ev_arg_r *arg)
 		char h_source[ETH_ALEN];
 		get_mac_address(arg->socket_fd, net_name,(unsigned char *) h_source) ;
 //		if(memcmp((void *)data +6,h_source,6)==0){		PRF(">>>@cb_forward_recvfrom: Message blocked!\n");return;	}
+char aa=0xfa;
 
+		if (0xff>aa)printf("\n ************TRUEEEEEEEEEEEEEE**** \n");
 		memcpy(arg->data,data,arg->len);
 printf("\n ????????????????????????????????");	print_hex_data((char *)data,arg->len);PRF("??????????????????????? o paquete que chega \n");
 		char datos[arg->len];
